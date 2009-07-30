@@ -9,7 +9,7 @@
  *
  *	
  *****************************************************************************/
-package com.gs.oracle;
+package com.gs.oracle.context;
 
 import java.awt.Dimension;
 import java.awt.Point;
@@ -21,9 +21,16 @@ import java.io.Serializable;
  */
 public class OracleGuiContext implements Serializable {
 
+	public static final String CONTEXT_FILE_NAME = "OracleGuiContext.ctx";
+	
 	protected static OracleGuiContext instance;
 	private OracleGuiContext() {
 		
+	}
+	public static OracleGuiContext getInstance(){
+		if(instance == null)
+			instance = new OracleGuiContext();
+		return instance;
 	}
 	
 	// data for main window
