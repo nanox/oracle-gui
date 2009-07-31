@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="Oracle-GUI Application" basedir="." default="compile">
+
+  <target name="project_init" description="Initialize environment">
+
+    <property name="component.name" value="Oracle-GUI"/>
+    <property name="component.package" value="com.gs.oracle"/>
+    <property name="component.title" value="Oracle-GUI"/>
+    <property name="component.version" value="1.0.1"/>
+  </target>
+
+  <target name="init" depends="project_init" description="Initialize environment">
+        <property name="path.bin" value="bin"/>
+        <property name="path.build" value="build"/>
+        <property name="path.build.lib" value="build/lib"/>
+        <property name="path.dist" value="dist"/>
+        <property name="path.dist.classes" value="dist/classes"/>
+        <property name="path.dist.lib" value="dist/lib"/>
+        <property name="path.docs" value="docs"/>
+        <property name="path.docs.api" value="docs/api"/>
+        <property name="path.lib" value="lib"/>
+        <property name="path.src" value="src"/>
+        <property name="path.src.java" value="src/main/java"/>
+		<property name="path.src.java.ress" value="src/main/resources"/>
+        <property name="path.src.test" value="src/test/java"/>
+		<property name="path.src.test.ress" value="src/test/resources"/>
+        <property name="compile.debug" value="true"/>
+        <property name="compile.deprecation" value="true"/>
+        <property name="compile.jdk-version.source" value="1.5"/>
+        <property name="compile.jdk-version.target" value="1.5"/>
+        <property name="compile.optimize" value="true"/>
+        <property file="${basedir}/build.properties"/>
+		<property name="path.libs" value="../../setup/app/libs"/>
+
+        <path id="compile.classpath">
+            <fileset dir="${path.libs}">
+                <include name="*.jar"/>
+            </fileset>
+            <fileset dir="${path.lib}">
+                <include name="*.jar"/>
+            </fileset>
+        </path>
+
+    </target>
+
+    <target name="project_prepare" description="Project-level prepare phase"/>
+
+    <target name="make_directories" description="Creates all project directories" depends="init">
+        <mkdir dir="${path.bin}"/>
+        <mkdir dir="${path.build}"/>
+        <mkdir dir="${path.build.lib}"/>
+        <mkdir dir="${path.dist}"/>
+        <mkdir dir="${path.dist.classes}"/>
+        <mkdir dir="${path.dist.lib}"/>
+        <mkdir dir="${path.docs}"/>
+        <mkdir dir="${path.docs.api}"/>
+        <mkdir dir="${path.lib}"/>
+    </target>
+
+    <target name="prepare" depends="init, make_directories, project_prepare" description="Prepare build directory">
+
+    </target>
+
+    <target name="compile" depends="prepare" description="Compile source">
+        <javac debug="${compile.debug}" deprecation="${compile.deprecation}" destdir="${path.dist.classes}" target="${compile.jdk-version.target}" source="${compile.jdk-version.source}" optimize="${compile.optimize}" srcdir="${path.src}">
+            <classpath refid="compile.classpath"/>
+        </javac>
+    </target>
+
+    <target name="project_clean" description="Project-level prepare phase"/>
+
+    <target name="clean" depends="init,project_clean" description="Wipeout all generated files">
+        <delete dir="${path.dist.classes}"/>
+        <delete dir="${path.dist.lib}"/>
+    </target>
+
+    <target name="all" depends="clean,compile" description="Clean and compile all components"/>
+
+    <target name="javadoc" depends="compile" description="Create component Javadoc documentation">
+        <delete dir="${path.docs.api}"/>
+        <mkdir dir="${path.docs.api}"/>
+        <javadoc author="true" bottom="${component.title}" destdir="${path.docs.api}" source="${compile.jdk-version.source}" doctitle="${component.title}" packagenames="*" access="protected" sourcepath="${path.src.java}" version="true" windowtitle="${component.title} (Version ${component.version})">
+            <classpath refid="compile.classpath"/>
+        </javadoc>
+    </target>
+
+    <target name="build-test" depends="compile" description="Compiles test components">
+        <javac debug="${compile.debug}" deprecation="${compile.deprecation}" destdir="${path.test.classes}" target="${compile.jdk-version.target" source="${compile.jdk-version.source}" optimize="${compile.optimize}" srcdir="${path.src.java.test}">
+            <classpath refid="compile.classpath"/>
+        </javac>
+    </target>
+
+    <target name="jar" depends="compile" description="Create binary distribution">
+        <delete>
+            <fileset dir="${path.dist.lib}" includes="*.jar"/>
+        </delete>
+        <jar basedir="${path.dist.classes}" jarfile="${path.dist.lib}/${component.name}-${component.version}.jar">
+            <include name="**/*.classes"/>
+        </jar>
+    </target>
+
+    <target name="src-zip" depends="compile" description="Creates source distribution">
+        <delete>
+            <fileset dir="${path.dist.lib}" includes="*-src.zip"/>
+        </delete>
+        <zip basedir="." destfile="${path.dist.lib}/${component.name}-${component.version}-src.zip" whenempty="fail">
+            <include name="**/*.*"/>
+            <include name="*"/>
+            <include name="**/*"/>
+            <exclude name="${path.dist}/**/*.*"/>
+            <exclude name="*.*~"/>      <!-- JEdit backups -->
+            <exclude name=".nbattrs"/>  <!-- Netbeans filesystem attributes -->
+            <exclude name="*.old"/>
+        </zip>
+    </target>
+
+    <target name="dist" depends="jar,src-zip"/>
+
+</project>
