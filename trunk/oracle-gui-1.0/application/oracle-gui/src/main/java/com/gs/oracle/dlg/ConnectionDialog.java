@@ -30,6 +30,7 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
@@ -37,6 +38,10 @@ import javax.swing.JSeparator;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
+
+import com.gs.oracle.command.GuiCommandConstants;
+import com.gs.oracle.util.DisplayTypeEnum;
+import com.gs.oracle.util.DisplayUtils;
 
 /**
  * @author Green Moon
@@ -99,6 +104,7 @@ public class ConnectionDialog extends JDialog {
 		parentPanel.add(jLabel1, gridBagConstraints);
 
 		newConnectionButton.setText("New ...");
+		newConnectionButton.setActionCommand(GuiCommandConstants.NEW_CONNECTION_ACT_CMD);
 		newConnectionButton
 				.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -156,7 +162,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 		parentPanel.add(jComboBox1, gridBagConstraints);
 
-		editConnNameButton.setText("...");
+		editConnNameButton.setText("Edit ...");
 		editConnNameButton
 				.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -413,7 +419,8 @@ public class ConnectionDialog extends JDialog {
 
 	private void newConnectionButtonActionPerformed(
 			ActionEvent evt) {
-		// TODO add your handling code here:
+		String name = DisplayUtils.readString("Enter a new connection name:");
+		DisplayUtils.displayMessage(this.getParent(), name,DisplayTypeEnum.ERROR);
 	}
 
 	private void saveConnectionButtonActionPerformed(

@@ -11,10 +11,19 @@
  *****************************************************************************/
 package com.gs.oracle.grabber;
 
+import java.sql.Connection;
+
+import com.gs.oracle.model.Schema;
+
 /**
  * @author Green Moon
  *
  */
 public class OracleDbGrabber {
 
+	public Schema grabSchema(Connection connection, String schemaName){
+		
+		return null;
+	}
+	
 }

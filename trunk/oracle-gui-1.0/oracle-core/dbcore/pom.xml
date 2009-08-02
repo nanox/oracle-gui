@@ -24,11 +24,30 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.oracle.ojdbc</groupId>
+			<groupId>com.gs.oracle</groupId>
+			<artifactId>util</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.oracle</groupId>
 			<artifactId>ojdbc14</artifactId>
-			<scope>system</scope>
-			<version>1.0</version>
-			<systemPath>${libs.dir}/ojdbc14.jar</systemPath>
+			<version>10.2.0.3.0</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbutils</groupId>
+			<artifactId>commons-dbutils</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-dbcp</groupId>
+			<artifactId>commons-dbcp</artifactId>
+			<version>20030825.184428</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-beanutils</groupId>
+			<artifactId>commons-beanutils</artifactId>
+			<version>20030211.134440</version>
 		</dependency>
 	</dependencies>
 </project>
