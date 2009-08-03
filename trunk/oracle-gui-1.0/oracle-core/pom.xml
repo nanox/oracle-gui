@@ -14,6 +14,7 @@
 		<module>dbcore</module>
 		<module>services</module>
 		<module>util</module>
+		<module>oracle-gui</module>
 	</modules>
  
 	<dependencyManagement>
