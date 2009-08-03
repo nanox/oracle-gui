@@ -36,5 +36,8 @@ public abstract class BaseDbModel implements Serializable {
 		this.comments = comments;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return getModelName();
+	}
 }

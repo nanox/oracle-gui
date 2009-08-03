@@ -74,5 +74,9 @@ public class Column<T> extends BaseDbModel implements Serializable {
 	}
 	
 	
-	
+	@Override
+	public String toString() {
+		return getModelName() + " [ " + dataType + ", (" + size +")" + 
+			((nullable) ? "NULL" : "NOTNULL") + " ]";
+	}
 }
