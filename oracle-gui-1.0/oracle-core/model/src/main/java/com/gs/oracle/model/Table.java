@@ -58,6 +58,9 @@ public class Table extends BaseDbModel implements Serializable {
 		this.columnlist = columnlist;
 	}
 	
-	
+	@Override
+	public String toString() {
+		return super.getModelName();
+	}
 	
 }
