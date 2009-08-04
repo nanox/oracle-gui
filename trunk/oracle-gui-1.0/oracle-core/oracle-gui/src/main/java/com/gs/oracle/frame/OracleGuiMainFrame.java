@@ -16,6 +16,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
 import javax.swing.JMenu;
@@ -45,6 +46,9 @@ public class OracleGuiMainFrame extends JFrame {
     private JMenuBar mainMenuBar;
     private JPanel mainPanel;
     private JToolBar mainToolBar;
+    private ToolbarButtons toolbarButtons;
+    
+    private JComboBox dbNamesComboBox;
     
     private StatusBar statusBar;
 
@@ -67,8 +71,10 @@ public class OracleGuiMainFrame extends JFrame {
         mainToolBar = new JToolBar();
         mainDesktopPane = new JDesktopPane();
         mainMenuBar = new JMenuBar();
+        dbNamesComboBox = new JComboBox();
         
         statusBar = new StatusBar();
+        toolbarButtons = new ToolbarButtons(this);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setName("Form"); 
@@ -76,6 +82,7 @@ public class OracleGuiMainFrame extends JFrame {
         mainPanel.setName("jPanel1"); 
         mainPanel.setLayout(new GridBagLayout());
 
+        dbNamesComboBox.setMaximumSize(dbNamesComboBox.getPreferredSize());
         mainToolBar.setRollover(true);
         mainToolBar.setName("jToolBar1"); 
         mainToolBar.setFloatable(false);
@@ -83,7 +90,8 @@ public class OracleGuiMainFrame extends JFrame {
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        mainToolBar.add(ToolbarButtons.createToolbarButton("", "", "Database.png"));
+        addToolbarComponents();
+        
         mainPanel.add(mainToolBar, gridBagConstraints);
 
         mainDesktopPane.setName("jDesktopPane1");
@@ -115,5 +123,15 @@ public class OracleGuiMainFrame extends JFrame {
 
         pack();
     }
+
+	private void addToolbarComponents() {
+		mainToolBar.add(toolbarButtons.getButton(ToolbarButtons.NEW_CONNECTION_TOOLBAR_BUTTON));
+		mainToolBar.add(toolbarButtons.getButton(ToolbarButtons.REFRESH_DATABASE_TOOLBAR_BUTTON));
+		mainToolBar.add(dbNamesComboBox);
+		mainToolBar.addSeparator();
+		mainToolBar.add(toolbarButtons.getButton(ToolbarButtons.BACKUP_DATABSE_TOOLBAR_BUTTON));
+		mainToolBar.add(toolbarButtons.getButton(ToolbarButtons.EXECUITE_CURRENT_SQL_TOOLBAR_BUTTON));
+		mainToolBar.add(toolbarButtons.getButton(ToolbarButtons.DB_SYNC_TOOLBAR_BUTTON));
+	}
 	
 }
