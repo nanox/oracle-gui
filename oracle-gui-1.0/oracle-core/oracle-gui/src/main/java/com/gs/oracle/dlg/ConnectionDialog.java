@@ -49,9 +49,11 @@ import com.gs.oracle.util.DisplayUtils;
  */
 public class ConnectionDialog extends JDialog {
 
-	public ConnectionDialog(java.awt.Frame parent, boolean modal) {
+	public ConnectionDialog(JFrame parent, boolean modal) {
 		super(parent, modal);
 		initComponents();
+		setResizable(false);
+		setTitle("Connect to Oracle Database");
 	}
 
 	private void initComponents() {
@@ -101,6 +103,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridheight = 3;
 		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
+		gridBagConstraints.anchor = GridBagConstraints.NORTH;
 		parentPanel.add(jLabel1, gridBagConstraints);
 
 		newConnectionButton.setText("New ...");
