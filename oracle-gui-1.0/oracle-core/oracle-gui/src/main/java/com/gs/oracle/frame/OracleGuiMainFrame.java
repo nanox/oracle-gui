@@ -77,14 +77,14 @@ public class OracleGuiMainFrame extends JFrame {
         toolbarButtons = new ToolbarButtons(this);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setName("Form"); 
+        setName("OracleGuiMainFrame"); 
 
-        mainPanel.setName("jPanel1"); 
+        mainPanel.setName("mainPanel"); 
         mainPanel.setLayout(new GridBagLayout());
 
         dbNamesComboBox.setMaximumSize(dbNamesComboBox.getPreferredSize());
         mainToolBar.setRollover(true);
-        mainToolBar.setName("jToolBar1"); 
+        mainToolBar.setName("mainToolBar"); 
         mainToolBar.setFloatable(false);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -117,7 +117,7 @@ public class OracleGuiMainFrame extends JFrame {
         
         getContentPane().add(mainPanel, BorderLayout.CENTER);
 
-        mainMenuBar.setName("jMenuBar1"); 
+        mainMenuBar.setName("mainMenuBar"); 
         mainMenuBar.add(new JMenu("File"));
         setJMenuBar(mainMenuBar);
 
