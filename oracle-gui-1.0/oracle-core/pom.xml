@@ -57,7 +57,7 @@
 	</build>
 	
 	<properties>
-		<libs.dir>D:/SVN_HOME/MY_PROJECTS/oracle-gui/trunk/oracle-gui-1.0/setup/extern-libs</libs.dir>
+		<libs.dir>E:/SVN_HOME/MyProjects/oracle-gui/trunk/oracle-gui-1.0/setup/extern-libs</libs.dir>
 	</properties>
 	
  </project>

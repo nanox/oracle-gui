@@ -25,6 +25,7 @@ import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
 
+import com.gs.oracle.comps.MenuBarItems;
 import com.gs.oracle.comps.ToolbarButtons;
 import com.gs.oracle.dlg.StatusBar;
 import com.gs.oracle.util.MenuBarUtil;
@@ -47,6 +48,7 @@ public class OracleGuiMainFrame extends JFrame {
     private JPanel mainPanel;
     private JToolBar mainToolBar;
     private ToolbarButtons toolbarButtons;
+    private MenuBarItems menuBarItems;
     
     private JComboBox dbNamesComboBox;
     
@@ -75,6 +77,7 @@ public class OracleGuiMainFrame extends JFrame {
         
         statusBar = new StatusBar();
         toolbarButtons = new ToolbarButtons(this);
+        menuBarItems = new MenuBarItems(this);
 
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         setName("OracleGuiMainFrame"); 
@@ -118,11 +121,17 @@ public class OracleGuiMainFrame extends JFrame {
         getContentPane().add(mainPanel, BorderLayout.CENTER);
 
         mainMenuBar.setName("mainMenuBar"); 
-        mainMenuBar.add(new JMenu("File"));
+        addMenubarComponents();
+        
         setJMenuBar(mainMenuBar);
 
         pack();
     }
+
+	private void addMenubarComponents() {
+		//mainMenuBar.add(menuBarItems.getMenu(MenuBarItems.FILE_MENU_NAME));
+		menuBarItems.addMenusToMenuBar(mainMenuBar);
+	}
 
 	private void addToolbarComponents() {
 		mainToolBar.add(toolbarButtons.getButton(ToolbarButtons.NEW_CONNECTION_TOOLBAR_BUTTON));
