@@ -5,6 +5,8 @@ package com.gs.oracle.comps;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyEvent;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -30,6 +32,16 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 	public static final String FILE_MENU_NAME = "FILE_MENU_NAME";
 	public static final String FILE_MENU_TEXT = "File";
 	public static final String NEW_CONN_FILE_MENU_ITEM = "NEW_CONN_FILE_MENU_ITEM";
+	public static final String NEW_CONN_W_FILE_MENU_ITEM = "NEW_CONN_W_FILE_MENU_ITEM";
+	public static final String DISCONN_DB_FILE_MENU_ITEM = "DISCONN_DB_FILE_MENU_ITEM";
+	public static final String DISCONN_ALL_DB_FILE_MENU_ITEM = "DISCONN_ALL_DB_FILE_MENU_ITEM";
+	public static final String EXIT_FILE_MENU_ITEM = "EXIT_FILE_MENU_ITEM";
+	//public static final String _FILE_MENU_ITEM = "";
+	public static final String NEW_QUERY_TAB_FILE_MENU_ITEM = "NEW_QUERY_TAB_FILE_MENU_ITEM";
+	public static final String OPEN_QUERY_FILE_MENU_ITEM = "OPEN_QUERY_FILE_MENU_ITEM";
+	public static final String SAVE_QUERY_FILE_MENU_ITEM = "SAVE_QUERY_FILE_MENU_ITEM";
+	public static final String SAVE_AS_QUERY_FILE_MENU_ITEM = "SAVE_AS_QUERY_FILE_MENU_ITEM";
+	
 	
 	
 	public static final String EDIT_MENU_NAME = "EDIT_MENU_NAME";
@@ -77,7 +89,32 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 		addMenu(VIEW_MENU_NAME, VIEW_MENU_TEXT);
 		addMenu(HELP_MENU_NAME, HELP_MENU_TEXT);
 		// add items to file menu
-		addMenuItem(FILE_MENU_NAME, NEW_CONN_FILE_MENU_ITEM, "New Connection", NEW_CONNECTION_ACT_CMD);
+		addMenuItem(FILE_MENU_NAME, NEW_CONN_FILE_MENU_ITEM, "New Connection", 
+				NEW_CONNECTION_ACT_CMD, "new_connection.gif", KeyEvent.VK_N, InputEvent.CTRL_MASK);
+		addMenuItem(FILE_MENU_NAME, NEW_CONN_W_FILE_MENU_ITEM, "New Connection with current setup", 
+				NEW_CONN_W_CURR_ACT_CMD, "New database.png", KeyEvent.VK_N, InputEvent.CTRL_MASK + InputEvent.SHIFT_MASK);
+		getMenu(FILE_MENU_NAME).addSeparator();
+		addMenuItem(FILE_MENU_NAME, DISCONN_DB_FILE_MENU_ITEM, "Disconnect", 
+				DISCONN_DB__ACT_CMD, "disconnect-16x16.png", KeyEvent.VK_F4, InputEvent.CTRL_MASK);
+		addMenuItem(FILE_MENU_NAME, DISCONN_ALL_DB_FILE_MENU_ITEM, "Disconnect All", 
+				NEW_CONN_W_CURR_ACT_CMD, "disconnect-16x16.png");
+		getMenu(FILE_MENU_NAME).addSeparator();
+		addMenuItem(FILE_MENU_NAME, NEW_QUERY_TAB_FILE_MENU_ITEM, "New Query Tab", 
+				NEW_QUERY_TAB_ACT_CMD, "new_untitled_text_file.gif", KeyEvent.VK_T, InputEvent.CTRL_MASK);
+		getMenu(FILE_MENU_NAME).addSeparator();
+		addMenuItem(FILE_MENU_NAME, OPEN_QUERY_FILE_MENU_ITEM, "Open", 
+				OPEN_QUERY_FILE_ACT_CMD, "open.gif", KeyEvent.VK_O, InputEvent.CTRL_MASK);
+		getMenu(FILE_MENU_NAME).addSeparator();
+		addMenuItem(FILE_MENU_NAME, SAVE_QUERY_FILE_MENU_ITEM, "Save", 
+				SAVE_QUERY_FILE_ACT_CMD, "save_edit.gif", KeyEvent.VK_S, InputEvent.CTRL_MASK);
+		addMenuItem(FILE_MENU_NAME, SAVE_AS_QUERY_FILE_MENU_ITEM, "Save As...", 
+				SAVE_AS_QUERY_FILE_ACT_CMD, "saveas_edit.gif");
+		addMenuItem(FILE_MENU_NAME, SAVE_AS_QUERY_FILE_MENU_ITEM, "Save All...", 
+				SAVE_AS_QUERY_FILE_ACT_CMD, "saveall_edit.gif", KeyEvent.VK_S, InputEvent.CTRL_MASK + InputEvent.SHIFT_MASK);
+		getMenu(FILE_MENU_NAME).addSeparator();
+		addMenuItem(FILE_MENU_NAME, EXIT_FILE_MENU_ITEM, "Exit", 
+				EXIT_APP_ACT_CMD, "exit.gif", KeyEvent.VK_F4, InputEvent.ALT_MASK);
+		
 	}
 	
 	public void addMenusToMenuBar(JMenuBar menuBar){
@@ -92,6 +129,10 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 		menuBar.add(menuMap.get(WINDOW_MENU_NAME));
 		menuBar.add(menuMap.get(VIEW_MENU_NAME));
 		menuBar.add(menuMap.get(HELP_MENU_NAME));
+	}
+	
+	public void addSeparator(JMenu menu){
+		menu.addSeparator();
 	}
 
 	private JMenu createMenu(String name, String txt){
@@ -110,9 +151,11 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 					.getResource(OracleGuiConstants.IMAGE_PATH + imageName));
 			item.setIcon(image);
 		}
-		KeyStroke stroke = KeyStroke.getKeyStroke(keyCode, modifiers);
-		if(stroke != null)
-			item.setAccelerator(stroke);
+		if(keyCode != -1){
+			KeyStroke stroke = KeyStroke.getKeyStroke(keyCode, modifiers);
+			if(stroke != null)
+				item.setAccelerator(stroke);
+		}
 		return item;
 	}
 	
