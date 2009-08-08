@@ -142,5 +142,118 @@ public class OracleGuiMainFrame extends JFrame {
 		mainToolBar.add(toolbarButtons.getButton(ToolbarButtons.EXECUITE_CURRENT_SQL_TOOLBAR_BUTTON));
 		mainToolBar.add(toolbarButtons.getButton(ToolbarButtons.DB_SYNC_TOOLBAR_BUTTON));
 	}
+
+	/**
+	 * @return the mainDesktopPane
+	 */
+	public JDesktopPane getMainDesktopPane() {
+		return mainDesktopPane;
+	}
+
+	/**
+	 * @param mainDesktopPane the mainDesktopPane to set
+	 */
+	public void setMainDesktopPane(JDesktopPane mainDesktopPane) {
+		this.mainDesktopPane = mainDesktopPane;
+	}
+
+	/**
+	 * @return the mainMenuBar
+	 */
+	public JMenuBar getMainMenuBar() {
+		return mainMenuBar;
+	}
+
+	/**
+	 * @param mainMenuBar the mainMenuBar to set
+	 */
+	public void setMainMenuBar(JMenuBar mainMenuBar) {
+		this.mainMenuBar = mainMenuBar;
+	}
+
+	/**
+	 * @return the mainPanel
+	 */
+	public JPanel getMainPanel() {
+		return mainPanel;
+	}
+
+	/**
+	 * @param mainPanel the mainPanel to set
+	 */
+	public void setMainPanel(JPanel mainPanel) {
+		this.mainPanel = mainPanel;
+	}
+
+	/**
+	 * @return the mainToolBar
+	 */
+	public JToolBar getMainToolBar() {
+		return mainToolBar;
+	}
+
+	/**
+	 * @param mainToolBar the mainToolBar to set
+	 */
+	public void setMainToolBar(JToolBar mainToolBar) {
+		this.mainToolBar = mainToolBar;
+	}
+
+	/**
+	 * @return the toolbarButtons
+	 */
+	public ToolbarButtons getToolbarButtons() {
+		return toolbarButtons;
+	}
+
+	/**
+	 * @param toolbarButtons the toolbarButtons to set
+	 */
+	public void setToolbarButtons(ToolbarButtons toolbarButtons) {
+		this.toolbarButtons = toolbarButtons;
+	}
+
+	/**
+	 * @return the menuBarItems
+	 */
+	public MenuBarItems getMenuBarItems() {
+		return menuBarItems;
+	}
+
+	/**
+	 * @param menuBarItems the menuBarItems to set
+	 */
+	public void setMenuBarItems(MenuBarItems menuBarItems) {
+		this.menuBarItems = menuBarItems;
+	}
+
+	/**
+	 * @return the dbNamesComboBox
+	 */
+	public JComboBox getDbNamesComboBox() {
+		return dbNamesComboBox;
+	}
+
+	/**
+	 * @param dbNamesComboBox the dbNamesComboBox to set
+	 */
+	public void setDbNamesComboBox(JComboBox dbNamesComboBox) {
+		this.dbNamesComboBox = dbNamesComboBox;
+	}
+
+	/**
+	 * @return the statusBar
+	 */
+	public StatusBar getStatusBar() {
+		return statusBar;
+	}
+
+	/**
+	 * @param statusBar the statusBar to set
+	 */
+	public void setStatusBar(StatusBar statusBar) {
+		this.statusBar = statusBar;
+	}
+	
 	
 }

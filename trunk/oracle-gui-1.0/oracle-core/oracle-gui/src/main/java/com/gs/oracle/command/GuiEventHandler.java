@@ -44,7 +44,7 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 				ConnectionDialog dialog = new ConnectionDialog((JFrame)parent, true);
 				WindowUtil.bringCenterTo(dialog, parent);
 				dialog.setVisible(true);
-			}else if(CONNECT_TO_DB_ACT_CMD.equals(cmd)){
+			}else if(CREATE_CONNECTION_ACT_CMD.equals(cmd)){
 				
 			}
 		}
