@@ -20,6 +20,8 @@ import javax.swing.JFrame;
 
 import com.gs.oracle.dlg.ConnectionDialog;
 import com.gs.oracle.frame.OracleGuiMainFrame;
+import com.gs.oracle.service.DatabaseConnectionService;
+import com.gs.oracle.service.impl.DatabaseConnectionServiceImpl;
 import com.gs.oracle.util.WindowUtil;
 
 /**
@@ -30,10 +32,11 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 
 	private Component parent;
 	private Object data;
+	private DatabaseConnectionService connectionService;
 	
 	
 	public GuiEventHandler() {
-		// TODO Auto-generated constructor stub
+		connectionService = new DatabaseConnectionServiceImpl();
 	}
 	
 	@Override
