@@ -41,7 +41,10 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 	public static final String OPEN_QUERY_FILE_MENU_ITEM = "OPEN_QUERY_FILE_MENU_ITEM";
 	public static final String SAVE_QUERY_FILE_MENU_ITEM = "SAVE_QUERY_FILE_MENU_ITEM";
 	public static final String SAVE_AS_QUERY_FILE_MENU_ITEM = "SAVE_AS_QUERY_FILE_MENU_ITEM";
-	
+	public static final String NEW_QUERY_BUILDER_FILE_MENU_ITEM = "NEW_QUERY_BUILDER_FILE_MENU_ITEM";
+	public static final String NEW_SCHEMA_DESIGNER_FILE_MENU_ITEM = "NEW_SCHEMA_DESIGNER_FILE_MENU_ITEM";
+	public static final String OPEN_RECENT_SQL_FILE_MENU_ITEM = "OPEN_RECENT_SQL_FILE_MENU_ITEM";
+	public static final String OPEN_RECENT_SCHEMA_FILE_MENU_ITEM = "OPEN_RECENT_SCHEMA_FILE_MENU_ITEM";
 	
 	
 	public static final String EDIT_MENU_NAME = "EDIT_MENU_NAME";
@@ -91,7 +94,7 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 		// add items to file menu
 		addMenuItem(FILE_MENU_NAME, NEW_CONN_FILE_MENU_ITEM, "New Connection", 
 				NEW_CONNECTION_ACT_CMD, "new_connection.gif", KeyEvent.VK_N, InputEvent.CTRL_MASK);
-		addMenuItem(FILE_MENU_NAME, NEW_CONN_W_FILE_MENU_ITEM, "New Connection with current setup", 
+		addMenuItem(FILE_MENU_NAME, NEW_CONN_W_FILE_MENU_ITEM, "Connect using current setup", 
 				NEW_CONN_W_CURR_ACT_CMD, "New database.png", KeyEvent.VK_N, InputEvent.CTRL_MASK + InputEvent.SHIFT_MASK);
 		getMenu(FILE_MENU_NAME).addSeparator();
 		addMenuItem(FILE_MENU_NAME, DISCONN_DB_FILE_MENU_ITEM, "Disconnect", 
@@ -101,9 +104,17 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 		getMenu(FILE_MENU_NAME).addSeparator();
 		addMenuItem(FILE_MENU_NAME, NEW_QUERY_TAB_FILE_MENU_ITEM, "New Query Tab", 
 				NEW_QUERY_TAB_ACT_CMD, "new_untitled_text_file.gif", KeyEvent.VK_T, InputEvent.CTRL_MASK);
+		addMenuItem(FILE_MENU_NAME, NEW_QUERY_BUILDER_FILE_MENU_ITEM, "New Query Builder", 
+				NEW_QUERY_BUILDER_ACT_CMD, "query-builder.png", KeyEvent.VK_K, InputEvent.CTRL_MASK);
+		addMenuItem(FILE_MENU_NAME, NEW_SCHEMA_DESIGNER_FILE_MENU_ITEM, "New Schema Designer", 
+				NEW_SCHEMA_DESIGNER_ACT_CMD, "schema_designer.gif", KeyEvent.VK_T, InputEvent.CTRL_MASK);
 		getMenu(FILE_MENU_NAME).addSeparator();
 		addMenuItem(FILE_MENU_NAME, OPEN_QUERY_FILE_MENU_ITEM, "Open", 
 				OPEN_QUERY_FILE_ACT_CMD, "open.gif", KeyEvent.VK_O, InputEvent.CTRL_MASK);
+		addMenuItem(FILE_MENU_NAME, OPEN_RECENT_SQL_FILE_MENU_ITEM, "Open Recent SQL Files", 
+				OPEN_RECENT_SQL_FILE_ACT_CMD);
+		addMenuItem(FILE_MENU_NAME, OPEN_RECENT_SCHEMA_FILE_MENU_ITEM, "Open Recent Schema Designs", 
+				OPEN_RECENT_SCHEMA_D_ACT_CMD);
 		getMenu(FILE_MENU_NAME).addSeparator();
 		addMenuItem(FILE_MENU_NAME, SAVE_QUERY_FILE_MENU_ITEM, "Save", 
 				SAVE_QUERY_FILE_ACT_CMD, "save_edit.gif", KeyEvent.VK_S, InputEvent.CTRL_MASK);
