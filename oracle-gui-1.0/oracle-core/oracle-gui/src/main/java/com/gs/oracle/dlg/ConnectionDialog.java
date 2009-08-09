@@ -348,7 +348,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(2, 1, 2, 1);
 		parentPanel.add(jSeparator1, gridBagConstraints);
 
-		connectButton.setText("jButton5");
+		connectButton.setText("Connect");
 		connectButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				connectButtonActionPerformed(evt);
@@ -360,7 +360,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		parentPanel.add(connectButton, gridBagConstraints);
 
-		cancelButton.setText("jButton6");
+		cancelButton.setText("Cancel");
 		cancelButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				cancelButtonActionPerformed(evt);
@@ -371,7 +371,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.gridy = 4;
 		parentPanel.add(cancelButton, gridBagConstraints);
 
-		testConnectionButton.setText("jButton7");
+		testConnectionButton.setText("Test Connection");
 		testConnectionButton
 				.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -404,7 +404,7 @@ public class ConnectionDialog extends JDialog {
 	}
 
 	private void connectButtonActionPerformed(ActionEvent evt) {
-		// TODO add your handling code here:
+		
 	}
 
 	private void serviceNameRadioButtonActionPerformed(
