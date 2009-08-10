@@ -39,7 +39,9 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
+import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiCommandConstants;
+import com.gs.oracle.command.GuiEventHandler;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
 
@@ -349,6 +351,7 @@ public class ConnectionDialog extends JDialog {
 		parentPanel.add(jSeparator1, gridBagConstraints);
 
 		connectButton.setText("Connect");
+		connectButton.setActionCommand(GuiCommandConstants.CREATE_CONNECTION_ACT_CMD);
 		connectButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				connectButtonActionPerformed(evt);
@@ -404,7 +407,10 @@ public class ConnectionDialog extends JDialog {
 	}
 
 	private void connectButtonActionPerformed(ActionEvent evt) {
-		
+		GuiEventHandler handler = new GuiEventHandler();
+		handler.setParent(getParent());
+		handler.actionPerformed(evt);
+		dispose();
 	}
 
 	private void serviceNameRadioButtonActionPerformed(
