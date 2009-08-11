@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 
 import com.gs.oracle.comps.DatabaseDirectoryTree;
+import com.gs.oracle.comps.SqlQueryPanel;
 
 /**
  * @author sabuj.das
@@ -51,6 +52,8 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		innerSplitPane.setContinuousLayout(true);
 		innerSplitPane.setOneTouchExpandable(true);
 		innerSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		
+		innerSplitPane.setTopComponent(new SqlQueryPanel());
 		outterSplitPane.setRightComponent(innerSplitPane);
 		
 		getContentPane().setLayout(new BorderLayout());

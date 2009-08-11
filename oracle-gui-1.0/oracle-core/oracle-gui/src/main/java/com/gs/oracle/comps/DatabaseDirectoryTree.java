@@ -39,20 +39,23 @@ import com.gs.oracle.OracleGuiConstants;
 public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 
 	
-	private final ImageIcon ICON_COMPUTER = new ImageIcon(
+	public static final ImageIcon ICON_ROOT_DATABASE = new ImageIcon(
             DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
-	private final ImageIcon ICON_DISK = new ImageIcon(
+	public static final ImageIcon ICON_SCHEMA = new ImageIcon(
             DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
-	private final ImageIcon ICON_FOLDER_CLOSED = new ImageIcon(
+	public static final ImageIcon ICON_TABLE = new ImageIcon(
             DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
-	private final ImageIcon ICON_FOLDER_OPENED = new ImageIcon(
+	public static final ImageIcon ICON_COLUMN = new ImageIcon(
             DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
-	private final ImageIcon ICON_EXPAND = new ImageIcon(
+	public static final ImageIcon ICON_EXPAND = new ImageIcon(
             DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
-	private final ImageIcon ICON_COLLASPE = new ImageIcon(
+	public static final ImageIcon ICON_COLLASPE = new ImageIcon(
             DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
-    private final ImageIcon NOTEPAD_ICON = new ImageIcon(
+	public static final ImageIcon ICON_PK = new ImageIcon(
             DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
+	public static final ImageIcon ICON_FK = new ImageIcon(
+            DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
+	
 
     
     private String rootNodeName;
@@ -74,12 +77,12 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 
 	private void initComponents() {
 
-		topNode = new DefaultMutableTreeNode(new IconData(ICON_COMPUTER, null,
+		topNode = new DefaultMutableTreeNode(new IconData(ICON_ROOT_DATABASE, null,
 				rootNodeName));
 		DefaultMutableTreeNode node;
 		File[] roots = File.listRoots();
 		for (int k = 0; k < roots.length; k++) {
-			node = new DefaultMutableTreeNode(new IconData(ICON_DISK, null,
+			node = new DefaultMutableTreeNode(new IconData(ICON_SCHEMA, null,
 					new FileNode(roots[k])));
 			topNode.add(node);
 			node.add(new DefaultMutableTreeNode(new Boolean(true)));
@@ -131,33 +134,7 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 			return null;
 	}
 
-	public ImageIcon getICON_COMPUTER() {
-		return ICON_COMPUTER;
-	}
 
-	public ImageIcon getICON_DISK() {
-		return ICON_DISK;
-	}
-
-	public ImageIcon getICON_FOLDER_CLOSED() {
-		return ICON_FOLDER_CLOSED;
-	}
-
-	public ImageIcon getICON_FOLDER_OPENED() {
-		return ICON_FOLDER_OPENED;
-	}
-
-	public ImageIcon getICON_EXPAND() {
-		return ICON_EXPAND;
-	}
-
-	public ImageIcon getICON_COLLASPE() {
-		return ICON_COLLASPE;
-	}
-
-    public ImageIcon getNOTEPAD_ICON() {
-        return NOTEPAD_ICON;
-    }
 
 
 	public JTextField getDisplayTextField() {
@@ -386,13 +363,9 @@ class FileNode {
 			FileNode nd = (FileNode) v.elementAt(i);
             IconData idata = null;
             if(nd.m_file.isDirectory()){
-                idata = new IconData(new DatabaseDirectoryTree()
-					.getICON_FOLDER_CLOSED(), new DatabaseDirectoryTree()
-					.getICON_FOLDER_OPENED(), nd);
+                idata = new IconData(DatabaseDirectoryTree.ICON_SCHEMA, DatabaseDirectoryTree.ICON_SCHEMA, nd);
             }else if(nd.m_file.isFile()){
-                idata = new IconData(new DatabaseDirectoryTree()
-					.getNOTEPAD_ICON(), new DatabaseDirectoryTree()
-					.getNOTEPAD_ICON(), nd);
+                idata = new IconData(DatabaseDirectoryTree.ICON_SCHEMA, DatabaseDirectoryTree.ICON_SCHEMA, nd);
             }
             if(idata == null){
                 continue;

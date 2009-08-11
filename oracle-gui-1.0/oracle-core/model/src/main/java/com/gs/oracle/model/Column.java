@@ -19,7 +19,7 @@ import com.gs.oracle.BaseDbModel;
  * Type Name	: com.gs.oracle.model.Column
  *
  */
-public class Column<T> extends BaseDbModel implements Serializable {
+public class Column<T extends OracleDataType> extends BaseDbModel implements Serializable {
 
 	private int columnID;
 	private boolean nullable;
