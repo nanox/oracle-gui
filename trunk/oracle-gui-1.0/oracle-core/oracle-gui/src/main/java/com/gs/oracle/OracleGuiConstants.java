@@ -16,7 +16,8 @@ package com.gs.oracle;
  *
  */
 public interface OracleGuiConstants {
-
+	
 	String IMAGE_PATH = "/images/";
+	String QUERY_IMAGE_PATH = "/images/query/";
 	
 }

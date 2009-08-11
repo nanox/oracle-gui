@@ -22,13 +22,13 @@ import com.gs.oracle.BaseDbModel;
  */
 public class Table extends BaseDbModel implements Serializable {
 
-	private List<Column<?>> columnlist;
+	private List<Column<? extends OracleDataType>> columnlist;
 	
 	/**
 	 * Returns the primary key column.
 	 * @return
 	 */
-	public Column<?> getPrimaryKeyColumn(){
+	public Column<? extends OracleDataType> getPrimaryKeyColumn(){
 		for (Column<?> column : columnlist) {
 			if(column.isPrimaryKey()){
 				return column;
