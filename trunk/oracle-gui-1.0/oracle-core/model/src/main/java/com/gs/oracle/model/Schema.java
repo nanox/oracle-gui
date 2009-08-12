@@ -12,6 +12,7 @@
 package com.gs.oracle.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gs.oracle.BaseDbModel;
@@ -24,7 +25,9 @@ public class Schema extends BaseDbModel implements Serializable {
 
 	private List<Table> tableList;
 	
-	
+	public Schema() {
+		tableList = new ArrayList<Table>();
+	}
 	
 
 	public List<Table> getTableList() {

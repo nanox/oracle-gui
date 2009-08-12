@@ -12,6 +12,7 @@
 package com.gs.oracle.model;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.gs.oracle.BaseDbModel;
@@ -22,14 +23,17 @@ import com.gs.oracle.BaseDbModel;
  */
 public class Table extends BaseDbModel implements Serializable {
 
-	private List<Column<? extends OracleDataType>> columnlist;
+	private List<Column> columnlist;
 	
+	public Table() {
+		columnlist = new ArrayList<Column>();
+	}
 	/**
 	 * Returns the primary key column.
 	 * @return
 	 */
-	public Column<? extends OracleDataType> getPrimaryKeyColumn(){
-		for (Column<?> column : columnlist) {
+	public Column getPrimaryKeyColumn(){
+		for (Column column : columnlist) {
 			if(column.isPrimaryKey()){
 				return column;
 			}
@@ -42,7 +46,7 @@ public class Table extends BaseDbModel implements Serializable {
 	 * @return
 	 */
 	public boolean hasPrimaryKey(){
-		for (Column<?> column : columnlist) {
+		for (Column column : columnlist) {
 			if(column.isPrimaryKey()){
 				return true;
 			}
@@ -50,11 +54,11 @@ public class Table extends BaseDbModel implements Serializable {
 		return false;
 	}
 
-	public List<Column<?>> getColumnlist() {
+	public List<Column> getColumnlist() {
 		return columnlist;
 	}
 
-	public void setColumnlist(List<Column<?>> columnlist) {
+	public void setColumnlist(List<Column> columnlist) {
 		this.columnlist = columnlist;
 	}
 	

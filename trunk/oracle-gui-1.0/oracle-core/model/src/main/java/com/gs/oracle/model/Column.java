@@ -19,14 +19,14 @@ import com.gs.oracle.BaseDbModel;
  * Type Name	: com.gs.oracle.model.Column
  *
  */
-public class Column<T extends OracleDataType> extends BaseDbModel implements Serializable {
+public class Column extends BaseDbModel implements Serializable {
 
 	private int columnID;
 	private boolean nullable;
 	private String dataType;
 	private int size;
 	private int precision;
-	private T defaultValue;
+	private Object defaultValue;
 	private boolean primaryKey;
 	
 	
@@ -60,10 +60,10 @@ public class Column<T extends OracleDataType> extends BaseDbModel implements Ser
 	public void setPrecision(int precision) {
 		this.precision = precision;
 	}
-	public T getDefaultValue() {
+	public Object getDefaultValue() {
 		return defaultValue;
 	}
-	public void setDefaultValue(T defaultValue) {
+	public void setDefaultValue(Object defaultValue) {
 		this.defaultValue = defaultValue;
 	}
 	public boolean isPrimaryKey() {
