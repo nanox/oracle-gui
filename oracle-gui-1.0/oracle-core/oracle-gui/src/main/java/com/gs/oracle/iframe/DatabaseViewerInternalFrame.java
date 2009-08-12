@@ -9,6 +9,7 @@ import java.awt.event.WindowListener;
 
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 
 import com.gs.oracle.comps.DatabaseDirectoryTree;
@@ -44,7 +45,8 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		outterSplitPane.setContinuousLayout(true);
 		outterSplitPane.setOneTouchExpandable(true);
 		outterSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-		outterSplitPane.setLeftComponent(new DatabaseDirectoryTree("Change It..."));
+		outterSplitPane.setLeftComponent(
+				new JScrollPane(new DatabaseDirectoryTree("Change It...")));
 		mainPanel.add(outterSplitPane, BorderLayout.CENTER);
 		
 		innerSplitPane = new JSplitPane();

@@ -19,19 +19,19 @@ import com.gs.oracle.BaseDbModel;
  */
 public class Index extends BaseDbModel {
 
-	private Column<?> indexedColumn;
+	private Column indexedColumn;
 	private boolean unique;
 	private boolean fullText;
 	/**
 	 * @return the indexedColumn
 	 */
-	public Column<?> getIndexedColumn() {
+	public Column getIndexedColumn() {
 		return indexedColumn;
 	}
 	/**
 	 * @param indexedColumn the indexedColumn to set
 	 */
-	public void setIndexedColumn(Column<?> indexedColumn) {
+	public void setIndexedColumn(Column indexedColumn) {
 		this.indexedColumn = indexedColumn;
 	}
 	/**

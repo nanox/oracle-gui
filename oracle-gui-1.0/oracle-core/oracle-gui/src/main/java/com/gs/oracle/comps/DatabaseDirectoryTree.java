@@ -9,6 +9,7 @@ import java.awt.Graphics;
 import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.io.File;
+import java.util.List;
 import java.util.Vector;
 
 import javax.swing.Action;
@@ -31,72 +32,86 @@ import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.model.Column;
+import com.gs.oracle.model.Database;
+import com.gs.oracle.model.OracleDataType;
+import com.gs.oracle.model.Schema;
+import com.gs.oracle.model.Table;
 
 /**
  * @author Green Moon
- *
+ * 
  */
-public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
+public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants {
 
-	
+	public static final ImageIcon ICON_ROOT_DATABASES = new ImageIcon(
+			DatabaseDirectoryTree.class.getResource(IMAGE_PATH
+					+ "DB_dev_perspective.gif"));
 	public static final ImageIcon ICON_ROOT_DATABASE = new ImageIcon(
-            DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
+			DatabaseDirectoryTree.class
+					.getResource(IMAGE_PATH + "Database.png"));
 	public static final ImageIcon ICON_SCHEMA = new ImageIcon(
-            DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
+			DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "schema.gif"));
 	public static final ImageIcon ICON_TABLE = new ImageIcon(
-            DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
+			DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "table.gif"));
 	public static final ImageIcon ICON_COLUMN = new ImageIcon(
-            DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
-	public static final ImageIcon ICON_EXPAND = new ImageIcon(
-            DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
-	public static final ImageIcon ICON_COLLASPE = new ImageIcon(
-            DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
-	public static final ImageIcon ICON_PK = new ImageIcon(
-            DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
-	public static final ImageIcon ICON_FK = new ImageIcon(
-            DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "DB_dev_perspective.gif"));
-	
+			DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "columns.gif"));
 
-    
-    private String rootNodeName;
-    
-    public DatabaseDirectoryTree() {
-        this("DB");
+	public static final ImageIcon ICON_PK = new ImageIcon(
+			DatabaseDirectoryTree.class.getResource(IMAGE_PATH
+					+ "primaryKey.gif"));
+	public static final ImageIcon ICON_FK = new ImageIcon(
+			DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "fk.gif"));
+
+	private String rootNodeName;
+	private Database database;
+
+	public DatabaseDirectoryTree() {
+		this("DB");
 	}
-    
+
 	public DatabaseDirectoryTree(String rootNodeName) {
-        this.rootNodeName = rootNodeName;
+		this.rootNodeName = rootNodeName;
 		initComponents();
 	}
 
-
-    public DefaultTreeModel getTreeModel() {
-        return defaultTreeModel;
-    }
-
+	public DefaultTreeModel getTreeModel() {
+		return defaultTreeModel;
+	}
 
 	private void initComponents() {
-
-		topNode = new DefaultMutableTreeNode(new IconData(ICON_ROOT_DATABASE, null,
-				rootNodeName));
-		DefaultMutableTreeNode node;
-		File[] roots = File.listRoots();
-		for (int k = 0; k < roots.length; k++) {
-			node = new DefaultMutableTreeNode(new IconData(ICON_SCHEMA, null,
-					new FileNode(roots[k])));
-			topNode.add(node);
-			node.add(new DefaultMutableTreeNode(new Boolean(true)));
+		// dummy DB
+		database = new Database();
+		database.setModelName("Dummy_DB");
+		for (int i = 0; i < 3; i++) {
+			Schema s = new Schema();
+			s.setModelName("SCHEMA_" + (i + 1));
+			for (int j = 0; j < 10; j++) {
+				Table t = new Table();
+				t.setModelName("TABLE_" + (i + 1) + "_" + (j + 1));
+				for (int k = 0; k < 5; k++) {
+					Column c = new Column();
+					if (k == 0)
+						c.setPrimaryKey(true);
+					c.setModelName("COLUMN_" + (i + 1) + "_" + (j + 1) + "_"
+							+ (k + 1));
+					t.getColumnlist().add(c);
+				}
+				s.getTableList().add(t);
+			}
+			database.getSchemaList().add(s);
 		}
 
+		topNode = populateDatabaseTree(database);
 		defaultTreeModel = new DefaultTreeModel(topNode);
 		setModel(defaultTreeModel);
 		ToolTipManager.sharedInstance().registerComponent(this);
 		putClientProperty("JTree.lineStyle", "Angled");
 		TreeCellRenderer renderer = new IconCellRenderer();
 		setCellRenderer(renderer);
-		//addTreeExpansionListener(new DirExpansionListener());
-		//addTreeSelectionListener(new DirSelectionListener());
-        
+		// addTreeExpansionListener(new DirExpansionListener());
+		// addTreeSelectionListener(new DirSelectionListener());
+
 		getSelectionModel().setSelectionMode(
 				TreeSelectionModel.SINGLE_TREE_SELECTION);
 		setShowsRootHandles(true);
@@ -104,16 +119,41 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 
 	}
 
+	public DefaultMutableTreeNode populateDatabaseTree(Database database) {
+		DefaultMutableTreeNode dbNode = new DefaultMutableTreeNode(
+				new IconData(ICON_ROOT_DATABASE, null, new DatabaseTreeNode(
+						database)));
+		for (Schema schema : database.getSchemaList()) {
+			DefaultMutableTreeNode sNode = new DefaultMutableTreeNode(
+					new IconData(ICON_SCHEMA, null, new SchemaNode(schema)));
+			for (Table t : schema.getTableList()) {
+				DefaultMutableTreeNode tNode = new DefaultMutableTreeNode(
+						new IconData(ICON_TABLE, null, new TableNode(t)));
+				for (Column c : t.getColumnlist()) {
+					DefaultMutableTreeNode cNode = new DefaultMutableTreeNode(
+							new IconData(ICON_COLUMN, null, new ColumnNode(c)));
+					if (c.isPrimaryKey()) {
+						cNode = new DefaultMutableTreeNode(new IconData(
+								ICON_PK, null, new ColumnNode(c)));
+					}
+					tNode.add(cNode);
+				}
+				sNode.add(tNode);
+			}
+			dbNode.add(sNode);
+		}
+		return dbNode;
+	}
+
 	public String getToolTipText(MouseEvent ev) {
 		if (ev == null)
 			return null;
 		TreePath path = getPathForLocation(ev.getX(), ev.getY());
 		if (path != null) {
-			FileNode fnode = getFileNode(getTreeNode(path));
-			if (fnode == null)
+			DatabaseNode<?> dbNode = getDatabaseNode(getTreeNode(path));
+			if (dbNode == null)
 				return null;
-			File f = fnode.getFile();
-			return (f == null ? null : f.getPath());
+			return dbNode.toString();
 		}
 		return null;
 	}
@@ -122,20 +162,17 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 		return (DefaultMutableTreeNode) (path.getLastPathComponent());
 	}
 
-	public FileNode getFileNode(DefaultMutableTreeNode node) {
+	public <T> DatabaseNode<T> getDatabaseNode(DefaultMutableTreeNode node) {
 		if (node == null)
 			return null;
 		Object obj = node.getUserObject();
 		if (obj instanceof IconData)
 			obj = ((IconData) obj).getObject();
-		if (obj instanceof FileNode)
-			return (FileNode) obj;
+		if (obj instanceof DatabaseNode)
+			return (DatabaseNode<T>) obj;
 		else
 			return null;
 	}
-
-
-
 
 	public JTextField getDisplayTextField() {
 		return displayTextField;
@@ -153,39 +190,30 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 	protected Action treeAction;
 	protected TreePath clickedPath;
 
-    
-/*
-    
-	class DirExpansionListener implements TreeExpansionListener {
-		public void treeExpanded(TreeExpansionEvent event) {
-			final DefaultMutableTreeNode node = getTreeNode(event.getPath());
-			final FileNode fnode = getFileNode(node);
-			if (fnode != null && fnode.expand(node)) {
-				defaultTreeModel.reload(node);
-			}
-		}
-
-		public void treeCollapsed(TreeExpansionEvent event) {
-		}
-	}
-
-	class DirSelectionListener implements TreeSelectionListener {
-		public void valueChanged(TreeSelectionEvent event) {
-			DefaultMutableTreeNode node = getTreeNode(event.getPath());
-			FileNode fnode = getFileNode(node);
-			if (fnode != null) {
-				//displayTextField.setText(fnode.getFile().getAbsolutePath());
-				
-			} else {
-				//displayTextField.setText("");
-				
-			}
-		}
-	}
-*/
+	/*
+	 * 
+	 * class DirExpansionListener implements TreeExpansionListener { public void
+	 * treeExpanded(TreeExpansionEvent event) { final DefaultMutableTreeNode
+	 * node = getTreeNode(event.getPath()); final FileNode fnode =
+	 * getFileNode(node); if (fnode != null && fnode.expand(node)) {
+	 * defaultTreeModel.reload(node); } }
+	 * 
+	 * public void treeCollapsed(TreeExpansionEvent event) { } }
+	 * 
+	 * class DirSelectionListener implements TreeSelectionListener { public void
+	 * valueChanged(TreeSelectionEvent event) { DefaultMutableTreeNode node =
+	 * getTreeNode(event.getPath()); FileNode fnode = getFileNode(node); if
+	 * (fnode != null) {
+	 * //displayTextField.setText(fnode.getFile().getAbsolutePath());
+	 * 
+	 * } else { //displayTextField.setText("");
+	 * 
+	 * } } }
+	 */
 	private static String selectedPath = "";
 
 }
+
 class IconCellRenderer extends JLabel implements TreeCellRenderer {
 	protected Color m_textSelectionColor;
 	protected Color m_textNonSelectionColor;
@@ -253,73 +281,160 @@ class IconCellRenderer extends JLabel implements TreeCellRenderer {
 	}
 }
 
-
 class IconData {
-	protected Icon m_icon;
-	protected Icon m_expandedIcon;
-	protected Object m_data;
-    protected boolean isDirectory = false;
-    protected boolean isFile = false;
+	protected Icon nodeIcon;
+	protected Icon expandedIcon;
+	protected Object nodeData;
 
 	public IconData(Icon icon, Object data) {
-		m_icon = icon;
-		m_expandedIcon = null;
-		m_data = data;
+		nodeIcon = icon;
+		expandedIcon = null;
+		nodeData = data;
 	}
 
 	public IconData(Icon icon, Icon expandedIcon, Object data) {
-		m_icon = icon;
-		m_expandedIcon = expandedIcon;
-		m_data = data;
+		nodeIcon = icon;
+		this.expandedIcon = expandedIcon;
+		nodeData = data;
 	}
 
 	public Icon getIcon() {
-		return m_icon;
+		return nodeIcon;
 	}
 
 	public Icon getExpandedIcon() {
-		return m_expandedIcon != null ? m_expandedIcon : m_icon;
+		return expandedIcon != null ? expandedIcon : nodeIcon;
 	}
 
 	public Object getObject() {
-		return m_data;
+		return nodeData;
 	}
 
 	public String toString() {
-		return m_data.toString();
+		return nodeData.toString();
 	}
 
-    public boolean isIsDirectory() {
-        return isDirectory;
-    }
-
-    public void setIsDirectory(boolean isDirectory) {
-        this.isDirectory = isDirectory;
-    }
-
-    public boolean isIsFile() {
-        return isFile;
-    }
-
-    public void setIsFile(boolean isFile) {
-        this.isFile = isFile;
-    }
-    
 }
-class FileNode {
-	protected File m_file;
 
-	public FileNode(File file) {
-		m_file = file;
+interface DatabaseNode<T> {
+	public boolean expand(DefaultMutableTreeNode parent);
+}
+
+class DatabaseTreeNode implements DatabaseNode<Database> {
+
+	protected Database database;
+
+	public DatabaseTreeNode(Database database) {
+		this.database = database;
 	}
 
-	public File getFile() {
-		return m_file;
+	@Override
+	public boolean expand(DefaultMutableTreeNode parent) {
+		DefaultMutableTreeNode flag = (DefaultMutableTreeNode) parent
+				.getFirstChild();
+		if (flag == null) // No flag
+			return false;
+		Object obj = flag.getUserObject();
+		if (!(obj instanceof Boolean))
+			return false; // Already expanded
+
+		parent.removeAllChildren(); // Remove Flag
+
+		List<Schema> schemas = database.getSchemaList();
+		if (schemas == null) {
+			return true;
+		}
+
+		Vector<SchemaNode> schemaNodeVector = new Vector<SchemaNode>();
+
+		for (int k = 0; k < schemas.size(); k++) {
+			Schema s = schemas.get(k);
+			SchemaNode schemaNode = new SchemaNode(s);
+			boolean isAdded = false;
+			for (int i = 0; i < schemaNodeVector.size(); i++) {
+				SchemaNode nd = schemaNodeVector.elementAt(i);
+				if (schemaNode.compareTo(nd) < 0) {
+					schemaNodeVector.insertElementAt(schemaNode, i);
+					isAdded = true;
+					break;
+				}
+			}
+			if (!isAdded)
+				schemaNodeVector.addElement(schemaNode);
+		}
+
+		for (int i = 0; i < schemaNodeVector.size(); i++) {
+			SchemaNode nd = schemaNodeVector.elementAt(i);
+			IconData idata = new IconData(DatabaseDirectoryTree.ICON_SCHEMA,
+					DatabaseDirectoryTree.ICON_SCHEMA, nd);
+
+			if (idata == null) {
+				continue;
+			}
+			DefaultMutableTreeNode node = new DefaultMutableTreeNode(idata);
+			parent.add(node);
+
+			if (nd.hasTables())
+				node.add(new DefaultMutableTreeNode(new Boolean(true)));
+		}
+
+		return true;
 	}
 
+	/**
+	 * @return the database
+	 */
+	public Database getDatabase() {
+		return database;
+	}
+
+	/**
+	 * @param database
+	 *            the database to set
+	 */
+	public void setDatabase(Database database) {
+		this.database = database;
+	}
+
+	@Override
 	public String toString() {
-		return m_file.getName().length() > 0 ? m_file.getName() : m_file
-				.getPath();
+		return database.toString();
+	}
+
+}
+
+class SchemaNode implements DatabaseNode<Schema>, Comparable<SchemaNode> {
+	protected Schema schema;
+
+	public SchemaNode(Schema s) {
+		this.schema = s;
+	}
+
+	public boolean hasTables() {
+		if (null != getSchema().getTableList()
+				&& getSchema().getTableList().size() > 0)
+			return true;
+		return false;
+	}
+
+	/**
+	 * @return the schema
+	 */
+	public Schema getSchema() {
+		return schema;
+	}
+
+	/**
+	 * @param schema
+	 *            the schema to set
+	 */
+	public void setSchema(Schema schema) {
+		this.schema = schema;
+	}
+
+	@Override
+	public String toString() {
+		return schema.toString();
 	}
 
 	public boolean expand(DefaultMutableTreeNode parent) {
@@ -333,78 +448,186 @@ class FileNode {
 
 		parent.removeAllChildren(); // Remove Flag
 
-		File[] files = listFiles();
-		if (files == null)
+		List<Table> tables = schema.getTableList();
+		if (tables == null) {
 			return true;
+		}
 
-		Vector v = new Vector();
+		Vector<TableNode> tableNodeVector = new Vector<TableNode>();
 
-		for (int k = 0; k < files.length; k++) {
-			File f = files[k];
-			if (!(f.isDirectory())){
-				
-            }
-			FileNode newNode = new FileNode(f);
-
+		for (int k = 0; k < tables.size(); k++) {
+			Table t = tables.get(k);
+			TableNode tableNode = new TableNode(t);
 			boolean isAdded = false;
-			for (int i = 0; i < v.size(); i++) {
-				FileNode nd = (FileNode) v.elementAt(i);
-				if (newNode.compareTo(nd) < 0) {
-					v.insertElementAt(newNode, i);
+			for (int i = 0; i < tableNodeVector.size(); i++) {
+				TableNode nd = tableNodeVector.elementAt(i);
+				if (tableNode.compareTo(nd) < 0) {
+					tableNodeVector.insertElementAt(tableNode, i);
 					isAdded = true;
 					break;
 				}
 			}
 			if (!isAdded)
-				v.addElement(newNode);
+				tableNodeVector.addElement(tableNode);
 		}
 
-		for (int i = 0; i < v.size(); i++) {
-			FileNode nd = (FileNode) v.elementAt(i);
-            IconData idata = null;
-            if(nd.m_file.isDirectory()){
-                idata = new IconData(DatabaseDirectoryTree.ICON_SCHEMA, DatabaseDirectoryTree.ICON_SCHEMA, nd);
-            }else if(nd.m_file.isFile()){
-                idata = new IconData(DatabaseDirectoryTree.ICON_SCHEMA, DatabaseDirectoryTree.ICON_SCHEMA, nd);
-            }
-            if(idata == null){
-                continue;
-            }
+		for (int i = 0; i < tableNodeVector.size(); i++) {
+			TableNode nd = tableNodeVector.elementAt(i);
+			IconData idata = new IconData(DatabaseDirectoryTree.ICON_TABLE,
+					DatabaseDirectoryTree.ICON_TABLE, nd);
+
+			if (idata == null) {
+				continue;
+			}
 			DefaultMutableTreeNode node = new DefaultMutableTreeNode(idata);
 			parent.add(node);
 
-			if (nd.hasSubDirs())
+			if (nd.hasColumns())
 				node.add(new DefaultMutableTreeNode(new Boolean(true)));
 		}
 
 		return true;
 	}
 
-	public boolean hasSubDirs() {
-		File[] files = listFiles();
-		if (files == null)
-			return false;
-		for (int k = 0; k < files.length; k++) {
-			if (files[k].isDirectory())
-				return true;
-		}
+	/**
+	 * compares the schema names
+	 */
+	@Override
+	public int compareTo(SchemaNode o) {
+		return schema.getModelName().compareTo(o.getSchema().getModelName());
+	}
+}
+
+class TableNode implements DatabaseNode<Table>, Comparable<TableNode> {
+	protected Table table;
+
+	public TableNode(Table table) {
+		this.table = table;
+	}
+
+	public boolean hasColumns() {
+		if (null != getTable().getColumnlist()
+				&& getTable().getColumnlist().size() > 0)
+			return true;
 		return false;
 	}
 
-	public int compareTo(FileNode toCompare) {
-		return m_file.getName().compareToIgnoreCase(toCompare.m_file.getName());
+	/**
+	 * @return the table
+	 */
+	public Table getTable() {
+		return table;
 	}
 
-	protected File[] listFiles() {
-		if (!m_file.isDirectory())
-			return null;
-		try {
-			return m_file.listFiles();
-		} catch (Exception ex) {
-			JOptionPane.showMessageDialog(null, "Error reading directory "
-					+ m_file.getAbsolutePath(), "Warning",
-					JOptionPane.WARNING_MESSAGE);
-			return null;
+	/**
+	 * @param table
+	 *            the table to set
+	 */
+	public void setTable(Table table) {
+		this.table = table;
+	}
+
+	@Override
+	public String toString() {
+		return table.toString();
+	}
+
+	public boolean expand(DefaultMutableTreeNode parent) {
+
+		DefaultMutableTreeNode flag = (DefaultMutableTreeNode) parent
+				.getFirstChild();
+		if (flag == null) // No flag
+			return false;
+		Object obj = flag.getUserObject();
+		if (!(obj instanceof Boolean))
+			return false; // Already expanded
+
+		parent.removeAllChildren(); // Remove Flag
+
+		List<Column> columns = table.getColumnlist();
+		if (columns == null) {
+			return true;
 		}
+
+		Vector<ColumnNode> columnNodeVector = new Vector<ColumnNode>();
+
+		for (int k = 0; k < columns.size(); k++) {
+			Column c = columns.get(k);
+			ColumnNode columnNode = new ColumnNode(c);
+			boolean isAdded = false;
+			for (int i = 0; i < columnNodeVector.size(); i++) {
+				ColumnNode nd = columnNodeVector.elementAt(i);
+				if (columnNode.compareTo(nd) < 0) {
+					columnNodeVector.insertElementAt(columnNode, i);
+					isAdded = true;
+					break;
+				}
+			}
+			if (!isAdded)
+				columnNodeVector.addElement(columnNode);
+		}
+
+		for (int i = 0; i < columnNodeVector.size(); i++) {
+			ColumnNode nd = columnNodeVector.elementAt(i);
+			IconData idata = null;
+			if (nd.getColumn().isPrimaryKey()) {
+				idata = new IconData(DatabaseDirectoryTree.ICON_PK,
+						DatabaseDirectoryTree.ICON_PK, nd);
+			} else {
+				idata = new IconData(DatabaseDirectoryTree.ICON_COLUMN,
+						DatabaseDirectoryTree.ICON_COLUMN, nd);
+			}
+			if (idata == null) {
+				continue;
+			}
+			DefaultMutableTreeNode node = new DefaultMutableTreeNode(idata);
+			parent.add(node);
+		}
+
+		return true;
+	}
+
+	@Override
+	public int compareTo(TableNode o) {
+		return this.getTable().getModelName().compareTo(
+				o.getTable().getModelName());
+	}
+}
+
+class ColumnNode implements DatabaseNode<Column>, Comparable<ColumnNode> {
+	protected Column column;
+
+	public ColumnNode(Column column) {
+		this.column = column;
+	}
+
+	/**
+	 * @return the column
+	 */
+	public Column getColumn() {
+		return column;
+	}
+
+	/**
+	 * @param column
+	 *            the column to set
+	 */
+	public void setColumn(Column column) {
+		this.column = column;
+	}
+
+	@Override
+	public String toString() {
+		return column.toString();
+	}
+
+	public boolean expand(DefaultMutableTreeNode parent) {
+		return true;
+	}
+
+	@Override
+	public int compareTo(ColumnNode o) {
+		return getColumn().getModelName().compareTo(
+				o.getColumn().getModelName());
 	}
 }
