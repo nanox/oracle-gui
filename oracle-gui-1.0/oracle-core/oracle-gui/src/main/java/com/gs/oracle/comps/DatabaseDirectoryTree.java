@@ -62,6 +62,8 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants {
 					+ "primaryKey.gif"));
 	public static final ImageIcon ICON_FK = new ImageIcon(
 			DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "fk.gif"));
+	public static final ImageIcon ICON_FOLDER_TABLE = new ImageIcon(
+			DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "Folder_table.png"));
 
 	private String rootNodeName;
 	private Database database;
@@ -126,19 +128,25 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants {
 		for (Schema schema : database.getSchemaList()) {
 			DefaultMutableTreeNode sNode = new DefaultMutableTreeNode(
 					new IconData(ICON_SCHEMA, null, new SchemaNode(schema)));
-			for (Table t : schema.getTableList()) {
-				DefaultMutableTreeNode tNode = new DefaultMutableTreeNode(
-						new IconData(ICON_TABLE, null, new TableNode(t)));
-				for (Column c : t.getColumnlist()) {
-					DefaultMutableTreeNode cNode = new DefaultMutableTreeNode(
-							new IconData(ICON_COLUMN, null, new ColumnNode(c)));
-					if (c.isPrimaryKey()) {
-						cNode = new DefaultMutableTreeNode(new IconData(
-								ICON_PK, null, new ColumnNode(c)));
+			// add all the tables in the table folder.
+			if(null != schema.getTableList() && schema.getTableList().size() > 0){
+				DefaultMutableTreeNode tableFolderNode = new DefaultMutableTreeNode(
+						new IconData(ICON_FOLDER_TABLE, null, new FolderNode<Table>("Tables", schema.getTableList())));
+				for (Table t : schema.getTableList()) {
+					DefaultMutableTreeNode tNode = new DefaultMutableTreeNode(
+							new IconData(ICON_TABLE, null, new TableNode(t)));
+					for (Column c : t.getColumnlist()) {
+						DefaultMutableTreeNode cNode = new DefaultMutableTreeNode(
+								new IconData(ICON_COLUMN, null, new ColumnNode(c)));
+						if (c.isPrimaryKey()) {
+							cNode = new DefaultMutableTreeNode(new IconData(
+									ICON_PK, null, new ColumnNode(c)));
+						}
+						tNode.add(cNode);
 					}
-					tNode.add(cNode);
+					tableFolderNode.add(tNode);
 				}
-				sNode.add(tNode);
+				sNode.add(tableFolderNode);
 			}
 			dbNode.add(sNode);
 		}
@@ -629,5 +637,46 @@ class ColumnNode implements DatabaseNode<Column>, Comparable<ColumnNode> {
 	public int compareTo(ColumnNode o) {
 		return getColumn().getModelName().compareTo(
 				o.getColumn().getModelName());
+	}
+}
+
+class FolderNode<T> implements DatabaseNode<T>, Comparable<FolderNode<T>>{
+	protected String name;
+	protected List<T> contentList;
+
+	public FolderNode(String name, List<T> contentList) {
+		this.name = name;
+		this.contentList = contentList;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+	
+	public List<T> getContentList() {
+		return contentList;
+	}
+
+	public void setContentList(List<T> contentList) {
+		this.contentList = contentList;
+	}
+
+	public int compareTo(FolderNode<T> o) {
+		return getName().compareTo(o.getName());
+	};
+	
+	@Override
+	public String toString() {
+		return getName();
+	}
+
+	@Override
+	public boolean expand(DefaultMutableTreeNode parent) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }
