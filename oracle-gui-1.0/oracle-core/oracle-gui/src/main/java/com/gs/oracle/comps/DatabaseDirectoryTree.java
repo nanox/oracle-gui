@@ -69,11 +69,10 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants {
 	private Database database;
 
 	public DatabaseDirectoryTree() {
-		this("DB");
 	}
 
-	public DatabaseDirectoryTree(String rootNodeName) {
-		this.rootNodeName = rootNodeName;
+	public DatabaseDirectoryTree(Database db) {
+		this.database = db;
 		initComponents();
 	}
 
@@ -82,28 +81,6 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants {
 	}
 
 	private void initComponents() {
-		// dummy DB
-		database = new Database();
-		database.setModelName("Dummy_DB");
-		for (int i = 0; i < 3; i++) {
-			Schema s = new Schema();
-			s.setModelName("SCHEMA_" + (i + 1));
-			for (int j = 0; j < 10; j++) {
-				Table t = new Table();
-				t.setModelName("TABLE_" + (i + 1) + "_" + (j + 1));
-				for (int k = 0; k < 5; k++) {
-					Column c = new Column();
-					if (k == 0)
-						c.setPrimaryKey(true);
-					c.setModelName("COLUMN_" + (i + 1) + "_" + (j + 1) + "_"
-							+ (k + 1));
-					t.getColumnlist().add(c);
-				}
-				s.getTableList().add(t);
-			}
-			database.getSchemaList().add(s);
-		}
-
 		topNode = populateDatabaseTree(database);
 		defaultTreeModel = new DefaultTreeModel(topNode);
 		setModel(defaultTreeModel);
@@ -129,9 +106,9 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants {
 			DefaultMutableTreeNode sNode = new DefaultMutableTreeNode(
 					new IconData(ICON_SCHEMA, null, new SchemaNode(schema)));
 			// add all the tables in the table folder.
+			DefaultMutableTreeNode tableFolderNode = new DefaultMutableTreeNode(
+					new IconData(ICON_FOLDER_TABLE, null, new FolderNode<Table>("Tables", schema.getTableList())));
 			if(null != schema.getTableList() && schema.getTableList().size() > 0){
-				DefaultMutableTreeNode tableFolderNode = new DefaultMutableTreeNode(
-						new IconData(ICON_FOLDER_TABLE, null, new FolderNode<Table>("Tables", schema.getTableList())));
 				for (Table t : schema.getTableList()) {
 					DefaultMutableTreeNode tNode = new DefaultMutableTreeNode(
 							new IconData(ICON_TABLE, null, new TableNode(t)));
@@ -146,8 +123,8 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants {
 					}
 					tableFolderNode.add(tNode);
 				}
-				sNode.add(tableFolderNode);
 			}
+			sNode.add(tableFolderNode);
 			dbNode.add(sNode);
 		}
 		return dbNode;

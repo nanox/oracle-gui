@@ -42,6 +42,7 @@ import javax.swing.WindowConstants;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.command.GuiEventHandler;
+import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
 
@@ -51,6 +52,11 @@ import com.gs.oracle.util.DisplayUtils;
  */
 public class ConnectionDialog extends JDialog {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2433429146983917444L;
+	
 	public ConnectionDialog(JFrame parent, boolean modal) {
 		super(parent, modal);
 		initComponents();
@@ -189,7 +195,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 		httpHostPanel.add(jLabel3, gridBagConstraints);
 
-		hostAddrTextField.setText("jTextField1");
+		hostAddrTextField.setText("localhost");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridwidth = 3;
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -204,7 +210,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 		httpHostPanel.add(jLabel4, gridBagConstraints);
 
-		userNameTextField.setText("jTextField2");
+		userNameTextField.setText("rnd_user");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 1;
@@ -221,7 +227,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 		httpHostPanel.add(jLabel5, gridBagConstraints);
 
-		pwdPasswordField.setText("jPasswordField1");
+		pwdPasswordField.setText("rnd_user");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 2;
@@ -250,7 +256,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 		httpHostPanel.add(jLabel7, gridBagConstraints);
 
-		portTextField.setText("jTextField3");
+		portTextField.setText("1521");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 3;
@@ -279,7 +285,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 		httpHostPanel.add(charSetComboBox, gridBagConstraints);
 
-		sidTextField.setText("jTextField4");
+		sidTextField.setText("xe");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 4;
@@ -375,6 +381,7 @@ public class ConnectionDialog extends JDialog {
 		parentPanel.add(cancelButton, gridBagConstraints);
 
 		testConnectionButton.setText("Test Connection");
+		testConnectionButton.setActionCommand(GuiCommandConstants.TEST_CONNECTION_ACT_CMD);
 		testConnectionButton
 				.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -399,7 +406,17 @@ public class ConnectionDialog extends JDialog {
 
 	private void testConnectionButtonActionPerformed(
 			ActionEvent evt) {
-		// TODO add your handling code here:
+		GuiEventHandler handler = new GuiEventHandler();
+		handler.setParent(getParent());
+		ConnectionProperties properties = new ConnectionProperties("TEST");
+		properties.setHostName(hostAddrTextField.getText());
+		properties.setPortNumber(Integer.parseInt(portTextField.getText()));
+		properties.setUserName(userNameTextField.getText());
+		properties.setPassword(pwdPasswordField.getText());
+		properties.setSid(sidTextField.getText());
+		handler.setData(properties);
+		handler.actionPerformed(evt);
+		
 	}
 
 	private void cancelButtonActionPerformed(ActionEvent evt) {
@@ -409,8 +426,16 @@ public class ConnectionDialog extends JDialog {
 	private void connectButtonActionPerformed(ActionEvent evt) {
 		GuiEventHandler handler = new GuiEventHandler();
 		handler.setParent(getParent());
+		handler.setSourceForm(this);
+		ConnectionProperties properties = new ConnectionProperties("TEST");
+		properties.setHostName(hostAddrTextField.getText());
+		properties.setPortNumber(Integer.parseInt(portTextField.getText()));
+		properties.setUserName(userNameTextField.getText());
+		properties.setPassword(pwdPasswordField.getText());
+		properties.setSid(sidTextField.getText());
+		handler.setData(properties);
 		handler.actionPerformed(evt);
-		dispose();
+		
 	}
 
 	private void serviceNameRadioButtonActionPerformed(

@@ -4,6 +4,7 @@
 package com.gs.oracle.connection;
 
 import java.io.Serializable;
+import java.sql.Connection;
 
 /**
  * @author Green Moon
@@ -25,8 +26,19 @@ public class ConnectionProperties implements Serializable {
 	private int portNumber;
 	private String sid;
 	private String serviceName;
+	private String databaseName;
+	
+	private Connection connection;
 
-	private ConnectionProperties(String connectionName) {
+	public Connection getConnection() {
+		return connection;
+	}
+
+	public void setConnection(Connection connection) {
+		this.connection = connection;
+	}
+
+	public ConnectionProperties(String connectionName) {
 		this.connectionName = connectionName;
 	}
 
@@ -100,6 +112,14 @@ public class ConnectionProperties implements Serializable {
 
 	public void setServiceName(String serviceName) {
 		this.serviceName = serviceName;
+	}
+	
+	public String getDatabaseName() {
+		return databaseName;
+	}
+
+	public void setDatabaseName(String databaseName) {
+		this.databaseName = databaseName;
 	}
 
 	@Override

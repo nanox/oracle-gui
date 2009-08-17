@@ -19,11 +19,15 @@ import java.sql.Connection;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 
+import com.gs.oracle.ApplicationException;
+import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.dlg.ConnectionDialog;
 import com.gs.oracle.frame.OracleGuiMainFrame;
 import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
 import com.gs.oracle.service.DatabaseConnectionService;
 import com.gs.oracle.service.impl.DatabaseConnectionServiceImpl;
+import com.gs.oracle.util.DisplayTypeEnum;
+import com.gs.oracle.util.DisplayUtils;
 import com.gs.oracle.util.WindowUtil;
 
 /**
@@ -32,7 +36,7 @@ import com.gs.oracle.util.WindowUtil;
  */
 public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 
-	private Component parent;
+	private Component parent, sourceForm;
 	private Object data;
 	private DatabaseConnectionService connectionService;
 	
@@ -50,14 +54,38 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 				WindowUtil.bringCenterTo(dialog, parent);
 				dialog.setVisible(true);
 			}else if(CREATE_CONNECTION_ACT_CMD.equals(cmd)){
-				Connection conn = connectionService.createConnection(null);
+				Connection conn = null;
+				try {
+					conn = connectionService.createConnection((ConnectionProperties) getData());
+				} catch (ApplicationException ex) {
+					// TODO Auto-generated catch block
+					ex.printStackTrace();
+				}
 				//TODO: Need to change the condition
-				if(conn == null){
-					DatabaseViewerInternalFrame frame = new DatabaseViewerInternalFrame();
-					((OracleGuiMainFrame)parent).getMainDesktopPane().add(frame);
+				if(conn != null){
+					ConnectionProperties p = (ConnectionProperties) data;
+					p.setConnection(conn);
+					DatabaseViewerInternalFrame frame = new DatabaseViewerInternalFrame(p);
 					frame.setVisible(true);
+					((OracleGuiMainFrame)parent).getMainDesktopPane().add(frame);
+					((ConnectionDialog)getSourceForm()).dispose();
 				}else{
-					
+					DisplayUtils.displayMessage(parent, "ERROR", DisplayTypeEnum.INFO);
+				}
+			}else if(TEST_CONNECTION_ACT_CMD.equals(cmd)){
+				if(data != null){
+					if(data instanceof ConnectionProperties){
+						try{
+							boolean b = connectionService.testConnection((ConnectionProperties) data);
+							String success = "SUCCESSFUL";
+							if(!b){
+								success = "FAILED";
+							}
+							DisplayUtils.displayMessage(parent, success, DisplayTypeEnum.INFO);
+						}catch(ApplicationException ex){
+							
+						}
+					}
 				}
 			}
 		}
@@ -88,7 +116,22 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 	public void setData(Object data) {
 		this.data = data;
 	}
-	
-	
 
+	public Component getSourceForm() {
+		return sourceForm;
+	}
+
+	public void setSourceForm(Component sourceForm) {
+		this.sourceForm = sourceForm;
+	}
+
+	public DatabaseConnectionService getConnectionService() {
+		return connectionService;
+	}
+
+	public void setConnectionService(DatabaseConnectionService connectionService) {
+		this.connectionService = connectionService;
+	}
+	
+	
 }
