@@ -4,9 +4,13 @@
 package com.gs.oracle.service.impl;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 
+import com.gs.oracle.ApplicationException;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.connection.OracleConnectionPool;
+import com.gs.oracle.connection.OracleConnectionUtil;
 import com.gs.oracle.service.DatabaseConnectionService;
 
 /**
@@ -16,43 +20,53 @@ import com.gs.oracle.service.DatabaseConnectionService;
 public class DatabaseConnectionServiceImpl implements DatabaseConnectionService {
 	
 	private ConnectionProperties connectionProperties;
-	private Connection connection;
 	
+	public DatabaseConnectionServiceImpl() {
+		// TODO Auto-generated constructor stub
+	}
+		
 
-	/* (non-Javadoc)
-	 * @see com.gs.oracle.service.DatabaseConnectionService#createConnection(com.gs.oracle.connection.ConnectionProperties)
-	 */
+	public ConnectionProperties getConnectionProperties() {
+		return connectionProperties;
+	}
+
+	public void setConnectionProperties(ConnectionProperties connectionProperties) {
+		this.connectionProperties = connectionProperties;
+	}
+
+	
 	@Override
 	public Connection createConnection(ConnectionProperties connectionProperties) {
-		// TODO Auto-generated method stub
+		try {
+			return OracleConnectionUtil.getConnection(connectionProperties);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.gs.oracle.service.DatabaseConnectionService#disconnect(java.sql.Connection)
-	 */
+	
 	@Override
 	public Connection disconnect(Connection connection) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.gs.oracle.service.DatabaseConnectionService#disconnectAll(java.util.List)
-	 */
+	
 	@Override
 	public Connection disconnectAll(List<Connection> connectionList) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	/* (non-Javadoc)
-	 * @see com.gs.oracle.service.DatabaseConnectionService#testConnection(com.gs.oracle.connection.ConnectionProperties)
-	 */
+	
 	@Override
-	public Boolean testConnection(ConnectionProperties connectionProperties) {
-		// TODO Auto-generated method stub
-		return null;
+	public Boolean testConnection(ConnectionProperties connectionProperties) throws ApplicationException{
+		return OracleConnectionUtil.testConnection(connectionProperties);
 	}
 
 }
