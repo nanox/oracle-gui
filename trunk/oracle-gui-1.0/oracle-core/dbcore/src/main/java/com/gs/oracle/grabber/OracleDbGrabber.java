@@ -18,6 +18,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.model.Schema;
 import com.gs.oracle.model.Table;
@@ -51,6 +52,17 @@ public class OracleDbGrabber {
 				while(ret.next()){
 					Table t = new Table();
 					t.setModelName(ret.getString("TABLE_NAME"));
+					try{
+						ResultSet cet = databaseMetaData.getColumns("", s.getModelName(), t.getModelName(), "%");
+						while(cet.next()){
+							Column c = new Column();
+							c.setModelName(cet.getString("COLUMN_NAME"));
+							
+							t.getColumnlist().add(c);
+						}
+					}catch(Exception e){
+						
+					}
 					s.getTableList().add(t);
 				}
 				schemaList.add(s);
