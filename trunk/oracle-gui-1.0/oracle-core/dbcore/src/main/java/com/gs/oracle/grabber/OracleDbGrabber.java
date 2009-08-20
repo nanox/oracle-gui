@@ -46,12 +46,18 @@ public class OracleDbGrabber {
 			ResultSet rs = databaseMetaData.getSchemas();
 			while(rs.next()){
 				String cat = rs.getString("TABLE_SCHEM");
+				if(!databaseName.equals(cat)){
+					continue;
+				}
 				Schema s = new Schema();
 				s.setModelName(cat);
 				ResultSet ret = databaseMetaData.getTables("", s.getModelName(), "%", new String[] {"TABLE"});
 				while(ret.next()){
+					String tn = ret.getString("TABLE_NAME");
+					/*if(tn.startsWith("BIN"))
+						continue;*/
 					Table t = new Table();
-					t.setModelName(ret.getString("TABLE_NAME"));
+					t.setModelName(tn);
 					try{
 						ResultSet cet = databaseMetaData.getColumns("", s.getModelName(), t.getModelName(), "%");
 						while(cet.next()){
@@ -66,6 +72,7 @@ public class OracleDbGrabber {
 					s.getTableList().add(t);
 				}
 				schemaList.add(s);
+				
 			}
 		}
 		db.setSchemaList(schemaList);
