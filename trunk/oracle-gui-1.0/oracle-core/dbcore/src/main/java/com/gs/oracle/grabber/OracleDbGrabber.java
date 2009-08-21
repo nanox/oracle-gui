@@ -46,9 +46,10 @@ public class OracleDbGrabber {
 			ResultSet rs = databaseMetaData.getSchemas();
 			while(rs.next()){
 				String cat = rs.getString("TABLE_SCHEM");
-				if(!databaseName.equals(cat)){
-					continue;
-				}
+				if(null != databaseName && !"".equals(databaseName))
+					if(!databaseName.equals(cat)){
+						continue;
+					}
 				Schema s = new Schema();
 				s.setModelName(cat);
 				ResultSet ret = databaseMetaData.getTables("", s.getModelName(), "%", new String[] {"TABLE"});
@@ -66,13 +67,22 @@ public class OracleDbGrabber {
 							
 							t.getColumnlist().add(c);
 						}
+						if(cet != null){
+							cet.close();
+						}
 					}catch(Exception e){
 						
 					}
 					s.getTableList().add(t);
 				}
+				if(ret != null){
+					ret.close();
+				}
 				schemaList.add(s);
 				
+			}
+			if(rs != null){
+				rs.close();
 			}
 		}
 		db.setSchemaList(schemaList);
