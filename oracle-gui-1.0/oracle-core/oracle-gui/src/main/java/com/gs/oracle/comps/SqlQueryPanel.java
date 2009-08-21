@@ -14,7 +14,11 @@ import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedReader;
+import java.io.StringReader;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -25,7 +29,9 @@ import javax.swing.KeyStroke;
 
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiEventHandler;
+import com.gs.oracle.common.StringUtil;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.io.IOUtils;
 import com.gs.oracle.util.MenuBarUtil;
 
 /**
@@ -275,7 +281,10 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 			@Override
 			public void keyPressed(KeyEvent e) {
-
+				if (KeyEvent.VK_F9 == e.getKeyCode()) {
+					String query = getLastQuery();
+					displayQueryResults(query);
+				}
 			}
 
 			@Override
@@ -286,10 +295,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 			@Override
 			public void keyTyped(KeyEvent e) {
-				if (KeyEvent.VK_F9 == e.getKeyCode()) {
-					String query = queryTextArea.getText();
-					displayQueryResults(query);
-				}
+				
 			}
 
 		});
@@ -406,7 +412,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 			queryTextArea.setText("");
 		}
 		if (e.getSource().equals(runQueryButton)) {
-			String query = queryTextArea.getText();
+			String query = getLastQuery();
 			displayQueryResults(query);
 		}
 	}
@@ -452,5 +458,53 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 	public void setFactory(ResultSetTableModelFactory factory) {
 		this.factory = factory;
 	}
+	
+	public List<String> getQueryList(){
+		if(!StringUtil.hasValidContent(queryTextArea.getText()))
+			return new ArrayList<String>();
+		List<String> queryList = new ArrayList<String>();
+		BufferedReader br = null;
+		try{
+			br = new BufferedReader(new StringReader(queryTextArea.getText()));
+			char[] cBuff = new char[1];
+			int count = 0;
+			StringBuffer qBuff = new StringBuffer();
+			while((count = br.read(cBuff, 0, cBuff.length)) >= 0){
+				char ch = cBuff[0];
+				if('\r' == ch || '\n' == ch)
+					continue;
+				if(';' != ch){
+					qBuff.append(ch);
+				}else{
+					queryList.add(qBuff.toString());
+					qBuff = new StringBuffer();
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			IOUtils.closeReader(br);
+		}
+		
+		return queryList;
+	}
+	
+	public String getLastQuery(){
+		if(!"".equals(getSelectedQuery())){
+			return getSelectedQuery();
+		}
+		List<String> queryList = getQueryList();
+		if(!queryList.isEmpty()){
+			return queryList.get(queryList.size() - 1);
+		}
+		return "";
+	}
 
+	public String getSelectedQuery(){
+		String full = queryTextArea.getText();
+		if(!StringUtil.hasValidContent(full)){
+			return "";
+		}
+		return queryTextArea.getSelectedText();
+	}
 }
