@@ -522,6 +522,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
 					try {
+						queryResultTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 						queryResultTable.setModel(factory.getResultSetTableModel(q));
 					} catch (SQLException ex) {
 						JOptionPane.showMessageDialog(null, new String[] {
