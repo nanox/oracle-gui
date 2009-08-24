@@ -23,11 +23,13 @@ public class Column extends BaseDbModel implements Serializable {
 
 	private int columnID;
 	private boolean nullable;
-	private String dataType;
+	private int dataType;
+	private String typeName;
 	private int size;
 	private int precision;
 	private Object defaultValue;
 	private boolean primaryKey;
+	private boolean foreignKey;
 	
 	
 	public int getColumnID() {
@@ -42,10 +44,10 @@ public class Column extends BaseDbModel implements Serializable {
 	public void setNullable(boolean nullable) {
 		this.nullable = nullable;
 	}
-	public String getDataType() {
+	public int getDataType() {
 		return dataType;
 	}
-	public void setDataType(String dataType) {
+	public void setDataType(int dataType) {
 		this.dataType = dataType;
 	}
 	public int getSize() {
@@ -76,7 +78,19 @@ public class Column extends BaseDbModel implements Serializable {
 	
 	@Override
 	public String toString() {
-		return getModelName() + " [ " + dataType + ", (" + size +")" + 
+		return getModelName() + " [ " + typeName + ", (" + size +")" + 
 			((nullable) ? "NULL" : "NOTNULL") + " ]";
+	}
+	public String getTypeName() {
+		return typeName;
+	}
+	public void setTypeName(String typeName) {
+		this.typeName = typeName;
+	}
+	public boolean isForeignKey() {
+		return foreignKey;
+	}
+	public void setForeignKey(boolean foreignKey) {
+		this.foreignKey = foreignKey;
 	}
 }
