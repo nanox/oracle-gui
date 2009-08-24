@@ -14,5 +14,11 @@ public class StringUtil {
 			return false;
 		return (str.trim().length() > 0);
 	}
+	
+	public static String getFirstWord(String str){
+		if(!hasValidContent(str))
+			return "";
+		return str.split(" ")[0];
+	}
 
 }

@@ -12,6 +12,7 @@ import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.comps.DatabaseDirectoryTree;
@@ -33,8 +34,10 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 
 	private JSplitPane outterSplitPane, innerSplitPane;
 	private JPanel mainPanel;
+	private JTabbedPane dbDetailsTabbedPane;
 	
 	private OracleDatabaseService service;
+	private JTabbedPane dbViewerTabbedPane;
 	
 	public DatabaseViewerInternalFrame() {
 		service = new OracleDatabaseServiceImpl();
@@ -99,26 +102,28 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 				new JScrollPane(new DatabaseDirectoryTree(database)));
 		mainPanel.add(outterSplitPane, BorderLayout.CENTER);
 		
-		innerSplitPane = new JSplitPane();
-		innerSplitPane.setDividerLocation(250);
-		innerSplitPane.setContinuousLayout(true);
-		innerSplitPane.setOneTouchExpandable(true);
-		innerSplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
+		
+		dbDetailsTabbedPane = new JTabbedPane();
 		SqlQueryPanel panel = new SqlQueryPanel();
 		panel.setConnectionProperties(getConnectionProperties());
 		ResultSetTableModelFactory factory = new ResultSetTableModelFactory(getConnection());
 		panel.setFactory(factory);
-		innerSplitPane.setTopComponent(panel);
-		outterSplitPane.setRightComponent(innerSplitPane);
+		dbDetailsTabbedPane.addTab("SQL", panel);
+		
+		dbDetailsTabbedPane.addTab("sdjhdskjhfks ", new JPanel());
+		
+		outterSplitPane.setRightComponent(dbDetailsTabbedPane);
 		
 		getContentPane().setLayout(new BorderLayout());
 		getContentPane().add(mainPanel, BorderLayout.CENTER);
 		
 		//pack();
 	}
-	
-	
 
+
+	public JTabbedPane getDbDetailsTabbedPane() {
+		return dbDetailsTabbedPane;
+	}
 
 	public ConnectionProperties getConnectionProperties() {
 		return connectionProperties;

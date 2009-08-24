@@ -47,7 +47,7 @@ public class OracleDbGrabber {
 			while(rs.next()){
 				String cat = rs.getString("TABLE_SCHEM");
 				if(null != databaseName && !"".equals(databaseName))
-					if(!databaseName.equals(cat)){
+					if(!databaseName.equalsIgnoreCase(cat)){
 						continue;
 					}
 				Schema s = new Schema();
