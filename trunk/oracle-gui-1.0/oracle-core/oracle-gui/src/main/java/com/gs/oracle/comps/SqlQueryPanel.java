@@ -1,4 +1,3 @@
-
 /*
  * SqlQueryPanel.java
  *
@@ -8,26 +7,40 @@
 package com.gs.oracle.comps;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
+import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.StringReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.QueryTypeEnum;
+import com.gs.oracle.SqlQuery;
 import com.gs.oracle.command.GuiEventHandler;
 import com.gs.oracle.common.StringUtil;
 import com.gs.oracle.connection.ConnectionProperties;
@@ -40,8 +53,28 @@ import com.gs.oracle.util.MenuBarUtil;
  */
 public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener {
 
+	public static final java.awt.Font DEFAULT_TEXT_FONT =
+        new java.awt.Font(java.awt.Font.MONOSPACED,
+            java.awt.Font.PLAIN, 12);
+
+	private Font bitstreamFont;
+	private JMenuItem runSelectionMenuItem;
+	private JButton queryFontButton;
+
 	/** Creates new form SqlQueryPanel */
 	public SqlQueryPanel() {
+		try {
+			bitstreamFont = Font.createFont(Font.TRUETYPE_FONT, 
+					getClass().getResourceAsStream("/fonts/VeraMono.ttf"));
+			bitstreamFont = new Font(bitstreamFont.getFontName(),
+            java.awt.Font.BOLD, 12);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (FontFormatException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		initComponents();
 	}
 
@@ -51,6 +84,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		queryPopupMenu = new javax.swing.JPopupMenu();
 		runQueryMenuItem = new javax.swing.JMenuItem();
 		runAllMenuItem = new javax.swing.JMenuItem();
+		runSelectionMenuItem = new javax.swing.JMenuItem();
 		jSeparator4 = new javax.swing.JSeparator();
 		commitMenuItem = new javax.swing.JMenuItem();
 		rollbackMenuItem = new javax.swing.JMenuItem();
@@ -86,23 +120,31 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		jButton1 = new javax.swing.JButton();
 		jScrollPane2 = new javax.swing.JScrollPane();
 		queryLogTextArea = new javax.swing.JTextArea();
-
+		runSelectedQueryButton = new javax.swing.JButton();
+		queryFontButton = new  javax.swing.JButton();
+		
 		Icon image = null;
 
-		runQueryMenuItem.setText("Run");
+		runQueryMenuItem.setText("Run Last Query");
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "execution_obj.gif"));
-		runQueryMenuItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_F5,
-				InputEvent.CTRL_MASK));
 		runQueryMenuItem.setIcon(image);
 		runQueryMenuItem.addActionListener(this);
 		queryPopupMenu.add(runQueryMenuItem);
-
+		
+		runSelectionMenuItem.setText("Run Selection");
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "sql_execute_selection.gif"));
+		runSelectionMenuItem.setIcon(image);
+		runSelectionMenuItem.addActionListener(this);
+		queryPopupMenu.add(runSelectionMenuItem);
+		
 		runAllMenuItem.setText("Run All");
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "execution_obj.gif"));
+						+ "sql_execute.gif"));
 		runAllMenuItem.setIcon(image);
 		runAllMenuItem.addActionListener(this);
 		queryPopupMenu.add(runAllMenuItem);
@@ -110,14 +152,14 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 		commitMenuItem.setText("Commit");
 		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + ""));
+				.getResource(OracleGuiConstants.IMAGE_PATH + "commit.gif"));
 		commitMenuItem.setIcon(image);
 		commitMenuItem.addActionListener(this);
 		queryPopupMenu.add(commitMenuItem);
 
 		rollbackMenuItem.setText("Rollback Last");
 		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + ""));
+				.getResource(OracleGuiConstants.IMAGE_PATH + "rollback.png"));
 		rollbackMenuItem.setIcon(image);
 		rollbackMenuItem.addActionListener(this);
 		queryPopupMenu.add(rollbackMenuItem);
@@ -125,28 +167,28 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 		openMenuItem.setText("Open");
 		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + ""));
+				.getResource(OracleGuiConstants.IMAGE_PATH + "open.gif"));
 		openMenuItem.setIcon(image);
 		openMenuItem.addActionListener(this);
 		queryPopupMenu.add(openMenuItem);
 
 		saveMenuItem.setText("Save");
 		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + ""));
+				.getResource(OracleGuiConstants.IMAGE_PATH + "save_edit.gif"));
 		saveMenuItem.setIcon(image);
 		saveMenuItem.addActionListener(this);
 		queryPopupMenu.add(saveMenuItem);
 
 		saveAsMenuItem.setText("Save As...");
 		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + ""));
+				.getResource(OracleGuiConstants.IMAGE_PATH + "saveas_edit.gif"));
 		saveAsMenuItem.setIcon(image);
 		saveAsMenuItem.addActionListener(this);
 		queryPopupMenu.add(saveAsMenuItem);
 
 		clearMenuItem.setText("Clear");
 		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + ""));
+				.getResource(OracleGuiConstants.IMAGE_PATH + "clear_co.gif"));
 		clearMenuItem.setIcon(image);
 		clearMenuItem.addActionListener(this);
 		queryPopupMenu.add(clearMenuItem);
@@ -154,7 +196,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 		wrapCheckBoxMenuItem.setSelected(true);
 		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + ""));
+				.getResource(OracleGuiConstants.IMAGE_PATH + "button-word-wrap.gif"));
 		wrapCheckBoxMenuItem.setIcon(image);
 		wrapCheckBoxMenuItem.addActionListener(this);
 		wrapCheckBoxMenuItem.setText("Wrap");
@@ -180,23 +222,37 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 				.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 		runQueryButton
 				.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+		runQueryButton.setToolTipText("Run the last query. [F9]");
 		queryToolBar.add(runQueryButton);
 
+		runSelectedQueryButton.setFocusable(false);
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "sql_execute_selection.gif"));
+		runSelectedQueryButton.setIcon(image);
+		runSelectedQueryButton.addActionListener(this);
+		runSelectedQueryButton
+				.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+		runSelectedQueryButton
+				.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+		runSelectedQueryButton.setToolTipText("Run selected query. [F10]");
+		queryToolBar.add(runSelectedQueryButton);
 		runAllButton.setFocusable(false);
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "execution_obj.gif"));
+						+ "sql_execute.gif"));
 		runAllButton.setIcon(image);
 		runAllButton.addActionListener(this);
 		runAllButton
 				.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 		runAllButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+		runAllButton.setToolTipText("Run all the queries. [F5]");
 		queryToolBar.add(runAllButton);
 		queryToolBar.add(jSeparator1);
 
 		commitButton.setFocusable(false);
 		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + ""));
+				.getResource(OracleGuiConstants.IMAGE_PATH + "commit.gif"));
 		commitButton.setIcon(image);
 		commitButton.addActionListener(this);
 		commitButton
@@ -206,7 +262,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 		rollbackButton.setFocusable(false);
 		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + ""));
+				.getResource(OracleGuiConstants.IMAGE_PATH + "rollback.png"));
 		rollbackButton.setIcon(image);
 		rollbackButton.addActionListener(this);
 		rollbackButton
@@ -218,7 +274,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 		openButton.setFocusable(false);
 		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + ""));
+				.getResource(OracleGuiConstants.IMAGE_PATH + "open.gif"));
 		openButton.setIcon(image);
 		openButton.addActionListener(this);
 		openButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -227,7 +283,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 		saveButton.setFocusable(false);
 		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + ""));
+				.getResource(OracleGuiConstants.IMAGE_PATH + "save_edit.gif"));
 		saveButton.setIcon(image);
 		saveButton.addActionListener(this);
 		saveButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -236,7 +292,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 		saveAsButton.setFocusable(false);
 		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + ""));
+				.getResource(OracleGuiConstants.IMAGE_PATH + "saveas_edit.gif"));
 		saveAsButton.setIcon(image);
 		saveAsButton.addActionListener(this);
 		saveAsButton
@@ -246,7 +302,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 		clearButton.setFocusable(false);
 		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + ""));
+				.getResource(OracleGuiConstants.IMAGE_PATH + "clear_co.gif"));
 		clearButton.setIcon(image);
 		clearButton.addActionListener(this);
 		clearButton
@@ -255,9 +311,16 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		queryToolBar.add(clearButton);
 		queryToolBar.add(jSeparator3);
 
+		queryFontButton.setFocusable(false);
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.IMAGE_PATH + "font.gif"));
+		queryFontButton.setIcon(image);
+		queryFontButton.addActionListener(this);
+		queryToolBar.add(queryFontButton);
+		
 		wrapToggleButton.setSelected(true);
 		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + ""));
+				.getResource(OracleGuiConstants.IMAGE_PATH + "button-word-wrap.gif"));
 		wrapToggleButton.setIcon(image);
 		wrapToggleButton.addActionListener(this);
 		wrapToggleButton.setFocusable(false);
@@ -276,6 +339,27 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		queryTextArea.setLineWrap(true);
 		queryTextArea.setRows(5);
 		queryTextArea.setTabSize(4);
+		queryTextArea.setMargin(new Insets(0,5,0,5));
+		
+		LineNumberedBorder lineNumberedBorder = new LineNumberedBorder(LineNumberedBorder.LEFT_SIDE,
+				LineNumberedBorder.RIGHT_JUSTIFY);
+		queryTextArea.setFont((null != bitstreamFont) ? bitstreamFont : DEFAULT_TEXT_FONT);
+		queryTextArea.setBorder(
+            BorderFactory.createCompoundBorder(
+              BorderFactory.createEmptyBorder(1, 1, 1, 1),
+              BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.GRAY, 1),
+                BorderFactory.createCompoundBorder(
+                    lineNumberedBorder, BorderFactory.createCompoundBorder(
+                        BorderFactory.createLineBorder(Color.GRAY, 1),
+                        BorderFactory.createEmptyBorder(0, 8, 0, 2)
+              ))
+              )
+              )
+              );
+
+
+		
 		queryTextArea.setComponentPopupMenu(queryPopupMenu);
 		queryTextArea.addKeyListener(new KeyListener() {
 
@@ -295,7 +379,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 			@Override
 			public void keyTyped(KeyEvent e) {
-				
+
 			}
 
 		});
@@ -318,7 +402,8 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		queryResultTable.setAutoCreateRowSorter(true);
 		queryResultTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 		queryResultTable.setAutoscrolls(true);
-		queryResultTabPanel.add(new JScrollPane(queryResultTable), BorderLayout.CENTER);
+		queryResultTabPanel.add(new JScrollPane(queryResultTable),
+				BorderLayout.CENTER);
 		queryResultTabbedPane.addTab("Result", queryResultTabPanel);
 
 		jPanel2.setLayout(new java.awt.GridBagLayout());
@@ -395,12 +480,14 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 	private javax.swing.JButton rollbackButton;
 	private javax.swing.JButton runAllButton;
 	private javax.swing.JButton runQueryButton;
+	private javax.swing.JButton runSelectedQueryButton;
 	private javax.swing.JButton saveAsButton;
 	private javax.swing.JButton saveButton;
 	private javax.swing.JSplitPane sqlQuerySplitPane;
 	private javax.swing.JToggleButton wrapToggleButton;
 	private JTable queryResultTable;
 	private ResultSetTableModelFactory factory;
+	
 
 	private GuiEventHandler guiEventHandler = new GuiEventHandler();
 	private ConnectionProperties connectionProperties;
@@ -411,27 +498,50 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 				|| e.getSource().equals(clearMenuItem)) {
 			queryTextArea.setText("");
 		}
-		if (e.getSource().equals(runQueryButton)) {
+		if (e.getSource().equals(runQueryButton) || e.getSource().equals(runQueryMenuItem)) {
 			String query = getLastQuery();
 			displayQueryResults(query);
+		}
+		if (e.getSource().equals(runSelectedQueryButton) || e.getSource().equals(runSelectionMenuItem)) {
+			List<String> queryList = getSelectedQueryList();
+			if(!queryList.isEmpty())
+				displayQueryResults(queryList.get(0));
+		}
+		if (e.getSource().equals(wrapToggleButton) || e.getSource().equals(wrapCheckBoxMenuItem)) {
+			if(wrapToggleButton.isSelected() && wrapCheckBoxMenuItem.isSelected()){
+				queryTextArea.setLineWrap(true);
+			}else{
+				queryTextArea.setLineWrap(false);
+			}
 		}
 	}
 
 	public void displayQueryResults(final String q) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					queryResultTable
-							.setModel(factory.getResultSetTableModel(q));
-				} catch (SQLException ex) {
-					JOptionPane.showMessageDialog(null, new String[] { // Display
-																		// a
-																		// 2-line
-																		// message
-							ex.getClass().getName() + ": ", ex.getMessage() });
+		SqlQuery sqlQuery = new SqlQuery(q);
+		if(QueryTypeEnum.SELECT.equals(sqlQuery.getQueryType())){
+			EventQueue.invokeLater(new Runnable() {
+				public void run() {
+					try {
+						queryResultTable.setModel(factory.getResultSetTableModel(q));
+					} catch (SQLException ex) {
+						JOptionPane.showMessageDialog(null, new String[] {
+						ex.getClass().getName() + ": ", ex.getMessage() });
+					}
 				}
-			}
-		});
+			});
+		}
+		else if(QueryTypeEnum.INSERT.equals(sqlQuery.getQueryType())){
+			
+		}
+		else if(QueryTypeEnum.CREATE.equals(sqlQuery.getQueryType())){
+					
+		}
+		else if(QueryTypeEnum.UPDATE.equals(sqlQuery.getQueryType())){
+			
+		}
+		else if(QueryTypeEnum.ALTER.equals(sqlQuery.getQueryType())){
+			
+		}
 	}
 
 	public javax.swing.JTextArea getQueryTextArea() {
@@ -458,53 +568,60 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 	public void setFactory(ResultSetTableModelFactory factory) {
 		this.factory = factory;
 	}
-	
-	public List<String> getQueryList(){
-		if(!StringUtil.hasValidContent(queryTextArea.getText()))
+
+	public List<String> getQueryList() {
+		return getQueryList(queryTextArea.getText());
+	}
+
+	public List<String> getQueryList(String text) {
+		if (!StringUtil.hasValidContent(text))
 			return new ArrayList<String>();
 		List<String> queryList = new ArrayList<String>();
 		BufferedReader br = null;
-		try{
-			br = new BufferedReader(new StringReader(queryTextArea.getText()));
+		boolean hasDelem = false;
+		if(text.contains(";"))
+			hasDelem = true;
+		try {
+			br = new BufferedReader(new StringReader(text));
 			char[] cBuff = new char[1];
 			int count = 0;
 			StringBuffer qBuff = new StringBuffer();
-			while((count = br.read(cBuff, 0, cBuff.length)) >= 0){
+			while ((count = br.read(cBuff, 0, cBuff.length)) >= 0) {
 				char ch = cBuff[0];
-				if('\r' == ch || '\n' == ch)
-					continue;
-				if(';' != ch){
-					qBuff.append(ch);
-				}else{
+				if (';' != ch) {
+					if ('\r' == ch || '\n' == ch)
+						qBuff.append(' ');
+					else
+						qBuff.append(ch);
+				} else {
 					queryList.add(qBuff.toString());
 					qBuff = new StringBuffer();
 				}
 			}
-		}catch(Exception e){
+			if(!hasDelem)
+				queryList.add(qBuff.toString());
+		} catch (Exception e) {
 			e.printStackTrace();
-		}finally{
+		} finally {
 			IOUtils.closeReader(br);
 		}
-		
+
 		return queryList;
 	}
-	
-	public String getLastQuery(){
-		if(!"".equals(getSelectedQuery())){
-			return getSelectedQuery();
+
+	public String getLastQuery() {
+		List<String> queryList = getSelectedQueryList(); 
+		if (!queryList.isEmpty()) {
+			return queryList.get(0);
 		}
-		List<String> queryList = getQueryList();
-		if(!queryList.isEmpty()){
+		queryList = getQueryList();
+		if (!queryList.isEmpty()) {
 			return queryList.get(queryList.size() - 1);
 		}
 		return "";
 	}
 
-	public String getSelectedQuery(){
-		String full = queryTextArea.getText();
-		if(!StringUtil.hasValidContent(full)){
-			return "";
-		}
-		return queryTextArea.getSelectedText();
+	public List<String> getSelectedQueryList() {
+		return getQueryList(queryTextArea.getSelectedText());
 	}
 }
