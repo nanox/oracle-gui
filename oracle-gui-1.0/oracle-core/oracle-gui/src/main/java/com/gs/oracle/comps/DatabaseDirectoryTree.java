@@ -57,13 +57,15 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants {
 	public static final ImageIcon ICON_COLUMN = new ImageIcon(
 			DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "columns.gif"));
 
-	public static final ImageIcon ICON_PK = new ImageIcon(
+	public static final ImageIcon ICON_PK_COLUMN = new ImageIcon(
 			DatabaseDirectoryTree.class.getResource(IMAGE_PATH
-					+ "primaryKey.gif"));
-	public static final ImageIcon ICON_FK = new ImageIcon(
-			DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "fk.gif"));
+					+ "PrimaryKeyColumn.gif"));
+	public static final ImageIcon ICON_FK_COLUMN = new ImageIcon(
+			DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "ForeignKeyColumn.gif"));
 	public static final ImageIcon ICON_FOLDER_TABLE = new ImageIcon(
 			DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "Folder_table.png"));
+	public static final ImageIcon ICON_TABLE_DELETED = new ImageIcon(
+			DatabaseDirectoryTree.class.getResource(IMAGE_PATH + "deleted_table.gif"));
 
 	private String rootNodeName;
 	private Database database;
@@ -110,15 +112,24 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants {
 					new IconData(ICON_FOLDER_TABLE, null, new FolderNode<Table>("Tables", schema.getTableList())));
 			if(null != schema.getTableList() && schema.getTableList().size() > 0){
 				for (Table t : schema.getTableList()) {
-					DefaultMutableTreeNode tNode = new DefaultMutableTreeNode(
-							new IconData(ICON_TABLE, null, new TableNode(t)));
+					DefaultMutableTreeNode tNode = null;
+					if(t.isDeleted()){
+						tNode = new DefaultMutableTreeNode(
+								new IconData(ICON_TABLE_DELETED, null, new TableNode(t)));
+					}else{
+						tNode = new DefaultMutableTreeNode(
+								new IconData(ICON_TABLE, null, new TableNode(t)));
+					}
 					for (Column c : t.getColumnlist()) {
 						DefaultMutableTreeNode cNode = new DefaultMutableTreeNode(
 								new IconData(ICON_COLUMN, null, new ColumnNode(c)));
 						if (c.isPrimaryKey()) {
 							cNode = new DefaultMutableTreeNode(new IconData(
-									ICON_PK, null, new ColumnNode(c)));
-						}
+									ICON_PK_COLUMN, null, new ColumnNode(c)));
+						}else if (c.isForeignKey()) {
+							cNode = new DefaultMutableTreeNode(new IconData(
+									ICON_FK_COLUMN, null, new ColumnNode(c)));
+						} 
 						tNode.add(cNode);
 					}
 					tableFolderNode.add(tNode);
@@ -458,9 +469,14 @@ class SchemaNode implements DatabaseNode<Schema>, Comparable<SchemaNode> {
 
 		for (int i = 0; i < tableNodeVector.size(); i++) {
 			TableNode nd = tableNodeVector.elementAt(i);
-			IconData idata = new IconData(DatabaseDirectoryTree.ICON_TABLE,
-					DatabaseDirectoryTree.ICON_TABLE, nd);
-
+			IconData idata = null;
+			if(nd.table.isDeleted()){
+				idata = new IconData(DatabaseDirectoryTree.ICON_TABLE_DELETED,
+						DatabaseDirectoryTree.ICON_TABLE_DELETED, nd);
+			}else{
+				idata = new IconData(DatabaseDirectoryTree.ICON_TABLE,
+						DatabaseDirectoryTree.ICON_TABLE, nd);
+			}
 			if (idata == null) {
 				continue;
 			}
@@ -556,8 +572,11 @@ class TableNode implements DatabaseNode<Table>, Comparable<TableNode> {
 			ColumnNode nd = columnNodeVector.elementAt(i);
 			IconData idata = null;
 			if (nd.getColumn().isPrimaryKey()) {
-				idata = new IconData(DatabaseDirectoryTree.ICON_PK,
-						DatabaseDirectoryTree.ICON_PK, nd);
+				idata = new IconData(DatabaseDirectoryTree.ICON_PK_COLUMN,
+						DatabaseDirectoryTree.ICON_PK_COLUMN, nd);
+			} else if (nd.getColumn().isForeignKey()) {
+				idata = new IconData(DatabaseDirectoryTree.ICON_FK_COLUMN,
+						DatabaseDirectoryTree.ICON_FK_COLUMN, nd);
 			} else {
 				idata = new IconData(DatabaseDirectoryTree.ICON_COLUMN,
 						DatabaseDirectoryTree.ICON_COLUMN, nd);

@@ -16,7 +16,11 @@ import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+
+import javax.naming.ldap.HasControls;
 
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Database;
@@ -55,15 +59,46 @@ public class OracleDbGrabber {
 				ResultSet ret = databaseMetaData.getTables("", s.getModelName(), "%", new String[] {"TABLE"});
 				while(ret.next()){
 					String tn = ret.getString("TABLE_NAME");
-					/*if(tn.startsWith("BIN"))
-						continue;*/
+					
 					Table t = new Table();
 					t.setModelName(tn);
+					if(tn.startsWith("BIN$"))
+						t.setDeleted(true);
 					try{
+						String pkColName = ""; 
+						ResultSet pkRs = databaseMetaData.getPrimaryKeys("", s.getModelName(), tn);
+						while(pkRs.next()){
+							pkColName = pkRs.getString("COLUMN_NAME");
+						}
+						if(pkRs != null){
+							pkRs.close();
+						}
+						Set<String> fkColSet = new HashSet<String>();
+						ResultSet fkRs = databaseMetaData.getImportedKeys("", s.getModelName(), tn);
+						while(fkRs.next()){
+							fkColSet.add(fkRs.getString("FKCOLUMN_NAME"));
+						}
+						if(fkRs != null){
+							fkRs.close();
+						}
+						
 						ResultSet cet = databaseMetaData.getColumns("", s.getModelName(), t.getModelName(), "%");
 						while(cet.next()){
 							Column c = new Column();
 							c.setModelName(cet.getString("COLUMN_NAME"));
+							if(c.getModelName().equalsIgnoreCase(pkColName)){
+								c.setPrimaryKey(true);
+							}
+							if(fkColSet.contains(c.getModelName())){
+								c.setForeignKey(true);
+							}
+							c.setTypeName(cet.getString("TYPE_NAME"));
+							String nulAble = cet.getString("IS_NULLABLE");
+							if("YES".equalsIgnoreCase(nulAble)){
+								c.setNullable(true);
+							}else{
+								c.setNullable(false);
+							}
 							
 							t.getColumnlist().add(c);
 						}

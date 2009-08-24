@@ -21,7 +21,7 @@ public abstract class BaseDbModel implements Serializable {
 
 	private String modelName;
 	private String comments;
-	
+	private boolean deleted = false;
 	
 	public String getModelName() {
 		return modelName;
@@ -35,9 +35,14 @@ public abstract class BaseDbModel implements Serializable {
 	public void setComments(String comments) {
 		this.comments = comments;
 	}
-	
 	@Override
 	public String toString() {
 		return getModelName();
+	}
+	public boolean isDeleted() {
+		return deleted;
+	}
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted;
 	}
 }
