@@ -18,6 +18,7 @@ import com.gs.oracle.ApplicationException;
 import com.gs.oracle.comps.DatabaseDirectoryTree;
 import com.gs.oracle.comps.ResultSetTableModelFactory;
 import com.gs.oracle.comps.SqlQueryPanel;
+import com.gs.oracle.comps.TableDetailsPanel;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.service.OracleDatabaseService;
@@ -110,7 +111,7 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		panel.setFactory(factory);
 		dbDetailsTabbedPane.addTab("SQL", panel);
 		
-		dbDetailsTabbedPane.addTab("sdjhdskjhfks ", new JPanel());
+		dbDetailsTabbedPane.addTab("TABLE_NAME", new TableDetailsPanel());
 		
 		outterSplitPane.setRightComponent(dbDetailsTabbedPane);
 		
