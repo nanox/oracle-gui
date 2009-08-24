@@ -67,7 +67,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 			bitstreamFont = Font.createFont(Font.TRUETYPE_FONT, 
 					getClass().getResourceAsStream("/fonts/VeraMono.ttf"));
 			bitstreamFont = new Font(bitstreamFont.getFontName(),
-            java.awt.Font.BOLD, 12);
+            java.awt.Font.PLAIN, 12);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (FontFormatException e) {
