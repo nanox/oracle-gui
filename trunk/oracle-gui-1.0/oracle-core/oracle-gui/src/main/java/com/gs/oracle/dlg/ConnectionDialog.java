@@ -433,6 +433,7 @@ public class ConnectionDialog extends JDialog {
 		properties.setSid(sidTextField.getText());
 		properties.setDatabaseName(schemaNameTextField.getText());
 		handler.setData(properties);
+		handler.setSourceForm(this);
 		handler.actionPerformed(evt);
 		
 	}
@@ -453,6 +454,7 @@ public class ConnectionDialog extends JDialog {
 		properties.setSid(sidTextField.getText());
 		properties.setDatabaseName(schemaNameTextField.getText());
 		handler.setData(properties);
+		handler.setSourceForm(this);
 		handler.actionPerformed(evt);
 		
 	}
@@ -549,4 +551,9 @@ public class ConnectionDialog extends JDialog {
 	private JTextField userNameTextField;
 	// End of variables declaration
 
+	public void disableButtons(boolean b){
+		connectButton.setEnabled(!b);
+		testConnectionButton.setEnabled(!b);
+		cancelButton.setEnabled(!b);
+	}
 }
