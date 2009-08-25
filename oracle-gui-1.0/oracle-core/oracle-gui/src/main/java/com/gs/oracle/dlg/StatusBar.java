@@ -139,4 +139,10 @@ public class StatusBar extends JPanel {
 
 
 	}
+
+	public JLabel getCurrentStatusLabel() {
+		return currentStatusLabel;
+	}
+	
+	
 }

@@ -7,7 +7,9 @@ import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.Connection;
+import java.sql.SQLException;
 
+import javax.swing.ImageIcon;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -15,6 +17,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
 import com.gs.oracle.ApplicationException;
+import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.comps.DatabaseDirectoryTree;
 import com.gs.oracle.comps.ResultSetTableModelFactory;
 import com.gs.oracle.comps.SqlQueryPanel;
@@ -23,6 +26,7 @@ import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.service.OracleDatabaseService;
 import com.gs.oracle.service.impl.OracleDatabaseServiceImpl;
+import com.gs.oracle.util.MenuBarUtil;
 
 /**
  * @author sabuj.das
@@ -109,9 +113,12 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		panel.setConnectionProperties(getConnectionProperties());
 		ResultSetTableModelFactory factory = new ResultSetTableModelFactory(getConnection());
 		panel.setFactory(factory);
-		dbDetailsTabbedPane.addTab("SQL", panel);
+		dbDetailsTabbedPane.addTab("SQL", new ImageIcon(DatabaseViewerInternalFrame.class
+				.getResource(OracleGuiConstants.IMAGE_PATH + "executesql.gif")), panel);
 		
-		dbDetailsTabbedPane.addTab("TABLE_NAME", new TableDetailsPanel());
+		dbDetailsTabbedPane.addTab("TABLE_NAME", new ImageIcon(DatabaseViewerInternalFrame.class
+				.getResource(OracleGuiConstants.IMAGE_PATH + "table.gif")),
+				new TableDetailsPanel());
 		
 		outterSplitPane.setRightComponent(dbDetailsTabbedPane);
 		
@@ -180,7 +187,13 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		
+		if(connection != null){
+			try {
+				connection.close();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	@Override
