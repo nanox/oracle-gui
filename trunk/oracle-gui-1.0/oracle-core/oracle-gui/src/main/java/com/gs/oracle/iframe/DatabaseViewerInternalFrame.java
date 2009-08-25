@@ -18,6 +18,7 @@ import javax.swing.JTabbedPane;
 
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.comps.DatabaseDirectoryPanel;
 import com.gs.oracle.comps.DatabaseDirectoryTree;
 import com.gs.oracle.comps.ResultSetTableModelFactory;
 import com.gs.oracle.comps.SqlQueryPanel;
@@ -103,8 +104,9 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		outterSplitPane.setContinuousLayout(true);
 		outterSplitPane.setOneTouchExpandable(true);
 		outterSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
-		outterSplitPane.setLeftComponent(
-				new JScrollPane(new DatabaseDirectoryTree(database)));
+		
+		DatabaseDirectoryPanel directoryPanel = new DatabaseDirectoryPanel(new DatabaseDirectoryTree(database));
+		outterSplitPane.setLeftComponent(directoryPanel);
 		mainPanel.add(outterSplitPane, BorderLayout.CENTER);
 		
 		
