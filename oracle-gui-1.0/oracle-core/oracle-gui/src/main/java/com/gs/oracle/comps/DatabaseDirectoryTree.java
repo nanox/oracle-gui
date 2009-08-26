@@ -42,8 +42,7 @@ import com.gs.oracle.model.Table;
  * @author Green Moon
  * 
  */
-public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants {
-
+public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 	public static final ImageIcon ICON_ROOT_DATABASES = new ImageIcon(
 			DatabaseDirectoryTree.class.getResource(IMAGE_PATH
 					+ "DB_dev_perspective.gif"));
@@ -164,8 +163,9 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants {
 		Object obj = node.getUserObject();
 		if (obj instanceof IconData)
 			obj = ((IconData) obj).getObject();
-		if (obj instanceof DatabaseNode)
+		if (obj instanceof DatabaseNode){
 			return (DatabaseNode<T>) obj;
+		}
 		else
 			return null;
 	}
@@ -186,26 +186,7 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants {
 	protected Action treeAction;
 	protected TreePath clickedPath;
 
-	/*
-	 * 
-	 * class DirExpansionListener implements TreeExpansionListener { public void
-	 * treeExpanded(TreeExpansionEvent event) { final DefaultMutableTreeNode
-	 * node = getTreeNode(event.getPath()); final FileNode fnode =
-	 * getFileNode(node); if (fnode != null && fnode.expand(node)) {
-	 * defaultTreeModel.reload(node); } }
-	 * 
-	 * public void treeCollapsed(TreeExpansionEvent event) { } }
-	 * 
-	 * class DirSelectionListener implements TreeSelectionListener { public void
-	 * valueChanged(TreeSelectionEvent event) { DefaultMutableTreeNode node =
-	 * getTreeNode(event.getPath()); FileNode fnode = getFileNode(node); if
-	 * (fnode != null) {
-	 * //displayTextField.setText(fnode.getFile().getAbsolutePath());
-	 * 
-	 * } else { //displayTextField.setText("");
-	 * 
-	 * } } }
-	 */
+
 	private static String selectedPath = "";
 
 }
