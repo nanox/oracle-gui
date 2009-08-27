@@ -43,7 +43,6 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 	private Object data;
 	private DatabaseConnectionService connectionService;
 	
-	
 	public GuiEventHandler() {
 		connectionService = new DatabaseConnectionServiceImpl();
 	}
@@ -121,6 +120,8 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 					}
 				};
 				new Thread(testConnRun).start();
+			} else if(VIEW_TABLE_DETAILS_ACT_CMD.equals(cmd)){
+				
 			}
 		}
 	}

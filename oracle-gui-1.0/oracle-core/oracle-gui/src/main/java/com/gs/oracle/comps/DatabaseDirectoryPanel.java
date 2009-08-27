@@ -7,6 +7,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -15,16 +18,22 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JToolBar;
+import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.PopupMenuListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
 
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.command.GuiCommandConstants;
+import com.gs.oracle.command.GuiEventHandler;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.util.MenuBarUtil;
 
@@ -36,10 +45,9 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		OracleGuiConstants, TreeSelectionListener, MouseListener{
 
 	private DatabaseDirectoryTree databaseDirectoryTree;
-	protected JPopupMenu m_popup;
-	protected Action m_action;
 	protected TreePath m_clickedPath;
 	private JPopupMenu dbDirectoryTreePopup;
+	private JMenuItem expandCollaspMenuItem, viewTableDetailsMenuItem;
 	
 	public DatabaseDirectoryPanel(DatabaseDirectoryTree tree) {
 		if(tree == null)
@@ -53,25 +61,66 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		refreshTreeButton = new JButton();
 		databaseDirectoryToolBar = new JToolBar();
 		dbDirectoryTreePopup = new JPopupMenu();
+		expandCollaspMenuItem = new JMenuItem("Expand");
+		viewTableDetailsMenuItem = new JMenuItem("Table Details");
 		
-		m_popup = new JPopupMenu();
-        m_action = new AbstractAction() {
+		dbDirectoryTreePopup.addPopupMenuListener(new PopupMenuListener(){
 
-            public void actionPerformed(ActionEvent e) {
-                if (m_clickedPath == null) {
-                    return;
-                }
-                if (getDatabaseDirectoryTree().isExpanded(m_clickedPath)) {
-                	getDatabaseDirectoryTree().collapsePath(m_clickedPath);
-                } else {
-                	getDatabaseDirectoryTree().expandPath(m_clickedPath);
-                }
-            }
-        };
+			@Override
+			public void popupMenuCanceled(PopupMenuEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
+				directoryTreePopupPopupMenuWillBecomeVisible(e);
+			}
+
+		});
+		dbDirectoryTreePopup.addComponentListener(new ComponentListener(){
+
+			@Override
+			public void componentHidden(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentMoved(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentResized(ComponentEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void componentShown(ComponentEvent e) {
+				directoryTreePopupComponentShown(e);
+			}
+			
+		});
+		getDatabaseDirectoryTree().add(dbDirectoryTreePopup);
+		
+		expandCollaspMenuItem.addActionListener(this);
+        getDatabaseDirectoryTree().add(expandCollaspMenuItem);
+        getDatabaseDirectoryTree().add(new JSeparator());
         
-        m_popup.add(m_action);
-        
-        getDatabaseDirectoryTree().add(dbDirectoryTreePopup);
+        viewTableDetailsMenuItem.addActionListener(this);
+        viewTableDetailsMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "sampleContents.gif")));
+        getDatabaseDirectoryTree().add(viewTableDetailsMenuItem);
 		
 		databaseDirectoryToolBar.setFloatable(false);
 		setLayout(new GridBagLayout());
@@ -136,7 +185,34 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
+		if(e.getSource().equals(getDatabaseDirectoryTree())){
+            TreePath p = getDatabaseDirectoryTree().getSelectionPath();
+            if(p==null)
+                return;
+            DefaultMutableTreeNode node = getDatabaseDirectoryTree().getTreeNode(p);
+            if(node == null)
+                return;
+            DatabaseNode dbNode = getDatabaseDirectoryTree().getDatabaseNode(node);
+            if (dbNode == null) {
+                return;
+            }
+            if(MouseEvent.BUTTON1 == e.getButton()){
+                if(dbNode instanceof TableNode){
+                    if(e.getClickCount() == 2){
+                    	Table table = ((TableNode)dbNode).getTable();
+            			if(table != null){
+            				String tableName = table.getModelName();
+            				openTableDetails(tableName);
+            			}
+                    }
+                }
+            }
+        }
+	}
+
+	private void openTableDetails(String tableName) {
+		GuiEventHandler handler = new GuiEventHandler();
+		handler.setData(tableName);
 		
 	}
 
@@ -163,5 +239,60 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		// TODO Auto-generated method stub
 		
 	}
+	
+	private void directoryTreePopupPopupMenuWillBecomeVisible(PopupMenuEvent evt) {                                                              
+        if(evt.getSource().equals(getDatabaseDirectoryTree())){
+            TreePath p = getDatabaseDirectoryTree().getSelectionPath();
+            if(p==null)
+                return;
+            DefaultMutableTreeNode node = getDatabaseDirectoryTree().getTreeNode(p);
+            if(node == null)
+                return;
+            /*FileNode fnode = directoryTree.getFileNode(node);
+            if (fnode == null) {
+                return;
+            }*/
+            
+        }
+    }                                                             
+
+    private void directoryTreePopupComponentShown(ComponentEvent evt) {                                                  
+        if(evt.getSource().equals(getDatabaseDirectoryTree())){
+            TreePath p = getDatabaseDirectoryTree().getSelectionPath();
+            if(p==null)
+                return;
+            DefaultMutableTreeNode node = getDatabaseDirectoryTree().getTreeNode(p);
+            if(node == null)
+                return;
+            /*FileNode fnode = directoryTree.getFileNode(node);
+            if (fnode == null) {
+                return;
+            }*/
+
+        }
+    }
+    
+    
+    
+    
+    class PopupTrigger extends MouseAdapter {
+
+        public void mouseReleased(MouseEvent e) {
+            if (e.isPopupTrigger()) {
+                int x = e.getX();
+                int y = e.getY();
+                TreePath path = getDatabaseDirectoryTree().getPathForLocation(x, y);
+                if (path != null) {
+                    if (getDatabaseDirectoryTree().isExpanded(path)) {
+                        //m_action.putValue(Action.NAME, "Collapse");
+                    } else {
+                        //m_action.putValue(Action.NAME, "Expand");
+                    }
+                    //m_popup.show(m_tree, x, y);
+                    //m_clickedPath = path;
+                }
+            }
+        }
+    }
 
 }
