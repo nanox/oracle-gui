@@ -38,4 +38,10 @@ public interface GuiCommandConstants {
 	
 	String EXIT_APP_ACT_CMD 			= "EXIT_APP_ACT_CMD";
 	
+	
+	String COLLAPSE_PATH_ACTION 		= "COLLAPSE_PATH_ACTION";
+    String EXPAND_PATH_ACTION 			= "EXPAND_PATH_ACTION";
+    
+    String VIEW_TABLE_DETAILS_ACT_CMD	= "VIEW_TABLE_DETAILS_ACT_CMD";
+    
 }
