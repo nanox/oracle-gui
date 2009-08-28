@@ -3,6 +3,7 @@
  */
 package com.gs.oracle.comps;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -18,6 +19,7 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -34,6 +36,7 @@ import javax.swing.tree.TreePath;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.command.GuiEventHandler;
+import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.util.MenuBarUtil;
 
@@ -44,6 +47,8 @@ import com.gs.oracle.util.MenuBarUtil;
 public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		OracleGuiConstants, TreeSelectionListener, MouseListener{
 
+	private JComponent parentComponent;
+	
 	private DatabaseDirectoryTree databaseDirectoryTree;
 	protected TreePath m_clickedPath;
 	private JPopupMenu dbDirectoryTreePopup;
@@ -54,6 +59,8 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 			throw new IllegalArgumentException("DatabaseDirectoryTree cannot be NULL");
 		this.databaseDirectoryTree = tree;
 		this.databaseDirectoryTree.addTreeSelectionListener(this);
+		this.databaseDirectoryTree.addMouseListener(this);
+		addMouseListener(this);
 		initComponents();
 	}
 	
@@ -211,9 +218,39 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 	}
 
 	private void openTableDetails(String tableName) {
-		GuiEventHandler handler = new GuiEventHandler();
-		handler.setData(tableName);
-		
+		DatabaseViewerInternalFrame iFrame = (DatabaseViewerInternalFrame) getParentComponent();
+		if(iFrame != null){
+			boolean tableOpened = false;
+			int selectedTabIndex = -1;
+			int tabCount = iFrame.getDbDetailsTabbedPane().getTabCount();
+			for (int i = 0; i < tabCount; i++) {
+				Component tabComponent = iFrame.getDbDetailsTabbedPane().getComponentAt(i);
+				if(tabComponent instanceof TableDetailsPanel){
+					TableDetailsPanel ti = (TableDetailsPanel) tabComponent;
+					if(ti != null){
+						if(tableName.equals(ti.getTableName())){
+							tableOpened = true;
+							selectedTabIndex = i;
+							break;
+						}
+					}
+				}
+			}
+			if(!tableOpened){
+				TableDetailsPanel panel = new TableDetailsPanel(tableName, iFrame.getConnectionProperties());
+				iFrame.getDbDetailsTabbedPane().addTab(tableName, 
+						new ImageIcon(DatabaseViewerInternalFrame.class
+					.getResource(OracleGuiConstants.IMAGE_PATH + "table.gif")),
+					panel);
+				selectedTabIndex = iFrame.getDbDetailsTabbedPane().getTabCount() - 1;
+			}else{
+				// call the refresh method of this tab
+			}
+			if(selectedTabIndex > -1){
+				iFrame.getDbDetailsTabbedPane().setSelectedIndex(selectedTabIndex);
+				iFrame.getDbDetailsTabbedPane().updateUI();
+			}
+		}
 	}
 
 	@Override
@@ -294,5 +331,16 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
             }
         }
     }
+
+
+
+
+	public JComponent getParentComponent() {
+		return parentComponent;
+	}
+
+	public void setParentComponent(JComponent parentComponent) {
+		this.parentComponent = parentComponent;
+	}
 
 }

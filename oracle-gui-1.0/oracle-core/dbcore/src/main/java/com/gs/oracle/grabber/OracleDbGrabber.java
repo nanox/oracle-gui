@@ -143,4 +143,19 @@ public class OracleDbGrabber {
 		return schema;
 	}
 	
+	public ResultSet grabColumnDetails(String schemaName, String tableName, Connection connection) throws SQLException{
+		DatabaseMetaData metaData = connection.getMetaData();
+		return metaData.getColumns("", schemaName, tableName, "%");
+	}
+	
+	public int grabColumnCount(String schemaName, String tableName, Connection connection) throws SQLException{
+		DatabaseMetaData metaData = connection.getMetaData();
+		ResultSet rs = metaData.getColumns("", schemaName, tableName, "%");
+		int count = 0;
+		while(rs.next()){
+			count ++;
+		}
+		return count;
+	}
+	
 }

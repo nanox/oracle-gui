@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.util.MenuBarUtil;
 
 /**
@@ -22,10 +23,22 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 		OracleGuiConstants {
 
 	private JTabbedPane tableDetailsTabbedPane;
+	private String tableName;
+	private ConnectionProperties connectionProperties;
+	
+	public TableDetailsPanel(String tableName) {
+		this(tableName, null);
+	}
+	
 
-	public TableDetailsPanel() {
+	public TableDetailsPanel(String tableName,
+			ConnectionProperties connectionProperties) {
+		this.tableName = tableName;
+		this.connectionProperties = connectionProperties;
 		initComponents();
 	}
+
+
 
 	private void initComponents() {
 		tableDetailsTabbedPane = new JTabbedPane();
@@ -37,7 +50,8 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 		tableDetailsTabbedPane.addTab("Columns",new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "columngroup.gif")), new JPanel());
+						+ "columngroup.gif")), 
+						new ColumnDetailsPanel(getTableName(), getConnectionProperties()));
 		tableDetailsTabbedPane.addTab("Constraints",new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
@@ -75,6 +89,26 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 
 	public JTabbedPane getTableDetailsTabbedPane() {
 		return tableDetailsTabbedPane;
+	}
+
+
+	public String getTableName() {
+		return tableName;
+	}
+
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+
+	public ConnectionProperties getConnectionProperties() {
+		return connectionProperties;
+	}
+
+
+	public void setConnectionProperties(ConnectionProperties connectionProperties) {
+		this.connectionProperties = connectionProperties;
 	}
 
 }
