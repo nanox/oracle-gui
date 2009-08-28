@@ -105,22 +105,21 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		outterSplitPane.setOneTouchExpandable(true);
 		outterSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 		
-		DatabaseDirectoryPanel directoryPanel = new DatabaseDirectoryPanel(new DatabaseDirectoryTree(database));
+		DatabaseDirectoryPanel directoryPanel = new DatabaseDirectoryPanel(
+				new DatabaseDirectoryTree(database));
+		directoryPanel.setParentComponent(this);
 		outterSplitPane.setLeftComponent(directoryPanel);
 		mainPanel.add(outterSplitPane, BorderLayout.CENTER);
 		
 		
 		dbDetailsTabbedPane = new JTabbedPane();
+		dbDetailsTabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		SqlQueryPanel panel = new SqlQueryPanel();
 		panel.setConnectionProperties(getConnectionProperties());
 		ResultSetTableModelFactory factory = new ResultSetTableModelFactory(getConnection());
 		panel.setFactory(factory);
 		dbDetailsTabbedPane.addTab("SQL", new ImageIcon(DatabaseViewerInternalFrame.class
 				.getResource(OracleGuiConstants.IMAGE_PATH + "executesql.gif")), panel);
-		
-		dbDetailsTabbedPane.addTab("TABLE_NAME", new ImageIcon(DatabaseViewerInternalFrame.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + "table.gif")),
-				new TableDetailsPanel());
 		
 		outterSplitPane.setRightComponent(dbDetailsTabbedPane);
 		

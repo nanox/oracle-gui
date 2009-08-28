@@ -21,6 +21,7 @@ import com.gs.oracle.BaseDbModel;
  */
 public class Column extends BaseDbModel implements Serializable {
 
+	@ColumnHeader(columnName="COLUMN_ID")
 	private int columnID;
 	private boolean nullable;
 	private int dataType;

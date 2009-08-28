@@ -21,9 +21,12 @@ public class ResultSetTableModel implements TableModel{
 	private int columnCount;
 	private int rowCount;
 	
-	
-
 	public ResultSetTableModel(ResultSet resultSet) throws SQLException {
+		setResultSet(resultSet);
+	}
+
+	public ResultSetTableModel(ResultSet resultSet, int rows) throws SQLException {
+		rowCount = rows;
 		setResultSet(resultSet);
 	}
 
@@ -35,9 +38,11 @@ public class ResultSetTableModel implements TableModel{
 		// get column count from the metadata
 		this.columnCount = resultSetMetaData.getColumnCount();
 		// move to the last row of the resultset
-		rs.last();
-		// set the row count
-		this.rowCount = rs.getRow();
+		if(ResultSet.TYPE_SCROLL_INSENSITIVE == rs.getType()){
+			rs.last();
+			this.rowCount = rs.getRow();
+		}
+		
 	}
 	
 	
@@ -75,7 +80,17 @@ public class ResultSetTableModel implements TableModel{
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		try {
-			getResultSet().absolute(rowIndex + 1); // Go to the specified row
+			if(ResultSet.TYPE_SCROLL_INSENSITIVE == getResultSet().getType()){
+				getResultSet().absolute(rowIndex + 1); // Go to the specified row
+			}else{
+				int i = 0;
+				while(getResultSet().next()){
+					if(i == rowIndex)
+						break;
+					i++;
+				}
+			}
+			
 			Object o = resultSet.getObject(columnIndex + 1); // Get value of the column
 			if (o == null)
 				return null;

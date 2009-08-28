@@ -45,4 +45,8 @@ public class ResultSetTableModelFactory {
 		// Create and return a TableModel for the ResultSet
 		return new ResultSetTableModel(r);
 	}
+	
+	public ResultSetTableModel getResultSetTableModel(ResultSet resultSet, int rowCount) throws SQLException{
+		return new ResultSetTableModel(resultSet, rowCount);
+	}
 }
