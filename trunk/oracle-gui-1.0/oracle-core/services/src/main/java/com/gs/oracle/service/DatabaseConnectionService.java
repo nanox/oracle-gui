@@ -6,6 +6,8 @@ package com.gs.oracle.service;
 import java.sql.Connection;
 import java.util.List;
 
+import javax.sql.DataSource;
+
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.connection.ConnectionProperties;
 
@@ -22,5 +24,7 @@ public interface DatabaseConnectionService {
 	public Connection disconnect(Connection connection) throws ApplicationException;
 	
 	public Connection disconnectAll(List<Connection> connectionList) throws ApplicationException;
+	
+	public DataSource getDataSource(ConnectionProperties connectionProperties);
 	
 }

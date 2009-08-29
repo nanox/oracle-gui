@@ -38,6 +38,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.KeyStroke;
 
+import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.QueryTypeEnum;
 import com.gs.oracle.SqlQuery;
@@ -45,6 +46,9 @@ import com.gs.oracle.command.GuiEventHandler;
 import com.gs.oracle.common.StringUtil;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.io.IOUtils;
+import com.gs.oracle.service.QueryExecutionService;
+import com.gs.oracle.service.impl.QueryExecutionServiceImpl;
+import com.gs.oracle.sql.SqlDocument;
 import com.gs.oracle.util.MenuBarUtil;
 
 /**
@@ -60,6 +64,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 	private Font bitstreamFont;
 	private JMenuItem runSelectionMenuItem;
 	private JButton queryFontButton;
+	private QueryExecutionService queryExecutionService;
 
 	/** Creates new form SqlQueryPanel */
 	public SqlQueryPanel() {
@@ -75,6 +80,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		queryExecutionService = new QueryExecutionServiceImpl(getConnectionProperties());
 		initComponents();
 	}
 
@@ -335,12 +341,14 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		gridBagConstraints.weightx = 1.0;
 		queryPanel.add(queryToolBar, gridBagConstraints);
 
+		SqlDocument doc = new SqlDocument();
+		//doc.setTextArea(queryTextArea);
 		queryTextArea.setColumns(20);
 		queryTextArea.setLineWrap(true);
 		queryTextArea.setRows(5);
 		queryTextArea.setTabSize(4);
-		queryTextArea.setMargin(new Insets(0,5,0,5));
-		
+		queryTextArea.setMargin(new Insets(2,5,2,5));
+		//queryTextArea.setDocument(doc);
 		LineNumberedBorder lineNumberedBorder = new LineNumberedBorder(LineNumberedBorder.LEFT_SIDE,
 				LineNumberedBorder.RIGHT_JUSTIFY);
 		queryTextArea.setFont((null != bitstreamFont) ? bitstreamFont : DEFAULT_TEXT_FONT);
@@ -348,7 +356,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
             BorderFactory.createCompoundBorder(
               BorderFactory.createEmptyBorder(1, 1, 1, 1),
               BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(Color.GRAY, 1),
+                BorderFactory.createLineBorder(Color.BLACK, 1),
                 BorderFactory.createCompoundBorder(
                     lineNumberedBorder, BorderFactory.createCompoundBorder(
                         BorderFactory.createLineBorder(Color.GRAY, 1),
@@ -409,7 +417,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		jPanel2.setLayout(new java.awt.GridBagLayout());
 
 		queryLogToolBar.setRollover(true);
-
+		queryLogToolBar.setFloatable(false);
 		jButton1.setText("jButton1");
 		jButton1.setFocusable(false);
 		jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -423,6 +431,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 		queryLogTextArea.setColumns(20);
 		queryLogTextArea.setRows(5);
+		queryLogTextArea.setFont((null != bitstreamFont) ? bitstreamFont : DEFAULT_TEXT_FONT);
 		jScrollPane2.setViewportView(queryLogTextArea);
 
 		gridBagConstraints = new java.awt.GridBagConstraints();
@@ -524,6 +533,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 					try {
 						queryResultTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 						queryResultTable.setModel(factory.getResultSetTableModel(q));
+						queryResultTabbedPane.setSelectedIndex(0);
 					} catch (SQLException ex) {
 						JOptionPane.showMessageDialog(null, new String[] {
 						ex.getClass().getName() + ": ", ex.getMessage() });
@@ -531,17 +541,15 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 				}
 			});
 		}
-		else if(QueryTypeEnum.INSERT.equals(sqlQuery.getQueryType())){
-			
-		}
-		else if(QueryTypeEnum.CREATE.equals(sqlQuery.getQueryType())){
-					
-		}
-		else if(QueryTypeEnum.UPDATE.equals(sqlQuery.getQueryType())){
-			
-		}
-		else if(QueryTypeEnum.ALTER.equals(sqlQuery.getQueryType())){
-			
+		else {
+			queryExecutionService = new QueryExecutionServiceImpl(getConnectionProperties());
+			try {
+				int row = queryExecutionService.executeNonQuery(sqlQuery);
+				queryLogTextArea.append("[ " + row + " ] rows updated.\n");
+				queryResultTabbedPane.setSelectedIndex(1);
+			} catch (ApplicationException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 

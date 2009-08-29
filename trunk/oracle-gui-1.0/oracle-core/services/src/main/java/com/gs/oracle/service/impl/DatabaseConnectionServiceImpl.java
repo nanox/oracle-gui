@@ -7,6 +7,9 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
+import javax.sql.ConnectionPoolDataSource;
+import javax.sql.DataSource;
+
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.connection.OracleConnectionPool;
@@ -32,6 +35,20 @@ public class DatabaseConnectionServiceImpl implements DatabaseConnectionService 
 
 	public void setConnectionProperties(ConnectionProperties connectionProperties) {
 		this.connectionProperties = connectionProperties;
+	}
+	
+	
+	public DataSource getDataSource(ConnectionProperties connectionProperties){
+		try {
+			return OracleConnectionUtil.createDataSource(connectionProperties);
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	

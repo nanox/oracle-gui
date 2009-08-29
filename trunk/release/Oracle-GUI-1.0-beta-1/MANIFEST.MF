@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: Green Moon
+Build-Jdk: 1.6.0
+Main-Class: com.gs.oracle.Launcher
+Class-Path: libs/ojdbc14.jar

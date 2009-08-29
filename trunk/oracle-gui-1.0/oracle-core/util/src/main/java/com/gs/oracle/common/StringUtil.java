@@ -18,6 +18,7 @@ public class StringUtil {
 	public static String getFirstWord(String str){
 		if(!hasValidContent(str))
 			return "";
+		str = str.trim();
 		return str.split(" ")[0];
 	}
 
