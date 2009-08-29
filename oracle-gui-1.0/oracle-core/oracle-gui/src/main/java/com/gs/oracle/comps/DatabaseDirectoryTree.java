@@ -98,6 +98,12 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 		setEditable(false);
 
 	}
+	
+	public void reload(Database db){
+		this.database = db;
+		removeAll();
+		initComponents();
+	}
 
 	public DefaultMutableTreeNode populateDatabaseTree(Database database) {
 		DefaultMutableTreeNode dbNode = new DefaultMutableTreeNode(
@@ -122,10 +128,10 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 					for (Column c : t.getColumnlist()) {
 						DefaultMutableTreeNode cNode = new DefaultMutableTreeNode(
 								new IconData(ICON_COLUMN, null, new ColumnNode(c)));
-						if (c.isPrimaryKey()) {
+						if (null != c.getPrimaryKey() && Boolean.TRUE.equals(c.getPrimaryKey())) {
 							cNode = new DefaultMutableTreeNode(new IconData(
 									ICON_PK_COLUMN, null, new ColumnNode(c)));
-						}else if (c.isForeignKey()) {
+						}else if (null != c.getForeignKey() && Boolean.TRUE.equals(c.getForeignKey())) {
 							cNode = new DefaultMutableTreeNode(new IconData(
 									ICON_FK_COLUMN, null, new ColumnNode(c)));
 						} 
@@ -552,10 +558,10 @@ class TableNode implements DatabaseNode<Table>, Comparable<TableNode> {
 		for (int i = 0; i < columnNodeVector.size(); i++) {
 			ColumnNode nd = columnNodeVector.elementAt(i);
 			IconData idata = null;
-			if (nd.getColumn().isPrimaryKey()) {
+			if (nd.getColumn().getPrimaryKey()) {
 				idata = new IconData(DatabaseDirectoryTree.ICON_PK_COLUMN,
 						DatabaseDirectoryTree.ICON_PK_COLUMN, nd);
-			} else if (nd.getColumn().isForeignKey()) {
+			} else if (nd.getColumn().getForeignKey()) {
 				idata = new IconData(DatabaseDirectoryTree.ICON_FK_COLUMN,
 						DatabaseDirectoryTree.ICON_FK_COLUMN, nd);
 			} else {

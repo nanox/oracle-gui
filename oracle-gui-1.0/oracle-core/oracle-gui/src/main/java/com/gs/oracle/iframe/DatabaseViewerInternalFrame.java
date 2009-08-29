@@ -18,6 +18,7 @@ import javax.swing.JTabbedPane;
 
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.comps.ButtonTabComponent;
 import com.gs.oracle.comps.DatabaseDirectoryPanel;
 import com.gs.oracle.comps.DatabaseDirectoryTree;
 import com.gs.oracle.comps.ResultSetTableModelFactory;
@@ -36,7 +37,6 @@ import com.gs.oracle.util.MenuBarUtil;
 public class DatabaseViewerInternalFrame extends JInternalFrame implements WindowListener{
 	
 	private ConnectionProperties connectionProperties;
-	private Connection connection;
 
 	private JSplitPane outterSplitPane, innerSplitPane;
 	private JPanel mainPanel;
@@ -57,7 +57,6 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 			ConnectionProperties connectionProperties) {
 		service = new OracleDatabaseServiceImpl();
 		this.connectionProperties = connectionProperties;
-		this.connection = this.connectionProperties.getConnection();
 		Database database = getDataBaseInformation();
 		initComponents(database);
 	}
@@ -66,9 +65,8 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 
 	private Database getDataBaseInformation() {
 		Database db = null;
-		if(connection != null && connectionProperties != null){
+		if(connectionProperties != null){
 			try {
-				connectionProperties.setConnection(connection);
 				db = service.getDatabase(connectionProperties);
 			} catch (ApplicationException e) {
 				e.printStackTrace();
@@ -106,7 +104,7 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		outterSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 		
 		DatabaseDirectoryPanel directoryPanel = new DatabaseDirectoryPanel(
-				new DatabaseDirectoryTree(database));
+				new DatabaseDirectoryTree(database), getConnectionProperties());
 		directoryPanel.setParentComponent(this);
 		outterSplitPane.setLeftComponent(directoryPanel);
 		mainPanel.add(outterSplitPane, BorderLayout.CENTER);
@@ -116,11 +114,21 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		dbDetailsTabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		SqlQueryPanel panel = new SqlQueryPanel();
 		panel.setConnectionProperties(getConnectionProperties());
-		ResultSetTableModelFactory factory = new ResultSetTableModelFactory(getConnection());
+		ResultSetTableModelFactory factory = null;
+		try {
+			factory = new ResultSetTableModelFactory(
+					getConnectionProperties().getDataSource().getConnection());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		panel.setFactory(factory);
-		dbDetailsTabbedPane.addTab("SQL", new ImageIcon(DatabaseViewerInternalFrame.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + "executesql.gif")), panel);
-		
+		dbDetailsTabbedPane.addTab("SQL", panel);
+		int n = dbDetailsTabbedPane.getTabCount();
+		dbDetailsTabbedPane.setTabComponentAt(n - 1,
+                new ButtonTabComponent(dbDetailsTabbedPane, new ImageIcon(DatabaseViewerInternalFrame.class
+        				.getResource(OracleGuiConstants.IMAGE_PATH + "executesql.gif"))));
+		dbDetailsTabbedPane.setSelectedIndex(n - 1);
 		outterSplitPane.setRightComponent(dbDetailsTabbedPane);
 		
 		getContentPane().setLayout(new BorderLayout());
@@ -142,13 +150,6 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		this.connectionProperties = connectionProperties;
 	}
 
-	public Connection getConnection() {
-		return connection;
-	}
-
-	public void setConnection(Connection connection) {
-		this.connection = connection;
-	}
 
 	public JPanel getMainPanel() {
 		return mainPanel;
@@ -188,13 +189,13 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		if(connection != null){
+		/*if(connection != null){
 			try {
 				connection.close();
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
-		}
+		}*/
 	}
 
 	@Override

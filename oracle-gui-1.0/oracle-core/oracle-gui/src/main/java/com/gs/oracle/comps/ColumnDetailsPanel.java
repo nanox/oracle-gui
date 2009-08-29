@@ -10,8 +10,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -23,7 +26,13 @@ import javax.swing.JToolBar;
 
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.connection.OracleConnectionUtil;
 import com.gs.oracle.grabber.OracleDbGrabber;
+import com.gs.oracle.model.Column;
+import com.gs.oracle.model.Database;
+import com.gs.oracle.model.Schema;
+import com.gs.oracle.model.Table;
+import com.gs.oracle.util.ConnectionUtil;
 import com.gs.oracle.util.MenuBarUtil;
 
 /**
@@ -51,7 +60,7 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 		GridBagConstraints gridBagConstraints = null;
 		Insets insets = null;
 		
-		refreshButton = new JButton("R");
+		refreshButton = new JButton();
 		addColumnButton = new JButton("+");
 		editColumnButton = new JButton("E");
 		dropColumnButton = new JButton("-");
@@ -63,24 +72,25 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 		columnToolBar.setFloatable(false);
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "execution_obj.gif"));
+						+ "reload_green.png"));
 		refreshButton.setIcon(image);
+		refreshButton.setFocusable(false);
 		columnToolBar.add(refreshButton);
 		columnToolBar.add(new JToolBar.Separator());
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "execution_obj.gif"));
-		addColumnButton.setIcon(image);
+		//addColumnButton.setIcon(image);
 		columnToolBar.add(addColumnButton);
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "execution_obj.gif"));
-		editColumnButton.setIcon(image);
+		//editColumnButton.setIcon(image);
 		columnToolBar.add(editColumnButton);
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "execution_obj.gif"));
-		dropColumnButton.setIcon(image);
+		//dropColumnButton.setIcon(image);
 		columnToolBar.add(dropColumnButton);
 		
 		gridBagConstraints = new GridBagConstraints();
@@ -103,6 +113,46 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 		gridBagConstraints.gridy = 1;
 		gridBagConstraints.insets = insets;
 		
+		
+		OracleDbGrabber dbGrabber = new OracleDbGrabber();
+		Connection conn = null;
+		try {
+			conn = OracleConnectionUtil.getConnection(connectionProperties);//connectionProperties.getDataSource().getConnection();
+			Database db = dbGrabber.grabDatabase(conn, connectionProperties.getDatabaseName());
+			/*dbGrabber.getColumnList(connectionProperties.getDatabaseName(), 
+					tableName, conn)*/
+			List<Column> cl = new ArrayList<Column>();
+			List<Schema> sL = db.getSchemaList();
+			for (Schema s : sL) {
+				if(connectionProperties.getDatabaseName().equalsIgnoreCase(s.getModelName())){
+					List<Table> lT = s.getTableList();
+					for (Table t : lT) {
+						if(tableName.equalsIgnoreCase(t.getModelName())){
+							cl = t.getColumnlist();
+							break;
+						}
+					}
+				}
+			}
+			
+			
+			columDetailsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			columDetailsTable.setModel(new ColumnDetailsTableModel(cl));
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			if(conn != null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
 		
 		/*columDetailsTable.addPropertyChangeListener(new PropertyChangeListener(){
 

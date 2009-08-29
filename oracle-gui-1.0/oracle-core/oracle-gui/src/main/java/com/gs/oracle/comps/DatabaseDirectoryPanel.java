@@ -13,6 +13,7 @@ import java.awt.event.ComponentListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.SQLException;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
@@ -36,7 +37,10 @@ import javax.swing.tree.TreePath;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.command.GuiEventHandler;
+import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
+import com.gs.oracle.model.Database;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.util.MenuBarUtil;
 
@@ -53,13 +57,15 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 	protected TreePath m_clickedPath;
 	private JPopupMenu dbDirectoryTreePopup;
 	private JMenuItem expandCollaspMenuItem, viewTableDetailsMenuItem;
+	private ConnectionProperties connectionProperties;
 	
-	public DatabaseDirectoryPanel(DatabaseDirectoryTree tree) {
+	public DatabaseDirectoryPanel(DatabaseDirectoryTree tree, ConnectionProperties connectionProperties) {
 		if(tree == null)
 			throw new IllegalArgumentException("DatabaseDirectoryTree cannot be NULL");
 		this.databaseDirectoryTree = tree;
 		this.databaseDirectoryTree.addTreeSelectionListener(this);
 		this.databaseDirectoryTree.addMouseListener(this);
+		this.connectionProperties = connectionProperties;
 		addMouseListener(this);
 		initComponents();
 	}
@@ -165,10 +171,26 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-
+		if(e.getSource().equals(refreshTreeButton)){
+			reloadDatabaseTree();
+		}
 	}
 
+	public void reloadDatabaseTree(){
+		try {
+			Database db = new OracleDbGrabber().grabDatabase(
+					connectionProperties.getDataSource().getConnection(), 
+					connectionProperties.getDatabaseName());
+			databaseDirectoryTree.reload(db);
+			if(m_clickedPath != null){
+				databaseDirectoryTree.expandPath(m_clickedPath);
+				databaseDirectoryTree.updateUI();
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
 
 	public DatabaseDirectoryTree getDatabaseDirectoryTree() {
@@ -196,6 +218,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
             TreePath p = getDatabaseDirectoryTree().getSelectionPath();
             if(p==null)
                 return;
+            m_clickedPath = p;
             DefaultMutableTreeNode node = getDatabaseDirectoryTree().getTreeNode(p);
             if(node == null)
                 return;
@@ -208,8 +231,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
                     if(e.getClickCount() == 2){
                     	Table table = ((TableNode)dbNode).getTable();
             			if(table != null){
-            				String tableName = table.getModelName();
-            				openTableDetails(tableName);
+            				openTableDetails(table);
             			}
                     }
                 }
@@ -217,7 +239,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
         }
 	}
 
-	private void openTableDetails(String tableName) {
+	private void openTableDetails(Table table) {
 		DatabaseViewerInternalFrame iFrame = (DatabaseViewerInternalFrame) getParentComponent();
 		if(iFrame != null){
 			boolean tableOpened = false;
@@ -228,7 +250,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 				if(tabComponent instanceof TableDetailsPanel){
 					TableDetailsPanel ti = (TableDetailsPanel) tabComponent;
 					if(ti != null){
-						if(tableName.equals(ti.getTableName())){
+						if(table.getModelName().equals(ti.getTableName())){
 							tableOpened = true;
 							selectedTabIndex = i;
 							break;
@@ -237,11 +259,12 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 				}
 			}
 			if(!tableOpened){
-				TableDetailsPanel panel = new TableDetailsPanel(tableName, iFrame.getConnectionProperties());
-				iFrame.getDbDetailsTabbedPane().addTab(tableName, 
-						new ImageIcon(DatabaseViewerInternalFrame.class
-					.getResource(OracleGuiConstants.IMAGE_PATH + "table.gif")),
-					panel);
+				TableDetailsPanel panel = new TableDetailsPanel(table.getSchemaName(), table.getModelName(), iFrame.getConnectionProperties());
+				iFrame.getDbDetailsTabbedPane().addTab(table.getModelName(), panel);
+				int n = iFrame.getDbDetailsTabbedPane().getTabCount();
+				iFrame.getDbDetailsTabbedPane().setTabComponentAt(n - 1,
+		                new ButtonTabComponent(iFrame.getDbDetailsTabbedPane(), new ImageIcon(DatabaseViewerInternalFrame.class
+		        				.getResource(OracleGuiConstants.IMAGE_PATH + "table.gif"))));
 				selectedTabIndex = iFrame.getDbDetailsTabbedPane().getTabCount() - 1;
 			}else{
 				// call the refresh method of this tab

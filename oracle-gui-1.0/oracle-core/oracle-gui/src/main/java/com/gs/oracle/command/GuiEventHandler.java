@@ -75,7 +75,7 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 						//TODO: Need to change the condition
 						if(conn != null){
 							ConnectionProperties p = (ConnectionProperties) data;
-							p.setConnection(conn);
+							p.setDataSource(connectionService.getDataSource(p));
 							DatabaseViewerInternalFrame iFrame = new DatabaseViewerInternalFrame(p);
 							iFrame.setVisible(true);
 							((OracleGuiMainFrame)parent).getMainDesktopPane().add(iFrame);
@@ -86,6 +86,7 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 						}
 						frame.getStatusBar().getCurrentStatusLabel().setIcon(null);
 						frame.getStatusBar().getCurrentStatusLabel().setText("");
+						
 					}
 				};
 				new Thread(connRun).start();

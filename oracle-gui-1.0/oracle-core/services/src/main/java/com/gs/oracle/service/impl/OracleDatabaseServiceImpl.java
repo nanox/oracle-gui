@@ -3,6 +3,7 @@
  */
 package com.gs.oracle.service.impl;
 
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -70,12 +71,22 @@ public class OracleDatabaseServiceImpl implements OracleDatabaseService {
 	public Database getDatabase(ConnectionProperties connectionProperties)
 			throws ApplicationException {
 		Database db = null;
+		Connection connection = null;
 		try {
-			db = oracleDbGrabber.grabDatabase(connectionProperties.getConnection(), 
+			connection = connectionProperties.getDataSource().getConnection();
+			db = oracleDbGrabber.grabDatabase(connection, 
 					connectionProperties.getDatabaseName());
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}
+		if(connection != null){
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		return db;
 	}

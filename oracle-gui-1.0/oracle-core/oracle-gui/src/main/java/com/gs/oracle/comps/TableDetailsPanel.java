@@ -24,17 +24,20 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 
 	private JTabbedPane tableDetailsTabbedPane;
 	private String tableName;
+	private String schemaName;
 	private ConnectionProperties connectionProperties;
 	
-	public TableDetailsPanel(String tableName) {
-		this(tableName, null);
+	public TableDetailsPanel(String schemaName, String tableName) {
+		this(schemaName, tableName, null);
 	}
 	
 
-	public TableDetailsPanel(String tableName,
+	public TableDetailsPanel(String schemaName, String tableName,
 			ConnectionProperties connectionProperties) {
+		this.schemaName = schemaName;
 		this.tableName = tableName;
 		this.connectionProperties = connectionProperties;
+		this.connectionProperties.setDatabaseName(schemaName);
 		initComponents();
 	}
 
@@ -46,7 +49,8 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 		tableDetailsTabbedPane.addTab("Data", new ImageIcon(
 				TableDetailsPanel.class
 						.getResource(OracleGuiConstants.IMAGE_PATH
-								+ "table_data.gif")), new JPanel());
+								+ "table_data.gif")), 
+								new TableDataPanel(getSchemaName(), getTableName(), getConnectionProperties()));
 		tableDetailsTabbedPane.addTab("Columns",new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
@@ -109,6 +113,16 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 
 	public void setConnectionProperties(ConnectionProperties connectionProperties) {
 		this.connectionProperties = connectionProperties;
+	}
+
+
+	public String getSchemaName() {
+		return schemaName;
+	}
+
+
+	public void setSchemaName(String schemaName) {
+		this.schemaName = schemaName;
 	}
 
 }

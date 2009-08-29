@@ -24,6 +24,7 @@ import com.gs.oracle.BaseDbModel;
 public class Table extends BaseDbModel implements Serializable {
 
 	private List<Column> columnlist;
+	private String schemaName;
 	
 	public Table() {
 		columnlist = new ArrayList<Column>();
@@ -34,7 +35,7 @@ public class Table extends BaseDbModel implements Serializable {
 	 */
 	public Column getPrimaryKeyColumn(){
 		for (Column column : columnlist) {
-			if(column.isPrimaryKey()){
+			if(column.getPrimaryKey()){
 				return column;
 			}
 		}
@@ -47,7 +48,7 @@ public class Table extends BaseDbModel implements Serializable {
 	 */
 	public boolean hasPrimaryKey(){
 		for (Column column : columnlist) {
-			if(column.isPrimaryKey()){
+			if(column.getPrimaryKey()){
 				return true;
 			}
 		}
@@ -62,6 +63,12 @@ public class Table extends BaseDbModel implements Serializable {
 		this.columnlist = columnlist;
 	}
 	
+	public String getSchemaName() {
+		return schemaName;
+	}
+	public void setSchemaName(String schemaName) {
+		this.schemaName = schemaName;
+	}
 	@Override
 	public String toString() {
 		return super.getModelName();
