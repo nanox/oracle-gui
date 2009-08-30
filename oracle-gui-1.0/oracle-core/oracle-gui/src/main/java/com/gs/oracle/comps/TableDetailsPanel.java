@@ -71,7 +71,7 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 		tableDetailsTabbedPane.addTab("DDL", new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "generate_ddl.gif")),new JPanel());
+						+ "generate_ddl.gif")),new DDLGenerationPanel(getTableName(), getConnectionProperties()));
 
 		setLayout(new BorderLayout());
 

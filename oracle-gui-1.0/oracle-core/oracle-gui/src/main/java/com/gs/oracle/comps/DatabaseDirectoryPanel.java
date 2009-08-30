@@ -6,6 +6,7 @@ package com.gs.oracle.comps;
 import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
@@ -21,6 +22,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
@@ -51,13 +53,44 @@ import com.gs.oracle.util.MenuBarUtil;
 public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		OracleGuiConstants, TreeSelectionListener, MouseListener{
 
+	private static final ImageIcon EXPAND_IMAGE = new ImageIcon(DatabaseDirectoryPanel.class
+			.getResource(OracleGuiConstants.IMAGE_PATH
+					+ "expand.gif"));
+	private static final ImageIcon EXPAND_ALL_IMAGE = new ImageIcon(DatabaseDirectoryPanel.class
+			.getResource(OracleGuiConstants.IMAGE_PATH
+					+ "expandall.gif"));
+	private static final ImageIcon COLLAPSE_IMAGE = new ImageIcon(DatabaseDirectoryPanel.class
+			.getResource(OracleGuiConstants.IMAGE_PATH
+					+ "collapse.gif"));
+	private static final ImageIcon COLLAPSE_ALL_IMAGE = new ImageIcon(DatabaseDirectoryPanel.class
+			.getResource(OracleGuiConstants.IMAGE_PATH
+					+ "collapseall.gif"));
+	
 	private JComponent parentComponent;
 	
 	private DatabaseDirectoryTree databaseDirectoryTree;
-	protected TreePath m_clickedPath;
-	private JPopupMenu dbDirectoryTreePopup;
-	private JMenuItem expandCollaspMenuItem, viewTableDetailsMenuItem;
+	protected TreePath mouseClickedTreePath;
+	private JPopupMenu dbDirectoryTreePopupMenu, commonPopupMenu, columnPopupMenu, tablePopupMenu,
+						folderPopupMenu, schemaPopupMenu;
+	private JMenuItem expandCollaspMenuItem, renameObjectMenuItem, viewTableDetailsMenuItem,
+						dropObjectMenuItem, commentObjectMenuItem;
+	
+	private JMenuItem renameColumnMenuItem, dropColumnMenuItem, commentColumnMenuItem;
+	
 	private ConnectionProperties connectionProperties;
+	
+	private JMenuItem expandCollaspTableMenuItem, renameTableMenuItem,
+		dropTableMenuItem, commentTableMenuItem, openTableDetailsMenuItem, showTableContentMenuItem,
+		importDataToTableMenuItem, modifyTableMenuItem, truncateTableMenuItem,
+		copyTableMenuItem, exportDataToInsertScriptMenuItem, exportDataToLoaderMenuItem,
+		exportDataToCsvMenuItem, exportDataToHtmlMenuItem, exportDataToTextMenuItem,
+		exportDataToExcelMenuItem, exportDataToXmlMenuItem, exportDdlToFileMenuItem,
+		exportDdlToClipBoardMenuItem, exportDdlToSqlTabMenuItem;
+	private JMenu editTableMenu, exportTableDataMenu, exportTableDdlMenu;
+	
+	private JMenuItem addTableMenuItem, expandCollapseFolderMenuItem, expandCollapseSchemaMenuItem,
+		expandCollapseAllFolderMenuItem, expandCollapseAllSchemaMenuItem;
+	
 	
 	public DatabaseDirectoryPanel(DatabaseDirectoryTree tree, ConnectionProperties connectionProperties) {
 		if(tree == null)
@@ -73,68 +106,211 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 	private void initComponents(){
 		refreshTreeButton = new JButton();
 		databaseDirectoryToolBar = new JToolBar();
-		dbDirectoryTreePopup = new JPopupMenu();
+		dbDirectoryTreePopupMenu = new JPopupMenu();
+		
+		
+// menu items		
 		expandCollaspMenuItem = new JMenuItem("Expand");
-		viewTableDetailsMenuItem = new JMenuItem("Table Details");
-		
-		dbDirectoryTreePopup.addPopupMenuListener(new PopupMenuListener(){
-
-			@Override
-			public void popupMenuCanceled(PopupMenuEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void popupMenuWillBecomeInvisible(PopupMenuEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void popupMenuWillBecomeVisible(PopupMenuEvent e) {
-				directoryTreePopupPopupMenuWillBecomeVisible(e);
-			}
-
-		});
-		dbDirectoryTreePopup.addComponentListener(new ComponentListener(){
-
-			@Override
-			public void componentHidden(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void componentMoved(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void componentResized(ComponentEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-
-			@Override
-			public void componentShown(ComponentEvent e) {
-				directoryTreePopupComponentShown(e);
-			}
-			
-		});
-		getDatabaseDirectoryTree().add(dbDirectoryTreePopup);
-		
+		expandCollaspMenuItem.setIcon(EXPAND_IMAGE);
 		expandCollaspMenuItem.addActionListener(this);
-        getDatabaseDirectoryTree().add(expandCollaspMenuItem);
-        getDatabaseDirectoryTree().add(new JSeparator());
-        
-        viewTableDetailsMenuItem.addActionListener(this);
+		
+		viewTableDetailsMenuItem = new JMenuItem("Table Details");
+		viewTableDetailsMenuItem.addActionListener(this);
         viewTableDetailsMenuItem.setIcon(new ImageIcon(getClass()
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "sampleContents.gif")));
-        getDatabaseDirectoryTree().add(viewTableDetailsMenuItem);
+        
+		renameObjectMenuItem = new JMenuItem("Rename");
+		renameObjectMenuItem.addActionListener(this);
+		renameObjectMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "correction_linked_rename.gif")));
 		
+		dropObjectMenuItem = new JMenuItem("Drop");
+		dropObjectMenuItem.addActionListener(this);
+		dropObjectMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "drop.gif")));
+		
+		commentObjectMenuItem = new JMenuItem("Comment");
+		commentObjectMenuItem.addActionListener(this);
+		commentObjectMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "comments.gif")));
+		
+		renameColumnMenuItem = new JMenuItem("Rename");
+		renameColumnMenuItem.addActionListener(this);
+		renameColumnMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "correction_linked_rename.gif")));
+		
+		dropColumnMenuItem = new JMenuItem("Drop");
+		dropColumnMenuItem.addActionListener(this);
+		dropColumnMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "drop.gif")));
+		
+		commentColumnMenuItem = new JMenuItem("Comment");
+		commentColumnMenuItem.addActionListener(this);
+		commentColumnMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "comments.gif")));
+		
+		columnPopupMenu = new JPopupMenu();
+		columnPopupMenu.add(renameColumnMenuItem);
+		columnPopupMenu.add(dropColumnMenuItem);
+		columnPopupMenu.add(new JSeparator());
+		columnPopupMenu.add(commentColumnMenuItem);
+		
+		expandCollaspTableMenuItem = new JMenuItem("Expand");
+		expandCollaspTableMenuItem.addActionListener(this);
+		expandCollaspTableMenuItem.setIcon(EXPAND_IMAGE);
+		
+		openTableDetailsMenuItem = new JMenuItem("Open");
+		openTableDetailsMenuItem.addActionListener(this);
+		openTableDetailsMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "openTable.gif")));
+		showTableContentMenuItem = new JMenuItem("Show Content");
+		showTableContentMenuItem.addActionListener(this);
+		showTableContentMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "sampleContents.gif")));
+		importDataToTableMenuItem = new JMenuItem("Import Data");
+		importDataToTableMenuItem.addActionListener(this);
+		importDataToTableMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "appclient_import_wiz.gif")));
+		modifyTableMenuItem = new JMenuItem("Modify");
+		modifyTableMenuItem.addActionListener(this);
+		modifyTableMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "edit.gif")));
+		renameTableMenuItem = new JMenuItem("Rename");
+		renameTableMenuItem.addActionListener(this);
+		renameTableMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "correction_linked_rename.gif")));
+		
+		dropTableMenuItem = new JMenuItem("Drop");
+		dropTableMenuItem.addActionListener(this);
+		dropTableMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "drop.gif")));
+		
+		commentTableMenuItem = new JMenuItem("Comment");
+		commentTableMenuItem.addActionListener(this);
+		commentTableMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "comments.gif")));
+		truncateTableMenuItem = new JMenuItem("Truncate");
+		truncateTableMenuItem.addActionListener(this);
+		/*truncateTableMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "edit.gif")));*/
+		copyTableMenuItem = new JMenuItem("Copy");
+		copyTableMenuItem.addActionListener(this);
+		copyTableMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "copy_edit.gif")));
+		exportDataToInsertScriptMenuItem = new JMenuItem("Insert Script");
+		exportDataToInsertScriptMenuItem.addActionListener(this);
+		
+		exportDataToLoaderMenuItem = new JMenuItem("Sql Loader");
+		exportDataToLoaderMenuItem.addActionListener(this);
+		
+		exportDataToCsvMenuItem = new JMenuItem("CSV");
+		exportDataToCsvMenuItem.addActionListener(this);
+		
+		exportDataToHtmlMenuItem = new JMenuItem("HTML");
+		exportDataToHtmlMenuItem.addActionListener(this);
+		
+		exportDataToTextMenuItem = new JMenuItem("Text");
+		exportDataToTextMenuItem.addActionListener(this);
+		
+		exportDataToExcelMenuItem = new JMenuItem("Excel");
+		exportDataToExcelMenuItem.addActionListener(this);
+		
+		exportDataToXmlMenuItem = new JMenuItem("Xml");
+		exportDataToXmlMenuItem.addActionListener(this);
+		
+		exportDdlToFileMenuItem = new JMenuItem("To File");
+		exportDdlToFileMenuItem.addActionListener(this);
+		
+		exportDdlToClipBoardMenuItem = new JMenuItem("To Clipboard");
+		exportDdlToClipBoardMenuItem.addActionListener(this);
+		
+		exportDdlToSqlTabMenuItem = new JMenuItem("To Sql Tab");
+		exportDdlToSqlTabMenuItem.addActionListener(this);
+		
+		editTableMenu = new JMenu("Edit");
+		editTableMenu.add(modifyTableMenuItem);
+		editTableMenu.add(new JSeparator());
+		editTableMenu.add(renameTableMenuItem);
+		editTableMenu.add(dropTableMenuItem);
+		editTableMenu.add(truncateTableMenuItem);
+		editTableMenu.add(new JSeparator());
+		editTableMenu.add(commentTableMenuItem);
+		editTableMenu.add(copyTableMenuItem);
+
+		exportTableDataMenu = new JMenu("Export Data");
+		exportTableDataMenu.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "export_wiz.gif")));
+		exportTableDataMenu.add(exportDataToInsertScriptMenuItem);
+		exportTableDataMenu.add(exportDataToLoaderMenuItem);
+		exportTableDataMenu.add(new JSeparator());
+		exportTableDataMenu.add(exportDataToCsvMenuItem);
+		exportTableDataMenu.add(exportDataToHtmlMenuItem);
+		exportTableDataMenu.add(exportDataToTextMenuItem);
+		exportTableDataMenu.add(exportDataToExcelMenuItem);
+		exportTableDataMenu.add(new JSeparator());
+		exportTableDataMenu.add(exportDataToXmlMenuItem);
+		
+		exportTableDdlMenu = new JMenu("Export DDL");
+		exportTableDdlMenu.add(exportDdlToFileMenuItem);
+		exportTableDdlMenu.add(exportDdlToClipBoardMenuItem);
+		exportTableDdlMenu.add(new JSeparator());
+		exportTableDdlMenu.add(exportDdlToSqlTabMenuItem);
+		
+		tablePopupMenu = new JPopupMenu();
+		tablePopupMenu.add(expandCollaspTableMenuItem);
+		tablePopupMenu.add(new JSeparator());
+		tablePopupMenu.add(openTableDetailsMenuItem);
+		tablePopupMenu.add(showTableContentMenuItem);
+		tablePopupMenu.add(new JSeparator());
+		tablePopupMenu.add(editTableMenu);
+		tablePopupMenu.add(new JSeparator());
+		tablePopupMenu.add(importDataToTableMenuItem);
+		tablePopupMenu.add(new JSeparator());
+		tablePopupMenu.add(exportTableDataMenu);
+		tablePopupMenu.add(exportTableDdlMenu);
+		
+		
+		expandCollapseFolderMenuItem = new JMenuItem("Expand");
+		expandCollapseFolderMenuItem.setIcon(EXPAND_IMAGE);
+		expandCollapseFolderMenuItem.addActionListener(this);
+		expandCollapseAllFolderMenuItem = new JMenuItem("Expand All");
+		expandCollapseAllFolderMenuItem.setIcon(EXPAND_ALL_IMAGE);
+		expandCollapseAllFolderMenuItem.addActionListener(this);
+		addTableMenuItem = new JMenuItem("Add Table");
+		addTableMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "add_obj.gif")));
+		addTableMenuItem.addActionListener(this);
+		
+		folderPopupMenu  = new JPopupMenu();
+		folderPopupMenu.add(expandCollapseFolderMenuItem);
+		folderPopupMenu.add(expandCollapseAllFolderMenuItem);
+		folderPopupMenu.add(new JSeparator());
+		folderPopupMenu.add(addTableMenuItem);
+		
+		//getDatabaseDirectoryTree().add(dbDirectoryTreePopupMenu);
+		//getDatabaseDirectoryTree().add(columnPopupMenu);
+		//getDatabaseDirectoryTree().add(tablePopupMenu);
+		
+		
+        
 		databaseDirectoryToolBar.setFloatable(false);
 		setLayout(new GridBagLayout());
 		Icon image = null;
@@ -171,9 +347,41 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource().equals(refreshTreeButton)){
+		if(GuiCommandConstants.EXPAND_PATH_ACTION.equalsIgnoreCase(e.getActionCommand())){
+			if (mouseClickedTreePath == null) {
+                return;
+            }
+            if (!getDatabaseDirectoryTree().isExpanded(mouseClickedTreePath)) {
+                getDatabaseDirectoryTree().expandPath(mouseClickedTreePath);
+            }
+		}else if(GuiCommandConstants.COLLAPSE_PATH_ACTION.equalsIgnoreCase(e.getActionCommand())){
+			if (mouseClickedTreePath == null) {
+                return;
+            }
+            if (getDatabaseDirectoryTree().isExpanded(mouseClickedTreePath)) {
+            	getDatabaseDirectoryTree().collapsePath(mouseClickedTreePath);
+            }
+		}else if(e.getSource().equals(refreshTreeButton)){
 			reloadDatabaseTree();
+		}else if(e.getSource().equals(openTableDetailsMenuItem)){
+			openTableFromTreePath(mouseClickedTreePath);
 		}
+	}
+	
+	public void openTableFromTreePath(TreePath clickedPath){
+		DefaultMutableTreeNode node = getDatabaseDirectoryTree().getTreeNode(clickedPath);
+        if(node == null)
+            return;
+        DatabaseNode dbNode = getDatabaseDirectoryTree().getDatabaseNode(node);
+        if (dbNode == null) {
+            return;
+        }
+        if(dbNode instanceof TableNode){
+        	Table table = ((TableNode)dbNode).getTable();
+			if(table != null){
+				openTableDetails(table);
+			}
+        }
 	}
 
 	public void reloadDatabaseTree(){
@@ -182,8 +390,8 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 					connectionProperties.getDataSource().getConnection(), 
 					connectionProperties.getDatabaseName());
 			databaseDirectoryTree.reload(db);
-			if(m_clickedPath != null){
-				databaseDirectoryTree.expandPath(m_clickedPath);
+			if(mouseClickedTreePath != null){
+				databaseDirectoryTree.expandPath(mouseClickedTreePath);
 				databaseDirectoryTree.updateUI();
 			}
 		} catch (SQLException e) {
@@ -218,7 +426,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
             TreePath p = getDatabaseDirectoryTree().getSelectionPath();
             if(p==null)
                 return;
-            m_clickedPath = p;
+            mouseClickedTreePath = p;
             DefaultMutableTreeNode node = getDatabaseDirectoryTree().getTreeNode(p);
             if(node == null)
                 return;
@@ -296,8 +504,51 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
+		if(e.isPopupTrigger()){
+			int x = e.getX();
+            int y = e.getY();
+            TreePath path = getDatabaseDirectoryTree().getPathForLocation(x, y);
+            if (path == null) {
+                return;
+            }
+            mouseClickedTreePath = path;
+            DefaultMutableTreeNode node = getDatabaseDirectoryTree().getTreeNode(path);
+            if (node == null) {
+                return;
+            }
+            DatabaseNode dbNode = getDatabaseDirectoryTree().getDatabaseNode(node);
+            if(dbNode == null){
+            	return;
+            } else {
+            	getDatabaseDirectoryTree().remove(tablePopupMenu);
+            	getDatabaseDirectoryTree().remove(columnPopupMenu);
+            	if(dbNode instanceof TableNode){
+            		if (getDatabaseDirectoryTree().isExpanded(path)) {
+            			expandCollaspTableMenuItem.setText("Collapse");
+            			expandCollaspTableMenuItem.setIcon(COLLAPSE_IMAGE);
+            			expandCollaspTableMenuItem.setActionCommand(GuiCommandConstants.COLLAPSE_PATH_ACTION);
+                    } else {
+                    	expandCollaspTableMenuItem.setText("Expand");
+                    	expandCollaspTableMenuItem.setIcon(EXPAND_IMAGE);
+                    	expandCollaspTableMenuItem.setActionCommand(GuiCommandConstants.EXPAND_PATH_ACTION);
+                    }
+            		tablePopupMenu.show(getDatabaseDirectoryTree(), x, y);
+            	} else if(dbNode instanceof ColumnNode){
+            		columnPopupMenu.show(getDatabaseDirectoryTree(), x, y);
+            	} else if(dbNode instanceof FolderNode){
+            		if (getDatabaseDirectoryTree().isExpanded(path)) {
+            			expandCollapseFolderMenuItem.setText("Collapse");
+            			expandCollapseFolderMenuItem.setIcon(COLLAPSE_IMAGE);
+            			expandCollapseFolderMenuItem.setActionCommand(GuiCommandConstants.COLLAPSE_PATH_ACTION);
+                    } else {
+                    	expandCollapseFolderMenuItem.setText("Expand");
+                    	expandCollapseFolderMenuItem.setIcon(EXPAND_IMAGE);
+                    	expandCollapseFolderMenuItem.setActionCommand(GuiCommandConstants.EXPAND_PATH_ACTION);
+                    }
+            		folderPopupMenu.show(getDatabaseDirectoryTree(), x, y);
+            	}
+            }
+		}
 	}
 	
 	private void directoryTreePopupPopupMenuWillBecomeVisible(PopupMenuEvent evt) {                                                              

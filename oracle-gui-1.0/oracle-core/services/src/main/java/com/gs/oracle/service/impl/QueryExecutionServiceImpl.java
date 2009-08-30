@@ -3,6 +3,8 @@
  */
 package com.gs.oracle.service.impl;
 
+import java.io.BufferedReader;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -69,6 +71,41 @@ public class QueryExecutionServiceImpl implements QueryExecutionService {
 			throws ApplicationException {
 		
 		return null;
+	}
+	
+	public String generateDdlForTable(String tableName) throws ApplicationException{
+		if(getConnectionProperties() == null){
+			throw new ApplicationException("Cannot process : insufficient details.");
+		}
+		String query = "SELECT DBMS_METADATA.GET_DDL('TABLE','" + tableName
+			+"') FROM dual";
+		Connection con = null;
+		StringBuffer ddlBuffer = new StringBuffer();
+		try{
+			con = getConnectionProperties().getDataSource().getConnection();
+			Statement statement = con.createStatement();
+			ResultSet rs = statement.executeQuery(query);
+			Clob clob = null;
+			while(rs.next()){
+				clob = rs.getClob(1);
+			}
+			if(clob != null){
+				BufferedReader br = new BufferedReader(
+						clob.getCharacterStream());
+				int count = 0;
+				char[] cbuf = new char[100];
+				while((count = br.read(cbuf, 0, cbuf.length)) >= 0){
+					ddlBuffer.append(cbuf, 0, count);
+				}
+			}
+		}catch(SQLException e){
+			
+		}catch(Exception e){
+			
+		}finally{
+			
+		}
+		return ddlBuffer.toString();
 	}
 
 	public ConnectionProperties getConnectionProperties() {

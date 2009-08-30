@@ -21,4 +21,6 @@ public interface QueryExecutionService {
 	
 	public ResultSet executeSelect(SqlQuery sqlQuery) throws ApplicationException;
 	
+	public String generateDdlForTable(String tableName) throws ApplicationException;
+	
 }
