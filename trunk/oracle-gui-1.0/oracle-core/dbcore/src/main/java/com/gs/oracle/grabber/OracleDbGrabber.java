@@ -11,6 +11,7 @@
  *****************************************************************************/
 package com.gs.oracle.grabber;
 
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -23,6 +24,7 @@ import java.util.Set;
 
 import javax.naming.ldap.HasControls;
 
+import com.gs.oracle.ColumnMetaDataEnum;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.model.Schema;
@@ -148,21 +150,35 @@ public class OracleDbGrabber {
 		int cc = rsm.getColumnCount();
 		while(colRs.next()){
 			Column c = new Column();
+			//set table name
 			c.setTableName(tableName);
-			c.setModelName(colRs.getString("COLUMN_NAME"));
+			// set column name
+			c.setModelName(colRs.getString(ColumnMetaDataEnum.COLUMN_NAME.getCode()));
+			// set PK
 			if(c.getModelName().equalsIgnoreCase(pkColName)){
 				c.setPrimaryKey(true);
 			}
+			// set FK
 			if(fkColSet.contains(c.getModelName())){
 				c.setForeignKey(true);
 			}
-			c.setTypeName(colRs.getString("TYPE_NAME"));
-			String nulAble = colRs.getString("IS_NULLABLE");
-			if("YES".equalsIgnoreCase(nulAble)){
+			// set type name
+			c.setTypeName(colRs.getString(ColumnMetaDataEnum.TYPE_NAME.getCode()));
+			// set nullable
+			String nulAble = colRs.getString(ColumnMetaDataEnum.IS_NULLABLE.getCode());
+			if(ColumnMetaDataEnum.IS_NULLABLE_YES.getCode().equalsIgnoreCase(nulAble)){
 				c.setNullable(true);
 			}else{
 				c.setNullable(false);
 			}
+			// set sql type
+			c.setDataType(colRs.getInt(ColumnMetaDataEnum.SQL_DATA_TYPE.getCode()));
+			// set column id
+			c.setColumnID(colRs.getInt(ColumnMetaDataEnum.ORDINAL_POSITION.getCode()));
+			// set size
+			c.setSize(colRs.getInt(ColumnMetaDataEnum.COLUMN_SIZE.getCode()));
+			// set default value
+			c.setDefaultValue(colRs.getString(ColumnMetaDataEnum.COLUMN_DEF.getCode()));
 			list.add(c);
 		}
 		if(colRs != null){
@@ -170,5 +186,7 @@ public class OracleDbGrabber {
 		}
 		return list;
 	}
+	
+	
 	
 }

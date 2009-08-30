@@ -21,6 +21,11 @@ public class ApplicationException extends Exception {
 		this.code = "UNKNOWN";
 	}
 
+	public ApplicationException(String string) {
+		super(string);
+		message = string; 
+	}
+
 	public String getCode() {
 		return code;
 	}
