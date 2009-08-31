@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/"
+	debug="true">
+
+	<appender name="APP_LOG" class="org.apache.log4j.RollingFileAppender">
+		<param name="file" value="./logs/app/Application.log" />
+		<param name="MaxFileSize" value="8000KB" />
+		<param name="maxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{dd-MMM-yy HH:mm:ss} %-5p %C{1} %m%n" />
+		</layout>
+	</appender>
+
+	<category name="com.gs.oracle">
+		<priority value="DEBUG" />
+		<appender-ref ref="APP_LOG" />
+	</category>
+</log4j:configuration>

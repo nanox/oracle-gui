@@ -8,10 +8,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyChangeEvent;
-import java.beans.PropertyChangeListener;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,15 +21,13 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 
+import org.apache.log4j.Logger;
+
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
-import com.gs.oracle.connection.OracleConnectionUtil;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.model.Column;
-import com.gs.oracle.model.Database;
-import com.gs.oracle.model.Schema;
 import com.gs.oracle.model.Table;
-import com.gs.oracle.util.ConnectionUtil;
 import com.gs.oracle.util.MenuBarUtil;
 
 /**
@@ -42,15 +37,22 @@ import com.gs.oracle.util.MenuBarUtil;
 public class ColumnDetailsPanel extends JPanel implements ActionListener,
 		OracleGuiConstants {
 
+	private static final Logger logger = Logger.getLogger(ColumnDetailsPanel.class);
+	
 	private JButton refreshButton, addColumnButton, editColumnButton, dropColumnButton;
 	private JTable columDetailsTable;
 	private JToolBar columnToolBar;
-	private String tableName;
+	private String tableName,schemaName;
 	private ConnectionProperties connectionProperties;
 	private ResultSetTableModelFactory factory;
 	
-	public ColumnDetailsPanel(String tableName, ConnectionProperties connectionProperties) {
+	public ColumnDetailsPanel(String schemaName, String tableName, ConnectionProperties connectionProperties) {
+		if(logger.isDebugEnabled()){
+			logger.debug("Populating column details for Table : " + 
+					schemaName + "." +tableName );
+		}
 		this.tableName = tableName;
+		this.schemaName = schemaName;
 		this.connectionProperties = connectionProperties;
 		initComponents();
 	}
@@ -117,27 +119,16 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 		OracleDbGrabber dbGrabber = new OracleDbGrabber();
 		Connection conn = null;
 		try {
-			conn = OracleConnectionUtil.getConnection(connectionProperties);//connectionProperties.getDataSource().getConnection();
-			Database db = dbGrabber.grabDatabase(conn, connectionProperties.getDatabaseName());
-			/*dbGrabber.getColumnList(connectionProperties.getDatabaseName(), 
-					tableName, conn)*/
-			List<Column> cl = new ArrayList<Column>();
-			List<Schema> sL = db.getSchemaList();
-			for (Schema s : sL) {
-				if(connectionProperties.getDatabaseName().equalsIgnoreCase(s.getModelName())){
-					List<Table> lT = s.getTableList();
-					for (Table t : lT) {
-						if(tableName.equalsIgnoreCase(t.getModelName())){
-							cl = t.getColumnlist();
-							break;
-						}
-					}
+			conn = connectionProperties.getDataSource().getConnection();
+			Table table = dbGrabber.grabTable(conn, schemaName, tableName);
+			List<Column> columnList = new ArrayList<Column>();
+			if(table != null){
+				if(columnList != null){
+					columnList = table.getColumnlist();
 				}
 			}
-			
-			
 			columDetailsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			columDetailsTable.setModel(new ColumnDetailsTableModel(cl));
+			columDetailsTable.setModel(new ColumnDetailsTableModel(columnList));
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -154,26 +145,7 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 			}
 		}
 		
-		/*columDetailsTable.addPropertyChangeListener(new PropertyChangeListener(){
-
-			@Override
-			public void propertyChange(PropertyChangeEvent evt) {
-				OracleDbGrabber dbGrabber = new OracleDbGrabber();
-				try {
-					ResultSet rs = dbGrabber.grabColumnDetails(connectionProperties.getDatabaseName(), 
-							tableName, connectionProperties.getConnection());
-					int colCount = dbGrabber.grabColumnCount(connectionProperties.getDatabaseName(), 
-							tableName, connectionProperties.getConnection());
-					factory = new ResultSetTableModelFactory(connectionProperties.getConnection());
-					columDetailsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-					columDetailsTable.setModel(factory.getResultSetTableModel(rs, colCount));
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-			
-		});*/
+		
 		add(new JScrollPane(columDetailsTable), gridBagConstraints);
 		
 	}
@@ -201,6 +173,14 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 
 	public void setConnectionProperties(ConnectionProperties connectionProperties) {
 		this.connectionProperties = connectionProperties;
+	}
+
+	public String getSchemaName() {
+		return schemaName;
+	}
+
+	public void setSchemaName(String schemaName) {
+		this.schemaName = schemaName;
 	}
 
 }
