@@ -28,7 +28,7 @@ public class QueryExecutionServiceImpl implements QueryExecutionService {
 		connectionProperties = properties;
 	}
 	
-	@Override
+	
 	public int executeNonQuery(SqlQuery sqlQuery) throws ApplicationException {
 		if(connectionProperties == null){
 			return 0;
@@ -57,7 +57,7 @@ public class QueryExecutionServiceImpl implements QueryExecutionService {
 		return update;
 	}
 
-	@Override
+	
 	public void executeBatch(List<SqlQuery> queryList)
 			throws ApplicationException {
 		if(connectionProperties == null){
@@ -66,7 +66,7 @@ public class QueryExecutionServiceImpl implements QueryExecutionService {
 		
 	}
 
-	@Override
+	
 	public ResultSet executeSelect(SqlQuery sqlQuery)
 			throws ApplicationException {
 		

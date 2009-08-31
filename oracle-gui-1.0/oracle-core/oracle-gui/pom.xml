@@ -12,7 +12,7 @@
 	<packaging>jar</packaging>
 	<description>OracleGUI-Application</description>
 
-	
+
 	<dependencies>
 		<dependency>
 			<groupId>com.gs.oracle</groupId>
@@ -39,9 +39,14 @@
 			<artifactId>jedit-syntax</artifactId>
 			<version>2.2.2</version>
 		</dependency>
+		<dependency>
+			<groupId>log4j</groupId>
+			<artifactId>log4j</artifactId>
+			<version>1.2.14</version>
+		</dependency>
 	</dependencies>
 
-	
+
 
 	<build>
 		<plugins>
@@ -49,8 +54,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.0</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
 				</configuration>
 			</plugin>
 			<plugin>

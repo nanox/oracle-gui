@@ -3,12 +3,16 @@
  */
 package com.gs.oracle.comps;
 
+import java.io.IOException;
+import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
+
+import com.gs.oracle.jdbc.JdbcUtil;
 
 /**
  * @author sabuj.das
@@ -55,7 +59,14 @@ public class ResultSetTableModel implements TableModel{
 
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-		return String.class;
+		Class type = String.class;
+		try {
+			int columnType = resultSetMetaData.getColumnType(columnIndex + 1);
+			type = JdbcUtil.getJavaClassForSqlType(columnType);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return type;
 	}
 
 	@Override
@@ -94,11 +105,18 @@ public class ResultSetTableModel implements TableModel{
 			Object o = resultSet.getObject(columnIndex + 1); // Get value of the column
 			if (o == null)
 				return null;
+			else if(o instanceof Blob){
+				return JdbcUtil.readFromBlob((Blob)o).toString();
+			}
 			else
-				return o.toString(); // Convert it to a string
+				return o;
 		} catch (SQLException e) {
 			return e.toString();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
+		return "";
 	}
 
 	@Override

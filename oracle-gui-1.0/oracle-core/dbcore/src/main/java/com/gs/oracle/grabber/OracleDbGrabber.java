@@ -11,7 +11,6 @@
  *****************************************************************************/
 package com.gs.oracle.grabber;
 
-import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
@@ -22,7 +21,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.naming.ldap.HasControls;
+import oracle.jdbc.driver.OracleTypes;
 
 import com.gs.oracle.ColumnMetaDataEnum;
 import com.gs.oracle.model.Column;
@@ -71,7 +70,8 @@ public class OracleDbGrabber {
 					try{
 						t.setColumnlist(getColumnList(s.getModelName(), t.getModelName(), connection));
 					}catch(Exception e){
-						
+						System.err.println("Table : " + t.getModelName() );
+						e.printStackTrace();
 					}
 					
 					s.getTableList().add(t);
@@ -123,6 +123,33 @@ public class OracleDbGrabber {
 			count ++;
 		}
 		return count;
+	}
+	
+	public Table grabTable(Connection connection, String schemaName, String tableName){
+		Table table = new Table();
+		table.setModelName(tableName);
+		try{
+			DatabaseMetaData meta = connection.getMetaData();
+			ResultSet ret = meta.getTables("", schemaName, tableName, new String[] {"TABLE"});
+			while(ret.next()){
+				String tn = ret.getString("TABLE_NAME");
+				
+				
+				table.setSchemaName(schemaName);
+				table.setModelName(tn);
+				if(tn.startsWith("BIN$"))
+					table.setDeleted(true);
+				try{
+					table.setColumnlist(getColumnList(schemaName, table.getModelName(), connection));
+				}catch(Exception e){
+					System.err.println("Table : " + table.getModelName() );
+					e.printStackTrace();
+				}
+			}
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		return table;
 	}
 	
 	public List<Column> getColumnList(String schemaName, String tableName, Connection connection) throws SQLException{
@@ -178,7 +205,7 @@ public class OracleDbGrabber {
 			// set size
 			c.setSize(colRs.getInt(ColumnMetaDataEnum.COLUMN_SIZE.getCode()));
 			// set default value
-			c.setDefaultValue(colRs.getString(ColumnMetaDataEnum.COLUMN_DEF.getCode()));
+			//c.setDefaultValue(colRs.getString(ColumnMetaDataEnum.COLUMN_DEF.getCode()));
 			list.add(c);
 		}
 		if(colRs != null){

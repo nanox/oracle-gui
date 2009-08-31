@@ -34,6 +34,8 @@ import com.gs.oracle.dlg.StatusBar;
 import com.gs.oracle.util.MenuBarUtil;
 import com.gs.oracle.util.WindowUtil;
 
+import org.apache.log4j.Logger;
+
 /**
  * @author Green Moon
  *
@@ -44,7 +46,7 @@ public class OracleGuiMainFrame extends JFrame {
 	 *  Generated serialVersionUID
 	 */
 	private static final long serialVersionUID = -2179986000548903441L;
-	
+	private static final Logger logger = Logger.getLogger(OracleGuiMainFrame.class);
 	
 	private JDesktopPane mainDesktopPane;
     private JMenuBar mainMenuBar;
@@ -58,6 +60,7 @@ public class OracleGuiMainFrame extends JFrame {
     private StatusBar statusBar;
 
 	public OracleGuiMainFrame() {
+		logger.info("Starting application.");
 		initComponents();
 		setInitialProperties();
 	}
@@ -73,6 +76,7 @@ public class OracleGuiMainFrame extends JFrame {
 	}
 	
 	private void initComponents() {
+		logger.info("Starting init components.");
         java.awt.GridBagConstraints gridBagConstraints;
 
         mainPanel = new JPanel();
@@ -132,6 +136,7 @@ public class OracleGuiMainFrame extends JFrame {
         setJMenuBar(mainMenuBar);
 
         pack();
+        logger.info("Init components done.");
     }
 
 	private void addMenubarComponents() {
