@@ -5,14 +5,8 @@ package com.gs.oracle.dlg;
 
 import java.awt.GridBagConstraints;
 
-import javax.swing.JButton;
-import javax.swing.JDesktopPane;
 import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
-import javax.swing.JToolBar;
-import javax.swing.WindowConstants;
 
 /**
  * @author Green Moon

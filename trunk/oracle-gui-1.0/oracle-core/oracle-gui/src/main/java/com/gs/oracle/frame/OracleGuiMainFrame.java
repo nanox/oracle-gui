@@ -14,27 +14,23 @@ package com.gs.oracle.frame;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.Image;
 
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
-import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
 
+import org.apache.log4j.Logger;
+
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.comps.MenuBarItems;
 import com.gs.oracle.comps.ToolbarButtons;
 import com.gs.oracle.dlg.StatusBar;
-import com.gs.oracle.util.MenuBarUtil;
 import com.gs.oracle.util.WindowUtil;
-
-import org.apache.log4j.Logger;
 
 /**
  * @author Green Moon

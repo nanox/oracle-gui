@@ -7,7 +7,6 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.sql.SQLException;
-import java.util.List;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -19,9 +18,7 @@ import javax.swing.JToolBar;
 
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
-import com.gs.oracle.connection.OracleConnectionUtil;
 import com.gs.oracle.grabber.OracleDbGrabber;
-import com.gs.oracle.model.Column;
 import com.gs.oracle.util.MenuBarUtil;
 
 /**
@@ -30,7 +27,8 @@ import com.gs.oracle.util.MenuBarUtil;
  */
 public class TableDataPanel extends JPanel {
 
-	private JButton refreshButton, addRecordButton, editRecordButton, deleteRecordButton;
+	private JButton refreshButton, addRecordButton, editRecordButton, deleteRecordButton,
+		filterDataButton;
 	private JTable dataTable;
 	private JToolBar dataToolBar;
 	private String tableName, schemaName;
@@ -59,9 +57,10 @@ public class TableDataPanel extends JPanel {
 		Insets insets = null;
 		
 		refreshButton = new JButton();
-		addRecordButton = new JButton("+");
-		editRecordButton = new JButton("E");
-		deleteRecordButton = new JButton("-");
+		addRecordButton = new JButton();
+		editRecordButton = new JButton();
+		deleteRecordButton = new JButton();
+		filterDataButton = new JButton();
 		dataToolBar = new JToolBar();
 		dataTable = new JTable();
 
@@ -77,19 +76,29 @@ public class TableDataPanel extends JPanel {
 		dataToolBar.add(new JToolBar.Separator());
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "execution_obj.gif"));
-		//addColumnButton.setIcon(image);
+						+ "add_plus.png"));
+		addRecordButton.setIcon(image);
+		addRecordButton.setFocusable(false);
 		dataToolBar.add(addRecordButton);
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "execution_obj.gif"));
-		//editColumnButton.setIcon(image);
+						+ "editor_area.gif"));
+		editRecordButton.setIcon(image);
+		editRecordButton.setFocusable(false);
 		dataToolBar.add(editRecordButton);
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "execution_obj.gif"));
-		//dropColumnButton.setIcon(image);
+						+ "delete_edit.gif"));
+		deleteRecordButton.setIcon(image);
+		deleteRecordButton.setFocusable(false);
 		dataToolBar.add(deleteRecordButton);
+		dataToolBar.add(new JToolBar.Separator());
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "systemfilterpool.gif"));
+		filterDataButton.setIcon(image);
+		filterDataButton.setFocusable(false);
+		dataToolBar.add(filterDataButton);
 		
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -116,7 +125,14 @@ public class TableDataPanel extends JPanel {
 		try {
 			String query = "SELECT * FROM " + schemaName + "." + tableName.toUpperCase();
 			dataTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			dataTable.setCellSelectionEnabled(true);
 			dataTable.setModel(resultSetTableModelFactory.getResultSetTableModel(query));
+			/*JTextField textField = new JTextField();
+			//textField.setEditable(false);
+	        textField.setBorder(BorderFactory.createEmptyBorder());
+	        DefaultCellEditor editor = new DefaultCellEditor(textField);
+	        editor.setClickCountToStart(1);
+			dataTable.setCellEditor(new StringActionTableCellEditor(editor));*/
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

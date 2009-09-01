@@ -13,7 +13,6 @@ import javax.swing.JTabbedPane;
 
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
-import com.gs.oracle.util.MenuBarUtil;
 
 /**
  * @author sabuj.das

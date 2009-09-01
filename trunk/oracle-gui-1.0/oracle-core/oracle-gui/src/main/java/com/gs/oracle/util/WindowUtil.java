@@ -16,8 +16,6 @@ import java.awt.Dimension;
 import java.awt.Point;
 import java.awt.Toolkit;
 
-import javax.swing.JFrame;
-
 /**
  * @author Green Moon
  *

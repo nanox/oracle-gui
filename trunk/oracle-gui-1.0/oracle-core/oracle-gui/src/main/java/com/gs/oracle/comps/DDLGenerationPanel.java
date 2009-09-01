@@ -32,7 +32,6 @@ import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.service.QueryExecutionService;
 import com.gs.oracle.service.impl.QueryExecutionServiceImpl;
 import com.gs.oracle.sql.SqlDocument;
-import com.gs.oracle.util.MenuBarUtil;
 
 /**
  * @author Green Moon

@@ -17,7 +17,6 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 
 import javax.swing.ImageIcon;
-import javax.swing.JComponent;
 import javax.swing.JFrame;
 
 import com.gs.oracle.ApplicationException;
@@ -30,7 +29,6 @@ import com.gs.oracle.service.DatabaseConnectionService;
 import com.gs.oracle.service.impl.DatabaseConnectionServiceImpl;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
-import com.gs.oracle.util.MenuBarUtil;
 import com.gs.oracle.util.WindowUtil;
 
 /**

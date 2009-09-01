@@ -6,9 +6,7 @@ package com.gs.oracle.comps;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
-import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.util.List;
 import java.util.Vector;
 
@@ -16,25 +14,20 @@ import javax.swing.Action;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
-import javax.swing.event.TreeExpansionEvent;
-import javax.swing.event.TreeExpansionListener;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Database;
-import com.gs.oracle.model.OracleDataType;
 import com.gs.oracle.model.Schema;
 import com.gs.oracle.model.Table;
 

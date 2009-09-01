@@ -6,13 +6,11 @@ package com.gs.oracle.iframe;
 import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
@@ -23,12 +21,10 @@ import com.gs.oracle.comps.DatabaseDirectoryPanel;
 import com.gs.oracle.comps.DatabaseDirectoryTree;
 import com.gs.oracle.comps.ResultSetTableModelFactory;
 import com.gs.oracle.comps.SqlQueryPanel;
-import com.gs.oracle.comps.TableDetailsPanel;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.service.OracleDatabaseService;
 import com.gs.oracle.service.impl.OracleDatabaseServiceImpl;
-import com.gs.oracle.util.MenuBarUtil;
 
 /**
  * @author sabuj.das
