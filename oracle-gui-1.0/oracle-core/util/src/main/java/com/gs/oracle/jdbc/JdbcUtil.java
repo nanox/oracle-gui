@@ -101,6 +101,7 @@ public class JdbcUtil {
 				break;
 			case Types.CHAR:
 			case Types.VARCHAR:
+			case Types.BLOB:
 				clazz =  java.lang.String.class;
 				break;
 			case Types.DATE:
@@ -115,12 +116,6 @@ public class JdbcUtil {
 			case Types.NUMERIC:
 				clazz =  java.lang.Long.class;
 				break;
-			case Types.BLOB:
-				clazz =  java.sql.Blob.class;
-				break;
-			case Types.CLOB:
-				clazz =  java.sql.Clob.class;
-				break;
 			
 			default:
 				clazz =  java.lang.String.class;
@@ -128,6 +123,7 @@ public class JdbcUtil {
 		}
 		return clazz;
 	}
+	
 	public static String readFromBlob(Blob data) throws SQLException, IOException {
 		if(data == null){
 			return "";
@@ -136,11 +132,11 @@ public class JdbcUtil {
 		BufferedInputStream bi = new BufferedInputStream(
 				data.getBinaryStream());
 		int count = 0;
-		byte[] cbuf = new byte[100];
-		while((count = bi.read(cbuf, 0, cbuf.length)) >= 0){
-			ddlBuffer.append(new String(cbuf, 0, count));
+		byte[] buffer = new byte[100];
+		while((count = bi.read(buffer, 0, buffer.length)) >= 0){
+			ddlBuffer.append(new String(buffer, 0, count, "UTF8"));
 		}
-		return null;
+		return ddlBuffer.toString();
 	}
 	
 }

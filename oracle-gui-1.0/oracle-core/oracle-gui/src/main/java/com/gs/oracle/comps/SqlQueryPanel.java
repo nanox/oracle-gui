@@ -14,15 +14,11 @@ import java.awt.FontFormatException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.StringReader;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -36,7 +32,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.KeyStroke;
 
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
@@ -532,6 +527,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 				public void run() {
 					try {
 						queryResultTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+						queryResultTable.setCellSelectionEnabled(true);
 						queryResultTable.setModel(factory.getResultSetTableModel(q));
 						queryResultTabbedPane.setSelectedIndex(0);
 					} catch (SQLException ex) {

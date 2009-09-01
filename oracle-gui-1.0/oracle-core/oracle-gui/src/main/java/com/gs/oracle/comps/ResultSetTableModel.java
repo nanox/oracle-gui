@@ -3,6 +3,8 @@
  */
 package com.gs.oracle.comps;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.sql.Blob;
 import java.sql.ResultSet;
@@ -12,13 +14,14 @@ import java.sql.SQLException;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.jdbc.JdbcUtil;
 
 /**
  * @author sabuj.das
  *
  */
-public class ResultSetTableModel implements TableModel{
+public class ResultSetTableModel implements TableModel, ActionListener{
 	
 	private ResultSet resultSet;
 	private ResultSetMetaData resultSetMetaData;
@@ -106,22 +109,17 @@ public class ResultSetTableModel implements TableModel{
 			if (o == null)
 				return null;
 			else if(o instanceof Blob){
-				return JdbcUtil.readFromBlob((Blob)o).toString();
+				return "BLOB [view is not implemented.]";
 			}
 			else
 				return o;
 		} catch (SQLException e) {
-			return e.toString();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		return "";
+			return e.getMessage();
+		} 
 	}
 
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
@@ -156,4 +154,93 @@ public class ResultSetTableModel implements TableModel{
 		}
 	}
 
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if(GuiCommandConstants.VIEW_BLOB_TEXT_ACT_CMD.equals(e.getActionCommand())){
+			Blob data = ((BlobButton)e.getSource()).getBlobData();
+			try {
+				String s = JdbcUtil.readFromBlob(data);
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
+		
+	}
+
 }
+/*
+class JTableButtonRenderer implements TableCellRenderer {
+	private TableCellRenderer defaultRenderer;
+
+	public JTableButtonRenderer(TableCellRenderer renderer) {
+		defaultRenderer = renderer;
+	}
+
+	public Component getTableCellRendererComponent(JTable table, Object value,
+			boolean isSelected, boolean hasFocus, int row, int column) {
+		if (value instanceof Component)
+			return (Component) value;
+		return defaultRenderer.getTableCellRendererComponent(table, value,
+				isSelected, hasFocus, row, column);
+	}
+}
+
+class JTableButtonMouseListener implements MouseListener {
+	private JTable table;
+	
+
+	private void forwardEventToButton(MouseEvent e) {
+		TableColumnModel columnModel = table.getColumnModel();
+		int column = columnModel.getColumnIndexAtX(e.getX());
+		int row = e.getY() / table.getRowHeight();
+		Object value;
+		JButton button;
+		MouseEvent buttonEvent;
+
+		if (row >= table.getRowCount() || row < 0
+				|| column >= table.getColumnCount() || column < 0)
+			return;
+
+		value = table.getValueAt(row, column);
+
+		if (!(value instanceof JButton))
+			return;
+
+		button = (JButton) value;
+
+		buttonEvent = (MouseEvent) SwingUtilities.convertMouseEvent(table, e,
+				button);
+		button.dispatchEvent(buttonEvent);
+		// This is necessary so that when a button is pressed and released
+		// it gets rendered properly. Otherwise, the button may still appear
+		// pressed down when it has been released.
+		table.repaint();
+	}
+
+	public JTableButtonMouseListener(JTable table) {
+		this.table = table;
+	}
+
+	public void mouseClicked(MouseEvent e) {
+		forwardEventToButton(e);
+	}
+
+	public void mouseEntered(MouseEvent e) {
+		forwardEventToButton(e);
+	}
+
+	public void mouseExited(MouseEvent e) {
+		forwardEventToButton(e);
+	}
+
+	public void mousePressed(MouseEvent e) {
+		forwardEventToButton(e);
+	}
+
+	public void mouseReleased(MouseEvent e) {
+		forwardEventToButton(e);
+	}
+}
+*/

@@ -30,7 +30,6 @@ import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
@@ -39,7 +38,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.command.GuiEventHandler;
 import com.gs.oracle.connection.ConnectionProperties;
@@ -197,7 +195,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(1, 1, 1, 1);
 		httpHostPanel.add(jLabel3, gridBagConstraints);
 
-		hostAddrTextField.setText("localhost");
+		hostAddrTextField.setText("db001");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridwidth = 3;
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -212,7 +210,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(1, 1, 1, 1);
 		httpHostPanel.add(jLabel4, gridBagConstraints);
 
-		userNameTextField.setText("rnd_user");
+		userNameTextField.setText("pos_user");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 1;
@@ -229,7 +227,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(1, 1, 1, 1);
 		httpHostPanel.add(jLabel5, gridBagConstraints);
 
-		pwdPasswordField.setText("rnd_user");
+		pwdPasswordField.setText("pos_user");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 2;
@@ -287,7 +285,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(1, 1, 1, 1);
 		httpHostPanel.add(charSetComboBox, gridBagConstraints);
 
-		sidTextField.setText("XE");
+		sidTextField.setText("BK53DV01");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 4;
@@ -341,7 +339,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
 		gridBagConstraints.insets = new Insets(1, 1, 1, 1);
 		httpHostPanel.add(new JLabel("Schema Name"), gridBagConstraints);
-		schemaNameTextField = new JTextField("rnd_user");
+		schemaNameTextField = new JTextField("POS_OWNER");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 6;

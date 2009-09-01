@@ -44,4 +44,6 @@ public interface GuiCommandConstants {
     
     String VIEW_TABLE_DETAILS_ACT_CMD	= "VIEW_TABLE_DETAILS_ACT_CMD";
     
+    String VIEW_BLOB_TEXT_ACT_CMD		= "VIEW_BLOB_TEXT_ACT_CMD";
+    
 }

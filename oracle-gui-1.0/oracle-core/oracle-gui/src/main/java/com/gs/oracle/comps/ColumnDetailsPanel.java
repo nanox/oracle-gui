@@ -3,6 +3,8 @@
  */
 package com.gs.oracle.comps;
 
+
+
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -128,7 +130,9 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 				}
 			}
 			columDetailsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			columDetailsTable.setCellSelectionEnabled(true);
 			columDetailsTable.setModel(new ColumnDetailsTableModel(columnList));
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

@@ -11,7 +11,6 @@ import java.util.List;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
-import com.gs.oracle.model.Column;
 import com.gs.oracle.model.ColumnHeader;
 
 /**
