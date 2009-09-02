@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
+    "http://castor.org/mapping.dtd">
+
+<mapping>
+	<class name="com.gs.oracle.connection.ConnectionPropertiesCatalog">
+		<map-to xml="oracle-connections" />
+		<field name="connectionPropertiesList" 
+			type="com.gs.oracle.connection.ConnectionProperties"
+			collection="collection">
+			<bind-xml name="oracle-connection"/>
+		</field>
+	</class>
+	
+	<class name="com.gs.oracle.connection.ConnectionProperties">
+		<map-to xml="oracle-connection" />
+		
+		<field name="connectionName" type="string">
+			<bind-xml name="connection-name" node="attribute" />
+		</field>
+		<field name="userName" type="string">
+			<bind-xml name="user-name" node="element" />
+		</field>
+		<field name="password" type="string">
+			<bind-xml name="password" node="element" />
+		</field>
+		<field name="savePassword" type="boolean">
+			<bind-xml name="save-password" node="element" />
+		</field>
+		<field name="isModified" type="boolean">
+			<bind-xml name="is-modified" node="element" />
+		</field>
+		<field name="hostName" type="string">
+			<bind-xml name="host-name" node="element" />
+		</field>
+		<field name="portNumber" type="integer">
+			<bind-xml name="port-number" node="element" />
+		</field>
+		<field name="sid" type="string">
+			<bind-xml name="sid" node="element" />
+		</field>
+		<field name="serviceName" type="string">
+			<bind-xml name="service-name" node="element" />
+		</field>
+		<field name="databaseName" type="string">
+			<bind-xml name="database-name" node="element" />
+		</field>
+		<field name="displayOrder" type="integer">
+			<bind-xml name="display-order" node="element" />
+		</field>
+	</class>
+	
+	
+</mapping>

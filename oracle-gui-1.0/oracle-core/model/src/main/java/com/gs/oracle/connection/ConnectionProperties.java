@@ -12,7 +12,7 @@ import javax.sql.DataSource;
  * @author Green Moon
  * 
  */
-public class ConnectionProperties implements Serializable {
+public class ConnectionProperties implements Serializable, Comparable<ConnectionProperties> {
 
 	/**
 	 * 
@@ -22,107 +22,26 @@ public class ConnectionProperties implements Serializable {
 	private String connectionName;
 	private String userName;
 	private String password;
-	private boolean savePassword;
-	private DatabaseTypeEnum databaseType;
+	private Boolean savePassword;
 	private String hostName;
-	private int portNumber;
+	private Integer portNumber;
 	private String sid;
 	private String serviceName;
 	private String databaseName;
-	private DataSource dataSource;
+	private Integer displayOrder = 0;
+	private Boolean isModified = Boolean.TRUE;
+	
+	private transient DataSource dataSource;
 	
 	
-	public DataSource getDataSource() {
-		return dataSource;
+	public ConnectionProperties() {
+		setConnectionName("UN-NAMED");
 	}
-
-	public void setDataSource(DataSource dataSource) {
-		this.dataSource = dataSource;
-	}
-
 	public ConnectionProperties(String connectionName) {
 		this.connectionName = connectionName;
 	}
 
-	public String getConnectionName() {
-		return connectionName;
-	}
 
-	public void setConnectionName(String connectionName) {
-		this.connectionName = connectionName;
-	}
-
-	public String getUserName() {
-		return userName;
-	}
-
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public boolean isSavePassword() {
-		return savePassword;
-	}
-
-	public void setSavePassword(boolean savePassword) {
-		this.savePassword = savePassword;
-	}
-
-	public DatabaseTypeEnum getDatabaseType() {
-		return databaseType;
-	}
-
-	public void setDatabaseType(DatabaseTypeEnum databaseType) {
-		this.databaseType = databaseType;
-	}
-
-	public String getHostName() {
-		return hostName;
-	}
-
-	public void setHostName(String hostName) {
-		this.hostName = hostName;
-	}
-
-	public int getPortNumber() {
-		return portNumber;
-	}
-
-	public void setPortNumber(int portNumber) {
-		this.portNumber = portNumber;
-	}
-
-	public String getSid() {
-		return sid;
-	}
-
-	public void setSid(String sid) {
-		this.sid = sid;
-	}
-
-	public String getServiceName() {
-		return serviceName;
-	}
-
-	public void setServiceName(String serviceName) {
-		this.serviceName = serviceName;
-	}
-	
-	public String getDatabaseName() {
-		return databaseName;
-	}
-
-	public void setDatabaseName(String databaseName) {
-		this.databaseName = databaseName;
-	}
 
 	@Override
 	public int hashCode() {
@@ -148,6 +67,83 @@ public class ConnectionProperties implements Serializable {
 		} else if (!connectionName.equals(other.connectionName))
 			return false;
 		return true;
+	}
+
+	@Override
+	public int compareTo(ConnectionProperties o) {
+		return this.displayOrder.compareTo(o.getDisplayOrder());
+	}
+	public String getConnectionName() {
+		return connectionName;
+	}
+	public void setConnectionName(String connectionName) {
+		this.connectionName = connectionName;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getPassword() {
+		return password;
+	}
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	public Boolean getSavePassword() {
+		return savePassword;
+	}
+	public void setSavePassword(Boolean savePassword) {
+		this.savePassword = savePassword;
+	}
+	public String getHostName() {
+		return hostName;
+	}
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
+	}
+	public Integer getPortNumber() {
+		return portNumber;
+	}
+	public void setPortNumber(Integer portNumber) {
+		this.portNumber = portNumber;
+	}
+	public String getSid() {
+		return sid;
+	}
+	public void setSid(String sid) {
+		this.sid = sid;
+	}
+	public String getServiceName() {
+		return serviceName;
+	}
+	public void setServiceName(String serviceName) {
+		this.serviceName = serviceName;
+	}
+	public String getDatabaseName() {
+		return databaseName;
+	}
+	public void setDatabaseName(String databaseName) {
+		this.databaseName = databaseName;
+	}
+	public DataSource getDataSource() {
+		return dataSource;
+	}
+	public void setDataSource(DataSource dataSource) {
+		this.dataSource = dataSource;
+	}
+	public void setDisplayOrder(Integer displayOrder) {
+		this.displayOrder = displayOrder;
+	}
+	public Integer getDisplayOrder() {
+		return displayOrder;
+	}
+	public Boolean getIsModified() {
+		return isModified;
+	}
+	public void setIsModified(Boolean isModified) {
+		this.isModified = isModified;
 	}
 
 	

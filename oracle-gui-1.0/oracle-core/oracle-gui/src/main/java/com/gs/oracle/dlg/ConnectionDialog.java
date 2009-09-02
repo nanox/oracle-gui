@@ -20,6 +20,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Vector;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -40,7 +44,10 @@ import javax.swing.WindowConstants;
 
 import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.command.GuiEventHandler;
+import com.gs.oracle.common.StringUtil;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.connection.ConnectionPropertiesCatalog;
+import com.gs.oracle.util.ConnectionPropertiesRWUtil;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
 
@@ -55,10 +62,20 @@ public class ConnectionDialog extends JDialog {
 	 */
 	private static final long serialVersionUID = -2433429146983917444L;
 	private JTextField schemaNameTextField;
-	
+	private ConnectionPropertiesCatalog catalog; 
+	private Vector<String> connectionNames = new Vector<String>();
 	
 	public ConnectionDialog(JFrame parent, boolean modal) {
 		super(parent, modal);
+		catalog = ConnectionPropertiesRWUtil.getInstance().getCatalog();
+		if(catalog != null){
+			int i = 0;
+			for (ConnectionProperties p : catalog.getConnectionPropertiesList()) {
+				connectionNames.add(p.getConnectionName());
+				i++;
+			}
+		}
+		setSize(400, 300);
 		initComponents();
 		setResizable(false);
 		setTitle("Connect to Oracle Database");
@@ -75,7 +92,7 @@ public class ConnectionDialog extends JDialog {
 		saveConnectionButton = new JButton();
 		deleteConnectionButton = new JButton();
 		jLabel2 = new JLabel();
-		jComboBox1 = new JComboBox();
+		connectionNamesComboBox = new JComboBox();
 		editConnNameButton = new JButton();
 		settingsTabbedPane = new JTabbedPane();
 		httpHostPanel = new JPanel();
@@ -128,6 +145,7 @@ public class ConnectionDialog extends JDialog {
 		parentPanel.add(newConnectionButton, gridBagConstraints);
 
 		saveConnectionButton.setText("Save");
+		saveConnectionButton.setEnabled(false);
 		saveConnectionButton
 				.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -158,11 +176,11 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
 		parentPanel.add(jLabel2, gridBagConstraints);
 
-		jComboBox1.setModel(new DefaultComboBoxModel(new String[] {
-				"Item 1", "Item 2", "Item 3", "Item 4" }));
-		jComboBox1.addActionListener(new ActionListener() {
+		connectionNamesComboBox.setModel(new DefaultComboBoxModel(connectionNames));
+		
+		connectionNamesComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
-				jComboBox1ActionPerformed(evt);
+				connectionNamesComboBoxActionPerformed(evt);
 			}
 		});
 		gridBagConstraints = new GridBagConstraints();
@@ -171,7 +189,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
-		parentPanel.add(jComboBox1, gridBagConstraints);
+		parentPanel.add(connectionNamesComboBox, gridBagConstraints);
 
 		editConnNameButton.setText("Edit ...");
 		editConnNameButton
@@ -260,6 +278,8 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 3;
+		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.insets = new Insets(1, 1, 1, 1);
 		httpHostPanel.add(portTextField, gridBagConstraints);
 
@@ -473,12 +493,44 @@ public class ConnectionDialog extends JDialog {
 	private void newConnectionButtonActionPerformed(
 			ActionEvent evt) {
 		String name = DisplayUtils.readString("Enter a new connection name:");
-		DisplayUtils.displayMessage(this.getParent(), name,DisplayTypeEnum.ERROR);
+		if(!StringUtil.hasValidContent(name)){
+			DisplayUtils.displayMessage(this.getParent(), 
+					"Please enter a valid connection name.",DisplayTypeEnum.ERROR);
+			return;
+		}
+		ConnectionProperties p = new ConnectionProperties(name);
+		populateConnectionProperties(p);
+		catalog.add(p);
+		connectionNames.add(name);
+		connectionNamesComboBox.setModel(new DefaultComboBoxModel(connectionNames));
+		connectionNamesComboBox.setSelectedItem(name);
+		if(catalog.isConnPropModified()){
+			saveConnectionButton.setEnabled(true);
+		}else{
+			saveConnectionButton.setEnabled(false);
+		}
 	}
 
 	private void saveConnectionButtonActionPerformed(
 			ActionEvent evt) {
-		// TODO add your handling code here:
+		String name = connectionNamesComboBox.getSelectedItem().toString();
+		ConnectionProperties p = catalog.getByName(name);
+		populatePropsToConnProps(p);
+		ConnectionPropertiesRWUtil.getInstance().saveCatalog(catalog);
+	}
+	
+	private void populatePropsToConnProps(ConnectionProperties properties){
+		properties.setHostName(hostAddrTextField.getText());
+		try{
+			properties.setPortNumber(Integer.parseInt(portTextField.getText()));
+		}catch(Exception e){
+			properties.setPortNumber(1521);
+		}
+		properties.setUserName(userNameTextField.getText());
+		properties.setPassword(pwdPasswordField.getText());
+		properties.setSid(sidTextField.getText());
+		properties.setServiceName(serviceNameTextField.getText());
+		properties.setDatabaseName(schemaNameTextField.getText());
 	}
 
 	private void deleteConnectionButtonActionPerformed(
@@ -486,8 +538,27 @@ public class ConnectionDialog extends JDialog {
 		// TODO add your handling code here:
 	}
 
-	private void jComboBox1ActionPerformed(ActionEvent evt) {
-		// TODO add your handling code here:
+	private void connectionNamesComboBoxActionPerformed(ActionEvent evt) {
+		String name = connectionNamesComboBox.getSelectedItem().toString();
+		ConnectionProperties p = catalog.getByName(name);
+		if(p != null){
+			populateConnectionProperties(p);
+		}
+	}
+	
+	private void populateConnectionProperties(ConnectionProperties p){
+		hostAddrTextField.setText(p.getHostName());
+		portTextField.setText(""+p.getPortNumber());
+		userNameTextField.setText(p.getUserName());
+		pwdPasswordField.setText(p.getPassword());
+		if(StringUtil.hasValidContent(p.getSid())){
+			sidTextField.setText(p.getSid());
+			SIDRadioButton.setSelected(true);
+		}else if(StringUtil.hasValidContent(p.getServiceName())){
+			serviceNameTextField.setText(p.getServiceName());
+			serviceNameRadioButton.setSelected(true);
+		}
+		schemaNameTextField.setText(p.getDatabaseName());
 	}
 
 	private void editConnNameButtonActionPerformed(
@@ -524,7 +595,7 @@ public class ConnectionDialog extends JDialog {
 	private JButton editConnNameButton;
 	private JTextField hostAddrTextField;
 	private JPanel httpHostPanel;
-	private JComboBox jComboBox1;
+	private JComboBox connectionNamesComboBox;
 	private JLabel jLabel1;
 	private JLabel jLabel2;
 	private JLabel jLabel3;
