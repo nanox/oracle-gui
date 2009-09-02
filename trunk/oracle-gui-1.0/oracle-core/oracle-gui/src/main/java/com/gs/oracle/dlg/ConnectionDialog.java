@@ -517,6 +517,7 @@ public class ConnectionDialog extends JDialog {
 		ConnectionProperties p = catalog.getByName(name);
 		populatePropsToConnProps(p);
 		ConnectionPropertiesRWUtil.getInstance().saveCatalog(catalog);
+		saveConnectionButton.setEnabled(false);
 	}
 	
 	private void populatePropsToConnProps(ConnectionProperties properties){
@@ -535,7 +536,16 @@ public class ConnectionDialog extends JDialog {
 
 	private void deleteConnectionButtonActionPerformed(
 			ActionEvent evt) {
-		// TODO add your handling code here:
+		String name = connectionNamesComboBox.getSelectedItem().toString();
+		ConnectionProperties p = catalog.getByName(name);
+		catalog.getConnectionPropertiesList().remove(p);
+		connectionNames.remove(name);
+		connectionNamesComboBox.setModel(new DefaultComboBoxModel(connectionNames));
+		connectionNamesComboBox.setSelectedIndex(0);
+		for (ConnectionProperties prop : catalog.getConnectionPropertiesList()) {
+			prop.setDisplayOrder(prop.getDisplayOrder() - 1);
+		}
+		ConnectionPropertiesRWUtil.getInstance().saveCatalog(catalog);
 	}
 
 	private void connectionNamesComboBoxActionPerformed(ActionEvent evt) {
