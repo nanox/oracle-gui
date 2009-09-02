@@ -11,9 +11,21 @@
 			<param name="ConversionPattern" value="%d{dd-MMM-yy HH:mm:ss} %-5p %C{1} %m%n" />
 		</layout>
 	</appender>
+	<appender name="CASTOR_LOG" class="org.apache.log4j.RollingFileAppender">
+		<param name="file" value="./logs/app/Castor.log" />
+		<param name="MaxFileSize" value="8000KB" />
+		<param name="maxBackupIndex" value="10" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d{dd-MMM-yy HH:mm:ss} %-5p %C{1} %m%n" />
+		</layout>
+	</appender>
 
 	<category name="com.gs.oracle">
 		<priority value="DEBUG" />
 		<appender-ref ref="APP_LOG" />
+	</category>
+	<category name="org.exolab.castor">
+		<priority value="DEBUG" />
+		<appender-ref ref="CASTOR_LOG" />
 	</category>
 </log4j:configuration>
