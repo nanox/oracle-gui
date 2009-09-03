@@ -7,7 +7,7 @@ package com.gs.oracle;
  * @author sabuj.das
  * 
  */
-public enum ImportedKeyMetaDataEnum {
+public enum ForeignKeyMetaDataEnum {
 
 	PKTABLE_CAT("PKTABLE_CAT"), 
 	PKTABLE_SCHEM("PKTABLE_SCHEM"), 
@@ -26,7 +26,7 @@ public enum ImportedKeyMetaDataEnum {
 
 	private String code;
 
-	private ImportedKeyMetaDataEnum(String code) {
+	private ForeignKeyMetaDataEnum(String code) {
 		this.code = code;
 	}
 
