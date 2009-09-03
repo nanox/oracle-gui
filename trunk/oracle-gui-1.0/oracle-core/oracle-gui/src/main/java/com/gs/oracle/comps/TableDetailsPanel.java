@@ -13,6 +13,7 @@ import javax.swing.JTabbedPane;
 
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.graph.TableDependencyPanel;
 
 /**
  * @author sabuj.das
@@ -62,7 +63,8 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 		tableDetailsTabbedPane.addTab("Dependencies",new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "dependency.gif")), new JPanel());
+						+ "dependency.gif")), 
+				new TableDependencyPanel());
 		tableDetailsTabbedPane.addTab("Indexes",new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH

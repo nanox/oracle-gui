@@ -23,11 +23,16 @@ import com.gs.oracle.BaseDbModel;
  */
 public class Table extends BaseDbModel implements Serializable {
 
+	private PrimaryKey primaryKey;
 	private List<Column> columnlist;
+	private List<ForeignKey> importedKeys;
+	private List<ForeignKey> exportedKeys;
 	private String schemaName;
 	
 	public Table() {
 		columnlist = new ArrayList<Column>();
+		importedKeys = new ArrayList<ForeignKey>();
+		exportedKeys = new ArrayList<ForeignKey>();
 	}
 	/**
 	 * Returns the primary key column.
@@ -72,6 +77,24 @@ public class Table extends BaseDbModel implements Serializable {
 	@Override
 	public String toString() {
 		return super.getModelName();
+	}
+	public PrimaryKey getPrimaryKey() {
+		return primaryKey;
+	}
+	public void setPrimaryKey(PrimaryKey primaryKey) {
+		this.primaryKey = primaryKey;
+	}
+	public List<ForeignKey> getImportedKeys() {
+		return importedKeys;
+	}
+	public void setImportedKeys(List<ForeignKey> importedKeys) {
+		this.importedKeys = importedKeys;
+	}
+	public List<ForeignKey> getExportedKeys() {
+		return exportedKeys;
+	}
+	public void setExportedKeys(List<ForeignKey> exportedKeys) {
+		this.exportedKeys = exportedKeys;
 	}
 	
 }

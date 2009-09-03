@@ -26,6 +26,7 @@ import oracle.jdbc.driver.OracleTypes;
 import com.gs.oracle.ColumnMetaDataEnum;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Database;
+import com.gs.oracle.model.PrimaryKey;
 import com.gs.oracle.model.Schema;
 import com.gs.oracle.model.Table;
 
@@ -214,6 +215,10 @@ public class OracleDbGrabber {
 		return list;
 	}
 	
-	
+	public PrimaryKey grabPrimaryKey(Connection connection, String schemaName, String tableName){
+		PrimaryKey pk = null;
+		
+		return pk;
+	}
 	
 }
