@@ -45,9 +45,9 @@
 			<version>1.2.14</version>
 		</dependency>
 		<dependency>
-			<groupId>org.codehaus.castor</groupId>
+			<groupId>castor</groupId>
 			<artifactId>castor</artifactId>
-			<version>1.1.2.1</version>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>sax</groupId>
@@ -56,8 +56,8 @@
 		</dependency>
 		<dependency>
 			<groupId>xerces</groupId>
-			<artifactId>xerces</artifactId>
-			<version>2.4.0</version>
+			<artifactId>xercesImpl</artifactId>
+			<version>2.9.1</version>
 		</dependency>
 	</dependencies>
 
@@ -110,9 +110,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
-	<properties>
-		<libs.dir>D:/SVN_HOME/MY_PROJECTS/oracle-gui/trunk/oracle-gui-1.0/setup/app/libs</libs.dir>
-	</properties>
 </project>
