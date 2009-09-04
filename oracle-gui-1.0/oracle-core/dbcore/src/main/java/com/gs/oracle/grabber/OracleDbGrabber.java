@@ -159,21 +159,17 @@ public class OracleDbGrabber {
 	public List<Column> getColumnList(String schemaName, String tableName, Connection connection) throws SQLException{
 		List<Column> list = new ArrayList<Column>();
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
-		String pkColName = grabPrimaryKey(connection, schemaName, tableName).getColumnName(); 
-		/*ResultSet pkRs = databaseMetaData.getPrimaryKeys("", schemaName, tableName);
-		while(pkRs.next()){
-			pkColName = pkRs.getString("COLUMN_NAME");
+		
+		List<PrimaryKey> pkList = grabPrimaryKeys(connection, schemaName, tableName);
+		Set<String> pkColSet = new HashSet<String>();
+		for (PrimaryKey pk : pkList) {
+			pkColSet.add(pk.getColumnName());
 		}
-		if(pkRs != null){
-			pkRs.close();
-		}*/
+		
 		Set<String> fkColSet = new HashSet<String>();
-		ResultSet fkRs = databaseMetaData.getImportedKeys("", schemaName, tableName);
-		while(fkRs.next()){
-			fkColSet.add(fkRs.getString("FKCOLUMN_NAME"));
-		}
-		if(fkRs != null){
-			fkRs.close();
+		List<ForeignKey> importedKeys = grabImportedKeys(connection, schemaName, tableName);
+		for (ForeignKey fk : importedKeys) {
+			fkColSet.add(fk.getFkColumnName());
 		}
 		
 		ResultSet colRs = databaseMetaData.getColumns("", schemaName, tableName, "%");
@@ -186,7 +182,7 @@ public class OracleDbGrabber {
 			// set column name
 			c.setModelName(colRs.getString(ColumnMetaDataEnum.COLUMN_NAME.getCode()));
 			// set PK
-			if(c.getModelName().equalsIgnoreCase(pkColName)){
+			if(pkColSet.contains(c.getModelName())){
 				c.setPrimaryKey(true);
 			}
 			// set FK
@@ -218,11 +214,12 @@ public class OracleDbGrabber {
 		return list;
 	}
 	
-	public PrimaryKey grabPrimaryKey(Connection connection, String schemaName, String tableName) throws SQLException{
-		PrimaryKey pk = new PrimaryKey();
+	public List<PrimaryKey> grabPrimaryKeys(Connection connection, String schemaName, String tableName) throws SQLException{
+		List<PrimaryKey> pkList = new ArrayList<PrimaryKey>();
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 		ResultSet pkRs = databaseMetaData.getPrimaryKeys("", schemaName, tableName);
 		while(pkRs.next()){
+			PrimaryKey pk = new PrimaryKey();
 			pk.setTableCat(pkRs.getString(PKMetaDataEnum.TABLE_CAT.getCode()));
 			pk.setTableSchem(pkRs.getString(PKMetaDataEnum.TABLE_SCHEM.getCode()));
 			pk.setTableName(tableName);
@@ -231,39 +228,51 @@ public class OracleDbGrabber {
 			//pk.setDeleted(pkRs.getBoolean(PKMetaDataEnum.))
 			pk.setKeySeq(pkRs.getShort(PKMetaDataEnum.KEY_SEQ.getCode()));
 			//pk.setComments(pkRs.getString(PKMetaDataEnum.comments))
+			pkList.add(pk);
 		}
 		if(pkRs != null){
 			pkRs.close();
 		}
-		return pk;
+		return pkList;
 	}
 	
-	public ForeignKey grabImportedKey(Connection connection, String schemaName, String tableName) throws SQLException{
-		ForeignKey fk = new ForeignKey();
+	public List<ForeignKey> grabImportedKeys(Connection connection, String schemaName, String tableName) throws SQLException{
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 		ResultSet fkRs = databaseMetaData.getImportedKeys("", schemaName, tableName);
-		fk = readFkFromRS(fkRs);
-		return fk;
+		return readFksFromRS(fkRs);
 	}
 	
-	public ForeignKey grabExportedKey(Connection connection, String schemaName, String tableName) throws SQLException{
-		ForeignKey fk = new ForeignKey();
+	public List<ForeignKey> grabExportedKeys(Connection connection, String schemaName, String tableName) throws SQLException{
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 		ResultSet fkRs = databaseMetaData.getExportedKeys("", schemaName, tableName);
-		fk = readFkFromRS(fkRs);
-		return fk;
+		return readFksFromRS(fkRs);
 	}
 	
-	private ForeignKey readFkFromRS(ResultSet fkRs) throws SQLException{
-		ForeignKey fk = new ForeignKey();
+	private List<ForeignKey> readFksFromRS(ResultSet fkRs) throws SQLException{
+		List<ForeignKey> fks = new ArrayList<ForeignKey>();
+		
 		while(fkRs.next()){
+			ForeignKey fk = new ForeignKey();
 			fk.setPkTableCat(fkRs.getString(ForeignKeyMetaDataEnum.PKTABLE_CAT.getCode()));
-			
+			fk.setPkTableSchem(fkRs.getString(ForeignKeyMetaDataEnum.PKTABLE_SCHEM.getCode()));
+			fk.setPkTableName(fkRs.getString(ForeignKeyMetaDataEnum.PKTABLE_NAME.getCode()));
+			fk.setPkColumnName(fkRs.getString(ForeignKeyMetaDataEnum.PKCOLUMN_NAME.getCode()));
+			fk.setFkTableCat(fkRs.getString(ForeignKeyMetaDataEnum.FKTABLE_CAT.getCode()));
+			fk.setFkTableSchem(fkRs.getString(ForeignKeyMetaDataEnum.FKTABLE_SCHEM.getCode()));
+			fk.setFkTableName(fkRs.getString(ForeignKeyMetaDataEnum.FKTABLE_NAME.getCode()));
+			fk.setFkColumnName(fkRs.getString(ForeignKeyMetaDataEnum.FKCOLUMN_NAME.getCode()));
+			fk.setKeySeq(fkRs.getShort(ForeignKeyMetaDataEnum.KEY_SEQ.getCode()));
+			fk.setUpdateRule(fkRs.getShort(ForeignKeyMetaDataEnum.UPDATE_RULE.getCode()));
+			fk.setDeleteRule(fkRs.getShort(ForeignKeyMetaDataEnum.DELETE_RULE.getCode()));
+			fk.setPkName(fkRs.getString(ForeignKeyMetaDataEnum.PK_NAME.getCode()));
+			fk.setFkName(fkRs.getString(ForeignKeyMetaDataEnum.FK_NAME.getCode()));
+			fk.setDeferrability(fkRs.getShort(ForeignKeyMetaDataEnum.DEFERRABILITY.getCode()));
+			fks.add(fk);
 		}
 		if(fkRs != null){
 			fkRs.close();
 		}
-		return fk;
+		return fks;
 	}
 	
 }
