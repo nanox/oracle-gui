@@ -64,7 +64,7 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "dependency.gif")), 
-				new TableDependencyPanel());
+				new TableDependencyPanel(getSchemaName(), getTableName(), getConnectionProperties()));
 		tableDetailsTabbedPane.addTab("Indexes",new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
