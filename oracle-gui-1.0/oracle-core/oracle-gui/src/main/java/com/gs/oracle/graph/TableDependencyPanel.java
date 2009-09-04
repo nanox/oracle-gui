@@ -18,6 +18,8 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -27,19 +29,39 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.grabber.OracleDbGrabber;
+import com.gs.oracle.model.Database;
+import com.gs.oracle.util.MenuBarUtil;
+
 /**
  * @author sabuj.das
  * 
  */
 public class TableDependencyPanel extends JPanel {
 
-	public TableDependencyPanel() {
+	private String schemaName, tableName;
+	private ConnectionProperties connectionProperties;
+
+	private Database database;
+	
+	public TableDependencyPanel(String schemaName, String tableName, ConnectionProperties cp) {
+		this.schemaName = schemaName;
+		this.tableName = tableName;
+		this.connectionProperties = cp;
 		initComponents();
+	}
+
+	private void readCompleteDatabase(){
+		OracleDbGrabber dbGrabber = new OracleDbGrabber();
+		//this.database = dbGrabber.grabDatabase(connection, databaseName);
 	}
 
 	private void initComponents() {
 		GridBagConstraints gridBagConstraints;
-
+		Icon image = null;
+		
 		generateGraphToolBar = new JToolBar();
 		generateGraphButton = new JButton();
 		jSeparator1 = new JToolBar.Separator();
@@ -171,7 +193,12 @@ public class TableDependencyPanel extends JPanel {
 		gridBagConstraints.weightx = 1.0;
 		add(imageViewToolBar, gridBagConstraints);
 
-		loadingLabel.setText("Loading");
+		loadingLabel.setText("");
+		image = new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "loading.gif"));
+		loadingLabel.setIcon(image);
+		loadingLabel.setVisible(false);
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.fill = GridBagConstraints.VERTICAL;
 		gridBagConstraints.anchor = GridBagConstraints.EAST;
@@ -390,5 +417,39 @@ public class TableDependencyPanel extends JPanel {
 	private JTextField zoomPercentTextField;
 	private JScrollPane graphHolderScrollPane;
 	// End of variables declaration
+
+	public String getSchemaName() {
+		return schemaName;
+	}
+
+
+
+	public void setSchemaName(String schemaName) {
+		this.schemaName = schemaName;
+	}
+
+
+
+	public String getTableName() {
+		return tableName;
+	}
+
+
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+
+
+	public ConnectionProperties getConnectionProperties() {
+		return connectionProperties;
+	}
+
+
+
+	public void setConnectionProperties(ConnectionProperties connectionProperties) {
+		this.connectionProperties = connectionProperties;
+	}
 
 }
