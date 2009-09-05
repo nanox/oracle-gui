@@ -3,13 +3,9 @@
  */
 package com.gs.oracle.comps;
 
-
-
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -23,12 +19,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 
-import org.apache.log4j.Logger;
-
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.model.Column;
+import com.gs.oracle.model.Constraint;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.util.MenuBarUtil;
 
@@ -36,76 +31,81 @@ import com.gs.oracle.util.MenuBarUtil;
  * @author sabuj.das
  *
  */
-public class ColumnDetailsPanel extends JPanel implements ActionListener,
-		OracleGuiConstants {
+public class ConstraintsDetailsPanel extends JPanel {
 
-	private static final Logger logger = Logger.getLogger(ColumnDetailsPanel.class);
-	
-	private JButton refreshButton, addColumnButton, editColumnButton, dropColumnButton;
-	private JTable columDetailsTable;
-	private JToolBar columnToolBar;
-	private String tableName,schemaName;
+	private String schemaName; 
+	private String tableName;
 	private ConnectionProperties connectionProperties;
 	
-	public ColumnDetailsPanel(String schemaName, String tableName, ConnectionProperties connectionProperties) {
-		if(logger.isDebugEnabled()){
-			logger.debug("Populating column details for Table : " + 
-					schemaName + "." +tableName );
-		}
+	private JButton refreshButton, addConstraintButton, editConstraintButton, dropConstraintButton;
+	private JTable constraintDetailsTable;
+	private JToolBar constraintToolBar;
+	private ResultSetTableModelFactory resultSetTableModelFactory;
+	
+	public ConstraintsDetailsPanel(String schemaName, String tableName,
+			ConnectionProperties connectionProperties) {
+		this.schemaName = schemaName; 
 		this.tableName = tableName;
-		this.schemaName = schemaName;
 		this.connectionProperties = connectionProperties;
+		
+		try {
+			this.resultSetTableModelFactory = new ResultSetTableModelFactory(
+					connectionProperties.getDataSource().getConnection());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 		initComponents();
 	}
-	
+
 	private void initComponents() {
 		Icon image = null;
 		GridBagConstraints gridBagConstraints = null;
 		Insets insets = null;
 		
 		refreshButton = new JButton();
-		addColumnButton = new JButton("+");
-		editColumnButton = new JButton("E");
-		dropColumnButton = new JButton("-");
-		columnToolBar = new JToolBar();
-		columDetailsTable = new JTable();
+		addConstraintButton = new JButton("+");
+		editConstraintButton = new JButton("E");
+		dropConstraintButton = new JButton("-");
+		constraintToolBar = new JToolBar();
+		constraintDetailsTable = new JTable();
 
 		setLayout(new GridBagLayout());
 		
-		columnToolBar.setFloatable(false);
+		constraintToolBar.setFloatable(false);
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "reload_green.png"));
 		refreshButton.setIcon(image);
 		refreshButton.setFocusable(false);
-		columnToolBar.add(refreshButton);
-		columnToolBar.add(new JToolBar.Separator());
+		constraintToolBar.add(refreshButton);
+		constraintToolBar.add(new JToolBar.Separator());
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "execution_obj.gif"));
 		//addColumnButton.setIcon(image);
-		columnToolBar.add(addColumnButton);
+		constraintToolBar.add(addConstraintButton);
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "execution_obj.gif"));
 		//editColumnButton.setIcon(image);
-		columnToolBar.add(editColumnButton);
+		constraintToolBar.add(editConstraintButton);
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "execution_obj.gif"));
 		//dropColumnButton.setIcon(image);
-		columnToolBar.add(dropColumnButton);
+		constraintToolBar.add(dropConstraintButton);
 		
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.weightx = 1.0;
-		add(columnToolBar, gridBagConstraints);
+		add(constraintToolBar, gridBagConstraints);
 
 		
 		
-		columDetailsTable.setAutoCreateRowSorter(true);
-		columDetailsTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-		columDetailsTable.setAutoscrolls(true);
+		constraintDetailsTable.setAutoCreateRowSorter(true);
+		constraintDetailsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		constraintDetailsTable.setCellSelectionEnabled(true);
+		constraintDetailsTable.setAutoscrolls(true);
 		
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.fill = GridBagConstraints.BOTH;
@@ -120,22 +120,16 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 		OracleDbGrabber dbGrabber = new OracleDbGrabber();
 		Connection conn = null;
 		try {
-			conn = connectionProperties.getDataSource().getConnection();
-			Table table = dbGrabber.grabTable(conn, schemaName, tableName);
-			List<Column> columnList = new ArrayList<Column>();
-			if(table != null){
-				if(columnList != null){
-					columnList = table.getColumnlist();
-				}
-			}
-			columDetailsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			columDetailsTable.setCellSelectionEnabled(true);
-			columDetailsTable.setModel(new ColumnDetailsTableModel(columnList));
+			String query = "select * from all_constraints where owner='"+
+				schemaName +"' and TABLE_NAME = '" + tableName +"'";
 			
-		} catch (SQLException e) {
+			constraintDetailsTable.setModel(resultSetTableModelFactory.getResultSetTableModel(query));
+			
+		/*} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		} catch(Exception e){
+		}*/ 
+		}catch(Exception e){
 			e.printStackTrace();
 		}finally{
 			if(conn != null){
@@ -149,41 +143,32 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 		}
 		
 		
-		add(new JScrollPane(columDetailsTable), gridBagConstraints);
-		
-	}
-
-	/* (non-Javadoc)
-	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
-	 */
-	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-
-	}
-
-	public String getTableName() {
-		return tableName;
-	}
-
-	public void setTableName(String tableName) {
-		this.tableName = tableName;
-	}
-
-	public ConnectionProperties getConnectionProperties() {
-		return connectionProperties;
-	}
-
-	public void setConnectionProperties(ConnectionProperties connectionProperties) {
-		this.connectionProperties = connectionProperties;
+		add(new JScrollPane(constraintDetailsTable), gridBagConstraints);
 	}
 
 	public String getSchemaName() {
 		return schemaName;
 	}
 
+	public String getTableName() {
+		return tableName;
+	}
+
+	public ConnectionProperties getConnectionProperties() {
+		return connectionProperties;
+	}
+
 	public void setSchemaName(String schemaName) {
 		this.schemaName = schemaName;
 	}
 
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+	public void setConnectionProperties(ConnectionProperties connectionProperties) {
+		this.connectionProperties = connectionProperties;
+	}
+
+	
 }
