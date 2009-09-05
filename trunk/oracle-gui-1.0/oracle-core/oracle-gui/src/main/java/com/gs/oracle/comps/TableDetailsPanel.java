@@ -50,16 +50,17 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 				TableDetailsPanel.class
 						.getResource(OracleGuiConstants.IMAGE_PATH
 								+ "table_data.gif")), 
-								new TableDataPanel(getSchemaName(), getTableName(), getConnectionProperties()));
+				new TableDataPanel(getSchemaName(), getTableName(), getConnectionProperties()));
 		tableDetailsTabbedPane.addTab("Columns",new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "columngroup.gif")), 
-						new ColumnDetailsPanel(getSchemaName(), getTableName(), getConnectionProperties()));
+				new ColumnDetailsPanel(getSchemaName(), getTableName(), getConnectionProperties()));
 		tableDetailsTabbedPane.addTab("Constraints",new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "constraint.gif")), new JPanel());
+						+ "constraint.gif")), 
+				new ConstraintsDetailsPanel(getSchemaName(), getTableName(), getConnectionProperties()));
 		tableDetailsTabbedPane.addTab("Dependencies",new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
@@ -72,7 +73,8 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 		tableDetailsTabbedPane.addTab("DDL", new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "generate_ddl.gif")),new DDLGenerationPanel(getTableName(), getConnectionProperties()));
+						+ "generate_ddl.gif")),
+				new DDLGenerationPanel(getTableName(), getConnectionProperties()));
 
 		setLayout(new BorderLayout());
 

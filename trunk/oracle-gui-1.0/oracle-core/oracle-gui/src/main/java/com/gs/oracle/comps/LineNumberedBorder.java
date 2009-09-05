@@ -1,5 +1,6 @@
 package com.gs.oracle.comps;
 
+import java.awt.Color;
 import java.awt.Component;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -197,7 +198,7 @@ public class LineNumberedBorder extends AbstractBorder {
 			}
 		}
 
-		g.setColor(c.getForeground());
+		g.setColor(Color.GRAY);//c.getForeground());
 		//
 		// loop until out of the "visible" region...
 		//
