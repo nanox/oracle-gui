@@ -14,6 +14,8 @@ import javax.swing.JPanel;
 import javax.swing.JSplitPane;
 import javax.swing.JTabbedPane;
 
+import oracle.jdbc.pool.OracleDataSource;
+
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.comps.ButtonTabComponent;
@@ -185,13 +187,15 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		/*if(connection != null){
+		if(connectionProperties.getDataSource() != null){
 			try {
-				connection.close();
+				if(connectionProperties.getDataSource() instanceof OracleDataSource){
+					((OracleDataSource)connectionProperties.getDataSource()).close();
+				}
 			} catch (SQLException e1) {
 				e1.printStackTrace();
 			}
-		}*/
+		}
 	}
 
 	@Override

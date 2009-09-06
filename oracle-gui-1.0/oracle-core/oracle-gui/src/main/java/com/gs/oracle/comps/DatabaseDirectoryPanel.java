@@ -47,6 +47,8 @@ import com.gs.oracle.util.MenuBarUtil;
 public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		OracleGuiConstants, TreeSelectionListener, MouseListener{
 
+	private static final String CONTENT_TEXT = "Content of "; 
+	
 	private static final ImageIcon EXPAND_IMAGE = new ImageIcon(DatabaseDirectoryPanel.class
 			.getResource(OracleGuiConstants.IMAGE_PATH
 					+ "expand.gif"));
@@ -359,7 +361,35 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 			reloadDatabaseTree();
 		}else if(e.getSource().equals(openTableDetailsMenuItem)){
 			openTableFromTreePath(mouseClickedTreePath);
+		}else if(e.getSource().equals(showTableContentMenuItem)){
+			showTableContentFromTreePath(mouseClickedTreePath);
 		}
+	}
+	
+	public void showTableContentFromTreePath(TreePath clickedPath){
+		DefaultMutableTreeNode node = getDatabaseDirectoryTree().getTreeNode(clickedPath);
+        if(node == null)
+            return;
+        DatabaseNode dbNode = getDatabaseDirectoryTree().getDatabaseNode(node);
+        if (dbNode == null) {
+            return;
+        }
+        if(dbNode instanceof TableNode){
+        	Table table = ((TableNode)dbNode).getTable();
+			if(table != null){
+				TableContentPanel contentPanel = new TableContentPanel(
+					table.getSchemaName(), table.getModelName(), connectionProperties	
+				);
+				DatabaseViewerInternalFrame iFrame = (DatabaseViewerInternalFrame) getParentComponent();
+				iFrame.getDbDetailsTabbedPane().addTab(CONTENT_TEXT + table.getModelName(), contentPanel);
+				int n = iFrame.getDbDetailsTabbedPane().getTabCount();
+				iFrame.getDbDetailsTabbedPane().setTabComponentAt(n - 1,
+		                new ButtonTabComponent(iFrame.getDbDetailsTabbedPane(), new ImageIcon(DatabaseViewerInternalFrame.class
+		        				.getResource(OracleGuiConstants.IMAGE_PATH + "sampleContents.gif"))));
+				iFrame.getDbDetailsTabbedPane().setSelectedIndex(n-1);
+				iFrame.getDbDetailsTabbedPane().updateUI();
+			}
+        }
 	}
 	
 	public void openTableFromTreePath(TreePath clickedPath){

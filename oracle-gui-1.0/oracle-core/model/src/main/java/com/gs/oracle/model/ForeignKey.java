@@ -29,6 +29,8 @@ public class ForeignKey extends BaseDbModel implements Serializable {
 	private String pkName;
 	private Short deferrability;
 	
+	private Boolean importedKey = false;
+	
 	
 	public String getPkTableCat() {
 		return pkTableCat;
@@ -113,6 +115,12 @@ public class ForeignKey extends BaseDbModel implements Serializable {
 	}
 	public void setDeferrability(Short deferrability) {
 		this.deferrability = deferrability;
+	}
+	public Boolean getImportedKey() {
+		return importedKey;
+	}
+	public void setImportedKey(Boolean importedKey) {
+		this.importedKey = importedKey;
 	} 
 	
 	

@@ -239,16 +239,16 @@ public class OracleDbGrabber {
 	public List<ForeignKey> grabImportedKeys(Connection connection, String schemaName, String tableName) throws SQLException{
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 		ResultSet fkRs = databaseMetaData.getImportedKeys("", schemaName, tableName);
-		return readFksFromRS(fkRs);
+		return readFksFromRS(fkRs, true);
 	}
 	
 	public List<ForeignKey> grabExportedKeys(Connection connection, String schemaName, String tableName) throws SQLException{
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 		ResultSet fkRs = databaseMetaData.getExportedKeys("", schemaName, tableName);
-		return readFksFromRS(fkRs);
+		return readFksFromRS(fkRs, false);
 	}
 	
-	private List<ForeignKey> readFksFromRS(ResultSet fkRs) throws SQLException{
+	private List<ForeignKey> readFksFromRS(ResultSet fkRs, Boolean imported) throws SQLException{
 		List<ForeignKey> fks = new ArrayList<ForeignKey>();
 		
 		while(fkRs.next()){
@@ -267,6 +267,7 @@ public class OracleDbGrabber {
 			fk.setPkName(fkRs.getString(ForeignKeyMetaDataEnum.PK_NAME.getCode()));
 			fk.setFkName(fkRs.getString(ForeignKeyMetaDataEnum.FK_NAME.getCode()));
 			fk.setDeferrability(fkRs.getShort(ForeignKeyMetaDataEnum.DEFERRABILITY.getCode()));
+			fk.setImportedKey(imported);
 			fks.add(fk);
 		}
 		if(fkRs != null){

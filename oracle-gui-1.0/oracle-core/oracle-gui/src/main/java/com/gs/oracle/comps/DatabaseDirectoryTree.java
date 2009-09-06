@@ -100,7 +100,7 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 
 	public DefaultMutableTreeNode populateDatabaseTree(Database database) {
 		DefaultMutableTreeNode dbNode = new DefaultMutableTreeNode(
-				new IconData(ICON_ROOT_DATABASE, null, new DatabaseTreeNode(
+				new IconData(ICON_ROOT_DATABASES, null, new DatabaseTreeNode(
 						database)));
 		for (Schema schema : database.getSchemaList()) {
 			DefaultMutableTreeNode sNode = new DefaultMutableTreeNode(
