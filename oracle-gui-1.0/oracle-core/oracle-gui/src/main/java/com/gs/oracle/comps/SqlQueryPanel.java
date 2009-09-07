@@ -386,6 +386,10 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 			}
 
 		});
+		
+		AutoTextComplete atc = new AutoTextComplete(queryTextArea);
+		atc.setAlwaysOnTop(true);
+		atc.setItems(OracleGuiConstants.SQL_KEYWORD_LIST);
 		jScrollPane1.setViewportView(queryTextArea);
 
 		gridBagConstraints = new java.awt.GridBagConstraints();
