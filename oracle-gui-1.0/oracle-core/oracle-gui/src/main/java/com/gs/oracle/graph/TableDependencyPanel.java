@@ -123,8 +123,8 @@ public class TableDependencyPanel extends JPanel {
 		graphHolderPanel.setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createCompoundBorder(BorderFactory
 						.createLineBorder(new Color(0, 0, 0)), BorderFactory
-						.createMatteBorder(1, 25, 1, 25, new Color(204, 204,
-								255))), new LineBorder(
+						.createMatteBorder(1, 25, 1, 25, new Color(207, 218,
+								231))), new LineBorder(
 						new Color(153, 153, 255), 1, true)));
 		graphHolderPanel.setLayout(new BorderLayout());
 		graphHolderScrollPane.setViewportView(graphHolderPanel);
