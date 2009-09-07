@@ -15,15 +15,18 @@ import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.common.StringUtil;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.dlg.ConnectionDialog;
 import com.gs.oracle.frame.OracleGuiMainFrame;
+import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
 import com.gs.oracle.service.DatabaseConnectionService;
 import com.gs.oracle.service.impl.DatabaseConnectionServiceImpl;
@@ -73,11 +76,34 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 						//TODO: Need to change the condition
 						if(conn != null){
 							ConnectionProperties p = (ConnectionProperties) data;
+							String sqlKeyWords = OracleGuiConstants.SQL_KEYWORD.toLowerCase();
+							/*try {
+								sqlKeyWords = OracleDbGrabber.grabSqlKeyWords(conn);
+							} catch (SQLException e) {
+								e.printStackTrace();
+							}*/
+							if(StringUtil.hasValidContent(sqlKeyWords)){
+								
+								String[] kws = sqlKeyWords.toLowerCase().split(",");
+								for (String k : kws) {
+									OracleGuiConstants.SQL_KEYWORD_LIST.add(k.trim());
+								}
+							}
+							OracleGuiConstants.SQL_KEYWORD_LIST.add("select");
+							OracleGuiConstants.SQL_KEYWORD_LIST.add("insert");
+							OracleGuiConstants.SQL_KEYWORD_LIST.add("update");
+							OracleGuiConstants.SQL_KEYWORD_LIST.add("set");
+							OracleGuiConstants.SQL_KEYWORD_LIST.add("create");
 							p.setDataSource(connectionService.getDataSource(p));
 							DatabaseViewerInternalFrame iFrame = new DatabaseViewerInternalFrame(p);
 							iFrame.setVisible(true);
 							((OracleGuiMainFrame)parent).getMainDesktopPane().add(iFrame);
 							((ConnectionDialog)getSourceForm()).dispose();
+							try {
+								conn.close();
+							} catch (SQLException e) {
+								e.printStackTrace();
+							}
 						}else{
 							dlg.disableButtons(false);
 							DisplayUtils.displayMessage(parent, "ERROR", DisplayTypeEnum.INFO);

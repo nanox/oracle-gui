@@ -43,6 +43,14 @@ public class OracleDbGrabber {
 		// TODO Auto-generated constructor stub
 	}
 	
+	public static String grabSqlKeyWords(Connection connection) throws SQLException{
+		if(connection == null){
+			return "";
+		}
+		DatabaseMetaData databaseMetaData = connection.getMetaData();
+		return databaseMetaData.getSQLKeywords();
+	}
+	
 	public Database grabDatabase(Connection connection, String databaseName) throws SQLException{
 		if(connection == null){
 			return null;
