@@ -69,7 +69,6 @@ public class TableDependencyPanel extends JPanel {
 		saveGraphButton = new JButton();
 		jSeparator2 = new JToolBar.Separator();
 		clearButton = new JButton();
-		graphHolderPanel = new JPanel();
 		imageViewToolBar = new JToolBar();
 		fitToWindowButton = new JButton();
 		jSeparator3 = new JToolBar.Separator();
@@ -120,15 +119,7 @@ public class TableDependencyPanel extends JPanel {
 		gridBagConstraints.weightx = 1.0;
 		add(generateGraphToolBar, gridBagConstraints);
 
-		graphHolderPanel.setBackground(new Color(255, 255, 255));
-		graphHolderPanel.setBorder(BorderFactory.createCompoundBorder(
-				BorderFactory.createCompoundBorder(BorderFactory
-						.createLineBorder(new Color(0, 0, 0)), BorderFactory
-						.createMatteBorder(1, 25, 1, 25, new Color(207, 218,
-								231))), new LineBorder(
-						new Color(153, 153, 255), 1, true)));
-		graphHolderPanel.setLayout(new BorderLayout());
-		graphHolderScrollPane.setViewportView(graphHolderPanel);
+		
 		
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 0;
@@ -324,7 +315,9 @@ public class TableDependencyPanel extends JPanel {
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		System.out.println(dependency);
+		graphHolderPanel = new DependencyGraphPanel(dependency);
+		graphHolderPanel.updateUI();
+		graphHolderScrollPane.setViewportView(graphHolderPanel);
 	}
 
 	private void saveGraphButtonActionPerformed(ActionEvent evt) {
@@ -413,7 +406,7 @@ public class TableDependencyPanel extends JPanel {
 	private JButton fitToWindowButton;
 	private JButton generateGraphButton;
 	private JToolBar generateGraphToolBar;
-	private JPanel graphHolderPanel;
+	private DependencyGraphPanel graphHolderPanel;
 	private JToolBar imageViewToolBar;
 	private JLabel jLabel2;
 	private JToolBar.Separator jSeparator1;
