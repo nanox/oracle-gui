@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.SQLException;
+import java.util.List;
 
 import javax.swing.ImageIcon;
 import javax.swing.JInternalFrame;
@@ -25,6 +26,8 @@ import com.gs.oracle.comps.ResultSetTableModelFactory;
 import com.gs.oracle.comps.SqlQueryPanel;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.model.Database;
+import com.gs.oracle.model.Schema;
+import com.gs.oracle.model.Table;
 import com.gs.oracle.service.OracleDatabaseService;
 import com.gs.oracle.service.impl.OracleDatabaseServiceImpl;
 
@@ -70,6 +73,16 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 				e.printStackTrace();
 			}
 		}
+		if(db != null){
+			List<Schema> schemaList = db.getSchemaList();
+			for (Schema schema : schemaList) {
+				OracleGuiConstants.SQL_KEYWORD_LIST.add(schema.getModelName().toLowerCase());
+				List<Table> tablelList = schema.getTableList();
+				for (Table table : tablelList) {
+					OracleGuiConstants.SQL_KEYWORD_LIST.add(table.getModelName().toLowerCase());
+				}
+			}
+ 		}
 		return db;
 	}
 

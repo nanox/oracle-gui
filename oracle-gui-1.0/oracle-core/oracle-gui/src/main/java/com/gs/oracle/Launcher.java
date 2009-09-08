@@ -12,8 +12,13 @@
 package com.gs.oracle;
 
 import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import org.fife.plaf.Office2003.Office2003LookAndFeel;
 
 import com.gs.oracle.frame.OracleGuiMainFrame;
+
+import de.muntjak.tinylookandfeel.TinyLookAndFeel;
 
 /**
  * @author sabuj.das
@@ -23,9 +28,25 @@ public class Launcher {
 
 	public static void main(String[] args) {
 		try {
-            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			String osName = System.getProperty("os.name");
+            String lnfClass = TinyLookAndFeel.class.getCanonicalName();
+            if (osName.toLowerCase().contains("win")) {
+                lnfClass = Office2003LookAndFeel.class.getCanonicalName();
+            }
+            UIManager.setLookAndFeel(lnfClass);
+			
         } catch (Exception ex) {
-            
+        	try {
+				UIManager.setLookAndFeel(TinyLookAndFeel.class.getCanonicalName());
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (UnsupportedLookAndFeelException e) {
+				e.printStackTrace();
+			}
         }
 		OracleGuiMainFrame frame = new OracleGuiMainFrame();
 		frame.setVisible(true);
