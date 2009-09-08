@@ -42,6 +42,8 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
+import org.apache.log4j.Logger;
+
 import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.command.GuiEventHandler;
 import com.gs.oracle.common.StringUtil;
@@ -61,6 +63,9 @@ public class ConnectionDialog extends JDialog {
 	 * 
 	 */
 	private static final long serialVersionUID = -2433429146983917444L;
+	
+	private static final Logger logger = Logger.getLogger(ConnectionDialog.class);
+	
 	private JTextField schemaNameTextField;
 	private ConnectionPropertiesCatalog catalog; 
 	private Vector<String> connectionNames = new Vector<String>();

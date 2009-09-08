@@ -10,6 +10,10 @@ import java.awt.event.ActionListener;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
+import javax.swing.UIDefaults;
+import javax.swing.plaf.TabbedPaneUI;
+
+import org.fife.plaf.Office2003.Office2003ToolBarUI;
 
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
