@@ -11,7 +11,9 @@ import java.util.Set;
 
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.grabber.OracleDbGrabber;
+import com.gs.oracle.model.ExportedTableRelation;
 import com.gs.oracle.model.ForeignKey;
+import com.gs.oracle.model.ImportedTableRelation;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.model.TableDependency;
 import com.gs.oracle.model.TableRelation;
@@ -38,19 +40,44 @@ public class DependencyServiceImpl implements DependencyService {
 			return null;
 		}
 		dependency.setCurrentTable(currentTable);
-		Set<TableRelation> relationSet = new HashSet<TableRelation>();
 		
-		List<ForeignKey> relatedKeys = new ArrayList<ForeignKey>();
-		if(currentTable.getImportedKeys() != null){
-			relatedKeys.addAll(currentTable.getImportedKeys());
+		List<ForeignKey> importedKeys = currentTable.getImportedKeys();
+		List<ForeignKey> exportedKeys = currentTable.getExportedKeys();
+		List<ImportedTableRelation> importedRelations = new ArrayList<ImportedTableRelation>();
+		List<ExportedTableRelation> exportedRelations = new ArrayList<ExportedTableRelation>();
+		
+		if(importedKeys != null){
+			for (ForeignKey impKey : importedKeys) {
+				ImportedTableRelation r = new ImportedTableRelation();
+				r.setRelationTitle("Imported Relation");
+				r.setRelationType("IMPORTED");
+				r.setImportedKey(impKey);
+				Table importedTable = dbGrabber.grabTable(connection, 
+						impKey.getPkTableSchem(), 
+						impKey.getPkTableName());
+				r.setImportedTable(importedTable);
+				r.setForeignColumnName(impKey.getPkColumnName());
+				importedRelations.add(r);
+			}
 		}
-		if(currentTable.getExportedKeys() != null){
-			relatedKeys.addAll(currentTable.getExportedKeys());
+		
+		if(exportedKeys != null){
+			for (ForeignKey expKey : exportedKeys) {
+				ExportedTableRelation r = new ExportedTableRelation();
+				r.setRelationTitle("Exported Relation");
+				r.setRelationType("EXPORTED");
+				r.setExportedKey(expKey);
+				Table importedTable = dbGrabber.grabTable(connection, 
+						expKey.getFkTableSchem(), 
+						expKey.getFkTableName());
+				r.setExportedTable(importedTable);
+				r.setForeignColumnName(expKey.getFkColumnName());
+				exportedRelations.add(r);
+			}
 		}
 		
-		
-		
-		dependency.setTableRelationSet(relationSet);
+		dependency.setImportedRelations(importedRelations);
+		dependency.setExportedRelations(exportedRelations);
 		
 		return dependency;
 	}

@@ -9,68 +9,37 @@ import java.io.Serializable;
  * @author sabuj.das
  *
  */
-public class TableRelation implements Serializable {
+public abstract class TableRelation implements Serializable {
 
 	private String relationTitle;
 	private String relationType;
-	
-	private ForeignKey importedKey;
-	private ForeignKey exportedKey;
-	
-	private Table importedTable, exportedTable;
+	private String foreignColumnName;
 
-	
 	public TableRelation() {
-		// TODO Auto-generated constructor stub
+		
 	}
 	
 	public String getRelationTitle() {
 		return relationTitle;
 	}
-
-	public void setRelationTitle(String relationTitle) {
-		this.relationTitle = relationTitle;
-	}
-
 	public String getRelationType() {
 		return relationType;
 	}
-
+	public void setRelationTitle(String relationTitle) {
+		this.relationTitle = relationTitle;
+	}
 	public void setRelationType(String relationType) {
 		this.relationType = relationType;
 	}
 
-	public ForeignKey getImportedKey() {
-		return importedKey;
+	public String getForeignColumnName() {
+		return foreignColumnName;
 	}
 
-	public void setImportedKey(ForeignKey importedKey) {
-		this.importedKey = importedKey;
-	}
-
-	public ForeignKey getExportedKey() {
-		return exportedKey;
-	}
-
-	public void setExportedKey(ForeignKey exportedKey) {
-		this.exportedKey = exportedKey;
-	}
-
-	public Table getImportedTable() {
-		return importedTable;
-	}
-
-	public void setImportedTable(Table importedTable) {
-		this.importedTable = importedTable;
-	}
-
-	public Table getExportedTable() {
-		return exportedTable;
-	}
-
-	public void setExportedTable(Table exportedTable) {
-		this.exportedTable = exportedTable;
+	public void setForeignColumnName(String foreignColumnName) {
+		this.foreignColumnName = foreignColumnName;
 	}
 	
+
 	
 }

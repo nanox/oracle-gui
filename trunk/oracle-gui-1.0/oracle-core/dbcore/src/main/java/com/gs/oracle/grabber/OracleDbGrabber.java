@@ -145,10 +145,11 @@ public class OracleDbGrabber {
 			ResultSet ret = meta.getTables("", schemaName, tableName, new String[] {"TABLE"});
 			while(ret.next()){
 				String tn = ret.getString("TABLE_NAME");
-				
-				
 				table.setSchemaName(schemaName);
 				table.setModelName(tn);
+				table.setPrimaryKeys(grabPrimaryKeys(connection, schemaName, tableName));
+				table.setImportedKeys(grabImportedKeys(connection, schemaName, tableName));
+				table.setExportedKeys(grabExportedKeys(connection, schemaName, tableName));
 				if(tn.startsWith("BIN$"))
 					table.setDeleted(true);
 				try{

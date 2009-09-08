@@ -16,6 +16,7 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.sql.SQLException;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
@@ -29,10 +30,14 @@ import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
 
+import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.model.Database;
+import com.gs.oracle.model.TableDependency;
+import com.gs.oracle.service.DependencyService;
+import com.gs.oracle.service.impl.DependencyServiceImpl;
 import com.gs.oracle.util.MenuBarUtil;
 
 /**
@@ -44,7 +49,6 @@ public class TableDependencyPanel extends JPanel {
 	private String schemaName, tableName;
 	private ConnectionProperties connectionProperties;
 
-	private Database database;
 	
 	public TableDependencyPanel(String schemaName, String tableName, ConnectionProperties cp) {
 		this.schemaName = schemaName;
@@ -53,10 +57,7 @@ public class TableDependencyPanel extends JPanel {
 		initComponents();
 	}
 
-	private void readCompleteDatabase(){
-		OracleDbGrabber dbGrabber = new OracleDbGrabber();
-		//this.database = dbGrabber.grabDatabase(connection, databaseName);
-	}
+	
 
 	private void initComponents() {
 		GridBagConstraints gridBagConstraints;
@@ -312,7 +313,18 @@ public class TableDependencyPanel extends JPanel {
 	}
 
 	private void generateGraphButtonActionPerformed(ActionEvent evt) {
-		// TODO add your handling code here:
+		DependencyService dependencyService = new DependencyServiceImpl();
+		TableDependency dependency = null;
+		try {
+			dependency = dependencyService.generateTableDependency(
+					connectionProperties.getDataSource().getConnection(), 
+					schemaName, tableName);
+		} catch (ApplicationException e) {
+			e.printStackTrace();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		System.out.println(dependency);
 	}
 
 	private void saveGraphButtonActionPerformed(ActionEvent evt) {
