@@ -4,7 +4,7 @@
 package com.gs.oracle.model;
 
 import java.io.Serializable;
-import java.util.Set;
+import java.util.List;
 
 /**
  * @author sabuj.das
@@ -14,7 +14,8 @@ public class TableDependency implements Serializable{
 
 	private Table currentTable;
 	
-	private Set<TableRelation> tableRelationSet;
+	private List<ImportedTableRelation> importedRelations;
+	private List<ExportedTableRelation> exportedRelations;
 	
 	public TableDependency() {
 		// TODO Auto-generated constructor stub
@@ -28,13 +29,22 @@ public class TableDependency implements Serializable{
 		this.currentTable = currentTable;
 	}
 
-	public Set<TableRelation> getTableRelationSet() {
-		return tableRelationSet;
+	public List<ImportedTableRelation> getImportedRelations() {
+		return importedRelations;
 	}
 
-	public void setTableRelationSet(Set<TableRelation> tableRelationSet) {
-		this.tableRelationSet = tableRelationSet;
+	public List<ExportedTableRelation> getExportedRelations() {
+		return exportedRelations;
 	}
-	
+
+	public void setImportedRelations(List<ImportedTableRelation> importedRelations) {
+		this.importedRelations = importedRelations;
+	}
+
+	public void setExportedRelations(List<ExportedTableRelation> exportedRelations) {
+		this.exportedRelations = exportedRelations;
+	}
+
+
 	
 }

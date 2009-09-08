@@ -11,6 +11,7 @@
  *****************************************************************************/
 package com.gs.oracle;
 
+import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,4 +41,15 @@ public interface OracleGuiConstants {
 					"RECORD, RESOURCE, REVOKE,SELECT, SHARE, SIZE, SQL, START, SUBTYPE," +
 					"TABAUTH, TABLE, THEN, TO, TYPE,UNION, UNIQUE, UPDATE, USE,VALUES, " +
 					"VIEW, VIEWS,WHEN, WHERE, WITH";
+	
+	// constants for dependency
+	Color COLUMN_NAMES_BG_COLOR = new Color(232, 242, 254);
+	Color COLUMN_NAMES_FG_COLOR = Color.BLACK;
+	Color TABLE_BORDER_COLOR = new Color(106,140,203);
+	Color TABLE_HEADER_BG_COLOR = new Color(69, 117, 205);
+	Color TABLE_HEADER_FG_COLOR = Color.WHITE;
+	Color TABLE_LEFT_MARGIN_BG_COLOR = new Color(171, 200, 246);
+	Color TABLE_LEFT_MARGIN_FG_COLOR = Color.BLACK;
+	Color TABLE_DEPENDENCY_LONE_COLOR = new Color(6, 118, 96);
+	
 }
