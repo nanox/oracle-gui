@@ -13,13 +13,10 @@ import com.gs.oracle.model.Table;
  * @author sabuj.das
  *
  */
-public class DrawingUtil implements OracleGuiConstants {
+public class DrawingUtil{
 
-	public static void drawTable(Graphics graphics, Table table){
-		
-	}
 	
-	private static int calculateTableWidth(Graphics graphics, Table table){
+	public static int calculateTableWidth(Graphics graphics, Table table){
 		int charWidth = graphics.getFontMetrics().charWidth('H');
 		int maxLength = 0;
 		for (Column column : table.getColumnlist()) {
@@ -29,12 +26,16 @@ public class DrawingUtil implements OracleGuiConstants {
 				maxLength = length;
 			}
 		}
-		return 20 + (charWidth * maxLength);
+		return 30 + (charWidth * maxLength);
 	}
 	
-	private static int calculateTableHeight(Graphics graphics, Table table){
+	public static int calculateTableHeight(Graphics graphics, Table table){
 		int charHeight = graphics.getFontMetrics().getHeight();
 		int lineCount = 1 + table.getColumnlist().size();
-		return (charHeight + 4) * lineCount;
+		return (charHeight + 10) * lineCount;
+	}
+	
+	public static int calculateCellHeight(Graphics graphics){
+		return graphics.getFontMetrics().charWidth('H') + 10;
 	}
 }
