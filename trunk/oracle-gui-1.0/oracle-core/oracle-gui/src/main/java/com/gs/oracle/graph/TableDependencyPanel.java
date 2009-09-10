@@ -6,6 +6,7 @@ package com.gs.oracle.graph;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -16,12 +17,18 @@ import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
 import java.sql.SQLException;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -321,7 +328,31 @@ public class TableDependencyPanel extends JPanel {
 	}
 
 	private void saveGraphButtonActionPerformed(ActionEvent evt) {
-		// TODO add your handling code here:
+		if(graphHolderPanel == null){
+			return;
+		}
+/*		
+		JFileChooser chooser = new JFileChooser(".");
+        chooser.setMultiSelectionEnabled(false);
+        chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+        int opt = chooser.showSaveDialog();
+        if (opt == JFileChooser.APPROVE_OPTION) {
+            File f = chooser.getSelectedFile();
+            
+        }*/
+		
+		int w = graphHolderPanel.getWidth();
+		int h = graphHolderPanel.getHeight();
+		BufferedImage image = new BufferedImage(w, h, BufferedImage.TYPE_INT_RGB);
+		Graphics2D g2 = image.createGraphics();
+		graphHolderPanel.paint(g2);
+        g2.dispose();
+        try {
+			ImageIO.write(image, "jpeg", new File(OracleGuiConstants.DATA_DIR + 
+					schemaName + "." + tableName +"_dependency.jpg"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	private void clearButtonActionPerformed(ActionEvent evt) {
