@@ -54,7 +54,7 @@ public class DependencyGraphPanel extends JPanel {
 			bitstreamFont = Font.createFont(Font.TRUETYPE_FONT, 
 					getClass().getResourceAsStream("/fonts/VeraMono.ttf"));
 			bitstreamFont = new Font(bitstreamFont.getFontName(),
-            java.awt.Font.BOLD, 12);
+            java.awt.Font.PLAIN, 12);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (FontFormatException e) {
@@ -127,27 +127,33 @@ public class DependencyGraphPanel extends JPanel {
 		if(null != exportedRelations && !exportedRelations.isEmpty()){
 			int imp_X = X_Width - topMargin ;
 			int imp_Y = Y_Zero + topMargin * 4;
-			Point location = new Point(imp_X, imp_Y);
 			Dimension size = new Dimension();
 			int count = 0;
+			int x = 0, y = 0;
 			for (ExportedTableRelation r : exportedRelations) {
 				Table t = r.getExportedTable();
 				int w = 0, h = 0;
 				w = DrawingUtil.calculateTableWidth(graphics, t);
 				h = DrawingUtil.calculateTableHeight(graphics, t);
 				size.setSize(w, h);
-				if(count == 0)
-					location.setLocation(imp_X - w, location.y);
-				drawTable(graphics, location, size, t);
-				location.setLocation(imp_X - w, location.y + h + 5);
+				x = imp_X - w;
+				if(count == 0){
+					y = imp_Y;
+				}
+				drawTable(graphics, new Point(x,y), size, t);
+				y = y + (h + 5);
 				exportedPanelHeight += h + 5;
 				count++;
 			}
 		}
-		panelHeight = (importedPanelHeight > exportedPanelHeight)
-			? importedPanelHeight : exportedPanelHeight;
+		panelHeight = ((importedPanelHeight > exportedPanelHeight)
+			? importedPanelHeight : exportedPanelHeight) + topMargin;
 		setMinimumSize(new Dimension(panelWidth, panelHeight));
 		setPreferredSize(getMinimumSize());
+		
+		graphics.setColor(Color.BLACK);
+		graphics.drawString("Imported Relations", x, y)
+		
 	}
 	
 	public void drawTable(Graphics graphics, Point location, Dimension size, Table table){
@@ -163,7 +169,7 @@ public class DependencyGraphPanel extends JPanel {
 		graphics.fillRect(location.x+1, location.y+1, size.width-1, DrawingUtil.calculateCellHeight(graphics)-1);
 		graphics.setColor(OracleGuiConstants.TABLE_HEADER_FG_COLOR);
 		graphics.drawString(table.getModelName(), location.x+2, 
-				location.y+DrawingUtil.calculateCellHeight(graphics)-2);
+				location.y+DrawingUtil.calculateCellHeight(graphics)-4);
 		// draw the left margin
 		graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
 		graphics.drawRect(location.x, location.y + DrawingUtil.calculateCellHeight(graphics),
@@ -181,7 +187,7 @@ public class DependencyGraphPanel extends JPanel {
 			Column c = columnList.get(i);
 			graphics.setColor(OracleGuiConstants.COLUMN_NAMES_FG_COLOR);
 			graphics.drawString(c.getModelName(), 
-					colStart_X + 2, colStart_Y + cellHeight);
+					colStart_X + 2, colStart_Y + cellHeight - 4);
 			// if the column is not the last column
 			if(i != columnList.size()-1){
 				graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);

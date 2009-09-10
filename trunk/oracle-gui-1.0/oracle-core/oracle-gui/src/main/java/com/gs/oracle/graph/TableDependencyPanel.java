@@ -192,7 +192,7 @@ public class TableDependencyPanel extends JPanel {
 		gridBagConstraints.weightx = 1.0;
 		add(imageViewToolBar, gridBagConstraints);
 
-		loadingLabel.setText("");
+		loadingLabel.setText("Generating Dependency ...");
 		image = new ImageIcon(getClass()
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "loading.gif"));
@@ -311,20 +311,27 @@ public class TableDependencyPanel extends JPanel {
 	}
 
 	private void generateGraphButtonActionPerformed(ActionEvent evt) {
-		DependencyService dependencyService = new DependencyServiceImpl();
-		TableDependency dependency = null;
-		try {
-			dependency = dependencyService.generateTableDependency(
-					connectionProperties.getDataSource().getConnection(), 
-					schemaName, tableName);
-		} catch (ApplicationException e) {
-			e.printStackTrace();
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-		graphHolderPanel = new DependencyGraphPanel(dependency);
-		graphHolderPanel.updateUI();
-		graphHolderScrollPane.setViewportView(graphHolderPanel);
+		Runnable r = new Runnable(){
+			public void run() {
+				loadingLabel.setVisible(true);
+				DependencyService dependencyService = new DependencyServiceImpl();
+				TableDependency dependency = null;
+				try {
+					dependency = dependencyService.generateTableDependency(
+							connectionProperties.getDataSource().getConnection(), 
+							schemaName, tableName);
+				} catch (ApplicationException e) {
+					e.printStackTrace();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+				graphHolderPanel = new DependencyGraphPanel(dependency);
+				graphHolderPanel.updateUI();
+				graphHolderScrollPane.setViewportView(graphHolderPanel);
+				loadingLabel.setVisible(false);
+			}
+		};
+		new Thread(r).start();
 	}
 
 	private void saveGraphButtonActionPerformed(ActionEvent evt) {
