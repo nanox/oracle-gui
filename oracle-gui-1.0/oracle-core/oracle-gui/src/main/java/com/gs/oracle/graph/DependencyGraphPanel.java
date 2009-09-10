@@ -23,6 +23,7 @@ import javax.swing.border.LineBorder;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.model.Column;
+import com.gs.oracle.model.ExportedTableRelation;
 import com.gs.oracle.model.ImportedTableRelation;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.model.TableDependency;
@@ -86,31 +87,67 @@ public class DependencyGraphPanel extends JPanel {
 		
 		int tableWidth = DrawingUtil.calculateTableWidth(graphics, dependency.getCurrentTable());
 		int tableHeight = DrawingUtil.calculateTableHeight(graphics, dependency.getCurrentTable());
-		int panelWidth = getWidth();
-		int panelHeight = getHeight();
+		int panelWidth = 0;
+		int panelHeight = 0;
 		if(panelWidth < tableWidth){
-			panelWidth = tableWidth * 2;
+			panelWidth = tableWidth * 5;
 		}
 		if(panelHeight < tableHeight){
 			panelHeight = tableHeight * 2;
 		}
-		int topMargin = 5;
+		int topMargin = 25;
 		setMinimumSize(new Dimension(panelWidth, panelHeight));
 		Point currentTableLocation = new Point(
-				( panelWidth / 2 ) - (tableWidth / 2), Y_Zero + topMargin);
+				( getWidth() / 2 ) - (tableWidth / 2), Y_Zero + topMargin);
 		Dimension currentTableSize = new Dimension(tableWidth, tableHeight);
 		drawTable(graphics, currentTableLocation, currentTableSize, dependency.getCurrentTable());
 		
+		int importedPanelHeight = Y_Zero + topMargin * 4;
 		List<ImportedTableRelation> importedRelations = dependency.getImportedRelations();
 		if(null != importedRelations && !importedRelations.isEmpty()){
 			int imp_X = X_Zero + topMargin ;
-			int imp_Y = Y_Zero + topMargin + currentTableSize.height + topMargin;
+			int imp_Y = Y_Zero + topMargin * 4;
+			Point location = new Point(imp_X, imp_Y);
+			Dimension size = new Dimension();
+			
 			for (ImportedTableRelation r : importedRelations) {
 				Table t = r.getImportedTable();
-				
+				int w = 0, h = 0;
+				w = DrawingUtil.calculateTableWidth(graphics, t);
+				h = DrawingUtil.calculateTableHeight(graphics, t);
+				size.setSize(w, h);
+				drawTable(graphics, location, size, t);
+				location.setLocation(imp_X, location.y + h + 5);
+				importedPanelHeight += h + 5;
 			}
 		}
 		
+		int exportedPanelHeight = Y_Zero + topMargin * 4;
+		List<ExportedTableRelation> exportedRelations = dependency.getExportedRelations();
+		if(null != exportedRelations && !exportedRelations.isEmpty()){
+			int imp_X = X_Width - topMargin ;
+			int imp_Y = Y_Zero + topMargin * 4;
+			Point location = new Point(imp_X, imp_Y);
+			Dimension size = new Dimension();
+			int count = 0;
+			for (ExportedTableRelation r : exportedRelations) {
+				Table t = r.getExportedTable();
+				int w = 0, h = 0;
+				w = DrawingUtil.calculateTableWidth(graphics, t);
+				h = DrawingUtil.calculateTableHeight(graphics, t);
+				size.setSize(w, h);
+				if(count == 0)
+					location.setLocation(imp_X - w, location.y);
+				drawTable(graphics, location, size, t);
+				location.setLocation(imp_X - w, location.y + h + 5);
+				exportedPanelHeight += h + 5;
+				count++;
+			}
+		}
+		panelHeight = (importedPanelHeight > exportedPanelHeight)
+			? importedPanelHeight : exportedPanelHeight;
+		setMinimumSize(new Dimension(panelWidth, panelHeight));
+		setPreferredSize(getMinimumSize());
 	}
 	
 	public void drawTable(Graphics graphics, Point location, Dimension size, Table table){

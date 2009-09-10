@@ -18,7 +18,7 @@ public class DrawingUtil{
 	
 	public static int calculateTableWidth(Graphics graphics, Table table){
 		int charWidth = graphics.getFontMetrics().charWidth('H');
-		int maxLength = 0;
+		int maxLength = table.getModelName().length();
 		for (Column column : table.getColumnlist()) {
 			String colName = column.getModelName();
 			int length = colName.length();
@@ -30,12 +30,12 @@ public class DrawingUtil{
 	}
 	
 	public static int calculateTableHeight(Graphics graphics, Table table){
-		int charHeight = graphics.getFontMetrics().getHeight();
+		int charHeight = calculateCellHeight(graphics) + 2;
 		int lineCount = 1 + table.getColumnlist().size();
-		return (charHeight + 10) * lineCount;
+		return charHeight * lineCount;
 	}
 	
 	public static int calculateCellHeight(Graphics graphics){
-		return graphics.getFontMetrics().charWidth('H') + 10;
+		return graphics.getFontMetrics().getHeight() + 5;
 	}
 }
