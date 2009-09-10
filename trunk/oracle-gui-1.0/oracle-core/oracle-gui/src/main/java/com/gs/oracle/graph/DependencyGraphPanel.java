@@ -10,6 +10,7 @@ import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.Point;
 import java.io.FileNotFoundException;
@@ -17,6 +18,8 @@ import java.io.IOException;
 import java.util.List;
 
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
@@ -28,6 +31,7 @@ import com.gs.oracle.model.ImportedTableRelation;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.model.TableDependency;
 import com.gs.oracle.util.DrawingUtil;
+import com.gs.oracle.util.MenuBarUtil;
 
 /**
  * @author sabuj.das
@@ -40,6 +44,8 @@ public class DependencyGraphPanel extends JPanel {
             java.awt.Font.BOLD, 12);
 
 	private Font bitstreamFont;
+	private Font tahomaFont;
+	private Font verdanaFont;
 	
 	private TableDependency dependency;
 	private int X_Zero;
@@ -47,14 +53,27 @@ public class DependencyGraphPanel extends JPanel {
 	private int X_Width;
 	private int Y_Height;
 	private int scale;
-
+	
+	private Image imagePk = null;
+	private Image imageFk = null;
+	
 	public DependencyGraphPanel(TableDependency dependency) {
 		this.dependency = dependency;
 		try {
 			bitstreamFont = Font.createFont(Font.TRUETYPE_FONT, 
 					getClass().getResourceAsStream("/fonts/VeraMono.ttf"));
 			bitstreamFont = new Font(bitstreamFont.getFontName(),
-            java.awt.Font.PLAIN, 12);
+					java.awt.Font.BOLD, 11);
+			
+			tahomaFont = Font.createFont(Font.TRUETYPE_FONT, 
+					getClass().getResourceAsStream("/fonts/TAHOMA.TTF"));
+			tahomaFont = new Font(tahomaFont.getFontName(),
+					java.awt.Font.BOLD, 11);
+			
+			verdanaFont = Font.createFont(Font.TRUETYPE_FONT, 
+					getClass().getResourceAsStream("/fonts/verdana.TTF"));
+			verdanaFont = new Font(verdanaFont.getFontName(),
+					java.awt.Font.PLAIN, 10);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (FontFormatException e) {
@@ -62,6 +81,15 @@ public class DependencyGraphPanel extends JPanel {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		imagePk = new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "PrimaryKeyColumn.gif")).getImage(); 
+		imageFk = new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "ForeignKeyColumn.gif")).getImage(); 
+			
+			
 		setBackground(new Color(255, 255, 255));
 		setBorder(BorderFactory.createCompoundBorder(
 				BorderFactory.createCompoundBorder(BorderFactory
@@ -81,9 +109,8 @@ public class DependencyGraphPanel extends JPanel {
 		Y_Zero = i.top;
 		X_Width = getWidth() - i.right;
 		Y_Height = getHeight() - i.bottom;
-		graphics.setFont(
-				(null == bitstreamFont) ? DEFAULT_TEXT_FONT : bitstreamFont
-			);
+		
+		graphics.setFont(DEFAULT_TEXT_FONT);
 		
 		int tableWidth = DrawingUtil.calculateTableWidth(graphics, dependency.getCurrentTable());
 		int tableHeight = DrawingUtil.calculateTableHeight(graphics, dependency.getCurrentTable());
@@ -151,8 +178,15 @@ public class DependencyGraphPanel extends JPanel {
 		setMinimumSize(new Dimension(panelWidth, panelHeight));
 		setPreferredSize(getMinimumSize());
 		
-		graphics.setColor(Color.BLACK);
-		graphics.drawString("Imported Relations", x, y)
+		graphics.setFont(tahomaFont);
+		graphics.setColor(Color.BLUE);
+		graphics.drawString("Imported Tables", 
+				X_Zero + topMargin, 
+				Y_Zero + topMargin + graphics.getFontMetrics().getHeight());
+		graphics.drawString("Exported Tables", 
+				X_Width - topMargin - 
+					graphics.getFontMetrics().charsWidth("Exported Tables".toCharArray(), 0, "Exported Tables".length()), 
+				Y_Zero + topMargin + graphics.getFontMetrics().getHeight());
 		
 	}
 	
@@ -188,6 +222,20 @@ public class DependencyGraphPanel extends JPanel {
 			graphics.setColor(OracleGuiConstants.COLUMN_NAMES_FG_COLOR);
 			graphics.drawString(c.getModelName(), 
 					colStart_X + 2, colStart_Y + cellHeight - 4);
+			if(c.getPrimaryKey()){
+				Point imgLoc = new Point(
+						location.x + 2,
+						colStart_Y + 2
+					);
+				graphics.drawImage(imagePk, imgLoc.x, imgLoc.y, null);
+			}
+			if(c.getForeignKey()){
+				Point imgLoc = new Point(
+						location.x + 2,
+						colStart_Y + 2
+					);
+				graphics.drawImage(imageFk, imgLoc.x, imgLoc.y, null);
+			}
 			// if the column is not the last column
 			if(i != columnList.size()-1){
 				graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);

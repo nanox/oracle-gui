@@ -355,8 +355,8 @@ public class TableDependencyPanel extends JPanel {
 		graphHolderPanel.paint(g2);
         g2.dispose();
         try {
-			ImageIO.write(image, "jpeg", new File(OracleGuiConstants.DATA_DIR + 
-					schemaName + "." + tableName +"_dependency.jpg"));
+			ImageIO.write(image, "png", new File(OracleGuiConstants.DATA_DIR + 
+					schemaName + "." + tableName +"_dependency.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
