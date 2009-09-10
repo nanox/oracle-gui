@@ -4,4 +4,4 @@ Created-By: Apache Maven
 Built-By: Green Moon
 Build-Jdk: 1.6.0
 Main-Class: com.gs.oracle.Launcher
-Class-Path: libs/ojdbc14.jar
+Class-Path: libs/ojdbc14.jar libs/tinylaf.jar libs/OfficeLnFs_2.7.jar libs/substance.jar
