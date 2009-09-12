@@ -48,6 +48,8 @@ public class DependencyGraphPanel extends JPanel {
 	private Font verdanaFont;
 	
 	private TableDependency dependency;
+	private boolean showCompleteTable = true;
+	
 	private int X_Zero;
 	private int Y_Zero;
 	private int X_Width;
@@ -112,8 +114,8 @@ public class DependencyGraphPanel extends JPanel {
 		
 		graphics.setFont(DEFAULT_TEXT_FONT);
 		
-		int tableWidth = DrawingUtil.calculateTableWidth(graphics, dependency.getCurrentTable());
-		int tableHeight = DrawingUtil.calculateTableHeight(graphics, dependency.getCurrentTable());
+		int tableWidth = DrawingUtil.calculateTableWidth(graphics, dependency.getCurrentTable(), showCompleteTable);
+		int tableHeight = DrawingUtil.calculateTableHeight(graphics, dependency.getCurrentTable(), showCompleteTable);
 		int panelWidth = 0;
 		int panelHeight = 0;
 		if(panelWidth < tableWidth){
@@ -140,8 +142,8 @@ public class DependencyGraphPanel extends JPanel {
 			for (ImportedTableRelation r : importedRelations) {
 				Table t = r.getImportedTable();
 				int w = 0, h = 0;
-				w = DrawingUtil.calculateTableWidth(graphics, t);
-				h = DrawingUtil.calculateTableHeight(graphics, t);
+				w = DrawingUtil.calculateTableWidth(graphics, t, showCompleteTable);
+				h = DrawingUtil.calculateTableHeight(graphics, t, showCompleteTable);
 				size.setSize(w, h);
 				drawTable(graphics, location, size, t);
 				location.setLocation(imp_X, location.y + h + 5);
@@ -160,8 +162,8 @@ public class DependencyGraphPanel extends JPanel {
 			for (ExportedTableRelation r : exportedRelations) {
 				Table t = r.getExportedTable();
 				int w = 0, h = 0;
-				w = DrawingUtil.calculateTableWidth(graphics, t);
-				h = DrawingUtil.calculateTableHeight(graphics, t);
+				w = DrawingUtil.calculateTableWidth(graphics, t, showCompleteTable);
+				h = DrawingUtil.calculateTableHeight(graphics, t, showCompleteTable);
 				size.setSize(w, h);
 				x = imp_X - w;
 				if(count == 0){
@@ -219,30 +221,109 @@ public class DependencyGraphPanel extends JPanel {
 		List<Column> columnList = table.getColumnlist();
 		for(int i = 0; i<columnList.size(); i++){
 			Column c = columnList.get(i);
-			graphics.setColor(OracleGuiConstants.COLUMN_NAMES_FG_COLOR);
-			graphics.drawString(c.getModelName(), 
-					colStart_X + 2, colStart_Y + cellHeight - 4);
-			if(c.getPrimaryKey()){
-				Point imgLoc = new Point(
-						location.x + 2,
-						colStart_Y + 2
-					);
-				graphics.drawImage(imagePk, imgLoc.x, imgLoc.y, null);
+			if(! showCompleteTable){
+				if(c.getPrimaryKey()){
+					graphics.setColor(OracleGuiConstants.COLUMN_NAMES_FG_COLOR);
+					graphics.drawString(c.getModelName(), 
+							colStart_X + 2, colStart_Y + cellHeight - 4);
+					if(c.getPrimaryKey()){
+						Point imgLoc = new Point(
+								location.x + 2,
+								colStart_Y + 2
+							);
+						graphics.drawImage(imagePk, imgLoc.x, imgLoc.y, null);
+					}
+					if(c.getForeignKey()){
+						Point imgLoc = new Point(
+								location.x + 2,
+								colStart_Y + 2
+							);
+						graphics.drawImage(imageFk, imgLoc.x, imgLoc.y, null);
+					}
+					// if the column is not the last column
+					if(i != columnList.size()-1){
+						graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
+						graphics.drawLine(colStart_X+1, colStart_Y + cellHeight +2, location.x+size.width ,colStart_Y + cellHeight +2);
+					}
+					colStart_Y += cellHeight;
+				} else if(c.getForeignKey()){
+					graphics.setColor(OracleGuiConstants.COLUMN_NAMES_FG_COLOR);
+					graphics.drawString(c.getModelName(), 
+							colStart_X + 2, colStart_Y + cellHeight - 4);
+					if(c.getPrimaryKey()){
+						Point imgLoc = new Point(
+								location.x + 2,
+								colStart_Y + 2
+							);
+						graphics.drawImage(imagePk, imgLoc.x, imgLoc.y, null);
+					}
+					if(c.getForeignKey()){
+						Point imgLoc = new Point(
+								location.x + 2,
+								colStart_Y + 2
+							);
+						graphics.drawImage(imageFk, imgLoc.x, imgLoc.y, null);
+					}
+					// if the column is not the last column
+					if(i != columnList.size()-1){
+						graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
+						graphics.drawLine(colStart_X+1, colStart_Y + cellHeight +2, location.x+size.width ,colStart_Y + cellHeight +2);
+					}
+					colStart_Y += cellHeight;
+				}
+			} else {
+				graphics.setColor(OracleGuiConstants.COLUMN_NAMES_FG_COLOR);
+				graphics.drawString(c.getModelName(), 
+						colStart_X + 2, colStart_Y + cellHeight - 4);
+				if(c.getPrimaryKey()){
+					Point imgLoc = new Point(
+							location.x + 2,
+							colStart_Y + 2
+						);
+					graphics.drawImage(imagePk, imgLoc.x, imgLoc.y, null);
+				}
+				if(c.getForeignKey()){
+					Point imgLoc = new Point(
+							location.x + 2,
+							colStart_Y + 2
+						);
+					graphics.drawImage(imageFk, imgLoc.x, imgLoc.y, null);
+				}
+				// if the column is not the last column
+				if(i != columnList.size()-1){
+					graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
+					graphics.drawLine(colStart_X+1, colStart_Y + cellHeight +2, location.x+size.width ,colStart_Y + cellHeight +2);
+				}
+				colStart_Y += cellHeight;
 			}
-			if(c.getForeignKey()){
-				Point imgLoc = new Point(
-						location.x + 2,
-						colStart_Y + 2
-					);
-				graphics.drawImage(imageFk, imgLoc.x, imgLoc.y, null);
-			}
-			// if the column is not the last column
-			if(i != columnList.size()-1){
-				graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
-				graphics.drawLine(colStart_X+1, colStart_Y + cellHeight +2, location.x+size.width ,colStart_Y + cellHeight +2);
-			}
-			colStart_Y += cellHeight;
 		}
 	}
+
+	public TableDependency getDependency() {
+		return dependency;
+	}
+
+	public void setDependency(TableDependency dependency) {
+		this.dependency = dependency;
+	}
+
+	public boolean isShowCompleteTable() {
+		return showCompleteTable;
+	}
+
+	public void setShowCompleteTable(boolean showCompleteTable) {
+		this.showCompleteTable = showCompleteTable;
+	}
+
+	public int getScale() {
+		return scale;
+	}
+
+	public void setScale(int scale) {
+		this.scale = scale;
+	}
+	
+	
+	
 	
 }

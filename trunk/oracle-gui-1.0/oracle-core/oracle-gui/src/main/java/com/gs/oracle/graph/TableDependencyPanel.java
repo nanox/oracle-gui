@@ -28,11 +28,13 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
+import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 import javax.swing.border.LineBorder;
@@ -76,6 +78,7 @@ public class TableDependencyPanel extends JPanel {
 		saveGraphButton = new JButton();
 		jSeparator2 = new JToolBar.Separator();
 		clearButton = new JButton();
+		showCompleteTableToggleBtn = new JToggleButton("Show Complete Table");
 		imageViewToolBar = new JToolBar();
 		fitToWindowButton = new JButton();
 		jSeparator3 = new JToolBar.Separator();
@@ -119,6 +122,16 @@ public class TableDependencyPanel extends JPanel {
 		clearButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 		clearButton.addActionListener(formListener);
 		generateGraphToolBar.add(clearButton);
+		
+		generateGraphToolBar.add(new JToolBar.Separator());
+		
+		showCompleteTableToggleBtn.setFocusable(false);
+		showCompleteTableToggleBtn.setSelected(true);
+		showCompleteTableToggleBtn.setHorizontalTextPosition(SwingConstants.CENTER);
+		showCompleteTableToggleBtn.setVerticalTextPosition(SwingConstants.BOTTOM);
+		showCompleteTableToggleBtn.addActionListener(formListener);
+		generateGraphToolBar.add(showCompleteTableToggleBtn);
+		
 
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -220,6 +233,8 @@ public class TableDependencyPanel extends JPanel {
 				TableDependencyPanel.this.saveGraphButtonActionPerformed(evt);
 			} else if (evt.getSource() == clearButton) {
 				TableDependencyPanel.this.clearButtonActionPerformed(evt);
+			} else if (evt.getSource() == showCompleteTableToggleBtn) {
+				TableDependencyPanel.this.showCompleteTableActionPerformed(evt);
 			} else if (evt.getSource() == fitToWindowButton) {
 				TableDependencyPanel.this.fitToWindowButtonActionPerformed(evt);
 			} else if (evt.getSource() == zoomInButton) {
@@ -308,6 +323,8 @@ public class TableDependencyPanel extends JPanel {
                 TableDependencyPanel.this.graphHolderPanelMouseMoved(evt);
             }
         }
+        
+        
 	}
 
 	private void generateGraphButtonActionPerformed(ActionEvent evt) {
@@ -326,6 +343,7 @@ public class TableDependencyPanel extends JPanel {
 					e.printStackTrace();
 				}
 				graphHolderPanel = new DependencyGraphPanel(dependency);
+				graphHolderPanel.setShowCompleteTable(showCompleteTableToggleBtn.isSelected());
 				graphHolderPanel.updateUI();
 				graphHolderScrollPane.setViewportView(graphHolderPanel);
 				loadingLabel.setVisible(false);
@@ -365,6 +383,16 @@ public class TableDependencyPanel extends JPanel {
 	private void clearButtonActionPerformed(ActionEvent evt) {
 		// TODO add your handling code here:
 	}
+	
+	public void showCompleteTableActionPerformed(ActionEvent evt){
+    	if(showCompleteTableToggleBtn.isSelected()){
+    		graphHolderPanel.setShowCompleteTable(true);
+    	}else{
+    		graphHolderPanel.setShowCompleteTable(false);
+    	}
+    	graphHolderPanel.repaint();
+    	
+    }
 
 	private void fitToWindowButtonActionPerformed(ActionEvent evt) {
 		// TODO add your handling code here:
@@ -441,6 +469,7 @@ public class TableDependencyPanel extends JPanel {
 	// Variables declaration 
 	private JButton actualSizeButton;
 	private JButton clearButton;
+	private JToggleButton showCompleteTableToggleBtn;
 	private JButton fitToWindowButton;
 	private JButton generateGraphButton;
 	private JToolBar generateGraphToolBar;
