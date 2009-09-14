@@ -51,6 +51,9 @@ public interface OracleGuiConstants {
 	Color TABLE_LEFT_MARGIN_BG_COLOR = new Color(171, 200, 246);
 	Color TABLE_LEFT_MARGIN_FG_COLOR = Color.BLACK;
 	Color TABLE_DEPENDENCY_LONE_COLOR = new Color(6, 118, 96);
+	Color IMPORTED_RELATION_LINE_COLOR = new Color(0, 166, 80);
+	Color EXPORTED_RELATION_LINE_COLOR = new Color(0, 80, 166);
+	
 	int SCALE_100_PERCENT = 100;
 	int TABLE_LEFT_MARGIN_WIDTH = 20;
 }
