@@ -15,8 +15,12 @@ import java.awt.Insets;
 import java.awt.Point;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import javax.naming.ldap.HasControls;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -27,6 +31,7 @@ import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.ExportedTableRelation;
+import com.gs.oracle.model.ForeignKey;
 import com.gs.oracle.model.ImportedTableRelation;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.model.TableDependency;
@@ -42,13 +47,16 @@ public class DependencyGraphPanel extends JPanel {
 	public static final java.awt.Font DEFAULT_TEXT_FONT =
         new java.awt.Font(java.awt.Font.MONOSPACED,
             java.awt.Font.BOLD, 12);
-
+	private static final int CURRENT_TABLE = 0, IMPORTED_TABLE = 1, EXPORTED_TABLE = 2,
+		CONNECTION_ARROW_GAP = 5;
+	
 	private Font bitstreamFont;
 	private Font tahomaFont;
 	private Font verdanaFont;
 	
 	private TableDependency dependency;
-	private boolean showCompleteTable = true;
+	private boolean showCompleteTable = false;
+	private Table currentTable;
 	
 	private int X_Zero;
 	private int Y_Zero;
@@ -59,8 +67,18 @@ public class DependencyGraphPanel extends JPanel {
 	private Image imagePk = null;
 	private Image imageFk = null;
 	
+	private Map<String, TableRelationConnection> importedConnectionMap
+		= new HashMap<String, TableRelationConnection>();
+	private Map<String, TableRelationConnection> exportedConnectionMap
+		= new HashMap<String, TableRelationConnection>();
+	private Map<String, Point> currentTablePkPointMap
+		= new HashMap<String, Point>();
+	private Map<String, Point> currentTableFkPointMap
+		= new HashMap<String, Point>();
+	
 	public DependencyGraphPanel(TableDependency dependency) {
 		this.dependency = dependency;
+		this.currentTable = dependency.getCurrentTable();
 		try {
 			bitstreamFont = Font.createFont(Font.TRUETYPE_FONT, 
 					getClass().getResourceAsStream("/fonts/VeraMono.ttf"));
@@ -129,7 +147,8 @@ public class DependencyGraphPanel extends JPanel {
 		Point currentTableLocation = new Point(
 				( getWidth() / 2 ) - (tableWidth / 2), Y_Zero + topMargin);
 		Dimension currentTableSize = new Dimension(tableWidth, tableHeight);
-		drawTable(graphics, currentTableLocation, currentTableSize, dependency.getCurrentTable());
+		drawTable(graphics, currentTableLocation, currentTableSize, 
+				dependency.getCurrentTable(), CURRENT_TABLE);
 		
 		int importedPanelHeight = Y_Zero + topMargin * 4;
 		List<ImportedTableRelation> importedRelations = dependency.getImportedRelations();
@@ -145,7 +164,7 @@ public class DependencyGraphPanel extends JPanel {
 				w = DrawingUtil.calculateTableWidth(graphics, t, showCompleteTable);
 				h = DrawingUtil.calculateTableHeight(graphics, t, showCompleteTable);
 				size.setSize(w, h);
-				drawTable(graphics, location, size, t);
+				drawTable(graphics, location, size, t, IMPORTED_TABLE);
 				location.setLocation(imp_X, location.y + h + 5);
 				importedPanelHeight += h + 5;
 			}
@@ -169,7 +188,7 @@ public class DependencyGraphPanel extends JPanel {
 				if(count == 0){
 					y = imp_Y;
 				}
-				drawTable(graphics, new Point(x,y), size, t);
+				drawTable(graphics, new Point(x,y), size, t, EXPORTED_TABLE);
 				y = y + (h + 5);
 				exportedPanelHeight += h + 5;
 				count++;
@@ -190,9 +209,34 @@ public class DependencyGraphPanel extends JPanel {
 					graphics.getFontMetrics().charsWidth("Exported Tables".toCharArray(), 0, "Exported Tables".length()), 
 				Y_Zero + topMargin + graphics.getFontMetrics().getHeight());
 		
+		List<TableRelationConnection> relConnList = new ArrayList<TableRelationConnection>();
+		relConnList.addAll(importedConnectionMap.values());
+		relConnList.addAll(exportedConnectionMap.values());
+		drawRelationConnections(graphics, relConnList);
 	}
 	
-	public void drawTable(Graphics graphics, Point location, Dimension size, Table table){
+	private void drawRelationConnections(Graphics2D graphics,
+			List<TableRelationConnection> relConnList) {
+		
+		for (TableRelationConnection rc : relConnList) {
+			Point s = rc.getRelationPoint();
+			RelationConnectionDirection dir = rc.getConnectionDirection();
+			Point e = dir.getEndPoint();
+			s = dir.getStartPoint();
+			graphics.setColor(rc.getConnectionColor());
+			if(s != null && e != null){
+				graphics.drawLine(s.x, s.y, e.x, e.y);
+			}
+		}
+	}
+	
+	private void drawExportedRelationConnections(Graphics2D graphics,
+			List<TableRelationConnection> relConnList) {
+		
+	}
+
+	public void drawTable(Graphics graphics, Point location, Dimension size, Table table,
+			int tableType){
 		// draw the border
 		graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
 		graphics.drawRect(location.x, location.y, size.width, size.height);
@@ -222,6 +266,7 @@ public class DependencyGraphPanel extends JPanel {
 		for(int i = 0; i<columnList.size(); i++){
 			Column c = columnList.get(i);
 			if(! showCompleteTable){
+				// for primary key
 				if(c.getPrimaryKey()){
 					graphics.setColor(OracleGuiConstants.COLUMN_NAMES_FG_COLOR);
 					graphics.drawString(c.getModelName(), 
@@ -232,18 +277,99 @@ public class DependencyGraphPanel extends JPanel {
 								colStart_Y + 2
 							);
 						graphics.drawImage(imagePk, imgLoc.x, imgLoc.y, null);
+						Point relationLineStart = null;
+						switch(tableType){
+							case CURRENT_TABLE:
+								relationLineStart = new Point(
+										imgLoc.x-2 + size.width,  
+										imgLoc.y + 2);
+								currentTablePkPointMap.put(table.getSchemaName() + "." + table.getModelName() + "." + c.getModelName(), relationLineStart);
+								break;
+							case IMPORTED_TABLE:
+								relationLineStart = new Point(
+										imgLoc.x-2 + size.width,  
+										imgLoc.y + 2);
+								List<ForeignKey> exportedKeys = table.getExportedKeys();
+								if(exportedKeys != null){
+									for (ForeignKey expKey : exportedKeys) {
+										if(expKey.getFkTableSchem().equalsIgnoreCase(currentTable.getSchemaName())
+												&& expKey.getFkTableName().equalsIgnoreCase(currentTable.getModelName())){
+											Point startPoint = currentTableFkPointMap.get(expKey.getFkTableSchem() + "." 
+												+ expKey.getFkTableName() + "." + expKey.getFkColumnName());
+											if(startPoint != null){
+												TableRelationConnection trc = new TableRelationConnection();
+												trc.setConnectionColor(OracleGuiConstants.EXPORTED_RELATION_LINE_COLOR);
+												trc.setRelationPoint(relationLineStart);
+												RelationConnectionDirection dir = new RelationConnectionDirection();
+												dir.setStartPoint(startPoint);
+												dir.setEndPoint(relationLineStart);
+												trc.setConnectionDirection(dir);
+												importedConnectionMap.put(c.getModelName(), trc);
+											}
+										}
+									}
+								}
+								break;
+							case EXPORTED_TABLE:
+								relationLineStart = null;
+								break;
+						}
 					}
+					// for foreign key
 					if(c.getForeignKey()){
 						Point imgLoc = new Point(
 								location.x + 2,
 								colStart_Y + 2
 							);
 						graphics.drawImage(imageFk, imgLoc.x, imgLoc.y, null);
+						Point relationLineStart = null;
+						switch(tableType){
+							case CURRENT_TABLE:
+								relationLineStart = new Point(
+										imgLoc.x-2 ,  
+										imgLoc.y + 2);
+								currentTableFkPointMap.put(table.getSchemaName() + "." + table.getModelName() + "." + c.getModelName(), relationLineStart);
+								break;
+							case EXPORTED_TABLE:
+								relationLineStart = new Point(
+										imgLoc.x-2 ,  
+										imgLoc.y + 2);
+								List<ForeignKey> importedKeys = table.getImportedKeys();
+								if(importedKeys != null){
+									for (ForeignKey impKey : importedKeys) {
+										if(impKey.getPkTableSchem().equalsIgnoreCase(currentTable.getSchemaName())
+												&& impKey.getPkTableName().equalsIgnoreCase(currentTable.getModelName())){
+											for(ForeignKey expKey : currentTable.getExportedKeys()){
+												if(expKey.getFkColumnName().equalsIgnoreCase(c.getModelName())){
+													Point endPoint = currentTablePkPointMap.get(impKey.getPkTableSchem() + "." 
+															+ impKey.getPkTableName() + "." + impKey.getPkColumnName());
+													if(endPoint != null){
+														TableRelationConnection trc = new TableRelationConnection();
+														trc.setConnectionColor(OracleGuiConstants.IMPORTED_RELATION_LINE_COLOR);
+														trc.setRelationPoint(relationLineStart);
+														RelationConnectionDirection dir = new RelationConnectionDirection();
+														dir.setStartPoint(relationLineStart);
+														dir.setEndPoint(endPoint);
+														trc.setConnectionDirection(dir);
+														exportedConnectionMap.put(table.getSchemaName() + "."+ table.getModelName() + "."+c.getModelName(), trc);
+													}
+												}
+											}
+											
+										}
+									}
+								}
+								break;
+							case IMPORTED_TABLE:
+								relationLineStart = null;
+								break;
+						}
 					}
 					// if the column is not the last column
 					if(i != columnList.size()-1){
 						graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
-						graphics.drawLine(colStart_X+1, colStart_Y + cellHeight +2, location.x+size.width ,colStart_Y + cellHeight +2);
+						graphics.drawLine(colStart_X+1, colStart_Y + cellHeight +2, location.x+size.width ,
+								colStart_Y + cellHeight +2);
 					}
 					colStart_Y += cellHeight;
 				} else if(c.getForeignKey()){
@@ -256,6 +382,44 @@ public class DependencyGraphPanel extends JPanel {
 								colStart_Y + 2
 							);
 						graphics.drawImage(imagePk, imgLoc.x, imgLoc.y, null);
+						Point relationLineStart = null;
+						switch(tableType){
+							case CURRENT_TABLE:
+								relationLineStart = new Point(
+										imgLoc.x-2 + size.width,  
+										imgLoc.y + 2);
+								currentTablePkPointMap.put(table.getSchemaName() + "." + table.getModelName() + "." + c.getModelName(), relationLineStart);
+								break;
+							case IMPORTED_TABLE:
+								relationLineStart = new Point(
+										imgLoc.x-2 + size.width,  
+										imgLoc.y + 2);
+								List<ForeignKey> exportedKeys = table.getExportedKeys();
+								if(exportedKeys != null){
+									for (ForeignKey expKey : exportedKeys) {
+										if(expKey.getFkTableSchem().equalsIgnoreCase(currentTable.getSchemaName())
+												&& expKey.getFkTableName().equalsIgnoreCase(currentTable.getModelName())){
+											Point startPoint = currentTableFkPointMap.get(expKey.getFkTableSchem() + "." 
+												+ expKey.getFkTableName() + "." + expKey.getFkColumnName());
+											if(startPoint != null){
+												TableRelationConnection trc = new TableRelationConnection();
+												trc.setConnectionColor(OracleGuiConstants.EXPORTED_RELATION_LINE_COLOR);
+												trc.setRelationPoint(relationLineStart);
+												RelationConnectionDirection dir = new RelationConnectionDirection();
+												dir.setStartPoint(startPoint);
+												dir.setEndPoint(relationLineStart);
+												trc.setConnectionDirection(dir);
+												importedConnectionMap.put(c.getModelName(), trc);
+											}
+										
+										}
+									}
+								}
+								break;
+							case EXPORTED_TABLE:
+								relationLineStart = null;
+								break;
+						}
 					}
 					if(c.getForeignKey()){
 						Point imgLoc = new Point(
@@ -263,15 +427,60 @@ public class DependencyGraphPanel extends JPanel {
 								colStart_Y + 2
 							);
 						graphics.drawImage(imageFk, imgLoc.x, imgLoc.y, null);
+						Point relationLineStart = null;
+						switch(tableType){
+							case CURRENT_TABLE:
+								relationLineStart = new Point(
+										imgLoc.x-2 ,  
+										imgLoc.y + 2);
+								currentTableFkPointMap.put(table.getSchemaName() + "." + table.getModelName() + "." + c.getModelName(), relationLineStart);
+								break;
+							case EXPORTED_TABLE:
+								relationLineStart = new Point(
+										imgLoc.x-2 ,  
+										imgLoc.y + 2);
+								List<ForeignKey> importedKeys = table.getImportedKeys();
+								if(importedKeys != null){
+									for (ForeignKey impKey : importedKeys) {
+										if(impKey.getPkTableSchem().equalsIgnoreCase(currentTable.getSchemaName())
+												&& impKey.getPkTableName().equalsIgnoreCase(currentTable.getModelName())){
+											for(ForeignKey expKey : currentTable.getExportedKeys()){
+												if(expKey.getFkColumnName().equalsIgnoreCase(c.getModelName())){
+													Point endPoint = currentTablePkPointMap.get(impKey.getPkTableSchem() + "." 
+															+ impKey.getPkTableName() + "." + impKey.getPkColumnName());
+													if(endPoint != null){
+														TableRelationConnection trc = new TableRelationConnection();
+														trc.setConnectionColor(OracleGuiConstants.IMPORTED_RELATION_LINE_COLOR);
+														trc.setRelationPoint(relationLineStart);
+														RelationConnectionDirection dir = new RelationConnectionDirection();
+														dir.setStartPoint(relationLineStart);
+														dir.setEndPoint(endPoint);
+														trc.setConnectionDirection(dir);
+														exportedConnectionMap.put(table.getSchemaName() + "."+ table.getModelName() + "."+c.getModelName(), trc);
+													}
+												}
+											}
+										}
+									}
+								}
+								break;
+							case IMPORTED_TABLE:
+								relationLineStart = null;
+								break;
+						}
 					}
 					// if the column is not the last column
 					if(i != columnList.size()-1){
 						graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
-						graphics.drawLine(colStart_X+1, colStart_Y + cellHeight +2, location.x+size.width ,colStart_Y + cellHeight +2);
+						graphics.drawLine(colStart_X+1, colStart_Y + cellHeight +2, location.x+size.width ,
+								colStart_Y + cellHeight +2);
 					}
 					colStart_Y += cellHeight;
 				}
-			} else {
+			} 
+			
+		// show complete table	
+			else {
 				graphics.setColor(OracleGuiConstants.COLUMN_NAMES_FG_COLOR);
 				graphics.drawString(c.getModelName(), 
 						colStart_X + 2, colStart_Y + cellHeight - 4);
@@ -281,6 +490,43 @@ public class DependencyGraphPanel extends JPanel {
 							colStart_Y + 2
 						);
 					graphics.drawImage(imagePk, imgLoc.x, imgLoc.y, null);
+					Point relationLineStart = null;
+					switch(tableType){
+						case CURRENT_TABLE:
+							relationLineStart = new Point(
+									imgLoc.x-2 + size.width,  
+									imgLoc.y + 2);
+							currentTablePkPointMap.put(table.getSchemaName() + "." + table.getModelName() + "." + c.getModelName(), relationLineStart);
+							break;
+						case IMPORTED_TABLE:
+							relationLineStart = new Point(
+									imgLoc.x-2 + size.width,  
+									imgLoc.y + 2);
+							List<ForeignKey> exportedKeys = table.getExportedKeys();
+							if(exportedKeys != null){
+								for (ForeignKey expKey : exportedKeys) {
+									if(expKey.getFkTableSchem().equalsIgnoreCase(currentTable.getSchemaName())
+											&& expKey.getFkTableName().equalsIgnoreCase(currentTable.getModelName())){
+										Point startPoint = currentTableFkPointMap.get(expKey.getFkTableSchem() + "." 
+												+ expKey.getFkTableName() + "." + expKey.getFkColumnName());
+										if(startPoint != null){
+											TableRelationConnection trc = new TableRelationConnection();
+											trc.setConnectionColor(OracleGuiConstants.EXPORTED_RELATION_LINE_COLOR);
+											trc.setRelationPoint(relationLineStart);
+											RelationConnectionDirection dir = new RelationConnectionDirection();
+											dir.setStartPoint(startPoint);
+											dir.setEndPoint(relationLineStart);
+											trc.setConnectionDirection(dir);
+											importedConnectionMap.put(c.getModelName(), trc);
+										}
+									}
+								}
+							}
+							break;
+						case EXPORTED_TABLE:
+							relationLineStart = null;
+							break;
+					}
 				}
 				if(c.getForeignKey()){
 					Point imgLoc = new Point(
@@ -288,11 +534,53 @@ public class DependencyGraphPanel extends JPanel {
 							colStart_Y + 2
 						);
 					graphics.drawImage(imageFk, imgLoc.x, imgLoc.y, null);
+					Point relationLineStart = null;
+					switch(tableType){
+						case CURRENT_TABLE:
+							relationLineStart = new Point(
+									imgLoc.x-2 ,  
+									imgLoc.y + 2);
+							currentTableFkPointMap.put(table.getSchemaName() + "." + table.getModelName() + "." + c.getModelName(), relationLineStart);
+							break;
+						case EXPORTED_TABLE:
+							relationLineStart = new Point(
+									imgLoc.x-2 ,  
+									imgLoc.y + 2);
+							List<ForeignKey> importedKeys = table.getImportedKeys();
+							if(importedKeys != null){
+								for (ForeignKey impKey : importedKeys) {
+									if(impKey.getPkTableSchem().equalsIgnoreCase(currentTable.getSchemaName())
+											&& impKey.getPkTableName().equalsIgnoreCase(currentTable.getModelName())){
+										for(ForeignKey expKey : currentTable.getExportedKeys()){
+											if(expKey.getFkColumnName().equalsIgnoreCase(c.getModelName())){
+												Point endPoint = currentTablePkPointMap.get(impKey.getPkTableSchem() + "." 
+														+ impKey.getPkTableName() + "." + impKey.getPkColumnName());
+												if(endPoint != null){
+													TableRelationConnection trc = new TableRelationConnection();
+													trc.setConnectionColor(OracleGuiConstants.IMPORTED_RELATION_LINE_COLOR);
+													trc.setRelationPoint(relationLineStart);
+													RelationConnectionDirection dir = new RelationConnectionDirection();
+													dir.setStartPoint(relationLineStart);
+													dir.setEndPoint(endPoint);
+													trc.setConnectionDirection(dir);
+													exportedConnectionMap.put(table.getSchemaName() + "."+ table.getModelName() + "."+c.getModelName(), trc);
+												}
+											}
+										}
+									}
+								}
+							}
+							break;
+						case IMPORTED_TABLE:
+							relationLineStart = null;
+							break;
+					}
 				}
 				// if the column is not the last column
 				if(i != columnList.size()-1){
 					graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
-					graphics.drawLine(colStart_X+1, colStart_Y + cellHeight +2, location.x+size.width ,colStart_Y + cellHeight +2);
+					graphics.drawLine(colStart_X+1, colStart_Y + cellHeight +2, location.x+size.width ,
+							colStart_Y + cellHeight +2);
 				}
 				colStart_Y += cellHeight;
 			}
@@ -322,8 +610,5 @@ public class DependencyGraphPanel extends JPanel {
 	public void setScale(int scale) {
 		this.scale = scale;
 	}
-	
-	
-	
 	
 }
