@@ -45,7 +45,7 @@ public class SqlDocument extends DefaultStyledDocument {
 		Color blue = Color.BLUE;
  
 		StyleConstants.setForeground(keyword, blue);
-		StyleConstants.setFontSize(keyword, 24);
+		StyleConstants.setFontSize(keyword, 12);
 		//StyleConstants.setBold(keyword, true);
 		quote = new SimpleAttributeSet();
 		Color red = Color.RED;
@@ -54,6 +54,7 @@ public class SqlDocument extends DefaultStyledDocument {
 		Object dummyObject = new Object();
  
 		keywords = new Hashtable();
+		
 		keywords.put("SELECT", "SELECT");
 		keywords.put("INSERT", "INSERT");
 		keywords.put("DROP", "DROP");
