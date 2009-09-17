@@ -52,6 +52,31 @@ public class TableContentPanel extends JPanel implements ActionListener{
 			e.printStackTrace();
 		}
 		initComponents();
+		
+		showContent();
+	}
+
+	private void showContent() {
+		OracleDbGrabber dbGrabber = new OracleDbGrabber();
+		Connection conn = null;
+		try {
+			String query = "select * from " + tableName ;
+			
+			sampleContentTable.setModel(resultSetTableModelFactory.getResultSetTableModel(query));
+			 
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			if(conn != null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
 	}
 
 	private void initComponents() {
@@ -145,32 +170,6 @@ public class TableContentPanel extends JPanel implements ActionListener{
 		gridBagConstraints.gridy = 1;
 		gridBagConstraints.insets = insets;
 		
-		
-		OracleDbGrabber dbGrabber = new OracleDbGrabber();
-		Connection conn = null;
-		try {
-			String query = "select * from " + tableName ;
-			
-			sampleContentTable.setModel(resultSetTableModelFactory.getResultSetTableModel(query));
-			
-		/*} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}*/ 
-		}catch(Exception e){
-			e.printStackTrace();
-		}finally{
-			if(conn != null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
-		
-		
 		add(new JScrollPane(sampleContentTable), gridBagConstraints);
 	}
 
@@ -199,9 +198,10 @@ public class TableContentPanel extends JPanel implements ActionListener{
 	}
 
 	@Override
-	public void actionPerformed(ActionEvent arg0) {
-		// TODO Auto-generated method stub
-		
+	public void actionPerformed(ActionEvent evt) {
+		if(evt.getSource().equals(refreshButton)){
+			showContent();
+		}
 	}
 
 	
