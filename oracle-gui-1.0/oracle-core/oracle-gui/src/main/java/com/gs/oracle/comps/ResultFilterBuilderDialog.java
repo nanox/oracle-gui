@@ -16,21 +16,30 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 
+import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.sql.SqlDocument;
+import com.gs.oracle.util.DisplayUtils;
 
 /**
  * @author sabuj.das
@@ -38,7 +47,11 @@ import com.gs.oracle.sql.SqlDocument;
  */
 public class ResultFilterBuilderDialog extends JDialog {
 
+	private static final String REMOVE_CURRENT_ROW_CMD = "REMOVE_CURRENT_ROW_CMD";
+	private int currentRowCount = 0;
 	
+	private Map<String, JComponent> componentNameMap
+		= new HashMap<String, JComponent>();
 	
     /** Creates new form ResultFilterBuilderDialog */
     public ResultFilterBuilderDialog(Frame parent, boolean modal) {
@@ -280,46 +293,89 @@ public class ResultFilterBuilderDialog extends JDialog {
             else if (evt.getSource() == okButton) {
                 ResultFilterBuilderDialog.this.okButtonActionPerformed(evt);
             }
+            if(REMOVE_CURRENT_ROW_CMD.equals(evt.getActionCommand())){
+            	JButton b = (JButton) evt.getSource();
+            	String name = b.getName();
+            	int i = 0, j = 0, p = 0;
+            	String[] i_j = name.split("_");
+            	i = Integer.parseInt(i_j[0]);
+            	j = Integer.parseInt(i_j[1]);
+            	int to = 5 + (5 * i) + j;
+            	int from = to - 5;
+            	for(p = to; p > from ; p--){
+            		bottomPanel.remove(p);
+            	}
+            	bottomPanel.updateUI();
+            }
         }
     }
 
     private void addClauseButtonActionPerformed(ActionEvent evt) {
-    	/*jComboBox2.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+    	GridBagConstraints gridBagConstraints;
+    	
+    	JComboBox logicBox = new JComboBox(),
+    		columnsBox = new JComboBox(),
+    		operatoprBox = new JComboBox();
+    	JTextField valueTextField = new JTextField();
+    	JButton removeButton = new JButton();
+    	
+    	//if(currentRowCount > 0){
+    		logicBox.setModel(new javax.swing.DefaultComboBoxModel(OracleGuiConstants.LOGICAL_OPERATORS));
+    		logicBox.setName(""+currentRowCount + "_" + 0);
+            gridBagConstraints = new java.awt.GridBagConstraints();
+            gridBagConstraints.gridx = 0;
+            gridBagConstraints.gridy = currentRowCount + 1;
+            gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
+            gridBagConstraints.weighty = 1.0;
+            gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
+            bottomPanel.add(logicBox, gridBagConstraints);
+    	//}
+        
+        columnsBox.setModel(new javax.swing.DefaultComboBoxModel(new String[]{"kfdjghsjdfhg", "dfjhfdjghksjd"}));
+        columnsBox.setName(""+currentRowCount + "_" + 1);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = currentRowCount + 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-        bottomPanel.add(jComboBox2, gridBagConstraints);
-
-        jComboBox3.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        bottomPanel.add(columnsBox, gridBagConstraints);
+        
+        operatoprBox.setModel(new javax.swing.DefaultComboBoxModel(OracleGuiConstants.SQL_CONDITION_OPERATORS));
+        operatoprBox.setName(""+currentRowCount + "_" + 2);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = currentRowCount + 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-        bottomPanel.add(jComboBox3, gridBagConstraints);
+        bottomPanel.add(operatoprBox, gridBagConstraints);
 
-        jTextField1.setText("jTextField1");
+        valueTextField.setText("");
+        valueTextField.setName(""+currentRowCount + "_" + 3);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 3;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = currentRowCount + 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-        bottomPanel.add(jTextField1, gridBagConstraints);
+        bottomPanel.add(valueTextField, gridBagConstraints);
 
-        jButton2.setText("-");
+        removeButton.setText("-");
+        removeButton.setName(""+currentRowCount + "_" + 4);
+        removeButton.setActionCommand(REMOVE_CURRENT_ROW_CMD);
+        removeButton.addActionListener(new FormListener());
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 4;
-        gridBagConstraints.gridy = 1;
+        gridBagConstraints.gridy = currentRowCount + 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHEAST;
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
-        bottomPanel.add(jButton2, gridBagConstraints);*/
+        bottomPanel.add(removeButton, gridBagConstraints);
+        
+        bottomPanel.updateUI();
+        currentRowCount++;
     }
 
     private void cancelButtonActionPerformed(ActionEvent evt) {
@@ -336,6 +392,17 @@ public class ResultFilterBuilderDialog extends JDialog {
     public static void main(String args[]) {
         EventQueue.invokeLater(new Runnable() {
             public void run() {
+            	try {
+					UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+				} catch (ClassNotFoundException e1) {
+					e1.printStackTrace();
+				} catch (InstantiationException e1) {
+					e1.printStackTrace();
+				} catch (IllegalAccessException e1) {
+					e1.printStackTrace();
+				} catch (UnsupportedLookAndFeelException e1) {
+					e1.printStackTrace();
+				}
                 ResultFilterBuilderDialog dialog = new ResultFilterBuilderDialog(new JFrame(), true);
                 dialog.addWindowListener(new WindowAdapter() {
                     public void windowClosing(WindowEvent e) {

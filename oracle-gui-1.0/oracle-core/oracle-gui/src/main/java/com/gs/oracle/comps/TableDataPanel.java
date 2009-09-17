@@ -36,6 +36,7 @@ public class TableDataPanel extends JPanel implements ActionListener{
 	private String tableName, schemaName;
 	private ConnectionProperties connectionProperties;
 	private ResultSetTableModelFactory resultSetTableModelFactory;
+	private String queryString;
 	
 	
 	public TableDataPanel(String schemaName, String tableName,
@@ -49,16 +50,15 @@ public class TableDataPanel extends JPanel implements ActionListener{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		queryString = "SELECT * FROM " + schemaName + "." + tableName.toUpperCase();
 		initComponent();
-		showTableData();
+		showTableData(queryString);
 	}
 
 
-	private void showTableData() {
-
+	private void showTableData(String query) {
 		OracleDbGrabber dbGrabber = new OracleDbGrabber();
 		try {
-			String query = "SELECT * FROM " + schemaName + "." + tableName.toUpperCase();
 			dataTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			dataTable.setCellSelectionEnabled(true);
 			dataTable.setModel(resultSetTableModelFactory.getResultSetTableModel(query));
@@ -91,6 +91,7 @@ public class TableDataPanel extends JPanel implements ActionListener{
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "reload_green.png"));
 		refreshButton.setIcon(image);
+		refreshButton.addActionListener(this);
 		refreshButton.setFocusable(false);
 		dataToolBar.add(refreshButton);
 		dataToolBar.add(new JToolBar.Separator());
@@ -118,6 +119,7 @@ public class TableDataPanel extends JPanel implements ActionListener{
 						+ "systemfilterpool.gif"));
 		filterDataButton.setIcon(image);
 		filterDataButton.setFocusable(false);
+		filterDataButton.addActionListener(this);
 		dataToolBar.add(filterDataButton);
 		
 		gridBagConstraints = new GridBagConstraints();
@@ -175,7 +177,21 @@ public class TableDataPanel extends JPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		if(evt.getSource().equals(refreshButton)){
-			showTableData();
+			showTableData(queryString);
+		} else if(evt.getSource().equals(filterDataButton)){
+			applyFilter();
+		} 
+	}
+
+
+	private void applyFilter() {
+		ResultFilterDialog filterDialog = new ResultFilterDialog(null, true);
+		filterDialog.setInputQuery(queryString);
+		filterDialog.setAlwaysOnTop(true);
+		filterDialog.setLocation(100, 100);
+		int opt = filterDialog.showFilterDialog();
+		if(opt == ResultFilterDialog.APPLY_OPTION){
+			showTableData(filterDialog.getOutputQuery());
 		}
 	}
 
