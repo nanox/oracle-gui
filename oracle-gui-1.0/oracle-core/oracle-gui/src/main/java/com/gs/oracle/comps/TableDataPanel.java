@@ -6,6 +6,8 @@ package com.gs.oracle.comps;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.sql.SQLException;
 
 import javax.swing.Icon;
@@ -25,7 +27,7 @@ import com.gs.oracle.util.MenuBarUtil;
  * @author Green Moon
  *
  */
-public class TableDataPanel extends JPanel {
+public class TableDataPanel extends JPanel implements ActionListener{
 
 	private JButton refreshButton, addRecordButton, editRecordButton, deleteRecordButton,
 		filterDataButton;
@@ -48,6 +50,24 @@ public class TableDataPanel extends JPanel {
 			e.printStackTrace();
 		}
 		initComponent();
+		showTableData();
+	}
+
+
+	private void showTableData() {
+
+		OracleDbGrabber dbGrabber = new OracleDbGrabber();
+		try {
+			String query = "SELECT * FROM " + schemaName + "." + tableName.toUpperCase();
+			dataTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			dataTable.setCellSelectionEnabled(true);
+			dataTable.setModel(resultSetTableModelFactory.getResultSetTableModel(query));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		
 	}
 
 
@@ -121,25 +141,6 @@ public class TableDataPanel extends JPanel {
 		gridBagConstraints.insets = insets;
 		
 		
-		OracleDbGrabber dbGrabber = new OracleDbGrabber();
-		try {
-			String query = "SELECT * FROM " + schemaName + "." + tableName.toUpperCase();
-			dataTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			dataTable.setCellSelectionEnabled(true);
-			dataTable.setModel(resultSetTableModelFactory.getResultSetTableModel(query));
-			/*JTextField textField = new JTextField();
-			//textField.setEditable(false);
-	        textField.setBorder(BorderFactory.createEmptyBorder());
-	        DefaultCellEditor editor = new DefaultCellEditor(textField);
-	        editor.setClickCountToStart(1);
-			dataTable.setCellEditor(new StringActionTableCellEditor(editor));*/
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch(Exception e){
-			e.printStackTrace();
-		}
-		
 		add(new JScrollPane(dataTable), gridBagConstraints);
 
 	}
@@ -168,6 +169,14 @@ public class TableDataPanel extends JPanel {
 
 	public void setSchemaName(String schemaName) {
 		this.schemaName = schemaName;
+	}
+
+
+	@Override
+	public void actionPerformed(ActionEvent evt) {
+		if(evt.getSource().equals(refreshButton)){
+			showTableData();
+		}
 	}
 
 

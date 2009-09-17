@@ -56,8 +56,43 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 		this.schemaName = schemaName;
 		this.connectionProperties = connectionProperties;
 		initComponents();
+		showColumns();
 	}
 	
+	private void showColumns() {
+		OracleDbGrabber dbGrabber = new OracleDbGrabber();
+		Connection conn = null;
+		try {
+			conn = connectionProperties.getDataSource().getConnection();
+			Table table = dbGrabber.grabTable(conn, schemaName, tableName);
+			List<Column> columnList = new ArrayList<Column>();
+			if(table != null){
+				if(columnList != null){
+					columnList = table.getColumnlist();
+				}
+			}
+			columDetailsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			columDetailsTable.setCellSelectionEnabled(true);
+			columDetailsTable.setModel(new ColumnDetailsTableModel(columnList));
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			if(conn != null){
+				try {
+					conn.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		
+	}
+
 	private void initComponents() {
 		Icon image = null;
 		GridBagConstraints gridBagConstraints = null;
@@ -117,36 +152,6 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 		gridBagConstraints.insets = insets;
 		
 		
-		OracleDbGrabber dbGrabber = new OracleDbGrabber();
-		Connection conn = null;
-		try {
-			conn = connectionProperties.getDataSource().getConnection();
-			Table table = dbGrabber.grabTable(conn, schemaName, tableName);
-			List<Column> columnList = new ArrayList<Column>();
-			if(table != null){
-				if(columnList != null){
-					columnList = table.getColumnlist();
-				}
-			}
-			columDetailsTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			columDetailsTable.setCellSelectionEnabled(true);
-			columDetailsTable.setModel(new ColumnDetailsTableModel(columnList));
-			
-		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch(Exception e){
-			e.printStackTrace();
-		}finally{
-			if(conn != null){
-				try {
-					conn.close();
-				} catch (SQLException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		}
 		
 		
 		add(new JScrollPane(columDetailsTable), gridBagConstraints);
@@ -157,9 +162,10 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 	 * @see java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
 	 */
 	@Override
-	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
-
+	public void actionPerformed(ActionEvent evt) {
+		if(evt.getSource().equals(refreshButton)){
+			showColumns();
+		}
 	}
 
 	public String getTableName() {
