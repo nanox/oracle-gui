@@ -15,6 +15,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
+import com.gs.oracle.OracleGuiConstants;
+
 public class SqlDocument extends DefaultStyledDocument {
 	 
 	private DefaultStyledDocument doc;
@@ -55,9 +57,11 @@ public class SqlDocument extends DefaultStyledDocument {
  
 		keywords = new Hashtable();
 		
-		keywords.put("SELECT", "SELECT");
-		keywords.put("INSERT", "INSERT");
-		keywords.put("DROP", "DROP");
+		String[] l = OracleGuiConstants.SQL_KEYWORD.split(",");
+		for (String s : l) {
+			keywords.put(s.trim(), s.trim());
+		}
+		
 	}
 	
 	

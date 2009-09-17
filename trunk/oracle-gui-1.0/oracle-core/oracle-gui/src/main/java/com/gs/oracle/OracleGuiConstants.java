@@ -56,4 +56,7 @@ public interface OracleGuiConstants {
 	
 	int SCALE_100_PERCENT = 100;
 	int TABLE_LEFT_MARGIN_WIDTH = 20;
+	
+	String[] LOGICAL_OPERATORS = {"","AND", "OR", "NOT"};
+	String[] SQL_CONDITION_OPERATORS = {"IN", "LIKE", "=", "<", ">", "<>", "NOT IN", "BETWEEN"};
 }
