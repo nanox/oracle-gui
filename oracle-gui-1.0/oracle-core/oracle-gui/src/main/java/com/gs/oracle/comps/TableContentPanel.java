@@ -38,6 +38,7 @@ public class TableContentPanel extends JPanel implements ActionListener{
 	private JTable sampleContentTable;
 	private JToolBar contentToolBar;
 	private ResultSetTableModelFactory resultSetTableModelFactory;
+	private String queryString;
 	
 	public TableContentPanel(String schemaName, String tableName,
 			ConnectionProperties connectionProperties) {
@@ -51,19 +52,17 @@ public class TableContentPanel extends JPanel implements ActionListener{
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
+		queryString = "SELECT * FROM " + schemaName + "." + tableName.toUpperCase();
 		initComponents();
 		
-		showContent();
+		showContent(queryString);
 	}
 
-	private void showContent() {
+	private void showContent(String query) {
 		OracleDbGrabber dbGrabber = new OracleDbGrabber();
 		Connection conn = null;
 		try {
-			String query = "select * from " + tableName ;
-			
 			sampleContentTable.setModel(resultSetTableModelFactory.getResultSetTableModel(query));
-			 
 		}catch(Exception e){
 			e.printStackTrace();
 		}finally{
@@ -200,10 +199,21 @@ public class TableContentPanel extends JPanel implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		if(evt.getSource().equals(refreshButton)){
-			showContent();
-		}
+			showContent(queryString);
+		} else if(evt.getSource().equals(filterDataButton)){
+			applyFilter();
+		} 
 	}
 
-	
+	private void applyFilter() {
+		ResultFilterDialog filterDialog = new ResultFilterDialog(null, true);
+		filterDialog.setInputQuery(queryString);
+		filterDialog.setAlwaysOnTop(true);
+		filterDialog.setLocation(100, 100);
+		int opt = filterDialog.showFilterDialog();
+		if(opt == ResultFilterDialog.APPLY_OPTION){
+			showContent(filterDialog.getOutputQuery());
+		}
+	}
 
 }
