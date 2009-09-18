@@ -22,6 +22,8 @@ import javax.swing.JToolBar;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.grabber.OracleDbGrabber;
+import com.gs.oracle.util.DisplayTypeEnum;
+import com.gs.oracle.util.DisplayUtils;
 import com.gs.oracle.util.MenuBarUtil;
 
 /**
@@ -39,6 +41,7 @@ public class TableContentPanel extends JPanel implements ActionListener{
 	private JToolBar contentToolBar;
 	private ResultSetTableModelFactory resultSetTableModelFactory;
 	private String queryString;
+	private String currentFilter = "";
 	
 	public TableContentPanel(String schemaName, String tableName,
 			ConnectionProperties connectionProperties) {
@@ -50,7 +53,7 @@ public class TableContentPanel extends JPanel implements ActionListener{
 			this.resultSetTableModelFactory = new ResultSetTableModelFactory(
 					connectionProperties.getDataSource().getConnection());
 		} catch (SQLException e) {
-			e.printStackTrace();
+			DisplayUtils.displayMessage(null, e.getMessage(), DisplayTypeEnum.ERROR);
 		}
 		queryString = "SELECT * FROM " + schemaName + "." + tableName.toUpperCase();
 		initComponents();
@@ -64,7 +67,7 @@ public class TableContentPanel extends JPanel implements ActionListener{
 		try {
 			sampleContentTable.setModel(resultSetTableModelFactory.getResultSetTableModel(query));
 		}catch(Exception e){
-			e.printStackTrace();
+			DisplayUtils.displayMessage(null, e.getMessage(), DisplayTypeEnum.ERROR);
 		}finally{
 			if(conn != null){
 				try {
@@ -93,6 +96,11 @@ public class TableContentPanel extends JPanel implements ActionListener{
 
 		setLayout(new GridBagLayout());
 		
+		refreshButton.setToolTipText("Refresh");
+		addRecordButton.setToolTipText("Add Record");
+		editRecordButton.setToolTipText("Edit Record");
+		deleteRecordButton.setToolTipText("Delete Record");
+		filterDataButton.setToolTipText("Apply Filter");
 		
 		refreshButton.addActionListener(this);
 		addRecordButton.addActionListener(this);
@@ -206,12 +214,14 @@ public class TableContentPanel extends JPanel implements ActionListener{
 	}
 
 	private void applyFilter() {
-		ResultFilterDialog filterDialog = new ResultFilterDialog(null, true);
+		ResultFilterDialog filterDialog = new ResultFilterDialog(null, false);
+		filterDialog.setFilterQuery(currentFilter);
 		filterDialog.setInputQuery(queryString);
 		filterDialog.setAlwaysOnTop(true);
 		filterDialog.setLocation(100, 100);
 		int opt = filterDialog.showFilterDialog();
 		if(opt == ResultFilterDialog.APPLY_OPTION){
+			currentFilter = filterDialog.getFilterQuery();
 			showContent(filterDialog.getOutputQuery());
 		}
 	}

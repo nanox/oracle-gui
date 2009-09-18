@@ -14,11 +14,14 @@ package com.gs.oracle.frame;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
@@ -30,13 +33,14 @@ import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.comps.MenuBarItems;
 import com.gs.oracle.comps.ToolbarButtons;
 import com.gs.oracle.dlg.StatusBar;
+import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
 import com.gs.oracle.util.WindowUtil;
 
 /**
  * @author Green Moon
  *
  */
-public class OracleGuiMainFrame extends JFrame {
+public class OracleGuiMainFrame extends JFrame implements WindowListener{
 
 	/**
 	 *  Generated serialVersionUID
@@ -260,6 +264,55 @@ public class OracleGuiMainFrame extends JFrame {
 	 */
 	public void setStatusBar(StatusBar statusBar) {
 		this.statusBar = statusBar;
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		JInternalFrame[] iFrames = mainDesktopPane.getAllFrames();
+		for (JInternalFrame internalFrame : iFrames) {
+			if(internalFrame == null){
+				continue;
+			}
+			if(internalFrame instanceof DatabaseViewerInternalFrame){
+				((DatabaseViewerInternalFrame) internalFrame).closeWindow();
+			}
+		}
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 	
 	

@@ -112,6 +112,7 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "reload_green.png"));
 		refreshButton.setIcon(image);
+		refreshButton.addActionListener(this);
 		refreshButton.setFocusable(false);
 		columnToolBar.add(refreshButton);
 		columnToolBar.add(new JToolBar.Separator());
