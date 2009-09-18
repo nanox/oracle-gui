@@ -39,6 +39,7 @@ public class ResultFilterDialog extends JDialog implements ActionListener, Windo
 	
 	private String inputQuery;
 	private String outputQuery;
+	private String filterQuery = "";
 	
 	private JFrame parentComponent;	
 	
@@ -54,7 +55,7 @@ public class ResultFilterDialog extends JDialog implements ActionListener, Windo
     private void initComponents() {
         GridBagConstraints gridBagConstraints;
 
-        setMinimumSize(new Dimension(450, 350));
+        setMinimumSize(new Dimension(450, 300));
         setPreferredSize(getMinimumSize());
         
         jPanel1 = new JPanel();
@@ -71,7 +72,8 @@ public class ResultFilterDialog extends JDialog implements ActionListener, Windo
         jPanel2.setBorder(BorderFactory.createTitledBorder(" WHERE "));
         jPanel2.setLayout(new BorderLayout());
         
-        queryTextPane.setSize(400, 300);
+        queryTextPane.setSize(350, 200);
+        queryTextPane.setText(outputQuery);
         queryTextPane.setMargin(new Insets(2,2,2,2));
         jScrollPane1.setViewportView(queryTextPane);
 
@@ -166,10 +168,12 @@ public class ResultFilterDialog extends JDialog implements ActionListener, Windo
 		if(e.getSource().equals(okButton)){
 			setSelectedOption(APPLY_OPTION);
 			setOutputQuery(getInputQuery() + " WHERE " + queryTextPane.getText());
+			setFilterQuery(queryTextPane.getText());
 			dispose();
 		}else if(e.getSource().equals(cancelButton)){
 			setSelectedOption(CANCEL_OPTION);
 			setOutputQuery(getInputQuery() );
+			setFilterQuery(queryTextPane.getText());
 			dispose();
 		} 
 	}
@@ -185,12 +189,18 @@ public class ResultFilterDialog extends JDialog implements ActionListener, Windo
 	@Override
 	public void windowClosed(WindowEvent e) {
 		setSelectedOption(CANCEL_OPTION);
+		setOutputQuery(getInputQuery() );
+		setFilterQuery(queryTextPane.getText());
+		dispose();
 	}
 
 
 	@Override
 	public void windowClosing(WindowEvent e) {
 		setSelectedOption(CANCEL_OPTION);
+		setOutputQuery(getInputQuery() );
+		setFilterQuery(queryTextPane.getText());
+		dispose();
 	}
 
 
@@ -219,6 +229,17 @@ public class ResultFilterDialog extends JDialog implements ActionListener, Windo
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+	public String getFilterQuery() {
+		return filterQuery;
+	}
+
+
+	public void setFilterQuery(String filterQuery) {
+		this.filterQuery = filterQuery;
+		queryTextPane.setText(filterQuery);
 	}
 
 }

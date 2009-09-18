@@ -200,6 +200,10 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 
 	@Override
 	public void windowClosing(WindowEvent e) {
+		closeWindow();
+	}
+	
+	public void closeWindow(){
 		if(connectionProperties.getDataSource() != null){
 			try {
 				if(connectionProperties.getDataSource() instanceof OracleDataSource){

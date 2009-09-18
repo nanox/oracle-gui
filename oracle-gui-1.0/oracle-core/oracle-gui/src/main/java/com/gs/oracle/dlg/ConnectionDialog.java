@@ -84,6 +84,7 @@ public class ConnectionDialog extends JDialog {
 		initComponents();
 		setResizable(false);
 		setTitle("Connect to Oracle Database");
+		getRootPane().setDefaultButton(connectButton);
 	}
 
 	private void initComponents() {
