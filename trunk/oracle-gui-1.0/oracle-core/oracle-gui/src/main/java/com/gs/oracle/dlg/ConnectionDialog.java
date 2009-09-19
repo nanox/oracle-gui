@@ -69,9 +69,11 @@ public class ConnectionDialog extends JDialog {
 	private JTextField schemaNameTextField;
 	private ConnectionPropertiesCatalog catalog; 
 	private Vector<String> connectionNames = new Vector<String>();
+	private JFrame parentFrame;
 	
 	public ConnectionDialog(JFrame parent, boolean modal) {
 		super(parent, modal);
+		parentFrame = parent;
 		catalog = ConnectionPropertiesRWUtil.getInstance().getCatalog();
 		if(catalog != null){
 			int i = 0;
@@ -468,7 +470,7 @@ public class ConnectionDialog extends JDialog {
 
 	private void connectButtonActionPerformed(ActionEvent evt) {
 		GuiEventHandler handler = new GuiEventHandler();
-		handler.setParent(getParent());
+		handler.setParent(getParentFrame());
 		handler.setSourceForm(this);
 		ConnectionProperties properties = new ConnectionProperties("TEST");
 		properties.setHostName(hostAddrTextField.getText());
@@ -640,5 +642,13 @@ public class ConnectionDialog extends JDialog {
 		connectButton.setEnabled(!b);
 		testConnectionButton.setEnabled(!b);
 		cancelButton.setEnabled(!b);
+	}
+
+	public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
 	}
 }

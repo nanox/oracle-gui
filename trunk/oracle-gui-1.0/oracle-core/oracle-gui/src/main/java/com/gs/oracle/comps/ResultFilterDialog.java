@@ -188,19 +188,13 @@ public class ResultFilterDialog extends JDialog implements ActionListener, Windo
 
 	@Override
 	public void windowClosed(WindowEvent e) {
-		setSelectedOption(CANCEL_OPTION);
-		setOutputQuery(getInputQuery() );
-		setFilterQuery(queryTextPane.getText());
-		dispose();
+		
 	}
 
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		setSelectedOption(CANCEL_OPTION);
-		setOutputQuery(getInputQuery() );
-		setFilterQuery(queryTextPane.getText());
-		dispose();
+		
 	}
 
 

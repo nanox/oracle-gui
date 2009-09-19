@@ -28,6 +28,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
@@ -52,6 +53,7 @@ import com.gs.oracle.util.MenuBarUtil;
  */
 public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener {
 
+	private JFrame parentFrame;
 	public static final java.awt.Font DEFAULT_TEXT_FONT =
         new java.awt.Font(java.awt.Font.MONOSPACED,
             java.awt.Font.PLAIN, 12);
@@ -116,7 +118,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		queryResultPanel = new javax.swing.JPanel();
 		queryResultTabbedPane = new javax.swing.JTabbedPane();
 		queryResultTabPanel = new javax.swing.JPanel();
-		jPanel2 = new javax.swing.JPanel();
+		messagePanel = new javax.swing.JPanel();
 		queryLogToolBar = new javax.swing.JToolBar();
 		jButton1 = new javax.swing.JButton();
 		jScrollPane2 = new javax.swing.JScrollPane();
@@ -252,16 +254,19 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		queryToolBar.add(jSeparator1);
 
 		commitButton.setFocusable(false);
+		commitButton.setToolTipText("Commit");
+		commitButton.setEnabled(false);
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH + "commit.gif"));
 		commitButton.setIcon(image);
 		commitButton.addActionListener(this);
-		commitButton
-				.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+		commitButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 		commitButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 		queryToolBar.add(commitButton);
 
 		rollbackButton.setFocusable(false);
+		rollbackButton.setToolTipText("Rollback");
+		rollbackButton.setEnabled(false);
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH + "rollback.png"));
 		rollbackButton.setIcon(image);
@@ -274,6 +279,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		queryToolBar.add(jSeparator2);
 
 		openButton.setFocusable(false);
+		openButton.setToolTipText("Open Query File");
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH + "open.gif"));
 		openButton.setIcon(image);
@@ -286,12 +292,14 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH + "save_edit.gif"));
 		saveButton.setIcon(image);
+		saveButton.setToolTipText("Save");
 		saveButton.addActionListener(this);
 		saveButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
 		saveButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 		queryToolBar.add(saveButton);
 
 		saveAsButton.setFocusable(false);
+		saveAsButton.setToolTipText("Save As...");
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH + "saveas_edit.gif"));
 		saveAsButton.setIcon(image);
@@ -301,6 +309,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		saveAsButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
 		queryToolBar.add(saveAsButton);
 
+		clearButton.setToolTipText("Clear");
 		clearButton.setFocusable(false);
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH + "clear_co.gif"));
@@ -312,6 +321,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		queryToolBar.add(clearButton);
 		queryToolBar.add(jSeparator3);
 
+		queryFontButton.setToolTipText("Choose Font");
 		queryFontButton.setFocusable(false);
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH + "font.gif"));
@@ -413,7 +423,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 				BorderLayout.CENTER);
 		queryResultTabbedPane.addTab("Result", queryResultTabPanel);
 
-		jPanel2.setLayout(new java.awt.GridBagLayout());
+		messagePanel.setLayout(new java.awt.GridBagLayout());
 
 		queryLogToolBar.setRollover(true);
 		queryLogToolBar.setFloatable(false);
@@ -426,7 +436,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		gridBagConstraints = new java.awt.GridBagConstraints();
 		gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.weightx = 1.0;
-		jPanel2.add(queryLogToolBar, gridBagConstraints);
+		messagePanel.add(queryLogToolBar, gridBagConstraints);
 
 		queryLogTextArea.setColumns(20);
 		queryLogTextArea.setRows(5);
@@ -439,9 +449,9 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
-		jPanel2.add(jScrollPane2, gridBagConstraints);
+		messagePanel.add(jScrollPane2, gridBagConstraints);
 
-		queryResultTabbedPane.addTab("Log", jPanel2);
+		queryResultTabbedPane.addTab("Message", messagePanel);
 
 		gridBagConstraints = new java.awt.GridBagConstraints();
 		gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -466,7 +476,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 	private javax.swing.JMenuItem saveMenuItem;
 	private javax.swing.JMenuItem saveAsMenuItem;
 	private javax.swing.JMenuItem clearMenuItem;
-	private javax.swing.JPanel jPanel2;
+	private javax.swing.JPanel messagePanel;
 	private javax.swing.JScrollPane jScrollPane1;
 	private javax.swing.JScrollPane jScrollPane2;
 	private javax.swing.JToolBar.Separator jSeparator1;
@@ -518,10 +528,29 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		if (e.getSource().equals(wrapToggleButton) || e.getSource().equals(wrapCheckBoxMenuItem)) {
 			if(wrapToggleButton.isSelected() && wrapCheckBoxMenuItem.isSelected()){
 				queryTextArea.setLineWrap(true);
+				wrapToggleButton.setToolTipText("Un-Wrap");
+				wrapCheckBoxMenuItem.setText("Un-Wrap");
 			}else{
 				queryTextArea.setLineWrap(false);
+				wrapToggleButton.setToolTipText("Wrap");
+				wrapCheckBoxMenuItem.setText("Wrap");
 			}
 		}
+		if (e.getSource().equals(queryFontButton)){
+			
+		}
+		if (e.getSource().equals(saveAsButton) || e.getSource().equals(saveAsMenuItem)){
+					
+		}
+		if (e.getSource().equals(saveButton) || e.getSource().equals(saveMenuItem)){
+			
+		}
+		/*if (e.getSource().equals(queryFontButton)){
+			
+		}
+		if (e.getSource().equals(queryFontButton)){
+			
+		}*/
 	}
 
 	public void displayQueryResults(final String q) {
@@ -535,7 +564,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 						queryResultTable.setModel(factory.getResultSetTableModel(q));
 						queryResultTabbedPane.setSelectedIndex(0);
 					} catch (SQLException ex) {
-						JOptionPane.showMessageDialog(null, new String[] {
+						JOptionPane.showMessageDialog(getParentFrame(), new String[] {
 						ex.getClass().getName() + ": ", ex.getMessage() });
 					}
 				}
@@ -547,8 +576,9 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 				int row = queryExecutionService.executeNonQuery(sqlQuery);
 				queryLogTextArea.append("[ " + row + " ] rows updated.\n");
 				queryResultTabbedPane.setSelectedIndex(1);
-			} catch (ApplicationException e) {
-				e.printStackTrace();
+			} catch (ApplicationException ex) {
+				JOptionPane.showMessageDialog(getParentFrame(), new String[] {
+					ex.getClass().getName() + ": ", ex.getMessage() });
 			}
 		}
 	}
@@ -632,5 +662,13 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 	public List<String> getSelectedQueryList() {
 		return getQueryList(queryTextArea.getSelectedText());
+	}
+
+	public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
 	}
 }

@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
 import javax.swing.JSplitPane;
@@ -36,6 +37,8 @@ import com.gs.oracle.service.impl.OracleDatabaseServiceImpl;
  *
  */
 public class DatabaseViewerInternalFrame extends JInternalFrame implements WindowListener{
+	
+	private JFrame parentFrame;
 	
 	private ConnectionProperties connectionProperties;
 
@@ -124,6 +127,7 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		dbDetailsTabbedPane = new JTabbedPane();
 		dbDetailsTabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		SqlQueryPanel panel = new SqlQueryPanel();
+		panel.setParentFrame(parentFrame);
 		panel.setConnectionProperties(getConnectionProperties());
 		ResultSetTableModelFactory factory = null;
 		try {
@@ -237,5 +241,17 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
+	}
+
+
+
+	public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+
+
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
 	}
 }
