@@ -82,7 +82,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		exportDataToCsvMenuItem, exportDataToHtmlMenuItem, exportDataToTextMenuItem,
 		exportDataToExcelMenuItem, exportDataToXmlMenuItem, exportDdlToFileMenuItem,
 		exportDdlToClipBoardMenuItem, exportDdlToSqlTabMenuItem;
-	private JMenu editTableMenu, exportTableDataMenu, exportTableDdlMenu;
+	private JMenu editTableMenu, exportTableDataMenu, exportTableDdlMenu, exportTableStructureMenu;
 	
 	private JMenuItem addTableMenuItem, expandCollapseFolderMenuItem, expandCollapseSchemaMenuItem,
 		expandCollapseAllFolderMenuItem, expandCollapseAllSchemaMenuItem;
