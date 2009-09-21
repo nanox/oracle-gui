@@ -193,7 +193,7 @@ public class TableDataPanel extends JPanel implements ActionListener{
 
 
 	private void applyFilter() {
-		ResultFilterDialog filterDialog = new ResultFilterDialog(null, false);
+		ResultFilterDialog filterDialog = new ResultFilterDialog(null, true);
 		filterDialog.setFilterQuery(currentFilter);
 		filterDialog.setInputQuery(queryString);
 		filterDialog.setAlwaysOnTop(true);
