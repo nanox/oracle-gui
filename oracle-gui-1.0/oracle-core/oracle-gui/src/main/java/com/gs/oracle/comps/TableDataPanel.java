@@ -20,6 +20,7 @@ import javax.swing.JToolBar;
 
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.dlg.TableDataEditorDialog;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
@@ -113,6 +114,7 @@ public class TableDataPanel extends JPanel implements ActionListener{
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "editor_area.gif"));
 		editRecordButton.setIcon(image);
+		editRecordButton.addActionListener(this);
 		editRecordButton.setFocusable(false);
 		dataToolBar.add(editRecordButton);
 		image = new ImageIcon(MenuBarUtil.class
@@ -188,6 +190,8 @@ public class TableDataPanel extends JPanel implements ActionListener{
 			showTableData(queryString);
 		} else if(evt.getSource().equals(filterDataButton)){
 			applyFilter();
+		} else if(evt.getSource().equals(editRecordButton)){
+			editRecord();
 		} 
 	}
 
@@ -199,11 +203,22 @@ public class TableDataPanel extends JPanel implements ActionListener{
 		filterDialog.setAlwaysOnTop(true);
 		filterDialog.setLocation(100, 100);
 		int opt = filterDialog.showFilterDialog();
-		if(opt == ResultFilterDialog.APPLY_OPTION){
+		if(opt == OracleGuiConstants.APPLY_OPTION){
 			currentFilter  = filterDialog.getFilterQuery();
 			showTableData(filterDialog.getOutputQuery());
 		}
 	}
 
+	public void editRecord(){
+		TableDataEditorDialog dataEditorDialog = new TableDataEditorDialog(null, dataTable);
+		dataEditorDialog.setSchemaName(schemaName);
+		dataEditorDialog.setTableName(tableName);
+		dataEditorDialog.setConnectionProperties(connectionProperties);
+		dataEditorDialog.setLocation(100, 100);
+		int opt = dataEditorDialog.showEditorDialog();
+		if(opt == OracleGuiConstants.APPLY_OPTION){
+			
+		}
+	}
 
 }

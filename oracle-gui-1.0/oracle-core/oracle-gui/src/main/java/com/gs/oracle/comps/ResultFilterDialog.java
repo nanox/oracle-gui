@@ -24,6 +24,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextPane;
 import javax.swing.WindowConstants;
 
+import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.sql.SqlDocument;
 
 /**
@@ -32,10 +33,7 @@ import com.gs.oracle.sql.SqlDocument;
  */
 public class ResultFilterDialog extends JDialog implements ActionListener, WindowListener{
 
-	public static final int CANCEL_OPTION = -1001,
-							APPLY_OPTION = 1001; 
-	
-	private int selectedOption = CANCEL_OPTION;
+	private int selectedOption = OracleGuiConstants.CANCEL_OPTION;
 	
 	private String inputQuery;
 	private String outputQuery;
@@ -163,15 +161,14 @@ public class ResultFilterDialog extends JDialog implements ActionListener, Windo
 	}
 
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(okButton)){
-			setSelectedOption(APPLY_OPTION);
+			setSelectedOption(OracleGuiConstants.APPLY_OPTION);
 			setOutputQuery(getInputQuery() + " WHERE " + queryTextPane.getText());
 			setFilterQuery(queryTextPane.getText());
 			dispose();
 		}else if(e.getSource().equals(cancelButton)){
-			setSelectedOption(CANCEL_OPTION);
+			setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
 			setOutputQuery(getInputQuery() );
 			setFilterQuery(queryTextPane.getText());
 			dispose();

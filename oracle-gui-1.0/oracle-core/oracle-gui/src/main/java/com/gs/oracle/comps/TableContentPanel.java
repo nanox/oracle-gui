@@ -220,7 +220,7 @@ public class TableContentPanel extends JPanel implements ActionListener{
 		filterDialog.setAlwaysOnTop(true);
 		filterDialog.setLocation(100, 100);
 		int opt = filterDialog.showFilterDialog();
-		if(opt == ResultFilterDialog.APPLY_OPTION){
+		if(opt == OracleGuiConstants.APPLY_OPTION){
 			currentFilter = filterDialog.getFilterQuery();
 			showContent(filterDialog.getOutputQuery());
 		}
