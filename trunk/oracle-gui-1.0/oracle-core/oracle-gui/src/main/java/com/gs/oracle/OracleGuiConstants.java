@@ -20,6 +20,9 @@ import java.util.List;
  * 
  */
 public interface OracleGuiConstants {
+	
+	int CANCEL_OPTION = -1001;
+	int APPLY_OPTION = 1001; 
 
 	String IMAGE_PATH = "/images/";
 	String QUERY_IMAGE_PATH = "/images/query/";
