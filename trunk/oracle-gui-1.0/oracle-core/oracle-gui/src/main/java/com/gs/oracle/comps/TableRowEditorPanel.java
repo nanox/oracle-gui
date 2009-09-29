@@ -120,10 +120,15 @@ public class TableRowEditorPanel extends JPanel implements ActionListener {
 			if(primaryKeyColumnNameList.contains(colName)){
 				colNameLabel.setText(colName + " [ PK ] ");
 				colValueTextField.setEditable(false);
+			}else if(notNullColumnNameList.contains(colName)){
+				colNameLabel.setText(colName + " [ * ] ");
+				colNameLabel.setToolTipText("Not NULL");
+				colValueTextField.setEditable(true);
 			}else{
 				colNameLabel.setText(colName);
 				colValueTextField.setEditable(true);
 			}
+			
 			
 			colValueTextField.setText(
 				(columnRow.getColumnValue() != null) ? columnRow.getColumnValue().toString() : ""	

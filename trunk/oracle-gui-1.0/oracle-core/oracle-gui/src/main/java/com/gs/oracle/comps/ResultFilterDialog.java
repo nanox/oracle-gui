@@ -191,7 +191,8 @@ public class ResultFilterDialog extends JDialog implements ActionListener, Windo
 
 	@Override
 	public void windowClosing(WindowEvent e) {
-		
+		setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
+		dispose();
 	}
 
 

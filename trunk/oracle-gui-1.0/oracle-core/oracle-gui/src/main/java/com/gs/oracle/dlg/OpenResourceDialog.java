@@ -6,6 +6,7 @@
 package com.gs.oracle.dlg;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -16,6 +17,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -33,7 +36,9 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
+import com.gs.oracle.util.WindowUtil;
 
 /**
  *
@@ -41,19 +46,33 @@ import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
  */
 public class OpenResourceDialog extends JDialog {
 
-	private List<String> schemaNameList;
+	private int selectedOption = OracleGuiConstants.CANCEL_OPTION;
+	
+	private List<String> schemaNameList, tableNameList;
 	private JFrame parentFrame;
 	private DatabaseViewerInternalFrame targetDbViewerIFrame;
     
-    public OpenResourceDialog(JFrame parent, List<String> schemaNameList,
+	private String selectedSchemaName, selectedTableName;
+	
+    public OpenResourceDialog(JFrame parent, List<String> schemaNameList, List<String> tableNameList,
     		DatabaseViewerInternalFrame targetDbViewerIFrame) {
         super(parent, true);
         this.schemaNameList = schemaNameList;
+        this.tableNameList = tableNameList;
         this.parentFrame = parent;
         this.targetDbViewerIFrame = targetDbViewerIFrame;
         initComponents();
+        setMinimumSize(new Dimension(300, 400));
+        setPreferredSize(getMinimumSize());
+        WindowUtil.bringCenterTo(this, parentFrame);
+        getRootPane().setDefaultButton(openButton);
     }
 
+    
+    public int showOpenDialog() {
+        this.setVisible(true);
+        return selectedOption;
+    }
     
     private void initComponents() {
         GridBagConstraints gridBagConstraints;
@@ -121,11 +140,6 @@ public class OpenResourceDialog extends JDialog {
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         mainPanel.add(jLabel3, gridBagConstraints);
 
-        matchingItemsList.setModel(new AbstractListModel() {
-            String[] strings = { "Item 1", "Item 2", "Item 3", "Item 4", "Item 5" };
-            public int getSize() { return strings.length; }
-            public Object getElementAt(int i) { return strings[i]; }
-        });
         matchingItemsList.addListSelectionListener(formListener);
         jScrollPane1.setViewportView(matchingItemsList);
 
@@ -159,6 +173,7 @@ public class OpenResourceDialog extends JDialog {
         mainPanel.add(cancelButton, gridBagConstraints);
 
         openButton.setText("Open");
+        openButton.setEnabled(false);
         openButton.addActionListener(formListener);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -174,7 +189,7 @@ public class OpenResourceDialog extends JDialog {
 
     // Code for dispatching events from components to event handlers.
 
-    private class FormListener implements ActionListener, KeyListener, ListSelectionListener {
+    private class FormListener implements ActionListener, KeyListener, ListSelectionListener, WindowListener {
         FormListener() {}
         public void actionPerformed(ActionEvent evt) {
             if (evt.getSource() == schemaNameComboBox) {
@@ -205,6 +220,41 @@ public class OpenResourceDialog extends JDialog {
                 OpenResourceDialog.this.matchingItemsListValueChanged(evt);
             }
         }
+		@Override
+		public void windowActivated(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowClosed(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowClosing(WindowEvent arg0) {
+			setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
+			dispose();
+		}
+		@Override
+		public void windowDeactivated(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowDeiconified(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowIconified(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void windowOpened(WindowEvent arg0) {
+			// TODO Auto-generated method stub
+			
+		}
     }
 
     private void schemaNameComboBoxActionPerformed(ActionEvent evt) {
@@ -212,23 +262,74 @@ public class OpenResourceDialog extends JDialog {
     }
 
     private void selectItemTextFieldKeyTyped(KeyEvent evt) {
-        // TODO add your handling code here:
+    	String key = selectItemTextField.getText();
+        final String[] matchedRessNames = getMatchedResourceNames(key);
+        matchingItemsList.setModel(new AbstractListModel() {
+            String[] strings = matchedRessNames;
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
     }
 
-    private void matchingItemsListValueChanged(ListSelectionEvent evt) {
-        // TODO add your handling code here:
+    private String[] getMatchedResourceNames(String key) {
+		List<String> matchedNames = new ArrayList<String>();
+		for (String table : tableNameList) {
+			if(table.toLowerCase().startsWith(key.toLowerCase())){
+				matchedNames.add(table);
+			}
+		}
+		String[] arr = new String[matchedNames.size()];
+		for (int i = 0; i < matchedNames.size(); i++) {
+			arr[i] = matchedNames.get(i);
+		}
+		return arr;
+	}
+
+
+	private void matchingItemsListValueChanged(ListSelectionEvent evt) {
+		if(matchingItemsList.getSelectedIndex() < 0)
+		{
+			openButton.setEnabled(false);
+			return;
+		}
+		openButton.setEnabled(true);
+        Object o = matchingItemsList.getSelectedValue();
+        if(o != null){
+        	resourcePathTextField.setText(schemaNameComboBox.getSelectedItem().toString()
+        			+ "." + o.toString());
+        }
     }
 
     private void cancelButtonActionPerformed(ActionEvent evt) {
-        // TODO add your handling code here:
+    	setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
+		dispose();
     }
 
     private void openButtonActionPerformed(ActionEvent evt) {
-        // TODO add your handling code here:
+    	setSelectedOption(OracleGuiConstants.APPLY_OPTION);
+    	setSelectedSchemaName(schemaNameComboBox.getSelectedItem().toString());
+    	setSelectedTableName(matchingItemsList.getSelectedValue().toString());
+		dispose();
     }
 
 
-    // Variables declaration
+    /**
+	 * @return the selectedOption
+	 */
+	public int getSelectedOption() {
+		return selectedOption;
+	}
+
+
+	/**
+	 * @param selectedOption the selectedOption to set
+	 */
+	public void setSelectedOption(int selectedOption) {
+		this.selectedOption = selectedOption;
+	}
+
+
+	// Variables declaration
     private JButton cancelButton;
     private JLabel jLabel1;
     private JLabel jLabel2;
@@ -288,6 +389,38 @@ public class OpenResourceDialog extends JDialog {
 	public void setTargetDbViewerIFrame(
 			DatabaseViewerInternalFrame targetDbViewerIFrame) {
 		this.targetDbViewerIFrame = targetDbViewerIFrame;
+	}
+
+
+	/**
+	 * @return the selectedSchemaName
+	 */
+	public String getSelectedSchemaName() {
+		return selectedSchemaName;
+	}
+
+
+	/**
+	 * @param selectedSchemaName the selectedSchemaName to set
+	 */
+	public void setSelectedSchemaName(String selectedSchemaName) {
+		this.selectedSchemaName = selectedSchemaName;
+	}
+
+
+	/**
+	 * @return the selectedTableName
+	 */
+	public String getSelectedTableName() {
+		return selectedTableName;
+	}
+
+
+	/**
+	 * @param selectedTableName the selectedTableName to set
+	 */
+	public void setSelectedTableName(String selectedTableName) {
+		this.selectedTableName = selectedTableName;
 	}
 
     

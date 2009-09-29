@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -58,7 +59,6 @@ public class OracleDbGrabber {
 		Database db = new Database();
 		db.setModelName(databaseName);
 		List<Schema> schemaList = new ArrayList<Schema>();
-		
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 		if(databaseMetaData != null){
 			ResultSet rs = databaseMetaData.getSchemas();
@@ -74,18 +74,9 @@ public class OracleDbGrabber {
 				while(ret.next()){
 					String tn = ret.getString("TABLE_NAME");
 					
-					Table t = new Table();
-					t.setSchemaName(s.getModelName());
-					t.setModelName(tn);
+					Table t = grabTable(connection, s.getModelName(), tn);
 					if(tn.startsWith("BIN$"))
 						t.setDeleted(true);
-					try{
-						t.setColumnlist(getColumnList(s.getModelName(), t.getModelName(), connection));
-					}catch(Exception e){
-						System.err.println("Table : " + t.getModelName() );
-						e.printStackTrace();
-					}
-					
 					s.getTableList().add(t);
 				}
 				if(ret != null){
@@ -153,7 +144,7 @@ public class OracleDbGrabber {
 				if(tn.startsWith("BIN$"))
 					table.setDeleted(true);
 				try{
-					table.setColumnlist(getColumnList(schemaName, table.getModelName(), connection));
+					table.setColumnlist(getColumnList(table, connection));
 				}catch(Exception e){
 					System.err.println("Table : " + table.getModelName() );
 					e.printStackTrace();
@@ -163,6 +154,62 @@ public class OracleDbGrabber {
 			e.printStackTrace();
 		}
 		return table;
+	}
+	
+	public List<Column> getColumnList(Table table, Connection connection) throws SQLException{
+		List<Column> list = new ArrayList<Column>();
+		DatabaseMetaData databaseMetaData = connection.getMetaData();
+		List<PrimaryKey> pkList = table.getPrimaryKeys();
+		Set<String> pkColSet = new HashSet<String>();
+		for (PrimaryKey pk : pkList) {
+			pkColSet.add(pk.getColumnName());
+		}
+		
+		Set<String> fkColSet = new HashSet<String>();
+		List<ForeignKey> importedKeys = table.getImportedKeys();
+		for (ForeignKey fk : importedKeys) {
+			fkColSet.add(fk.getFkColumnName());
+		}
+		ResultSet colRs = databaseMetaData.getColumns("", table.getSchemaName(), table.getModelName(), "%");
+		ResultSetMetaData rsm = colRs.getMetaData();
+		int cc = rsm.getColumnCount();
+		while(colRs.next()){
+			Column c = new Column();
+			//set table name
+			c.setTableName(table.getModelName());
+			// set column name
+			c.setModelName(colRs.getString(ColumnMetaDataEnum.COLUMN_NAME.getCode()));
+			// set PK
+			if(pkColSet.contains(c.getModelName())){
+				c.setPrimaryKey(true);
+			}
+			// set FK
+			if(fkColSet.contains(c.getModelName())){
+				c.setForeignKey(true);
+			}
+			// set type name
+			c.setTypeName(colRs.getString(ColumnMetaDataEnum.TYPE_NAME.getCode()));
+			// set nullable
+			String nulAble = colRs.getString(ColumnMetaDataEnum.IS_NULLABLE.getCode());
+			if(ColumnMetaDataEnum.IS_NULLABLE_YES.getCode().equalsIgnoreCase(nulAble)){
+				c.setNullable(true);
+			}else{
+				c.setNullable(false);
+			}
+			// set sql type
+			c.setDataType(colRs.getInt(ColumnMetaDataEnum.SQL_DATA_TYPE.getCode()));
+			// set column id
+			c.setColumnID(colRs.getInt(ColumnMetaDataEnum.ORDINAL_POSITION.getCode()));
+			// set size
+			c.setSize(colRs.getInt(ColumnMetaDataEnum.COLUMN_SIZE.getCode()));
+			// set default value
+			//c.setDefaultValue(colRs.getString(ColumnMetaDataEnum.COLUMN_DEF.getCode()));
+			list.add(c);
+		}
+		if(colRs != null){
+			colRs.close();
+		}
+		return list;
 	}
 	
 	public List<Column> getColumnList(String schemaName, String tableName, Connection connection) throws SQLException{

@@ -7,6 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
@@ -49,6 +50,9 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 	private OracleDatabaseService service;
 	private JTabbedPane dbViewerTabbedPane;
 	
+	private List<String> schemaNameList = new ArrayList<String>();
+	private List<String> tableNameList = new ArrayList<String>();
+	
 	public DatabaseViewerInternalFrame() {
 		service = new OracleDatabaseServiceImpl();
 		Database database = getDataBaseInformation();
@@ -79,15 +83,35 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		if(db != null){
 			List<Schema> schemaList = db.getSchemaList();
 			for (Schema schema : schemaList) {
+				schemaNameList.add(schema.getModelName());
 				OracleGuiConstants.SQL_KEYWORD_LIST.add(schema.getModelName().toLowerCase());
 				List<Table> tablelList = schema.getTableList();
 				for (Table table : tablelList) {
+					tableNameList.add(table.getModelName());
 					OracleGuiConstants.SQL_KEYWORD_LIST.add(table.getModelName().toLowerCase());
 				}
 			}
  		}
 		return db;
 	}
+
+	/**
+	 * @return the schemaNameList
+	 */
+	public List<String> getSchemaNameList() {
+		return schemaNameList;
+	}
+
+
+
+	/**
+	 * @return the tableNameList
+	 */
+	public List<String> getTableNameList() {
+		return tableNameList;
+	}
+
+
 
 	public void refreshConnectionScheduler(ConnectionProperties connectionProperties){
 		

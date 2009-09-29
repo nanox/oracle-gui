@@ -19,6 +19,7 @@ import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.ImageIcon;
 import javax.swing.JDesktopPane;
@@ -33,11 +34,16 @@ import org.fife.plaf.Office2003.Office2003LookAndFeel;
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.common.StringUtil;
+import com.gs.oracle.comps.ButtonTabComponent;
 import com.gs.oracle.comps.MenuBarItems;
+import com.gs.oracle.comps.TableDetailsPanel;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.dlg.ConnectionDialog;
+import com.gs.oracle.dlg.OpenResourceDialog;
 import com.gs.oracle.frame.OracleGuiMainFrame;
+import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
+import com.gs.oracle.model.Table;
 import com.gs.oracle.service.DatabaseConnectionService;
 import com.gs.oracle.service.impl.DatabaseConnectionServiceImpl;
 import com.gs.oracle.util.DisplayTypeEnum;
@@ -193,9 +199,98 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 				if(desktopPane != null){
 					tileWindows(desktopPane);
 				}
+			} else if(OPEN_RESS_ACT_CMD.equals(cmd)){
+				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
+				JDesktopPane desktopPane = f.getMainDesktopPane();
+				if(desktopPane == null){
+					return;
+				}
+				JInternalFrame iFrame = desktopPane.getSelectedFrame();
+				if(iFrame == null){
+					return;
+				}
+				DatabaseViewerInternalFrame dbIframe = null;
+				if(iFrame instanceof DatabaseViewerInternalFrame){
+					dbIframe = (DatabaseViewerInternalFrame) iFrame;
+				}
+				if(dbIframe == null){
+					return;
+				}
+				openResource((JFrame) getParent(), dbIframe);
 			}
 		}
 	}
+	
+	private void openResource(JFrame parent, DatabaseViewerInternalFrame dbIframe) {
+		OpenResourceDialog openResourceDialog = new OpenResourceDialog(
+				parent, dbIframe.getSchemaNameList(), dbIframe.getTableNameList(), dbIframe
+			);
+		int opt = openResourceDialog.showOpenDialog();
+		if(OracleGuiConstants.APPLY_OPTION == opt){
+			String schemaName = openResourceDialog.getSelectedSchemaName();
+			String tableName =  openResourceDialog.getSelectedTableName();
+			if(StringUtil.hasValidContent(schemaName) && StringUtil.hasValidContent(tableName)){
+				OracleDbGrabber dbGrabber = new OracleDbGrabber();
+				Connection con = null;
+				try {
+					con = dbIframe.getConnectionProperties().getDataSource().getConnection();
+					Table table = dbGrabber.grabTable(con, schemaName, tableName);
+					if(table != null){
+						openTableDetails(dbIframe, table);
+					}
+				} catch (SQLException e) {
+					DisplayUtils.displayMessage(parent, e.getMessage(), DisplayTypeEnum.ERROR);
+				}
+				finally{
+					if(con != null){
+						try {
+							con.close();
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+		}
+	}
+
+	private void openTableDetails(DatabaseViewerInternalFrame dbIframe, Table table) {
+		DatabaseViewerInternalFrame iFrame = dbIframe;
+		if(iFrame != null){
+			boolean tableOpened = false;
+			int selectedTabIndex = -1;
+			int tabCount = iFrame.getDbDetailsTabbedPane().getTabCount();
+			for (int i = 0; i < tabCount; i++) {
+				Component tabComponent = iFrame.getDbDetailsTabbedPane().getComponentAt(i);
+				if(tabComponent instanceof TableDetailsPanel){
+					TableDetailsPanel ti = (TableDetailsPanel) tabComponent;
+					if(ti != null){
+						if(table.getModelName().equals(ti.getTableName())){
+							tableOpened = true;
+							selectedTabIndex = i;
+							break;
+						}
+					}
+				}
+			}
+			if(!tableOpened){
+				TableDetailsPanel panel = new TableDetailsPanel(table.getSchemaName(), table.getModelName(), iFrame.getConnectionProperties());
+				iFrame.getDbDetailsTabbedPane().addTab(table.getModelName(), panel);
+				int n = iFrame.getDbDetailsTabbedPane().getTabCount();
+				iFrame.getDbDetailsTabbedPane().setTabComponentAt(n - 1,
+		                new ButtonTabComponent(iFrame.getDbDetailsTabbedPane(), new ImageIcon(DatabaseViewerInternalFrame.class
+		        				.getResource(OracleGuiConstants.IMAGE_PATH + "table.gif"))));
+				selectedTabIndex = iFrame.getDbDetailsTabbedPane().getTabCount() - 1;
+			}else{
+				// call the refresh method of this tab
+			}
+			if(selectedTabIndex > -1){
+				iFrame.getDbDetailsTabbedPane().setSelectedIndex(selectedTabIndex);
+				iFrame.getDbDetailsTabbedPane().updateUI();
+			}
+		}
+	}
+	
 	
 	public void updateLnF(String lnfName){
 		try {
