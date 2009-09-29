@@ -12,27 +12,39 @@
 package com.gs.oracle.command;
 
 import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyVetoException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
+import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import org.fife.plaf.Office2003.Office2003LookAndFeel;
 
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.common.StringUtil;
+import com.gs.oracle.comps.MenuBarItems;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.dlg.ConnectionDialog;
 import com.gs.oracle.frame.OracleGuiMainFrame;
-import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
 import com.gs.oracle.service.DatabaseConnectionService;
 import com.gs.oracle.service.impl.DatabaseConnectionServiceImpl;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
 import com.gs.oracle.util.WindowUtil;
+
+import de.muntjak.tinylookandfeel.TinyLookAndFeel;
 
 /**
  * @author Green Moon
@@ -147,9 +159,134 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 				new Thread(testConnRun).start();
 			} else if(VIEW_TABLE_DETAILS_ACT_CMD.equals(cmd)){
 				
+			} else if(SHOW_TOOLBAR_ACT_CMD.equals(cmd)){
+				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
+				if(f.getMenuBarItems().getMenu(MenuBarItems.VIEW_MENU_NAME).getItem(0).isSelected()){
+					f.getMainToolBar().setVisible(true);
+				}else{
+					f.getMainToolBar().setVisible(false);
+				}
+			} else if(SHOW_STATBAR_ACT_CMD.equals(cmd)){
+				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
+				if(f.getMenuBarItems().getMenu(MenuBarItems.VIEW_MENU_NAME).getItem(1).isSelected()){
+					f.getStatusBar().setVisible(true);
+				}else{
+					f.getStatusBar().setVisible(false);
+				}
+			} else if(SYS_LnF_ACT_CMD.equals(cmd)){
+				updateLnF(UIManager.getSystemLookAndFeelClassName());
+			} else if(METAL_ACT_CMD.equals(cmd)){
+				updateLnF(UIManager.getCrossPlatformLookAndFeelClassName());
+			} else if(FOREST_ACT_CMD.equals(cmd)){
+				updateLnF(TinyLookAndFeel.class.getCanonicalName());
+			} else if(OFFICE_2003_ACT_CMD.equals(cmd)){
+				updateLnF(Office2003LookAndFeel.class.getCanonicalName());
+			} else if(CASCADE_ACT_CMD.equals(cmd)){
+				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
+				JDesktopPane desktopPane = f.getMainDesktopPane();
+				if(desktopPane != null){
+					cascadeWindows(desktopPane);
+				}
+			} else if(TILES_2003_ACT_CMD.equals(cmd)){
+				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
+				JDesktopPane desktopPane = f.getMainDesktopPane();
+				if(desktopPane != null){
+					tileWindows(desktopPane);
+				}
 			}
 		}
 	}
+	
+	public void updateLnF(String lnfName){
+		try {
+			UIManager.setLookAndFeel(lnfName);
+        } catch (Exception ex) {
+        	try {
+				UIManager.setLookAndFeel(TinyLookAndFeel.class.getCanonicalName());
+			} catch (ClassNotFoundException e) {
+				e.printStackTrace();
+			} catch (InstantiationException e) {
+				e.printStackTrace();
+			} catch (IllegalAccessException e) {
+				e.printStackTrace();
+			} catch (UnsupportedLookAndFeelException e) {
+				e.printStackTrace();
+			}
+        }
+        SwingUtilities.updateComponentTreeUI(getParent());
+	}
+	
+	
+	public void cascadeWindows( JDesktopPane desktopPane, int layer ) {
+	    JInternalFrame[] frames = desktopPane.getAllFramesInLayer( layer );
+	    if ( frames.length == 0) return;
+	 
+	    cascadeWindows( frames, desktopPane.getBounds(), 24 );
+	}
+	public void cascadeWindows( JDesktopPane desktopPane ) {
+	    JInternalFrame[] frames = desktopPane.getAllFrames();
+	    if ( frames.length == 0) return;
+	 
+	    cascadeWindows( frames, desktopPane.getBounds(), 24 );
+	}
+	private void cascadeWindows( JInternalFrame[] frames, Rectangle dBounds, int separation ) {
+	    int margin = frames.length*separation + separation;
+	    int width = dBounds.width - margin;
+	    int height = dBounds.height - margin;
+	    for ( int i = 0; i < frames.length; i++) {
+	        frames[i].setBounds( separation + dBounds.x + i*separation,
+	                             separation + dBounds.y + i*separation,
+	                             width, height );
+	    }
+	}
+
+	public void tileWindows(JDesktopPane desktopPane) {
+        
+        // How many frames do we have?
+        JInternalFrame[] allframes = desktopPane.getAllFrames();
+        int count = allframes.length;
+        if (count == 0) return;
+        
+        // Determine the necessary grid size
+        int sqrt = (int)Math.sqrt(count);
+        int rows = sqrt;
+        int cols = sqrt;
+        if (rows * cols < count) {
+            cols++;
+            if (rows * cols < count) {
+                rows++;
+            }
+        }
+        
+        // Define some initial values for size & location.
+        Dimension size = desktopPane.getSize();
+        
+        int w = size.width / cols;
+        int h = size.height / rows;
+        int x = 0;
+        int y = 0;
+        
+        // Iterate over the frames, deiconifying any iconified frames and then
+        // relocating & resizing each.
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols && ((i * cols) + j < count); j++) {
+                JInternalFrame f = allframes[(i * cols) + j];
+                
+                if (!f.isClosed() && f.isIcon()) {
+                    try {
+                        f.setIcon(false);
+                    } catch (PropertyVetoException ignored) {}
+                }
+                
+                desktopPane.getDesktopManager().resizeFrame(f, x, y, w, h);
+                x += w;
+            }
+            y += h; // start the next row
+            x = 0;
+        }
+    }
+
+	
 	/**
 	 * @return the parent
 	 */
