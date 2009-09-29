@@ -28,13 +28,7 @@ public class Launcher {
 
 	public static void main(String[] args) {
 		try {
-			String osName = System.getProperty("os.name");
-            String lnfClass = TinyLookAndFeel.class.getCanonicalName();
-            if (osName.toLowerCase().contains("win")) {
-                lnfClass = Office2003LookAndFeel.class.getCanonicalName();
-            }
-            UIManager.setLookAndFeel(lnfClass);
-			
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
         	try {
 				UIManager.setLookAndFeel(TinyLookAndFeel.class.getCanonicalName());
