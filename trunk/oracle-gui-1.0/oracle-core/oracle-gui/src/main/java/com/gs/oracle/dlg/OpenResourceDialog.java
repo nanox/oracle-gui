@@ -66,10 +66,28 @@ public class OpenResourceDialog extends JDialog {
         setPreferredSize(getMinimumSize());
         WindowUtil.bringCenterTo(this, parentFrame);
         getRootPane().setDefaultButton(openButton);
+        selectItemTextField.requestFocus();
+        showAllResources();
     }
-
     
-    public int showOpenDialog() {
+    
+    private void showAllResources() {
+    	final String[] matchedRessNames = getMatchedResourceNames("");
+        matchingItemsList.setModel(new AbstractListModel() {
+            String[] strings = matchedRessNames;
+            public int getSize() { return strings.length; }
+            public Object getElementAt(int i) { return strings[i]; }
+        });
+        int count = matchingItemsList.getModel().getSize();
+        if(count >= 1){
+        	matchingItemsList.setSelectedIndex(0);
+        }
+	}
+
+
+
+
+	public int showOpenDialog() {
         this.setVisible(true);
         return selectedOption;
     }
@@ -204,6 +222,13 @@ public class OpenResourceDialog extends JDialog {
         }
 
         public void keyPressed(KeyEvent evt) {
+        	int code = evt.getKeyCode();
+        	if(KeyEvent.VK_DOWN == code){
+        		if(matchingItemsList.getModel().getSize() > 0){
+        			matchingItemsList.requestFocus();
+        			matchingItemsList.setSelectedIndex(0);
+        		}
+        	}
         }
 
         public void keyReleased(KeyEvent evt) {
