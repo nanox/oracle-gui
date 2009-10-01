@@ -113,7 +113,7 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 							OracleGuiConstants.SQL_KEYWORD_LIST.add("set");
 							OracleGuiConstants.SQL_KEYWORD_LIST.add("create");
 							p.setDataSource(connectionService.getDataSource(p));
-							DatabaseViewerInternalFrame iFrame = new DatabaseViewerInternalFrame(p);
+							DatabaseViewerInternalFrame iFrame = new DatabaseViewerInternalFrame(frame, p);
 							iFrame.setVisible(true);
 							((OracleGuiMainFrame)parent).getMainDesktopPane().add(iFrame);
 							((ConnectionDialog)getSourceForm()).dispose();
@@ -274,11 +274,13 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 				}
 			}
 			if(!tableOpened){
-				TableDetailsPanel panel = new TableDetailsPanel(table.getSchemaName(), table.getModelName(), iFrame.getConnectionProperties());
+				TableDetailsPanel panel = new TableDetailsPanel((JFrame) getParent(), 
+						table.getSchemaName(), table.getModelName(), iFrame.getConnectionProperties());
 				iFrame.getDbDetailsTabbedPane().addTab(table.getModelName(), panel);
 				int n = iFrame.getDbDetailsTabbedPane().getTabCount();
 				iFrame.getDbDetailsTabbedPane().setTabComponentAt(n - 1,
-		                new ButtonTabComponent(iFrame.getDbDetailsTabbedPane(), new ImageIcon(DatabaseViewerInternalFrame.class
+		                new ButtonTabComponent(iFrame.getDbDetailsTabbedPane(), 
+		                new ImageIcon(DatabaseViewerInternalFrame.class
 		        				.getResource(OracleGuiConstants.IMAGE_PATH + "table.gif"))));
 				selectedTabIndex = iFrame.getDbDetailsTabbedPane().getTabCount() - 1;
 			}else{

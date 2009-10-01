@@ -14,6 +14,7 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -33,6 +34,7 @@ import com.gs.oracle.util.MenuBarUtil;
  */
 public class ConstraintsDetailsPanel extends JPanel {
 
+	private JFrame parentFrame;
 	private String schemaName; 
 	private String tableName;
 	private ConnectionProperties connectionProperties;
@@ -42,8 +44,9 @@ public class ConstraintsDetailsPanel extends JPanel {
 	private JToolBar constraintToolBar;
 	private ResultSetTableModelFactory resultSetTableModelFactory;
 	
-	public ConstraintsDetailsPanel(String schemaName, String tableName,
+	public ConstraintsDetailsPanel(JFrame frame, String schemaName, String tableName,
 			ConnectionProperties connectionProperties) {
+		this.parentFrame = frame;
 		this.schemaName = schemaName; 
 		this.tableName = tableName;
 		this.connectionProperties = connectionProperties;
@@ -170,5 +173,19 @@ public class ConstraintsDetailsPanel extends JPanel {
 		this.connectionProperties = connectionProperties;
 	}
 
+
+	/**
+	 * @return the parentFrame
+	 */
+	public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+	/**
+	 * @param parentFrame the parentFrame to set
+	 */
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
+	}
 	
 }

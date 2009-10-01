@@ -32,6 +32,8 @@ import com.gs.oracle.model.Schema;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.service.OracleDatabaseService;
 import com.gs.oracle.service.impl.OracleDatabaseServiceImpl;
+import com.gs.oracle.util.DisplayTypeEnum;
+import com.gs.oracle.util.DisplayUtils;
 
 /**
  * @author sabuj.das
@@ -61,8 +63,9 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 	
 	
 	
-	public DatabaseViewerInternalFrame(
+	public DatabaseViewerInternalFrame(JFrame parent,
 			ConnectionProperties connectionProperties) {
+		parentFrame = parent;
 		service = new OracleDatabaseServiceImpl();
 		this.connectionProperties = connectionProperties;
 		Database database = getDataBaseInformation();
@@ -141,7 +144,7 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		outterSplitPane.setOneTouchExpandable(true);
 		outterSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 		
-		DatabaseDirectoryPanel directoryPanel = new DatabaseDirectoryPanel(
+		DatabaseDirectoryPanel directoryPanel = new DatabaseDirectoryPanel(getParentFrame(), 
 				new DatabaseDirectoryTree(database), getConnectionProperties());
 		directoryPanel.setParentComponent(this);
 		outterSplitPane.setLeftComponent(directoryPanel);
@@ -158,8 +161,7 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 			factory = new ResultSetTableModelFactory(
 					getConnectionProperties().getDataSource().getConnection());
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
 		}
 		panel.setFactory(factory);
 		dbDetailsTabbedPane.addTab("SQL", panel);
@@ -237,8 +239,8 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 				if(connectionProperties.getDataSource() instanceof OracleDataSource){
 					((OracleDataSource)connectionProperties.getDataSource()).close();
 				}
-			} catch (SQLException e1) {
-				e1.printStackTrace();
+			} catch (SQLException e) {
+				DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
 			}
 		}
 	}

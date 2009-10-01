@@ -18,6 +18,7 @@ import java.util.List;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -40,18 +41,19 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 		OracleGuiConstants {
 
 	private static final Logger logger = Logger.getLogger(ColumnDetailsPanel.class);
-	
+	private JFrame parentFrame;
 	private JButton refreshButton, addColumnButton, editColumnButton, dropColumnButton;
 	private JTable columDetailsTable;
 	private JToolBar columnToolBar;
 	private String tableName,schemaName;
 	private ConnectionProperties connectionProperties;
 	
-	public ColumnDetailsPanel(String schemaName, String tableName, ConnectionProperties connectionProperties) {
+	public ColumnDetailsPanel(JFrame parent, String schemaName, String tableName, ConnectionProperties connectionProperties) {
 		if(logger.isDebugEnabled()){
 			logger.debug("Populating column details for Table : " + 
 					schemaName + "." +tableName );
 		}
+		this.parentFrame = parent;
 		this.tableName = tableName;
 		this.schemaName = schemaName;
 		this.connectionProperties = connectionProperties;
@@ -191,6 +193,20 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 
 	public void setSchemaName(String schemaName) {
 		this.schemaName = schemaName;
+	}
+
+	/**
+	 * @return the parentFrame
+	 */
+	public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+	/**
+	 * @param parentFrame the parentFrame to set
+	 */
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
 	}
 
 }

@@ -32,6 +32,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -59,9 +60,10 @@ public class TableDependencyPanel extends JPanel {
 
 	private String schemaName, tableName;
 	private ConnectionProperties connectionProperties;
-
+	private JFrame parentFrame;
 	
-	public TableDependencyPanel(String schemaName, String tableName, ConnectionProperties cp) {
+	public TableDependencyPanel(JFrame frame, String schemaName, String tableName, ConnectionProperties cp) {
+		this.parentFrame = frame;
 		this.schemaName = schemaName;
 		this.tableName = tableName;
 		this.connectionProperties = cp;
@@ -527,6 +529,21 @@ public class TableDependencyPanel extends JPanel {
 
 	public void setConnectionProperties(ConnectionProperties connectionProperties) {
 		this.connectionProperties = connectionProperties;
+	}
+
+
+	/**
+	 * @return the parentFrame
+	 */
+	public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+	/**
+	 * @param parentFrame the parentFrame to set
+	 */
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
 	}
 
 }

@@ -18,6 +18,7 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComponent;
+import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
@@ -63,7 +64,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 					+ "collapseall.gif"));
 	
 	private JComponent parentComponent;
-	
+	private JFrame parentFrame;
 	private DatabaseDirectoryTree databaseDirectoryTree;
 	protected TreePath mouseClickedTreePath;
 	private JPopupMenu dbDirectoryTreePopupMenu, commonPopupMenu, columnPopupMenu, tablePopupMenu,
@@ -88,9 +89,10 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		expandCollapseAllFolderMenuItem, expandCollapseAllSchemaMenuItem;
 	
 	
-	public DatabaseDirectoryPanel(DatabaseDirectoryTree tree, ConnectionProperties connectionProperties) {
+	public DatabaseDirectoryPanel(JFrame parent, DatabaseDirectoryTree tree, ConnectionProperties connectionProperties) {
 		if(tree == null)
 			throw new IllegalArgumentException("DatabaseDirectoryTree cannot be NULL");
+		this.parentFrame = parent;
 		this.databaseDirectoryTree = tree;
 		this.databaseDirectoryTree.addTreeSelectionListener(this);
 		this.databaseDirectoryTree.addMouseListener(this);

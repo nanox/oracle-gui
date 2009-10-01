@@ -13,6 +13,7 @@ import java.sql.SQLException;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -41,10 +42,11 @@ public class TableDataPanel extends JPanel implements ActionListener{
 	private ResultSetTableModelFactory resultSetTableModelFactory;
 	private String queryString;
 	private String currentFilter = "";
+	private JFrame parentFrame;
 	
-	
-	public TableDataPanel(String schemaName, String tableName,
+	public TableDataPanel(JFrame parent, String schemaName, String tableName,
 			ConnectionProperties connectionProperties) {
+		this.parentFrame = parent;
 		this.schemaName = schemaName;
 		this.tableName = tableName;
 		this.connectionProperties = connectionProperties;
@@ -197,7 +199,7 @@ public class TableDataPanel extends JPanel implements ActionListener{
 
 
 	private void applyFilter() {
-		ResultFilterDialog filterDialog = new ResultFilterDialog(null, true);
+		ResultFilterDialog filterDialog = new ResultFilterDialog(getParentFrame(), true);
 		filterDialog.setFilterQuery(currentFilter);
 		filterDialog.setInputQuery(queryString);
 		filterDialog.setAlwaysOnTop(true);
@@ -210,7 +212,7 @@ public class TableDataPanel extends JPanel implements ActionListener{
 	}
 
 	public void editRecord(){
-		TableDataEditorDialog dataEditorDialog = new TableDataEditorDialog(null, dataTable);
+		TableDataEditorDialog dataEditorDialog = new TableDataEditorDialog(getParentFrame(), dataTable);
 		dataEditorDialog.setSchemaName(schemaName);
 		dataEditorDialog.setTableName(tableName);
 		dataEditorDialog.setConnectionProperties(connectionProperties);
@@ -219,6 +221,20 @@ public class TableDataPanel extends JPanel implements ActionListener{
 		if(opt == OracleGuiConstants.APPLY_OPTION){
 			
 		}
+	}
+
+	/**
+	 * @return the parentFrame
+	 */
+	public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+	/**
+	 * @param parentFrame the parentFrame to set
+	 */
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
 	}
 
 }

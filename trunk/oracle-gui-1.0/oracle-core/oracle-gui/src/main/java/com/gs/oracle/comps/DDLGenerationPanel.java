@@ -18,6 +18,7 @@ import java.io.IOException;
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -45,7 +46,7 @@ public class DDLGenerationPanel extends JPanel implements ActionListener,
             java.awt.Font.PLAIN, 12);
 
 	private Font bitstreamFont;
-
+	private JFrame parentFrame;
 	private QueryExecutionService queryExecutionService;
 	
 	private String tableName;
@@ -58,8 +59,9 @@ public class DDLGenerationPanel extends JPanel implements ActionListener,
 
 	private JToggleButton wrapToggleButton;
 	
-	public DDLGenerationPanel(String tableName,
+	public DDLGenerationPanel(JFrame frame, String tableName,
 			ConnectionProperties connectionProperties) {
+		this.parentFrame = frame;
 		try {
 			bitstreamFont = Font.createFont(Font.TRUETYPE_FONT, 
 					getClass().getResourceAsStream("/fonts/VeraMono.ttf"));
@@ -216,6 +218,20 @@ public class DDLGenerationPanel extends JPanel implements ActionListener,
 				ddlTextArea.setLineWrap(false);
 			}
 		}
+	}
+
+	/**
+	 * @return the parentFrame
+	 */
+	public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+	/**
+	 * @param parentFrame the parentFrame to set
+	 */
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
 	}
 
 }
