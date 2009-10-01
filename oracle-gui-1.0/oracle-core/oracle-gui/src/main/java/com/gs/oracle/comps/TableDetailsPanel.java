@@ -8,6 +8,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.UIDefaults;
@@ -26,18 +27,20 @@ import com.gs.oracle.graph.TableDependencyPanel;
 public class TableDetailsPanel extends JPanel implements ActionListener,
 		OracleGuiConstants {
 
+	private JFrame parentFrame;
 	private JTabbedPane tableDetailsTabbedPane;
 	private String tableName;
 	private String schemaName;
 	private ConnectionProperties connectionProperties;
 	
-	public TableDetailsPanel(String schemaName, String tableName) {
-		this(schemaName, tableName, null);
+	public TableDetailsPanel(JFrame parentFrame, String schemaName, String tableName) {
+		this(parentFrame, schemaName, tableName, null);
 	}
 	
 
-	public TableDetailsPanel(String schemaName, String tableName,
+	public TableDetailsPanel(JFrame parentFrame, String schemaName, String tableName,
 			ConnectionProperties connectionProperties) {
+		this.parentFrame = parentFrame;
 		this.schemaName = schemaName;
 		this.tableName = tableName;
 		this.connectionProperties = connectionProperties;
@@ -47,6 +50,22 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 
 
 
+	/**
+	 * @return the parentFrame
+	 */
+	public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+
+	/**
+	 * @param parentFrame the parentFrame to set
+	 */
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
+	}
+
+
 	private void initComponents() {
 		tableDetailsTabbedPane = new JTabbedPane();
 		tableDetailsTabbedPane.setFocusable(false);
@@ -54,32 +73,32 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 				TableDetailsPanel.class
 						.getResource(OracleGuiConstants.IMAGE_PATH
 								+ "table_data.gif")), 
-				new TableDataPanel(getSchemaName(), getTableName(), getConnectionProperties()));
+				new TableDataPanel(getParentFrame(), getSchemaName(), getTableName(), getConnectionProperties()));
 		tableDetailsTabbedPane.addTab("Columns",new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "columngroup.gif")), 
-				new ColumnDetailsPanel(getSchemaName(), getTableName(), getConnectionProperties()));
+				new ColumnDetailsPanel(getParentFrame(),getSchemaName(), getTableName(), getConnectionProperties()));
 		tableDetailsTabbedPane.addTab("Constraints",new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "constraint.gif")), 
-				new ConstraintsDetailsPanel(getSchemaName(), getTableName(), getConnectionProperties()));
+				new ConstraintsDetailsPanel(getParentFrame(),getSchemaName(), getTableName(), getConnectionProperties()));
 		tableDetailsTabbedPane.addTab("Dependencies",new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "dependency.gif")), 
-				new TableDependencyPanel(getSchemaName(), getTableName(), getConnectionProperties()));
+				new TableDependencyPanel(getParentFrame(),getSchemaName(), getTableName(), getConnectionProperties()));
 		tableDetailsTabbedPane.addTab("Indexes",new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "index.gif")), 
-				new IndexDetailsPanel(getSchemaName(), getTableName(), getConnectionProperties()));
+				new IndexDetailsPanel(getParentFrame(),getSchemaName(), getTableName(), getConnectionProperties()));
 		tableDetailsTabbedPane.addTab("DDL", new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "generate_ddl.gif")),
-				new DDLGenerationPanel(getTableName(), getConnectionProperties()));
+				new DDLGenerationPanel(getParentFrame(),getTableName(), getConnectionProperties()));
 
 		setLayout(new BorderLayout());
 

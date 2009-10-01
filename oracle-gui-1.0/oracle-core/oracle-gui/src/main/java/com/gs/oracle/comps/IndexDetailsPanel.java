@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -24,14 +25,15 @@ public class IndexDetailsPanel extends JPanel {
 	private String schemaName; 
 	private String tableName;
 	private ConnectionProperties connectionProperties;
-	
+	private JFrame parentFrame;
 	private JButton refreshButton, editIndexButton;
 	private JTable indexDetailsTable;
 	private JToolBar indexToolBar;
 	private ResultSetTableModelFactory resultSetTableModelFactory;
 	
-	public IndexDetailsPanel(String schemaName, String tableName,
+	public IndexDetailsPanel(JFrame frame, String schemaName, String tableName,
 			ConnectionProperties connectionProperties) {
+		this.parentFrame = frame;
 		this.schemaName = schemaName; 
 		this.tableName = tableName;
 		this.connectionProperties = connectionProperties;
@@ -154,6 +156,20 @@ public class IndexDetailsPanel extends JPanel {
 		this.connectionProperties = connectionProperties;
 	}
 
+
+	/**
+	 * @return the parentFrame
+	 */
+	public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+	/**
+	 * @param parentFrame the parentFrame to set
+	 */
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
+	}
 	
 
 }
