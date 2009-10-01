@@ -493,7 +493,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 				}
 			}
 			if(!tableOpened){
-				TableDetailsPanel panel = new TableDetailsPanel(table.getSchemaName(), table.getModelName(), iFrame.getConnectionProperties());
+				TableDetailsPanel panel = new TableDetailsPanel(getParentFrame(), table.getSchemaName(), table.getModelName(), iFrame.getConnectionProperties());
 				iFrame.getDbDetailsTabbedPane().addTab(table.getModelName(), panel);
 				int n = iFrame.getDbDetailsTabbedPane().getTabCount();
 				iFrame.getDbDetailsTabbedPane().setTabComponentAt(n - 1,
@@ -641,6 +641,20 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 
 	public void setParentComponent(JComponent parentComponent) {
 		this.parentComponent = parentComponent;
+	}
+
+	/**
+	 * @return the parentFrame
+	 */
+	public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+	/**
+	 * @param parentFrame the parentFrame to set
+	 */
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
 	}
 
 }
