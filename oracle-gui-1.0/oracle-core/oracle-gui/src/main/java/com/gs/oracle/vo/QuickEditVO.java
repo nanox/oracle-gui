@@ -17,6 +17,7 @@ public class QuickEditVO {
 	private String pkColumnName;
 	private String pkColumnValue;
 	private ConnectionProperties connectionProperties;
+	private String rowid, oraRowscn;
 	
 	public QuickEditVO() {
 		// TODO Auto-generated constructor stub
@@ -118,6 +119,34 @@ public class QuickEditVO {
 	 */
 	public void setConnectionProperties(ConnectionProperties connectionProperties) {
 		this.connectionProperties = connectionProperties;
+	}
+
+	/**
+	 * @return the rowid
+	 */
+	public String getRowid() {
+		return rowid;
+	}
+
+	/**
+	 * @return the oraRowscn
+	 */
+	public String getOraRowscn() {
+		return oraRowscn;
+	}
+
+	/**
+	 * @param rowid the rowid to set
+	 */
+	public void setRowid(String rowid) {
+		this.rowid = rowid;
+	}
+
+	/**
+	 * @param oraRowscn the oraRowscn to set
+	 */
+	public void setOraRowscn(String oraRowscn) {
+		this.oraRowscn = oraRowscn;
 	}
 	
 	
