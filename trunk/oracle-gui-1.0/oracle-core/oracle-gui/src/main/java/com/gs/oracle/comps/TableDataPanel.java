@@ -8,7 +8,15 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.RowId;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -19,13 +27,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 
+import oracle.sql.ROWID;
+
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.dlg.QuickEditDialog;
 import com.gs.oracle.dlg.TableDataEditorDialog;
 import com.gs.oracle.grabber.OracleDbGrabber;
+import com.gs.oracle.model.Table;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
 import com.gs.oracle.util.MenuBarUtil;
+import com.gs.oracle.vo.QuickEditVO;
 
 /**
  * @author Green Moon
@@ -53,7 +66,7 @@ public class TableDataPanel extends JPanel implements ActionListener{
 		try {
 			this.resultSetTableModelFactory = new ResultSetTableModelFactory(connectionProperties.getDataSource().getConnection());
 		} catch (SQLException e) {
-			DisplayUtils.displayMessage(null, e.getMessage(), DisplayTypeEnum.ERROR);
+			DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
 		}
 		queryString = "SELECT * FROM " + schemaName + "." + tableName.toUpperCase();
 		initComponent();
@@ -68,7 +81,7 @@ public class TableDataPanel extends JPanel implements ActionListener{
 			dataTable.setCellSelectionEnabled(true);
 			dataTable.setModel(resultSetTableModelFactory.getResultSetTableModel(query));
 		} catch (SQLException e) {
-			DisplayUtils.displayMessage(null, e.getMessage(), DisplayTypeEnum.ERROR);
+			DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
 		} catch(Exception e){
 			e.printStackTrace();
 		}
@@ -89,6 +102,100 @@ public class TableDataPanel extends JPanel implements ActionListener{
 		dataToolBar = new JToolBar();
 		dataTable = new JTable();
 
+		
+		dataTable.addMouseListener(new MouseListener(){
+
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				if(e.getButton() == MouseEvent.BUTTON1){
+					if(e.getClickCount() == 2){
+						com.gs.oracle.vo.QuickEditVO vo = new com.gs.oracle.vo.QuickEditVO();
+						vo.setTableName(tableName);
+						vo.setSchemaName(schemaName);
+						int columnIndex = dataTable.getSelectedColumn();
+						int rowIndex = dataTable.getSelectedRow();
+						int columnCount = dataTable.getColumnCount();
+						String q = "SELECT ROWID, ORA_ROWSCN FROM " + getSchemaName() + "." + getTableName() + " WHERE ";
+						for (int i = 0; i < columnCount; i++) {
+							if(dataTable.getModel().getValueAt(rowIndex, i) == null)
+								continue;
+							Class clazz = dataTable.getColumnClass(i);
+							if(clazz.getCanonicalName().equalsIgnoreCase("java.util.Date") 
+									|| clazz.getCanonicalName().equalsIgnoreCase("java.sql.Date"))
+								continue;
+							q += dataTable.getModel().getColumnName(i) + " = '"
+								+ (
+								(dataTable.getModel().getValueAt(rowIndex, i) != null)
+								? dataTable.getModel().getValueAt(rowIndex, i).toString() : "") + "' ";
+							if(i != columnCount-1){
+								q += "AND ";
+							}
+						}
+						Connection con = null;
+						try{
+							con = getConnectionProperties().getDataSource().getConnection();
+							Statement stmt = con.prepareStatement(q);
+							ResultSet rs = stmt.executeQuery(q);
+							if(rs == null)
+								return;
+							while(rs.next()){
+								ROWID rid = (ROWID) rs.getObject("ROWID");
+								if(rid != null){
+									vo.setRowid(rid.stringValue());
+								}
+								String x = rs.getString("ORA_ROWSCN");
+								if(x != null){
+									vo.setOraRowscn(x);
+								}
+							}
+						}catch(Exception ex){
+							return;
+						}finally{
+							if(con != null){
+								try {
+									con.close();
+								} catch (SQLException e1) {
+									e1.printStackTrace();
+								}
+							}
+						}
+						vo.setCurrentColumnName(dataTable.getModel().getColumnName(columnIndex));
+						vo.setCurrentColumnValue(dataTable.getModel().getValueAt(rowIndex, columnIndex).toString());
+						vo.setConnectionProperties(getConnectionProperties());
+						openQuickEditDialog(vo);
+					}
+				}
+			}
+
+
+			@Override
+			public void mouseEntered(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseExited(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mousePressed(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+
+			@Override
+			public void mouseReleased(MouseEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			
+		});
+		
+		
 		refreshButton.setToolTipText("Refresh");
 		addRecordButton.setToolTipText("Add Record");
 		editRecordButton.setToolTipText("Edit Record");
@@ -220,6 +327,14 @@ public class TableDataPanel extends JPanel implements ActionListener{
 		int opt = dataEditorDialog.showEditorDialog();
 		if(opt == OracleGuiConstants.APPLY_OPTION){
 			
+		}
+	}
+	
+	public void openQuickEditDialog(QuickEditVO vo) {
+		QuickEditDialog editDialog = new QuickEditDialog(getParentFrame(), vo);
+		int opt = editDialog.showDialog();
+		if(opt == OracleGuiConstants.APPLY_OPTION){
+			showTableData(queryString);
 		}
 	}
 

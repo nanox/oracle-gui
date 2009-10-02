@@ -6,12 +6,17 @@ package com.gs.oracle.dlg;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.event.WindowAdapter;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -24,16 +29,22 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-import com.gs.oracle.connection.ConnectionProperties;
+import oracle.sql.ROWID;
+
+import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.util.DisplayTypeEnum;
+import com.gs.oracle.util.DisplayUtils;
 import com.gs.oracle.util.WindowUtil;
 import com.gs.oracle.vo.QuickEditVO;
 
 /**
- * @author Green Moon
+ * @author sabuj das
  *
  */
-public class QuickEditDialog extends JDialog {
+public class QuickEditDialog extends JDialog implements ActionListener, WindowListener {
 
+	private int selectedOption = OracleGuiConstants.CANCEL_OPTION;
+	
 	private JFrame parentFrame;
 	private QuickEditVO quickEditVO;
 	
@@ -43,13 +54,17 @@ public class QuickEditDialog extends JDialog {
         this.parentFrame = parent;
         this.quickEditVO = quickEditVO;
         initComponents();
-        setMinimumSize(new Dimension(300, 400));
+        setMinimumSize(new Dimension(300, 200));
         setPreferredSize(getMinimumSize());
         WindowUtil.bringCenterTo(this, parentFrame);
         getRootPane().setDefaultButton(updateButton);
         valueTextArea.requestFocus();
     }
 
+    public int showDialog() {
+        this.setVisible(true);
+        return selectedOption;
+    }
     
     private void initComponents() {
         GridBagConstraints gridBagConstraints;
@@ -72,6 +87,9 @@ public class QuickEditDialog extends JDialog {
         setTitle("Quick Edit"); 
         setName("Form"); 
 
+        updateButton.addActionListener(this);
+        cancelButton.addActionListener(this);
+        
         mainPanel.setName("mainPanel");
         mainPanel.setLayout(new GridBagLayout());
 
@@ -187,27 +205,43 @@ public class QuickEditDialog extends JDialog {
         pack();
     }
 
-    /**
-    * @param args the command line arguments
-    */
-    public static void main(String args[]) {
-        EventQueue.invokeLater(new Runnable() {
-            public void run() {
-            	QuickEditVO v = new QuickEditVO();
-            	v.setSchemaName("Schema x");
-            	v.setTableName("Table x");
-            	v.setCurrentColumnName("currentColumnName");
-            	v.setCurrentColumnValue("currentColumnValue");
-                QuickEditDialog dialog = new QuickEditDialog(new JFrame(), v);
-                dialog.addWindowListener(new WindowAdapter() {
-                    public void windowClosing(WindowEvent e) {
-                        System.exit(0);
-                    }
-                });
-                dialog.setVisible(true);
-            }
-        });
-    }
+    
+    
+    public void actionPerformed(ActionEvent e) {
+		if(e.getSource().equals(updateButton)){
+			setSelectedOption(OracleGuiConstants.APPLY_OPTION);
+			
+			String v = valueTextArea.getText().trim();
+			String q = "UPDATE "+ getQuickEditVO().getSchemaName() 
+						+ "." + getQuickEditVO().getTableName() + 
+				" SET "+ getQuickEditVO().getCurrentColumnName() + " = '" + v
+				+ "' WHERE ROWID = '" + getQuickEditVO().getRowid() + "' AND ORA_ROWSCN = '"
+				+ getQuickEditVO().getOraRowscn() + "'";
+			Connection con = null;
+			try{
+				con = getQuickEditVO().getConnectionProperties().getDataSource().getConnection();
+				Statement stmt = con.prepareStatement(q);
+				int i = stmt.executeUpdate(q);
+				DisplayUtils.displayMessage(getParentFrame(), "[ " + i + " ] rows updated.",
+						DisplayTypeEnum.INFO);
+			}catch(Exception ex){
+				DisplayUtils.displayMessage(getParentFrame(), ex.getMessage(), DisplayTypeEnum.ERROR);
+				return;
+			}finally{
+				if(con != null){
+					try {
+						con.close();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+			dispose();
+		}else if(e.getSource().equals(cancelButton)){
+			setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
+			dispose();
+		} 
+	}
 
     // Variables declaration 
     private JButton cancelButton;
@@ -255,6 +289,62 @@ public class QuickEditDialog extends JDialog {
 	 */
 	public void setQuickEditVO(QuickEditVO quickEditVO) {
 		this.quickEditVO = quickEditVO;
+	}
+
+	/**
+	 * @return the selectedOption
+	 */
+	public int getSelectedOption() {
+		return selectedOption;
+	}
+
+	/**
+	 * @param selectedOption the selectedOption to set
+	 */
+	public void setSelectedOption(int selectedOption) {
+		this.selectedOption = selectedOption;
+	}
+
+	@Override
+	public void windowActivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosed(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowClosing(WindowEvent e) {
+		setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
+		dispose();
+	}
+
+	@Override
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 
