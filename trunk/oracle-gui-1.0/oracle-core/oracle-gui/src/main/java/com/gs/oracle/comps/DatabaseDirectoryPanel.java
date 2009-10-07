@@ -83,10 +83,10 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		exportDataToCsvMenuItem, exportDataToHtmlMenuItem, exportDataToTextMenuItem,
 		exportDataToExcelMenuItem, exportDataToXmlMenuItem, exportDdlToFileMenuItem,
 		exportDdlToClipBoardMenuItem, exportDdlToSqlTabMenuItem;
-	private JMenu editTableMenu, exportTableDataMenu, exportTableDdlMenu, exportTableStructureMenu;
+	private JMenu editTableMenu, exportTableDataMenu, exportTableDdlMenu;
 	
 	private JMenuItem addTableMenuItem, expandCollapseFolderMenuItem, expandCollapseSchemaMenuItem,
-		expandCollapseAllFolderMenuItem, expandCollapseAllSchemaMenuItem;
+		expandCollapseAllFolderMenuItem, expandCollapseAllSchemaMenuItem, exportTableStructureMenuItem;
 	
 	
 	public DatabaseDirectoryPanel(JFrame parent, DatabaseDirectoryTree tree, ConnectionProperties connectionProperties) {
@@ -211,26 +211,45 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		copyTableMenuItem.setIcon(new ImageIcon(getClass()
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "copy_edit.gif")));
+		
 		exportDataToInsertScriptMenuItem = new JMenuItem("Insert Script");
 		exportDataToInsertScriptMenuItem.addActionListener(this);
+		exportDataToInsertScriptMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "insert_table_row.png")));
 		
 		exportDataToLoaderMenuItem = new JMenuItem("Sql Loader");
 		exportDataToLoaderMenuItem.addActionListener(this);
 		
 		exportDataToCsvMenuItem = new JMenuItem("CSV");
 		exportDataToCsvMenuItem.addActionListener(this);
+		exportDataToCsvMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "document-excel-csv.png")));
 		
 		exportDataToHtmlMenuItem = new JMenuItem("HTML");
 		exportDataToHtmlMenuItem.addActionListener(this);
+		exportDataToHtmlMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "html.png")));
 		
 		exportDataToTextMenuItem = new JMenuItem("Text");
 		exportDataToTextMenuItem.addActionListener(this);
+		exportDataToTextMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "Text.png")));
 		
 		exportDataToExcelMenuItem = new JMenuItem("Excel");
 		exportDataToExcelMenuItem.addActionListener(this);
+		exportDataToExcelMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "page_excel.png")));
 		
 		exportDataToXmlMenuItem = new JMenuItem("Xml");
 		exportDataToXmlMenuItem.addActionListener(this);
+		exportDataToXmlMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "xml.png")));
 		
 		exportDdlToFileMenuItem = new JMenuItem("To File");
 		exportDdlToFileMenuItem.addActionListener(this);
@@ -240,6 +259,9 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		
 		exportDdlToSqlTabMenuItem = new JMenuItem("To Sql Tab");
 		exportDdlToSqlTabMenuItem.addActionListener(this);
+		
+		exportTableStructureMenuItem = new JMenuItem("Structure to Excel");
+		exportTableStructureMenuItem.addActionListener(this);
 		
 		editTableMenu = new JMenu("Edit");
 		editTableMenu.add(modifyTableMenuItem);
@@ -271,6 +293,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		exportTableDdlMenu.add(new JSeparator());
 		exportTableDdlMenu.add(exportDdlToSqlTabMenuItem);
 		
+		
 		tablePopupMenu = new JPopupMenu();
 		tablePopupMenu.add(expandCollaspTableMenuItem);
 		tablePopupMenu.add(new JSeparator());
@@ -283,6 +306,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		tablePopupMenu.add(new JSeparator());
 		tablePopupMenu.add(exportTableDataMenu);
 		tablePopupMenu.add(exportTableDdlMenu);
+		tablePopupMenu.add(exportTableStructureMenuItem);
 		
 		
 		expandCollapseFolderMenuItem = new JMenuItem("Expand");
