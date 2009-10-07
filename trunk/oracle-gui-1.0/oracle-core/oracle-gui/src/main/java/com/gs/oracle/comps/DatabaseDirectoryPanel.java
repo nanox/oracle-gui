@@ -35,11 +35,14 @@ import javax.swing.tree.TreePath;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.dlg.TableDataExportDialog;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.model.Table;
+import com.gs.oracle.util.DisplayUtils;
 import com.gs.oracle.util.MenuBarUtil;
+import com.gs.oracle.vo.TableDataExportTypeEnum;
 
 /**
  * @author sabuj.das
@@ -389,9 +392,34 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 			openTableFromTreePath(mouseClickedTreePath);
 		}else if(e.getSource().equals(showTableContentMenuItem)){
 			showTableContentFromTreePath(mouseClickedTreePath);
+		}else if(e.getSource().equals(exportDataToInsertScriptMenuItem)){
+			exportTableData(mouseClickedTreePath, TableDataExportTypeEnum.INSERT_STATEMENT);
+		}else if(e.getSource().equals(exportDataToLoaderMenuItem)){
+			exportTableData(mouseClickedTreePath, TableDataExportTypeEnum.SQL_LOADER);
+		}else if(e.getSource().equals(exportDataToCsvMenuItem)){
+			exportTableData(mouseClickedTreePath, TableDataExportTypeEnum.CSV);
+		}else if(e.getSource().equals(exportDataToHtmlMenuItem)){
+			exportTableData(mouseClickedTreePath, TableDataExportTypeEnum.HTML);
+		}else if(e.getSource().equals(exportDataToTextMenuItem)){
+			exportTableData(mouseClickedTreePath, TableDataExportTypeEnum.TEXT);
+		}else if(e.getSource().equals(exportDataToExcelMenuItem)){
+			exportTableData(mouseClickedTreePath, TableDataExportTypeEnum.EXCEL);
+		}else if(e.getSource().equals(exportDataToXmlMenuItem)){
+			exportTableData(mouseClickedTreePath, TableDataExportTypeEnum.XML);
 		}
 	}
 	
+	public void exportTableData(TreePath clickedPath,
+			TableDataExportTypeEnum exportTypeEnum) {
+		Table table = getTableFromTreePath(clickedPath);
+		if(table != null){
+			TableDataExportDialog dataExportDialog = new TableDataExportDialog(
+					getParentFrame(), table, exportTypeEnum, null
+				);
+			dataExportDialog.setVisible(true);
+		}
+	}
+
 	public void showTableContentFromTreePath(TreePath clickedPath){
 		DefaultMutableTreeNode node = getDatabaseDirectoryTree().getTreeNode(clickedPath);
         if(node == null)
@@ -416,6 +444,23 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 				iFrame.getDbDetailsTabbedPane().updateUI();
 			}
         }
+	}
+	
+	private Table getTableFromTreePath(TreePath clickedPath){
+		DefaultMutableTreeNode node = getDatabaseDirectoryTree().getTreeNode(clickedPath);
+        if(node == null)
+            return null;
+        DatabaseNode dbNode = getDatabaseDirectoryTree().getDatabaseNode(node);
+        if (dbNode == null) {
+            return null;
+        }
+        if(dbNode instanceof TableNode){
+        	Table table = ((TableNode)dbNode).getTable();
+			if(table != null){
+				return table;
+			}
+        }
+        return null;
 	}
 	
 	public void openTableFromTreePath(TreePath clickedPath){
