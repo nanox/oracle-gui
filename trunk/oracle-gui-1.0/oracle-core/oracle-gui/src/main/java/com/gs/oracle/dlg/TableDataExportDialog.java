@@ -11,9 +11,15 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.io.File;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -25,6 +31,7 @@ import javax.swing.JTree;
 import javax.swing.WindowConstants;
 import javax.swing.table.DefaultTableModel;
 
+import com.gs.oracle.comps.ExtensionFileFilter;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.util.WindowUtil;
@@ -92,6 +99,12 @@ public class TableDataExportDialog  extends JDialog {
         setTitle("Export Data - " + getTable().getModelName());
         getContentPane().setLayout(new GridBagLayout());
 
+        cancelButton.addActionListener(formListener);
+        exportButton.addActionListener(formListener);
+        browseButton.addActionListener(formListener);
+        filterButton.addActionListener(formListener);
+        whereClauseTextField.addKeyListener(formListener);
+        
         mainPanel.setLayout(new GridBagLayout());
 
         schemaNameLabel.setText("Schema : ");
@@ -116,7 +129,6 @@ public class TableDataExportDialog  extends JDialog {
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         mainPanel.add(tableNameLabel, gridBagConstraints);
 
-        tableNameTextField.addActionListener(formListener);
         tableNameTextField.setBackground(new Color(255, 255, 255));
         tableNameTextField.setEditable(false);
         tableNameTextField.setForeground(new Color(0, 0, 204));
@@ -281,18 +293,86 @@ public class TableDataExportDialog  extends JDialog {
 	}
 
 
-	private class FormListener implements ActionListener {
+	private class FormListener 
+		implements 
+			ActionListener, FocusListener, KeyListener
+	{
         FormListener() {
         	
         }
         public void actionPerformed(ActionEvent evt) {
-            if (evt.getSource() == tableNameTextField) {
-                
+            if (evt.getSource() == cancelButton) {
+                dispose();
+            } else if (evt.getSource() == exportButton) {
+                export();
+            } else if (evt.getSource() == browseButton) {
+                browse();
+            } else if (evt.getSource() == filterButton) {
+                filter();
             }
         }
+		
+		public void focusGained(FocusEvent evt) {
+			
+		}
+		
+		public void focusLost(FocusEvent evt) {
+			if (evt.getSource() == whereClauseTextField) {
+                
+            }
+		}
+		
+		public void keyPressed(KeyEvent evt) {
+			
+		}
+		
+		public void keyReleased(KeyEvent evt) {
+			
+		}
+		
+		public void keyTyped(KeyEvent evt) {
+			
+		}
+		
     }
 
 
+	
+	private void export() {
+		
+	}
+
+	private void browse() {
+		ExtensionFileFilter fileFilter = new ExtensionFileFilter(
+				new String[]{getExportTypeEnum().getExtension()}, 
+				getExportTypeEnum().getDescription()
+			);
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileFilter(fileFilter);
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		chooser.setMultiSelectionEnabled(false);
+		int opt = chooser.showOpenDialog(getParentFrame());
+		if(JFileChooser.APPROVE_OPTION == opt){
+			File file = chooser.getSelectedFile();
+			if(file != null){
+				String fileName = file.getAbsolutePath();
+				if(!fileName.endsWith(getExportTypeEnum().getExtension())){
+					fileName += getExportTypeEnum().getExtension();
+				}
+				outputFileTextField.setText(fileName);
+			}
+		}
+	}
+
+	private void filter() {
+
+	}
+	
+	
+	
+	
+	
+	
     /**
 	 * @return the table
 	 */
