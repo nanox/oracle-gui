@@ -19,7 +19,7 @@ import com.gs.oracle.BaseDbModel;
  * Type Name	: com.gs.oracle.model.Column
  *
  */
-public class Column extends BaseDbModel implements Serializable {
+public class Column extends BaseDbModel implements Serializable, Comparable<Column> {
 
 	private String tableName;
 	
@@ -136,5 +136,10 @@ public class Column extends BaseDbModel implements Serializable {
 	public String toString() {
 		return getModelName() + " [ " + typeName + ", (" + size +") " + 
 			((nullable) ? "NULL" : "NOTNULL") + " ]";
+	}
+
+	@Override
+	public int compareTo(Column o) {
+		return this.getColumnID().compareTo(o.getColumnID());
 	}
 }
