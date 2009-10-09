@@ -22,6 +22,7 @@ import javax.swing.JDialog;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
@@ -92,6 +93,15 @@ public class TableDataExportDialog  extends JDialog {
         sampleDataTable = new JTable();
         cancelButton = new JButton();
         exportButton = new JButton();
+        
+        allColumnList = new JList();
+        selectedColumnList = new JList();
+        removeAllButton = new JButton("<<");
+        removeSelectedButton = new JButton("<");
+        addSelectedButton = new JButton(">");
+        addAllButton = new JButton(">>");
+        moveUpButton = new JButton("Up");
+        moveDownButton = new JButton("Down");
 
         FormListener formListener = new FormListener();
 
@@ -187,11 +197,106 @@ public class TableDataExportDialog  extends JDialog {
 
         exportTabbedPane.addTab("Format", exportFileFormatPanel);
 
-        columnSelectionPanel.setLayout(new BorderLayout());
+        columnSelectionPanel.setLayout(new GridBagLayout());
 
-        jScrollPane1.setViewportView(jTree1);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.insets = new Insets(5, 2, 5, 2);
+        columnSelectionPanel.add(new JLabel("All Columns"), gridBagConstraints);
+        
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 0;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.insets = new Insets(5, 2, 5, 2);
+        columnSelectionPanel.add(new JLabel("Selected Columns"), gridBagConstraints);
+        
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridheight = 4;
+        gridBagConstraints.insets = new Insets(5, 2, 5, 2);
+        columnSelectionPanel.add(allColumnList, gridBagConstraints);
+        
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = GridBagConstraints.NONE;
+        gridBagConstraints.anchor = GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.insets = new Insets(5, 2, 5, 2);
+        columnSelectionPanel.add(addAllButton, gridBagConstraints);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = GridBagConstraints.NONE;
+        gridBagConstraints.anchor = GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.insets = new Insets(5, 2, 5, 2);
+        columnSelectionPanel.add(addSelectedButton, gridBagConstraints);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 3;
+        gridBagConstraints.fill = GridBagConstraints.NONE;
+        gridBagConstraints.anchor = GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.insets = new Insets(5, 2, 5, 2);
+        columnSelectionPanel.add(removeSelectedButton, gridBagConstraints);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 4;
+        gridBagConstraints.fill = GridBagConstraints.NONE;
+        gridBagConstraints.anchor = GridBagConstraints.NORTH;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.insets = new Insets(5, 2, 5, 2);
+        columnSelectionPanel.add(removeAllButton, gridBagConstraints);
+        
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 2;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.gridheight = 4;
+        gridBagConstraints.insets = new Insets(5, 2, 5, 2);
+        columnSelectionPanel.add(selectedColumnList, gridBagConstraints);
+        
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 1;
+        gridBagConstraints.fill = GridBagConstraints.NONE;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.insets = new Insets(5, 2, 5, 2);
+        columnSelectionPanel.add(moveUpButton, gridBagConstraints);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 3;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.fill = GridBagConstraints.NONE;
+        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.weightx = 0.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.insets = new Insets(5, 2, 5, 2);
+        columnSelectionPanel.add(moveDownButton, gridBagConstraints);
 
-        columnSelectionPanel.add(jScrollPane1, BorderLayout.CENTER);
 
         exportTabbedPane.addTab("Columns", columnSelectionPanel);
 
@@ -447,6 +552,11 @@ public class TableDataExportDialog  extends JDialog {
 	private JLabel tableNameLabel;
     private JTextField tableNameTextField;
     private JTextField whereClauseTextField;
+    
+    private JList allColumnList, selectedColumnList;
+    private JButton removeAllButton, removeSelectedButton,
+    		addAllButton, addSelectedButton, 
+    		moveUpButton, moveDownButton;
     // End of variables declaration
 
 }
