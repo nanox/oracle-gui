@@ -15,7 +15,11 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -30,10 +34,14 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTree;
 import javax.swing.WindowConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import com.gs.oracle.comps.ColumnNameListModel;
 import com.gs.oracle.comps.ExtensionFileFilter;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.util.WindowUtil;
 import com.gs.oracle.vo.TableDataExportTypeEnum;
@@ -48,6 +56,8 @@ public class TableDataExportDialog  extends JDialog {
 	private TableDataExportTypeEnum exportTypeEnum;
 	private JFrame parentFrame;
 	private ConnectionProperties connectionProperties;
+	private ColumnNameListModel allColumnNameListModel;
+	private ColumnNameListModel selectedColumnNameListModel;
     
     public TableDataExportDialog(JFrame parentFrame, Table table,
 			TableDataExportTypeEnum exportTypeEnum,
@@ -58,6 +68,12 @@ public class TableDataExportDialog  extends JDialog {
 		this.exportTypeEnum = exportTypeEnum;
 		this.connectionProperties = connectionProperties;
 		initComponents();
+		allColumnNameListModel = new ColumnNameListModel(new ArrayList<Column>());
+		if(this.table.getColumnlist() != null){
+			selectedColumnNameListModel = new ColumnNameListModel(this.table.getColumnlist());
+		}
+		allColumnList.setModel(allColumnNameListModel);
+		selectedColumnList.setModel(selectedColumnNameListModel);
 		setMinimumSize(new Dimension(450, 350));
         setPreferredSize(getMinimumSize());
         setSize(getPreferredSize());
@@ -114,6 +130,17 @@ public class TableDataExportDialog  extends JDialog {
         browseButton.addActionListener(formListener);
         filterButton.addActionListener(formListener);
         whereClauseTextField.addKeyListener(formListener);
+        allColumnList.addMouseListener(formListener);
+        allColumnList.addListSelectionListener(formListener);
+        selectedColumnList.addMouseListener(formListener);
+        selectedColumnList.addListSelectionListener(formListener);
+        removeAllButton.addActionListener(formListener);
+        removeSelectedButton.addActionListener(formListener);
+        addSelectedButton.addActionListener(formListener);
+        addAllButton.addActionListener(formListener);
+        moveUpButton.addActionListener(formListener);
+        moveDownButton.addActionListener(formListener);
+        
         
         mainPanel.setLayout(new GridBagLayout());
 
@@ -228,7 +255,8 @@ public class TableDataExportDialog  extends JDialog {
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridheight = 4;
         gridBagConstraints.insets = new Insets(5, 2, 5, 2);
-        columnSelectionPanel.add(allColumnList, gridBagConstraints);
+        allColumnListScrollPane.setViewportView(allColumnList);
+        columnSelectionPanel.add(allColumnListScrollPane, gridBagConstraints);
         
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -276,7 +304,8 @@ public class TableDataExportDialog  extends JDialog {
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridheight = 4;
         gridBagConstraints.insets = new Insets(5, 2, 5, 2);
-        columnSelectionPanel.add(selectedColumnList, gridBagConstraints);
+        selectedColumnListScrollPane.setViewportView(selectedColumnList);
+        columnSelectionPanel.add(selectedColumnListScrollPane, gridBagConstraints);
         
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 3;
@@ -400,7 +429,8 @@ public class TableDataExportDialog  extends JDialog {
 
 	private class FormListener 
 		implements 
-			ActionListener, FocusListener, KeyListener
+			ActionListener, FocusListener, KeyListener, ListSelectionListener,
+			MouseListener
 	{
         FormListener() {
         	
@@ -414,6 +444,19 @@ public class TableDataExportDialog  extends JDialog {
                 browse();
             } else if (evt.getSource() == filterButton) {
                 filter();
+            }
+            else if (evt.getSource() == addAllButton) {
+            	moveSelectedItems(allColumnList, selectedColumnList, true);
+            } else if (evt.getSource() == addSelectedButton) {
+            	moveSelectedItems(allColumnList, selectedColumnList, false);
+            } else if (evt.getSource() == removeSelectedButton) {
+                moveSelectedItems(selectedColumnList, allColumnList, false);
+            } else if (evt.getSource() == removeAllButton) {
+            	moveSelectedItems(selectedColumnList, allColumnList, true);
+            } else if (evt.getSource() == moveUpButton) {
+                
+            } else if (evt.getSource() == moveDownButton) {
+                
             }
         }
 		
@@ -438,10 +481,58 @@ public class TableDataExportDialog  extends JDialog {
 		public void keyTyped(KeyEvent evt) {
 			
 		}
+		@Override
+		public void valueChanged(ListSelectionEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void mouseClicked(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void mouseEntered(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void mouseExited(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void mousePressed(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
+		@Override
+		public void mouseReleased(MouseEvent e) {
+			// TODO Auto-generated method stub
+			
+		}
 		
     }
 
-
+	
+	private void moveSelectedItems(JList from, JList to, boolean all){
+		ColumnNameListModel fromModel = (ColumnNameListModel) from.getModel();
+		ColumnNameListModel toModel = (ColumnNameListModel) to.getModel();
+		if(! all){
+			int[] fromIndeces = from.getSelectedIndices();
+			if(fromIndeces == null || fromIndeces.length > 0){
+				
+			}
+		} else {
+			List<Column> fromList = fromModel.getColumnList();
+			for (Column column : fromList) {
+				toModel.addColumn(column);
+			}
+			fromModel.clear();
+		}
+		from.updateUI();
+		to.updateUI();
+	}
 	
 	private void export() {
 		
@@ -557,6 +648,8 @@ public class TableDataExportDialog  extends JDialog {
     private JButton removeAllButton, removeSelectedButton,
     		addAllButton, addSelectedButton, 
     		moveUpButton, moveDownButton;
+    private JScrollPane allColumnListScrollPane = new JScrollPane(),
+    		selectedColumnListScrollPane = new JScrollPane();
     // End of variables declaration
 
 }
