@@ -5,6 +5,7 @@ package com.gs.oracle.comps;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +13,7 @@ import java.util.Set;
 
 import javax.swing.AbstractListModel;
 
+import com.gs.oracle.FieldSpecificComparator;
 import com.gs.oracle.model.Column;
 
 /**
@@ -24,6 +26,7 @@ public class ColumnNameListModel extends AbstractListModel {
 	private Map<String, Column> columnMap;
 	
 	public ColumnNameListModel(List<Column> columnList) {
+		super();
 		this.columnList = columnList;
 		columnMap = new HashMap<String, Column>();
 		for (Column column : columnList) {
@@ -90,5 +93,15 @@ public class ColumnNameListModel extends AbstractListModel {
 	
 	public void clear(){
 		setColumnList(new ArrayList<Column>());
+	}
+	
+	public void swap(Column c1, Column c2){
+		
+	}
+	
+	public void sortByName(){
+		FieldSpecificComparator<Column, Integer> comparator
+			= new FieldSpecificComparator<Column, Integer>("modelName");
+		Collections.sort(columnList, comparator);
 	}
 }

@@ -142,4 +142,38 @@ public class Column extends BaseDbModel implements Serializable, Comparable<Colu
 	public int compareTo(Column o) {
 		return this.getColumnID().compareTo(o.getColumnID());
 	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = super.hashCode();
+		result = prime * result
+				+ ((columnID == null) ? 0 : columnID.hashCode());
+		result = prime * result
+				+ ((tableName == null) ? 0 : tableName.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (!super.equals(obj))
+			return false;
+		if (!(obj instanceof Column))
+			return false;
+		Column other = (Column) obj;
+		if (columnID == null) {
+			if (other.columnID != null)
+				return false;
+		} else if (!columnID.equals(other.columnID))
+			return false;
+		if (tableName == null) {
+			if (other.tableName != null)
+				return false;
+		} else if (!tableName.equals(other.tableName))
+			return false;
+		return true;
+	}
+	
 }

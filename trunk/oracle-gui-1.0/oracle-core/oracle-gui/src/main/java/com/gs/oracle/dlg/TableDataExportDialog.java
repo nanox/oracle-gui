@@ -71,6 +71,7 @@ public class TableDataExportDialog  extends JDialog {
 		allColumnNameListModel = new ColumnNameListModel(new ArrayList<Column>());
 		if(this.table.getColumnlist() != null){
 			selectedColumnNameListModel = new ColumnNameListModel(this.table.getColumnlist());
+			selectedColumnNameListModel.sortByName();
 		}
 		allColumnList.setModel(allColumnNameListModel);
 		selectedColumnList.setModel(selectedColumnNameListModel);
@@ -137,7 +138,9 @@ public class TableDataExportDialog  extends JDialog {
         removeAllButton.addActionListener(formListener);
         removeSelectedButton.addActionListener(formListener);
         addSelectedButton.addActionListener(formListener);
+        addSelectedButton.setEnabled(false);
         addAllButton.addActionListener(formListener);
+        addAllButton.setEnabled(false);
         moveUpButton.addActionListener(formListener);
         moveDownButton.addActionListener(formListener);
         
@@ -482,9 +485,14 @@ public class TableDataExportDialog  extends JDialog {
 			
 		}
 		@Override
-		public void valueChanged(ListSelectionEvent e) {
-			// TODO Auto-generated method stub
-			
+		public void valueChanged(ListSelectionEvent evt) {
+			if (evt.getSource() == allColumnList) {
+                if(allColumnList.getSelectedIndex() >= 0){
+                	addSelectedButton.setEnabled(true);
+                }else{
+                	addSelectedButton.setEnabled(false);
+                }
+            }
 		}
 		@Override
 		public void mouseClicked(MouseEvent e) {
@@ -520,7 +528,14 @@ public class TableDataExportDialog  extends JDialog {
 		ColumnNameListModel toModel = (ColumnNameListModel) to.getModel();
 		if(! all){
 			int[] fromIndeces = from.getSelectedIndices();
-			if(fromIndeces == null || fromIndeces.length > 0){
+			if(fromIndeces != null && fromIndeces.length > 0){
+				Object[] selectionNameList = from.getSelectedValues();
+				for (int i = 0; i < selectionNameList.length; i++) {
+					String name = selectionNameList[i].toString();
+					Column c = fromModel.getColumnByName(name);
+					fromModel.removeColumn(c);
+					toModel.addColumn(c);
+				}
 				
 			}
 		} else {
