@@ -1,1 +1,1 @@
-java -jar oracle-gui-1.0.jar
+%JAVA_6_HOME%\bin\java -Xms64m -Xmx512m -jar oracle-gui-1.0-SNAPSHOT-jar-with-dependencies.jar 
