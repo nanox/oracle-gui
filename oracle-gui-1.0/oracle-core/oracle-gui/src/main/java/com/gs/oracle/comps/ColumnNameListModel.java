@@ -38,6 +38,13 @@ public class ColumnNameListModel extends AbstractListModel {
 		return columnMap.get(name);
 	}
 	
+	/**
+	 * @return the columnMap
+	 */
+	public Map<String, Column> getColumnMap() {
+		return columnMap;
+	}
+
 	public String getElementAt(int index) {
 		return columnList.get(index).getModelName();
 	}
@@ -95,8 +102,32 @@ public class ColumnNameListModel extends AbstractListModel {
 		setColumnList(new ArrayList<Column>());
 	}
 	
+	public boolean swap(int i, int j){
+		if(i < 0 || j < 0){
+			return false;
+		}
+		if(i > getSize() || j > getSize()){
+			return false;
+		}
+		if(i == j){
+			return false;
+		}
+		Collections.swap(columnList, i, j);
+		refresh();
+		return true;
+	}
+	
+	public void refresh() {
+		columnMap.clear();
+		for (Column column : columnList) {
+			columnMap.put(column.getModelName(), column);
+		}
+	}
+
 	public void swap(Column c1, Column c2){
-		
+		Column temp = c1;
+		c1 = c2;
+		c2 = temp;
 	}
 	
 	public void sortByName(){

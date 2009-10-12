@@ -19,7 +19,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -58,6 +60,8 @@ public class TableDataExportDialog  extends JDialog {
 	private ConnectionProperties connectionProperties;
 	private ColumnNameListModel allColumnNameListModel;
 	private ColumnNameListModel selectedColumnNameListModel;
+	
+	private Map<String, Column> selectedColumnsMap = new HashMap<String, Column>();
     
     public TableDataExportDialog(JFrame parentFrame, Table table,
 			TableDataExportTypeEnum exportTypeEnum,
@@ -72,6 +76,7 @@ public class TableDataExportDialog  extends JDialog {
 		if(this.table.getColumnlist() != null){
 			selectedColumnNameListModel = new ColumnNameListModel(this.table.getColumnlist());
 			selectedColumnNameListModel.sortByName();
+			selectedColumnsMap.putAll(selectedColumnNameListModel.getColumnMap());
 		}
 		allColumnList.setModel(allColumnNameListModel);
 		selectedColumnList.setModel(selectedColumnNameListModel);
@@ -82,6 +87,10 @@ public class TableDataExportDialog  extends JDialog {
 		WindowUtil.bringCenterTo(this, parentFrame);
 	}
     
+    public void updateSelectedColumnsMap(){
+    	selectedColumnsMap.clear();
+    	selectedColumnsMap.putAll(selectedColumnNameListModel.getColumnMap());
+    }
     
 	private void initComponents() {
         GridBagConstraints gridBagConstraints;
@@ -525,9 +534,19 @@ public class TableDataExportDialog  extends JDialog {
 	private void moveSelectedItem(JList list, boolean up){
 		int index = list.getSelectedIndex();
 		ColumnNameListModel model = (ColumnNameListModel) list.getModel();
-		if(index > -1){
-			
+		if(up){
+			boolean b = model.swap(index, index-1);
+			if(b){
+				list.setSelectedIndex(index-1);
+			}
+		}else{
+			boolean b = model.swap(index+1, index);
+			if(b){
+				list.setSelectedIndex(index+1);
+			}
 		}
+		list.updateUI();
+		updateSelectedColumnsMap();
 	}
 	
 	private void moveSelectedItems(JList from, JList to, boolean all){
@@ -555,6 +574,7 @@ public class TableDataExportDialog  extends JDialog {
 		
 		from.updateUI();
 		to.updateUI();
+		updateSelectedColumnsMap();
 	}
 	
 	private void export() {
@@ -584,11 +604,17 @@ public class TableDataExportDialog  extends JDialog {
 	}
 
 	private void filter() {
-
+		
 	}
 	
 	
-	
+	public String formSelectStatement(String whereClause){
+		StringBuffer buffer = new StringBuffer("SELECT ");
+		
+		
+		
+		return buffer.toString();
+	}
 	
 	
 	
