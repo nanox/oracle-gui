@@ -253,7 +253,7 @@ public class TableDataExportDialog  extends JDialog {
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHEAST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridheight = 4;
@@ -302,7 +302,7 @@ public class TableDataExportDialog  extends JDialog {
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
-        gridBagConstraints.anchor = GridBagConstraints.CENTER;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.gridheight = 4;
@@ -457,9 +457,9 @@ public class TableDataExportDialog  extends JDialog {
             } else if (evt.getSource() == removeAllButton) {
             	moveSelectedItems(selectedColumnList, allColumnList, true);
             } else if (evt.getSource() == moveUpButton) {
-                
+                moveSelectedItem(selectedColumnList, true);
             } else if (evt.getSource() == moveDownButton) {
-                
+            	moveSelectedItem(selectedColumnList, false);
             }
         }
 		
@@ -522,6 +522,13 @@ public class TableDataExportDialog  extends JDialog {
 		
     }
 
+	private void moveSelectedItem(JList list, boolean up){
+		int index = list.getSelectedIndex();
+		ColumnNameListModel model = (ColumnNameListModel) list.getModel();
+		if(index > -1){
+			
+		}
+	}
 	
 	private void moveSelectedItems(JList from, JList to, boolean all){
 		ColumnNameListModel fromModel = (ColumnNameListModel) from.getModel();
@@ -545,6 +552,7 @@ public class TableDataExportDialog  extends JDialog {
 			}
 			fromModel.clear();
 		}
+		
 		from.updateUI();
 		to.updateUI();
 	}
