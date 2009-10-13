@@ -18,6 +18,7 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -42,9 +43,12 @@ import javax.swing.table.DefaultTableModel;
 
 import com.gs.oracle.comps.ColumnNameListModel;
 import com.gs.oracle.comps.ExtensionFileFilter;
+import com.gs.oracle.comps.ResultSetTableModelFactory;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Table;
+import com.gs.oracle.util.DisplayTypeEnum;
+import com.gs.oracle.util.DisplayUtils;
 import com.gs.oracle.util.WindowUtil;
 import com.gs.oracle.vo.TableDataExportTypeEnum;
 
@@ -60,6 +64,7 @@ public class TableDataExportDialog  extends JDialog {
 	private ConnectionProperties connectionProperties;
 	private ColumnNameListModel allColumnNameListModel;
 	private ColumnNameListModel selectedColumnNameListModel;
+	private ResultSetTableModelFactory resultSetTableModelFactory;
 	
 	private Map<String, Column> selectedColumnsMap = new HashMap<String, Column>();
     
@@ -80,6 +85,11 @@ public class TableDataExportDialog  extends JDialog {
 		}
 		allColumnList.setModel(allColumnNameListModel);
 		selectedColumnList.setModel(selectedColumnNameListModel);
+		try {
+			this.resultSetTableModelFactory = new ResultSetTableModelFactory(connectionProperties.getDataSource().getConnection());
+		} catch (SQLException e) {
+			DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
+		}
 		setMinimumSize(new Dimension(450, 350));
         setPreferredSize(getMinimumSize());
         setSize(getPreferredSize());
@@ -604,15 +614,37 @@ public class TableDataExportDialog  extends JDialog {
 	}
 
 	private void filter() {
-		
+		String sql = formSelectStatement(whereClauseTextField.getText());
+		try {
+			sampleDataTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			sampleDataTable.setCellSelectionEnabled(true);
+			sampleDataTable.setModel(resultSetTableModelFactory.getResultSetTableModel(sql));
+		} catch (SQLException e) {
+			DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
+		} catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
 	
 	public String formSelectStatement(String whereClause){
 		StringBuffer buffer = new StringBuffer("SELECT ");
-		
-		
-		
+		List<Column> selectedColumns = selectedColumnNameListModel.getColumnList();
+		if(selectedColumns != null){
+			for (int i = 0; i < selectedColumns.size(); i++) {
+				Column c = selectedColumns.get(i);
+				buffer.append(c.getModelName());
+				if(i != selectedColumns.size()-1){
+					buffer.append(", ");
+				}else{
+					buffer.append(" ");
+				}
+			}
+		}
+		buffer.append("FROM ").append(getTable().getSchemaName()).append(".").append(getTable().getModelName()).append(" ");
+		if(null != whereClause && whereClause.trim().length() > 0){
+			buffer.append("WHERE ").append(whereClause.trim());
+		}
 		return buffer.toString();
 	}
 	
