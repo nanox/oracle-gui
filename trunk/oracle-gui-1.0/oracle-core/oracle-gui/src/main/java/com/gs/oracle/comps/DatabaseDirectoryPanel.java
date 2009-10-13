@@ -414,7 +414,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		Table table = getTableFromTreePath(clickedPath);
 		if(table != null){
 			TableDataExportDialog dataExportDialog = new TableDataExportDialog(
-					getParentFrame(), table, exportTypeEnum, null
+					getParentFrame(), table, exportTypeEnum, connectionProperties
 				);
 			dataExportDialog.setVisible(true);
 		}
