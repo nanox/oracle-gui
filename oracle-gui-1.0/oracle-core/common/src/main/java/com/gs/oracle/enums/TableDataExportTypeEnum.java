@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gs.oracle.vo;
+package com.gs.oracle.enums;
 
 /**
  * @author sabuj.das
