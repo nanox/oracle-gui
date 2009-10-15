@@ -18,12 +18,14 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.File;
+import java.lang.Thread.State;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JFileChooser;
@@ -41,6 +43,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 
+import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.comps.ColumnNameListModel;
 import com.gs.oracle.comps.ExtensionFileFilter;
 import com.gs.oracle.comps.ResultSetTableModelFactory;
@@ -49,6 +52,7 @@ import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
+import com.gs.oracle.util.MenuBarUtil;
 import com.gs.oracle.util.WindowUtil;
 import com.gs.oracle.vo.TableDataExportTypeEnum;
 
@@ -59,8 +63,10 @@ import com.gs.oracle.vo.TableDataExportTypeEnum;
 public class TableDataExportDialog  extends JDialog {
 	
 	private Table table;
-	private TableDataExportTypeEnum exportTypeEnum;
 	private JFrame parentFrame;
+	private Thread exportRunnerThread;
+	private ExportRunner exportRunner;
+	private TableDataExportTypeEnum exportTypeEnum;
 	private ConnectionProperties connectionProperties;
 	private ColumnNameListModel allColumnNameListModel;
 	private ColumnNameListModel selectedColumnNameListModel;
@@ -90,6 +96,10 @@ public class TableDataExportDialog  extends JDialog {
 		} catch (SQLException e) {
 			DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
 		}
+		exportProgressLabel.setVisible(false);
+		
+		exportRunner = new ExportRunner(getExportTypeEnum());
+		exportRunnerThread = new Thread(exportRunner);
 		setMinimumSize(new Dimension(450, 350));
         setPreferredSize(getMinimumSize());
         setSize(getPreferredSize());
@@ -113,6 +123,7 @@ public class TableDataExportDialog  extends JDialog {
         exportTabbedPane = new JTabbedPane();
         exportFileFormatPanel = new JPanel();
         formatLabel = new JLabel();
+        exportProgressLabel = new JLabel();
         formatNameLabel = new JLabel();
         outputLabel = new JLabel();
         outputFileTextField = new JTextField();
@@ -243,7 +254,23 @@ public class TableDataExportDialog  extends JDialog {
         gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
         gridBagConstraints.insets = new Insets(5, 0, 5, 2);
         exportFileFormatPanel.add(browseButton, gridBagConstraints);
-
+        
+        
+        exportProgressLabel.setText(" Exporting Date ...");
+        exportProgressLabel.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "loading.gif")));
+        exportProgressLabel.setIconTextGap(15);
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridwidth = 3;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+        gridBagConstraints.anchor = GridBagConstraints.NORTHWEST;
+        gridBagConstraints.insets = new Insets(15, 2, 5, 2);
+        exportFileFormatPanel.add(exportProgressLabel, gridBagConstraints);
+        
         exportTabbedPane.addTab("Format", exportFileFormatPanel);
 
         columnSelectionPanel.setLayout(new GridBagLayout());
@@ -459,7 +486,8 @@ public class TableDataExportDialog  extends JDialog {
         }
         public void actionPerformed(ActionEvent evt) {
             if (evt.getSource() == cancelButton) {
-                dispose();
+            	cancel();
+                
             } else if (evt.getSource() == exportButton) {
                 export();
             } else if (evt.getSource() == browseButton) {
@@ -587,7 +615,79 @@ public class TableDataExportDialog  extends JDialog {
 		updateSelectedColumnsMap();
 	}
 	
+	public void cancel(){
+		if(exportRunnerThread.getState().compareTo(State.TIMED_WAITING) == 0){
+			exportRunnerThread.stop();
+		}else{
+			dispose();
+		}
+	}
+	
 	private void export() {
+		exportRunner.setExportSql(formSelectStatement(whereClauseTextField.getText()));
+		exportRunnerThread.start();
+	}
+	
+	private class ExportRunnerThread extends Thread{
+		private ExportRunner exportRunner;
+		
+		public ExportRunnerThread(ExportRunner exportRunner) {
+			super(exportRunner);
+			this.exportRunner = exportRunner;
+		}
+		
+		@Override
+		public synchronized void start() {
+			cancelButton.setText("Stop");
+		}
+	}
+	
+	private class ExportRunner implements Runnable{
+
+		private TableDataExportTypeEnum dataExportTypeEnum;
+		private String exportSql;
+		
+		
+		
+		private ExportRunner(TableDataExportTypeEnum dataExportTypeEnum) {
+			this.dataExportTypeEnum = dataExportTypeEnum;
+		}
+
+
+		private ExportRunner(String exportSql,
+				TableDataExportTypeEnum dataExportTypeEnum) {
+			this.exportSql = exportSql;
+			this.dataExportTypeEnum = dataExportTypeEnum;
+		}
+
+
+		public TableDataExportTypeEnum getDataExportTypeEnum() {
+			return dataExportTypeEnum;
+		}
+		public String getExportSql() {
+			return exportSql;
+		}
+		public void setDataExportTypeEnum(TableDataExportTypeEnum dataExportTypeEnum) {
+			this.dataExportTypeEnum = dataExportTypeEnum;
+		}
+		public void setExportSql(String exportSql) {
+			this.exportSql = exportSql;
+		}
+		@Override
+		public void run() {
+			exportProgressLabel.setVisible(true);
+			exportButton.setEnabled(false);
+			cancelButton.setText("Stop");
+			try {
+				Thread.sleep(50000);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			exportButton.setEnabled(true);
+			exportProgressLabel.setVisible(false);
+		}
+		
 		
 	}
 
@@ -709,6 +809,7 @@ public class TableDataExportDialog  extends JDialog {
     private JTabbedPane exportTabbedPane;
     private JButton filterButton;
     private JLabel formatLabel;
+    private JLabel exportProgressLabel;
     private JLabel formatNameLabel;
     private JLabel jLabel1;
     private JLabel jLabel2;
