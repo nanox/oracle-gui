@@ -638,7 +638,8 @@ public class TableDataExportDialog  extends JDialog {
 		cancelButton.setText("Stop");
 		
 		TableDataExportServiceImpl exportService = new TableDataExportServiceImpl(getConnectionProperties());
-		exportService.exportData(getExportTypeEnum(), outputFileTextField.getText(), 
+		exportService.exportData(getTable().getSchemaName(), getTable().getModelName(),
+				getExportTypeEnum(), outputFileTextField.getText(), 
 				formSelectStatement(whereClauseTextField.getText()));
 		
 		cancelButton.setText("Cancel");
@@ -699,7 +700,8 @@ public class TableDataExportDialog  extends JDialog {
 			cancelButton.setText("Stop");
 			
 			TableDataExportServiceImpl exportService = new TableDataExportServiceImpl(getConnectionProperties());
-			exportService.exportData(dataExportTypeEnum, outputFileTextField.getText(), getExportSql());
+			exportService.exportData(getTable().getSchemaName(), getTable().getModelName(),
+					dataExportTypeEnum, outputFileTextField.getText(), getExportSql());
 			
 			cancelButton.setText("Cancel");
 			exportButton.setEnabled(true);
