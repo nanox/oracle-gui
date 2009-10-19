@@ -12,6 +12,6 @@ import com.gs.oracle.enums.TableDataExportTypeEnum;
  */
 public interface TableDataExportService {
 
-	public boolean exportData(TableDataExportTypeEnum exportTypeEnum,
+	public boolean exportData(String schemaName, String tableName, TableDataExportTypeEnum exportTypeEnum,
 			String outputFileName, String exportQuery) throws ApplicationException;
 }

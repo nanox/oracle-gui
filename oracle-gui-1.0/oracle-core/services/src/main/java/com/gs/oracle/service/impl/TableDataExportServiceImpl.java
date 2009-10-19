@@ -51,14 +51,15 @@ public class TableDataExportServiceImpl implements TableDataExportService{
 
 
 	@Override
-	public boolean exportData(TableDataExportTypeEnum exportTypeEnum,
+	public boolean exportData(String schemaName, String tableName, TableDataExportTypeEnum exportTypeEnum,
 			String outputFileName, String exportQuery) {
 		if(!StringUtil.hasValidContent(exportQuery) 
 				|| !StringUtil.hasValidContent(outputFileName)
 				|| exportTypeEnum == null)
 			return false;
 		File outputFile = null;
-		
+		exportHandler.setSchemaName(schemaName);
+		exportHandler.setTableName(tableName);
 		if(TableDataExportTypeEnum.CSV.getCode() == exportTypeEnum.getCode()){
 			if(!outputFileName.toLowerCase().endsWith(TableDataExportTypeEnum.CSV.getExtension())){
 				outputFileName += outputFileName + TableDataExportTypeEnum.CSV.getExtension();
