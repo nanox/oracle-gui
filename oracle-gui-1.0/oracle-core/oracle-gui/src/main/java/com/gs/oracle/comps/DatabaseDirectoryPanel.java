@@ -42,7 +42,7 @@ import com.gs.oracle.model.Database;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.util.DisplayUtils;
 import com.gs.oracle.util.MenuBarUtil;
-import com.gs.oracle.vo.TableDataExportTypeEnum;
+import com.gs.oracle.enums.*;
 
 /**
  * @author sabuj.das
