@@ -1,9 +1,12 @@
 package com.gs.oracle.io;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.io.Writer;
 
 public class IOUtils {
 
@@ -12,6 +15,17 @@ public class IOUtils {
 		if(reader != null){
 			try {
 				reader.close();
+			} catch (IOException e) {
+				//e.printStackTrace();
+				// ignore
+			}
+		}
+	}
+	
+	public static void closeWriter(Writer writer){
+		if(writer != null){
+			try {
+				writer.close();
 			} catch (IOException e) {
 				//e.printStackTrace();
 				// ignore
@@ -55,5 +69,17 @@ public class IOUtils {
 			}
 		}
 		return file;
+	}
+	
+	public static void writeAsText(File file, String message){
+		BufferedWriter bw=null;
+		try{
+			bw = new BufferedWriter(new FileWriter(file));
+			bw.write(message);
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			IOUtils.closeWriter(bw);
+		}
 	}
 }

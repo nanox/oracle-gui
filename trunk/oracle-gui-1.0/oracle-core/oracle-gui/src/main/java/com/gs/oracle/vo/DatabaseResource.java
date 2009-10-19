@@ -7,6 +7,8 @@ import java.io.Serializable;
 
 import javax.swing.ImageIcon;
 
+import com.gs.oracle.enums.DatabaseResourceEnum;
+
 /**
  * @author Green Moon
  *

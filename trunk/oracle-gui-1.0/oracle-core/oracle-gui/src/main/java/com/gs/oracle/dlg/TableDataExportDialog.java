@@ -3,7 +3,6 @@
  */
 package com.gs.oracle.dlg;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -48,13 +47,13 @@ import com.gs.oracle.comps.ColumnNameListModel;
 import com.gs.oracle.comps.ExtensionFileFilter;
 import com.gs.oracle.comps.ResultSetTableModelFactory;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.enums.TableDataExportTypeEnum;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Table;
+import com.gs.oracle.service.impl.TableDataExportServiceImpl;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
-import com.gs.oracle.util.MenuBarUtil;
 import com.gs.oracle.util.WindowUtil;
-import com.gs.oracle.vo.TableDataExportTypeEnum;
 
 /**
  * @author sabuj.das
@@ -624,8 +623,28 @@ public class TableDataExportDialog  extends JDialog {
 	}
 	
 	private void export() {
+		/*exportRunner.setExportSql(formSelectStatement(whereClauseTextField.getText()));
+		exportRunner.setDataExportTypeEnum(getExportTypeEnum());
 		exportRunner.setExportSql(formSelectStatement(whereClauseTextField.getText()));
-		exportRunnerThread.start();
+		if(exportRunnerThread.getState().compareTo(State.RUNNABLE) == 0
+				|| exportRunnerThread.getState().compareTo(State.NEW) == 0){
+			exportRunnerThread.start();
+		}else{
+			exportRunnerThread.stop();
+			exportRunnerThread.start();
+		}*/
+		exportProgressLabel.setVisible(true);
+		exportButton.setEnabled(false);
+		cancelButton.setText("Stop");
+		
+		TableDataExportServiceImpl exportService = new TableDataExportServiceImpl(getConnectionProperties());
+		exportService.exportData(getExportTypeEnum(), outputFileTextField.getText(), 
+				formSelectStatement(whereClauseTextField.getText()));
+		
+		cancelButton.setText("Cancel");
+		exportButton.setEnabled(true);
+		exportProgressLabel.setVisible(false);
+		
 	}
 	
 	private class ExportRunnerThread extends Thread{
@@ -678,12 +697,11 @@ public class TableDataExportDialog  extends JDialog {
 			exportProgressLabel.setVisible(true);
 			exportButton.setEnabled(false);
 			cancelButton.setText("Stop");
-			try {
-				Thread.sleep(50000);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			
+			TableDataExportServiceImpl exportService = new TableDataExportServiceImpl(getConnectionProperties());
+			exportService.exportData(dataExportTypeEnum, outputFileTextField.getText(), getExportSql());
+			
+			cancelButton.setText("Cancel");
 			exportButton.setEnabled(true);
 			exportProgressLabel.setVisible(false);
 		}
