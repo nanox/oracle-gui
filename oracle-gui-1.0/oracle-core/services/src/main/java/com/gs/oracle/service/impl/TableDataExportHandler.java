@@ -11,17 +11,26 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Types;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.io.IOUtils;
+import com.gs.oracle.jdbc.JdbcUtil;
+import com.sun.jmx.snmp.Timestamp;
 
 /**
  * @author sabuj.das
  *
  */
 public class TableDataExportHandler {
+	
+	public static final String INSERT_DATE_FORMAT = "dd-MMM-yy HH.mm.ss.SSS aaa";
+	private static final String SQL_DATE_FORMAT = "'DD-MON-RR HH.MI.SS.FF AM'";
+	private static final String SQL_DATE_FUNCTION = "to_timestamp";
 	
 	private ConnectionProperties connectionProperties;
 	private String schemaName, tableName;
@@ -102,11 +111,12 @@ public class TableDataExportHandler {
 			while(resultSet.next()){
 				StringBuffer rowResultBuffer = new StringBuffer(resultBuffer.toString());
 				for(int i = 1; i<= columnCount; i++){
+					int columnType = metaData.getColumnType(i);
 					Object o = resultSet.getObject(i);
-					String value = "";
+					String value = "null";
 					if(o != null)
 						value = o.toString();
-					rowResultBuffer.append("'").append(value).append("'");
+					rowResultBuffer.append(getStringForObject(o, columnType));
 					if(i != columnCount){
 						rowResultBuffer.append(", ");
 					}else{
@@ -138,4 +148,39 @@ public class TableDataExportHandler {
 			
 		}
 	}
+	
+	public static String getStringForObject(Object o, int type){
+		String value = "";
+		if(o == null){
+			return "null";
+		}
+		SimpleDateFormat dateFormat = new SimpleDateFormat(INSERT_DATE_FORMAT);
+		switch(type){
+			case Types.SMALLINT:
+			case Types.INTEGER:
+			case Types.DECIMAL:
+			case Types.BIGINT:
+			case Types.REAL:
+			case Types.DOUBLE:
+			case Types.NUMERIC:
+				value = o.toString();
+				break;
+			
+			case Types.DATE:
+			case Types.TIME:
+			case Types.TIMESTAMP:
+				java.sql.Timestamp sqlTimestamp = (java.sql.Timestamp) o;
+				java.util.Date utilDate = new java.util.Date();
+				utilDate.setTime(sqlTimestamp.getTime());
+				value = SQL_DATE_FUNCTION + "('" +
+					dateFormat.format(utilDate) + "', " + SQL_DATE_FORMAT + ")";
+				break;
+			
+			default:
+				value = "'" + o.toString() + "'";
+				break;
+		}
+		return value;
+	}
+	
 }
