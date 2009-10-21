@@ -25,6 +25,7 @@ import javax.swing.JTextPane;
 import javax.swing.WindowConstants;
 
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.accesscontrol.AuthorizationController;
 import com.gs.oracle.common.StringUtil;
 import com.gs.oracle.comps.TableRowEditorPanel;
 import com.gs.oracle.connection.ConnectionProperties;
@@ -39,6 +40,8 @@ public class TableDataEditorDialog extends JDialog implements ActionListener{
 	 * 
 	 */
 	private static final long serialVersionUID = 280459765585383490L;
+	
+	private static final AuthorizationController authorizationController = AuthorizationController.getInstance();
 	
 	private int selectedOption = OracleGuiConstants.CANCEL_OPTION;
 	private JFrame parentComponent;	
@@ -186,6 +189,7 @@ public class TableDataEditorDialog extends JDialog implements ActionListener{
 		mainPanel.add(cancelButton, gridBagConstraints);
 
 		okButton.setText("OK");
+		okButton.setEnabled(authorizationController.hasAccess(null, ""));
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 3;
