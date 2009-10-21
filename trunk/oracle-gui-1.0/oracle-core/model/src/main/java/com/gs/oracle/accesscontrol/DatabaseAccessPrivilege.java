@@ -3,14 +3,12 @@
  */
 package com.gs.oracle.accesscontrol;
 
-import java.io.Serializable;
-
 /**
  * @author Sabuj Das
  *
  */
-public class DatabasePrivilege implements Serializable {
-
+public class DatabaseAccessPrivilege {
+	
 	private String catalogName;
 	private String schemaName;
 	private String grantor;
@@ -18,7 +16,7 @@ public class DatabasePrivilege implements Serializable {
 	private String privilegeName;
 	private Boolean isGrantable;
 	
-	public DatabasePrivilege() {
+	public DatabaseAccessPrivilege() {
 		// TODO Auto-generated constructor stub
 	}
 
@@ -69,6 +67,4 @@ public class DatabasePrivilege implements Serializable {
 	public void setIsGrantable(Boolean isGrantable) {
 		this.isGrantable = isGrantable;
 	}
-	
-	
 }

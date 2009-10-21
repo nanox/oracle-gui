@@ -33,6 +33,7 @@ import org.fife.plaf.Office2003.Office2003LookAndFeel;
 
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.accesscontrol.AuthorizationController;
 import com.gs.oracle.common.StringUtil;
 import com.gs.oracle.comps.ButtonTabComponent;
 import com.gs.oracle.comps.MenuBarItems;
@@ -117,6 +118,11 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 							iFrame.setVisible(true);
 							((OracleGuiMainFrame)parent).getMainDesktopPane().add(iFrame);
 							((ConnectionDialog)getSourceForm()).dispose();
+							AuthorizationController ac = AuthorizationController.getInstance();
+							ac.setConnectionProperties(p);
+							ac.setSchemaName(p.getDatabaseName());
+							ac.loadAuthorization();
+							
 							try {
 								conn.close();
 							} catch (SQLException e) {
