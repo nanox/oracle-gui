@@ -18,5 +18,11 @@
 			<artifactId>util</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>castor</groupId>
+			<artifactId>castor</artifactId>
+			<version>1.0</version>
+			<type>jar</type>
+		</dependency>
 	</dependencies>
 </project>

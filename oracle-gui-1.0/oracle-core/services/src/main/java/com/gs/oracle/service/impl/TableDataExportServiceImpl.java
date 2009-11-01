@@ -65,7 +65,7 @@ public class TableDataExportServiceImpl implements TableDataExportService{
 				outputFileName += outputFileName + TableDataExportTypeEnum.CSV.getExtension();
 			}
 			outputFile = IOUtils.mkfile(outputFileName);
-			//exportHandler
+			exportHandler.exportToTEXT(exportQuery, outputFile, true, ',');
 		} else if(TableDataExportTypeEnum.EXCEL.getCode() == exportTypeEnum.getCode()){
 			if(!outputFileName.toLowerCase().endsWith(TableDataExportTypeEnum.EXCEL.getExtension())){
 				outputFileName += outputFileName + TableDataExportTypeEnum.EXCEL.getExtension();
@@ -76,6 +76,7 @@ public class TableDataExportServiceImpl implements TableDataExportService{
 				outputFileName += outputFileName + TableDataExportTypeEnum.HTML.getExtension();
 			}
 			outputFile = IOUtils.mkfile(outputFileName);
+			exportHandler.exportToHTML(exportQuery, outputFile);
 		} else if(TableDataExportTypeEnum.INSERT_STATEMENT.getCode() == exportTypeEnum.getCode()){
 			if(!outputFileName.toLowerCase().endsWith(TableDataExportTypeEnum.INSERT_STATEMENT.getExtension())){
 				outputFileName += outputFileName + TableDataExportTypeEnum.INSERT_STATEMENT.getExtension();
@@ -87,16 +88,19 @@ public class TableDataExportServiceImpl implements TableDataExportService{
 				outputFileName += outputFileName + TableDataExportTypeEnum.SQL_LOADER.getExtension();
 			}
 			outputFile = IOUtils.mkfile(outputFileName);
+			
 		} else if(TableDataExportTypeEnum.TEXT.getCode() == exportTypeEnum.getCode()){
 			if(!outputFileName.toLowerCase().endsWith(TableDataExportTypeEnum.TEXT.getExtension())){
 				outputFileName += outputFileName + TableDataExportTypeEnum.TEXT.getExtension();
 			}
 			outputFile = IOUtils.mkfile(outputFileName);
+			exportHandler.exportToTEXT(exportQuery, outputFile, false, '\t');
 		} else if(TableDataExportTypeEnum.XML.getCode() == exportTypeEnum.getCode()){
 			if(!outputFileName.toLowerCase().endsWith(TableDataExportTypeEnum.XML.getExtension())){
 				outputFileName += outputFileName + TableDataExportTypeEnum.XML.getExtension();
 			}
 			outputFile = IOUtils.mkfile(outputFileName);
+			exportHandler.exportToXML(exportQuery, outputFile);
 		} 
 		
 		return false;

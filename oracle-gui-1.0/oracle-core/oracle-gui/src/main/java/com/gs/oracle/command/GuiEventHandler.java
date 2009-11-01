@@ -37,6 +37,7 @@ import com.gs.oracle.accesscontrol.AuthorizationController;
 import com.gs.oracle.common.StringUtil;
 import com.gs.oracle.comps.ButtonTabComponent;
 import com.gs.oracle.comps.MenuBarItems;
+import com.gs.oracle.comps.SqlQueryPanel;
 import com.gs.oracle.comps.TableDetailsPanel;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.dlg.ConnectionDialog;
@@ -223,6 +224,25 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 					return;
 				}
 				openResource((JFrame) getParent(), dbIframe);
+			} else if(NEW_QUERY_TAB_ACT_CMD.equals(cmd)){
+				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
+				JDesktopPane desktopPane = f.getMainDesktopPane();
+				if(desktopPane == null){
+					return;
+				}
+				JInternalFrame iFrame = desktopPane.getSelectedFrame();
+				if(iFrame == null){
+					return;
+				}
+				DatabaseViewerInternalFrame dbIframe = null;
+				if(iFrame instanceof DatabaseViewerInternalFrame){
+					dbIframe = (DatabaseViewerInternalFrame) iFrame;
+				}
+				if(dbIframe == null){
+					return;
+				}
+				SqlQueryPanel queryPanel = new SqlQueryPanel();
+				dbIframe.get
 			}
 		}
 	}

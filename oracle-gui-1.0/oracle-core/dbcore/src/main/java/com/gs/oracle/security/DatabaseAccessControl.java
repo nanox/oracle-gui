@@ -33,8 +33,8 @@ public class DatabaseAccessControl {
 			ResultSet tableRs = databaseMetaData.getTables("", schemaName, "%", new String[] {"TABLE"});
 			while(tableRs.next()){
 				String tableName = tableRs.getString("TABLE_NAME");
-				/*if(tableName.startsWith("BIN$"))
-					continue;*/
+				if(tableName.startsWith("BIN$"))
+					continue;
 				
 				ResultSet tablePrvRs = databaseMetaData.getTablePrivileges(connection.getCatalog(), schemaName, tableName);
 				List<TableAccessPrivilege> tablePrivilegeList = new ArrayList<TableAccessPrivilege>();
