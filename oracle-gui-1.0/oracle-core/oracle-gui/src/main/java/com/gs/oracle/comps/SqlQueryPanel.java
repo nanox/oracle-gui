@@ -566,6 +566,8 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 					} catch (SQLException ex) {
 						JOptionPane.showMessageDialog(getParentFrame(), new String[] {
 						ex.getClass().getName() + ": ", ex.getMessage() });
+					} catch (Exception ex) {
+						JOptionPane.showMessageDialog(getParentFrame(), "Error in query.");
 					}
 				}
 			});
@@ -577,8 +579,9 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 				queryLogTextArea.append("[ " + row + " ] rows updated.\n");
 				queryResultTabbedPane.setSelectedIndex(1);
 			} catch (ApplicationException ex) {
-				JOptionPane.showMessageDialog(getParentFrame(), new String[] {
-					ex.getClass().getName() + ": ", ex.getMessage() });
+				JOptionPane.showMessageDialog(getParentFrame(), ex.getMessage());
+			} catch (Exception ex) {
+				JOptionPane.showMessageDialog(getParentFrame(), "Error in query.");
 			}
 		}
 	}

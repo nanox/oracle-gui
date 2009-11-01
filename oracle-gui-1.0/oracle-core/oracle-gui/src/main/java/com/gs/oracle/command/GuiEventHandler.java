@@ -242,7 +242,12 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 					return;
 				}
 				SqlQueryPanel queryPanel = new SqlQueryPanel();
-				dbIframe.get
+				dbIframe.getDbDetailsTabbedPane().addTab("SQL", queryPanel);
+				int n = dbIframe.getDbDetailsTabbedPane().getTabCount();
+				dbIframe.getDbDetailsTabbedPane().setTabComponentAt(n - 1,
+		                new ButtonTabComponent(dbIframe.getDbDetailsTabbedPane(), new ImageIcon(this.getClass()
+		        				.getResource(OracleGuiConstants.IMAGE_PATH + "executesql.gif"))));
+				dbIframe.getDbDetailsTabbedPane().setSelectedIndex(n - 1);
 			}
 		}
 	}
