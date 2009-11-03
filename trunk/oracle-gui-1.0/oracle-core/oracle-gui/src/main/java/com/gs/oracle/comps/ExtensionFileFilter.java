@@ -72,4 +72,9 @@ public class ExtensionFileFilter extends FileFilter
     {
         return desc;
     }
+    
+    public File applyExtension(File original) {
+
+        return new File(original.getParentFile(), original.getName().concat(".".concat("")));
+    }
 }

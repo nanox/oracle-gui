@@ -11,38 +11,40 @@
  *****************************************************************************/
 package com.gs.oracle;
 
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
+import javax.swing.plaf.metal.MetalLookAndFeel;
+import javax.swing.plaf.synth.SynthLookAndFeel;
 
-import org.fife.plaf.Office2003.Office2003LookAndFeel;
+import org.apache.log4j.Logger;
 
 import com.gs.oracle.frame.OracleGuiMainFrame;
-
-import de.muntjak.tinylookandfeel.TinyLookAndFeel;
 
 /**
  * @author sabuj.das
  *
  */
 public class Launcher {
-
+	private static Logger logger = Logger.getLogger(Launcher.class);
+	
 	public static void main(String[] args) {
+		JFrame.setDefaultLookAndFeelDecorated(true);
+	    JDialog.setDefaultLookAndFeelDecorated(true);
 		try {
 			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
         } catch (Exception ex) {
-        	try {
-				UIManager.setLookAndFeel(TinyLookAndFeel.class.getCanonicalName());
-			} catch (ClassNotFoundException e) {
-				e.printStackTrace();
-			} catch (InstantiationException e) {
-				e.printStackTrace();
-			} catch (IllegalAccessException e) {
-				e.printStackTrace();
-			} catch (UnsupportedLookAndFeelException e) {
-				e.printStackTrace();
-			}
+        	
         }
-		OracleGuiMainFrame frame = new OracleGuiMainFrame();
-		frame.setVisible(true);
+		
+        OracleGuiMainFrame frame = new OracleGuiMainFrame();
+			frame.setVisible(true);
+		
+	    /*SwingUtilities.invokeLater(new Runnable() {
+	      public void run() {
+	    	  
+	      }
+	    });*/
 	}
 }

@@ -7,13 +7,14 @@
 package com.gs.oracle.comps;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontFormatException;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.BufferedReader;
@@ -24,7 +25,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -33,6 +33,15 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
+import javax.swing.event.HyperlinkEvent;
+import javax.swing.event.HyperlinkListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.undo.UndoManager;
+import javax.swing.undo.UndoableEdit;
 
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
@@ -45,13 +54,17 @@ import com.gs.oracle.io.IOUtils;
 import com.gs.oracle.service.QueryExecutionService;
 import com.gs.oracle.service.impl.QueryExecutionServiceImpl;
 import com.gs.oracle.sql.SqlDocument;
+import com.gs.oracle.sql.SyntaxHighlighter;
+import com.gs.oracle.sql.processor.SqlProcessor;
 import com.gs.oracle.util.MenuBarUtil;
+import com.gs.oracle.util.SwingUtilities;
 
 /**
  * 
  * @author Green Moon
  */
-public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener {
+public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener, CaretListener, FocusListener,
+UndoableEditListener, HyperlinkListener {
 
 	private JFrame parentFrame;
 	public static final java.awt.Font DEFAULT_TEXT_FONT =
@@ -62,6 +75,9 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 	private JMenuItem runSelectionMenuItem;
 	private JButton queryFontButton;
 	private QueryExecutionService queryExecutionService;
+	private UndoManager undoManager = new UndoManager();
+	
+	private SqlProcessor sqlProcessor = new SqlProcessor();
 
 	/** Creates new form SqlQueryPanel */
 	public SqlQueryPanel() {
@@ -114,7 +130,8 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		jSeparator3 = new javax.swing.JToolBar.Separator();
 		wrapToggleButton = new javax.swing.JToggleButton();
 		jScrollPane1 = new javax.swing.JScrollPane();
-		queryTextArea = new javax.swing.JTextArea();
+		//queryTextArea = new javax.swing.JTextArea();
+		
 		queryResultPanel = new javax.swing.JPanel();
 		queryResultTabbedPane = new javax.swing.JTabbedPane();
 		queryResultTabPanel = new javax.swing.JPanel();
@@ -346,15 +363,18 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		gridBagConstraints.weightx = 1.0;
 		queryPanel.add(queryToolBar, gridBagConstraints);
 
+		commandEditor = new SyntaxHighlighter(200,200,sqlProcessor);
+		
 		SqlDocument doc = new SqlDocument();
 		//doc.setTextArea(queryTextArea);
-		queryTextArea.setColumns(20);
+		/*queryTextArea.setColumns(20);
 		queryTextArea.setLineWrap(true);
 		queryTextArea.setRows(5);
-		queryTextArea.setTabSize(4);
-		queryTextArea.setMargin(new Insets(2,5,2,5));
+		queryTextArea.setTabSize(4);*/
+		commandEditor.setMargin(new Insets(2,5,2,5));
+		commandEditor.setFont(bitstreamFont);
 		//queryTextArea.setDocument(doc);
-		LineNumberedBorder lineNumberedBorder = new LineNumberedBorder(LineNumberedBorder.LEFT_SIDE,
+		/*LineNumberedBorder lineNumberedBorder = new LineNumberedBorder(LineNumberedBorder.LEFT_SIDE,
 				LineNumberedBorder.RIGHT_JUSTIFY);
 		queryTextArea.setFont((null != bitstreamFont) ? bitstreamFont : DEFAULT_TEXT_FONT);
 		queryTextArea.setBorder(
@@ -371,10 +391,10 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
               )
               );
 
-
+*/
 		
-		queryTextArea.setComponentPopupMenu(queryPopupMenu);
-		queryTextArea.addKeyListener(new KeyListener() {
+		commandEditor.setComponentPopupMenu(queryPopupMenu);
+		commandEditor.addKeyListener(new KeyListener() {
 
 			@Override
 			public void keyPressed(KeyEvent e) {
@@ -397,10 +417,10 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 		});
 		
-		AutoTextComplete atc = new AutoTextComplete(queryTextArea);
+		/*AutoTextComplete atc = new AutoTextComplete(queryTextArea);
 		atc.setAlwaysOnTop(true);
-		atc.setItems(OracleGuiConstants.SQL_KEYWORD_LIST);
-		jScrollPane1.setViewportView(queryTextArea);
+		atc.setItems(OracleGuiConstants.SQL_KEYWORD_LIST);*/
+		jScrollPane1.setViewportView(commandEditor);
 
 		gridBagConstraints = new java.awt.GridBagConstraints();
 		gridBagConstraints.gridx = 0;
@@ -493,7 +513,8 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 	private javax.swing.JPanel queryResultPanel;
 	private javax.swing.JPanel queryResultTabPanel;
 	private javax.swing.JTabbedPane queryResultTabbedPane;
-	private javax.swing.JTextArea queryTextArea;
+	//private javax.swing.JTextArea queryTextArea;
+	private SyntaxHighlighter commandEditor;
 	private javax.swing.JToolBar queryToolBar;
 	private javax.swing.JButton rollbackButton;
 	private javax.swing.JButton runAllButton;
@@ -514,7 +535,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource().equals(clearButton)
 				|| e.getSource().equals(clearMenuItem)) {
-			queryTextArea.setText("");
+			commandEditor.setText("");
 		}
 		if (e.getSource().equals(runQueryButton) || e.getSource().equals(runQueryMenuItem)) {
 			String query = getLastQuery();
@@ -526,7 +547,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 				displayQueryResults(queryList.get(0));
 		}
 		if (e.getSource().equals(wrapToggleButton) || e.getSource().equals(wrapCheckBoxMenuItem)) {
-			if(wrapToggleButton.isSelected() && wrapCheckBoxMenuItem.isSelected()){
+			/*if(wrapToggleButton.isSelected() && wrapCheckBoxMenuItem.isSelected()){
 				queryTextArea.setLineWrap(true);
 				wrapToggleButton.setToolTipText("Un-Wrap");
 				wrapCheckBoxMenuItem.setText("Un-Wrap");
@@ -534,7 +555,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 				queryTextArea.setLineWrap(false);
 				wrapToggleButton.setToolTipText("Wrap");
 				wrapCheckBoxMenuItem.setText("Wrap");
-			}
+			}*/
 		}
 		if (e.getSource().equals(queryFontButton)){
 			
@@ -586,9 +607,9 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 		}
 	}
 
-	public javax.swing.JTextArea getQueryTextArea() {
+	/*public javax.swing.JTextArea getQueryTextArea() {
 		return queryTextArea;
-	}
+	}*/
 
 	public void setQueryResultTable(JTable queryResultTable) {
 		this.queryResultTable = queryResultTable;
@@ -612,7 +633,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 	}
 
 	public List<String> getQueryList() {
-		return getQueryList(queryTextArea.getText());
+		return getQueryList(commandEditor.getText());
 	}
 
 	public List<String> getQueryList(String text) {
@@ -664,7 +685,7 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 	}
 
 	public List<String> getSelectedQueryList() {
-		return getQueryList(queryTextArea.getSelectedText());
+		return getQueryList(commandEditor.getSelectedText());
 	}
 
 	public JFrame getParentFrame() {
@@ -673,5 +694,59 @@ public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener 
 
 	public void setParentFrame(JFrame parentFrame) {
 		this.parentFrame = parentFrame;
+	}
+
+	@Override
+	public void caretUpdate(CaretEvent e) {
+		Object src = (e == null ? commandEditor : e.getSource());
+        int dot = (e == null ? commandEditor.getCaretPosition() : e.getDot());
+
+        int row = 0;
+        int column = 0;
+        if (src == commandEditor) {
+            try {
+                row = SwingUtilities.getCaretRow(dot, commandEditor) + 1;
+            } catch (BadLocationException e1) {
+                row = -1;
+            }
+            try {
+                column = SwingUtilities.getCaretCol(dot, commandEditor) + 1;
+            } catch (BadLocationException e1) {
+                column = -1;
+            }
+            String str = " " + row + " : " + column + "[" + dot + "]";
+            //labelCaretPosition.setText(str);
+        }
+	}
+
+	@Override
+	public void focusGained(FocusEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void undoableEditHappened(UndoableEditEvent e) {
+		if (e == null || e.getEdit() == null) {
+            return;
+        }
+        UndoableEdit edit = e.getEdit();
+        String editName = edit.getPresentationName();
+        if (editName.startsWith("style")) {
+            return;
+        }
+        undoManager.addEdit(e.getEdit());
+	}
+
+	@Override
+	public void hyperlinkUpdate(HyperlinkEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }
