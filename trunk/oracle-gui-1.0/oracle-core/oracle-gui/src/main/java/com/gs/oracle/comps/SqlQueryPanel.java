@@ -7,6 +7,7 @@
 package com.gs.oracle.comps;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontFormatException;
@@ -25,6 +26,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -33,6 +37,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.KeyStroke;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.HyperlinkEvent;
@@ -40,6 +45,10 @@ import javax.swing.event.HyperlinkListener;
 import javax.swing.event.UndoableEditEvent;
 import javax.swing.event.UndoableEditListener;
 import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.Keymap;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyledDocument;
 import javax.swing.undo.UndoManager;
 import javax.swing.undo.UndoableEdit;
 
@@ -56,6 +65,7 @@ import com.gs.oracle.service.impl.QueryExecutionServiceImpl;
 import com.gs.oracle.sql.SqlDocument;
 import com.gs.oracle.sql.SyntaxHighlighter;
 import com.gs.oracle.sql.processor.SqlProcessor;
+import com.gs.oracle.sql.text.WrapEditorKit;
 import com.gs.oracle.util.MenuBarUtil;
 import com.gs.oracle.util.SwingUtilities;
 
@@ -365,14 +375,17 @@ UndoableEditListener, HyperlinkListener {
 
 		commandEditor = new SyntaxHighlighter(200,200,sqlProcessor);
 		
-		SqlDocument doc = new SqlDocument();
+		//SqlDocument doc = new SqlDocument();
 		//doc.setTextArea(queryTextArea);
 		/*queryTextArea.setColumns(20);
 		queryTextArea.setLineWrap(true);
 		queryTextArea.setRows(5);
 		queryTextArea.setTabSize(4);*/
+		
 		commandEditor.setMargin(new Insets(2,5,2,5));
 		commandEditor.setFont(bitstreamFont);
+		initKeyMap();
+		
 		//queryTextArea.setDocument(doc);
 		/*LineNumberedBorder lineNumberedBorder = new LineNumberedBorder(LineNumberedBorder.LEFT_SIDE,
 				LineNumberedBorder.RIGHT_JUSTIFY);
@@ -390,8 +403,19 @@ UndoableEditListener, HyperlinkListener {
               )
               )
               );
+              */
+		/*commandEditor.setBorder(
+            BorderFactory.createCompoundBorder(
+              BorderFactory.createEmptyBorder(1, 1, 1, 1),
+              BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.BLACK, 1),
+                BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.GRAY, 1),
+                        BorderFactory.createEmptyBorder(0, 8, 0, 2))
+              )
+              )
+              );*/
 
-*/
+
 		
 		commandEditor.setComponentPopupMenu(queryPopupMenu);
 		commandEditor.addKeyListener(new KeyListener() {
@@ -483,6 +507,37 @@ UndoableEditListener, HyperlinkListener {
 
 		add(sqlQuerySplitPane, java.awt.BorderLayout.CENTER);
 	}
+	
+	protected void initKeyMap() {
+        Keymap kMap = commandEditor.getKeymap();
+        Action a = new AbstractAction() {
+            public void actionPerformed(ActionEvent e) {
+                insertLineBreak();
+            }
+        };
+        kMap.addActionForKeyStroke(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER,KeyEvent.SHIFT_MASK),a);
+    }
+	
+	protected void insertLineBreak() {
+        try {
+            int offs = commandEditor.getCaretPosition();
+            Document doc = commandEditor.getDocument();
+            SimpleAttributeSet attrs;
+            if (doc instanceof StyledDocument) {
+                attrs = new SimpleAttributeSet( ( (StyledDocument) doc).getCharacterElement(offs).getAttributes());
+            }
+            else {
+                attrs = new SimpleAttributeSet();
+            }
+            attrs.addAttribute(WrapEditorKit.LINE_BREAK_ATTRIBUTE_NAME,Boolean.TRUE);
+            doc.insertString(offs, "\r", attrs);
+            commandEditor.setCaretPosition(offs+1);
+        }
+        catch (BadLocationException ex) {
+            //should never happens
+            ex.printStackTrace();
+        }
+    }
 
 	private javax.swing.JButton clearButton;
 	private javax.swing.JButton commitButton;
