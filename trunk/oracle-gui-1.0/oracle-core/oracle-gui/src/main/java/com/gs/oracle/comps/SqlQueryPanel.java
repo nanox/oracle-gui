@@ -379,8 +379,7 @@ UndoableEditListener, HyperlinkListener {
 		//doc.setTextArea(queryTextArea);
 		/*queryTextArea.setColumns(20);
 		queryTextArea.setLineWrap(true);
-		queryTextArea.setRows(5);
-		queryTextArea.setTabSize(4);*/
+		queryTextArea.setRows(5);*/
 		
 		commandEditor.setMargin(new Insets(2,5,2,5));
 		commandEditor.setFont(bitstreamFont);

@@ -92,6 +92,13 @@
 			<scope>system</scope>
 			<systemPath>${libs.dir}/tinylaf.jar</systemPath>
 		</dependency>
+		<dependency>
+			<groupId>com.sun.rowset</groupId>
+			<artifactId>rowset</artifactId>
+			<version>1.0.1</version>
+			<scope>system</scope>
+			<systemPath>${libs.dir}/jdbc_rowset_tiger-1_0_1.jar</systemPath>
+		</dependency>
 	</dependencies>
 
 
