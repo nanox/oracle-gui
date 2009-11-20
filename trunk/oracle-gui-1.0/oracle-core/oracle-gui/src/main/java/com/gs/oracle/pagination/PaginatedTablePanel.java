@@ -4,6 +4,7 @@
 package com.gs.oracle.pagination;
 
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -16,11 +17,16 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.Serializable;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -28,6 +34,16 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+
+import org.apache.log4j.Logger;
+
+import com.gs.oracle.comps.ResultSetTableModel;
+import com.gs.oracle.comps.ResultSetTableModelFactory;
+import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.grabber.OracleDbGrabber;
+import com.gs.oracle.util.DisplayTypeEnum;
+import com.gs.oracle.util.DisplayUtils;
+import com.gs.oracle.vo.PaginationResult;
 
 
 
@@ -38,15 +54,187 @@ import javax.swing.SwingConstants;
 public class PaginatedTablePanel extends JPanel implements Serializable,
 		ActionListener, MouseListener, KeyListener {
 
+	private static final Logger logger = Logger.getLogger(PaginatedTablePanel.class);
 	
+	public static final int MIN_RECORDS_PER_PAGE = 10;
+	public static final int MAX_RECORDS_PER_PAGE = 99999;
+	
+	private JFrame parentFrame;
+	private ConnectionProperties connectionProperties;
+	private ResultSetTableModelFactory resultSetTableModelFactory;
+	//private ResultSetTableModel resultSetTableModel;
+	
+	private String queryString;
+	private String countQuery;
+	private PaginationResult paginationResult;
 
-    /** Creates new form PaginatedTablePanel */
-    public PaginatedTablePanel() {
+    public PaginatedTablePanel(JFrame parentFrame, 
+    		ConnectionProperties connectionProperties, String query, String countQuery) {
+    	this.parentFrame = parentFrame;
+        this.connectionProperties = connectionProperties;
+        this.queryString = query;
+        this.countQuery = countQuery;
+        try{
+        	resultSetTableModelFactory = new ResultSetTableModelFactory(
+        			connectionProperties.getDataSource().getConnection());
+        	
+        } catch(SQLException sqx){
+        	DisplayUtils.displayMessage(parentFrame, "Cannot create connection to database.", DisplayTypeEnum.ERROR);
+        }
+        
+        paginationResult = new PaginationResult();
+        paginationResult.setStartRow(0);
         initComponents();
+        targetTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+		targetTable.setCellSelectionEnabled(true);
+        populatePaginatedResult(1);
+        
     }
+    
+    public void populatePaginatedResult(int pageNumber){
+    	
+    	if(resultSetTableModelFactory != null){
+        	
+        	paginationResult.setCurrentPage(pageNumber);
+        	paginationResult.setRowsPerPage(MIN_RECORDS_PER_PAGE);
+        	
+        	showTableData();
+        	
+        }
+    }
+    
+    private void showTableData() {
+    	int totalRows = 0;
+		Connection connection = null;
+    	try {
+    		logger.info("Populating Data in table for Page number : "+ paginationResult.getCurrentPage());
+			connection = getConnectionProperties().getDataSource().getConnection();
+			
+			Statement statement = connection.prepareStatement(countQuery);
+			ResultSet rs = statement.executeQuery(countQuery);
+			if(rs != null){
+				while(rs.next()){
+					totalRows = rs.getInt(1);
+				}
+				rs.close();
+			}
+			logger.info("Total " + totalRows + " found by the query : " + countQuery);
+			
+		} catch (SQLException e) {
+			DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		finally{
+			if(connection != null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+		}
+		paginationResult.setRowAttributes(totalRows);
+		paginationResult.setEndRow(paginationResult.getStartRow() + paginationResult.getRowsPerPage());
+		int rowNumFrom = paginationResult.getStartRow();
+    	int rowNumTo = paginationResult.getEndRow();
+    	String query = getQueryString();
+    	if(query.toLowerCase().contains("where")){
+    		query += " " + "ROWNUM >= " + rowNumFrom + " AND ROWNUM < " + rowNumTo ;
+    	} else {
+    		query += " WHERE " + "ROWNUM >= " + rowNumFrom + " AND ROWNUM < " + rowNumTo ;
+    	}
+    	logger.info("Executing query : " + query);
+    	try {
+			targetTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+			targetTable.setCellSelectionEnabled(true);
+			targetTable.setModel(resultSetTableModelFactory.getResultSetTableModel(query));
+		} catch (SQLException e) {
+			DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
+		} catch(Exception e){
+			e.printStackTrace();
+		}
+		populatePageLinks();
+		
+	}
 
+    
+    private void populatePageLinks() {
+    	if(paginationResult.isPreviousPage()){
+			previousPageLabel.setVisible(true);
+		}else{
+			previousPageLabel.setVisible(false);
+		}
+		if(paginationResult.isNextPage()){
+			nextPageLabel.setVisible(true);
+		}else{
+			nextPageLabel.setVisible(false);
+		}
+	}
+
+	public void gotoNextPage(){
+    	if(paginationResult.getCurrentPage() >= paginationResult.getTotalPages()){
+    		return ;
+    	}
+    	paginationResult.setCurrentPage(
+    		paginationResult.getCurrentPage() + 1);
+    	gotoPage(paginationResult.getCurrentPage());
+    }
+    
+    public void gotoPreviousPage(){
+    	
+    }
+    
+    public void gotoPage(int pageNumber){
+    	
+    	populatePaginatedResult(pageNumber);
+    }
+    
    
-    private void initComponents() {
+    /**
+	 * @return the parentFrame
+	 */
+	public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+	/**
+	 * @return the connectionProperties
+	 */
+	public ConnectionProperties getConnectionProperties() {
+		return connectionProperties;
+	}
+
+	/**
+	 * @return the queryString
+	 */
+	public String getQueryString() {
+		return queryString;
+	}
+
+	/**
+	 * @param parentFrame the parentFrame to set
+	 */
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
+	}
+
+	/**
+	 * @param connectionProperties the connectionProperties to set
+	 */
+	public void setConnectionProperties(ConnectionProperties connectionProperties) {
+		this.connectionProperties = connectionProperties;
+	}
+
+	/**
+	 * @param queryString the queryString to set
+	 */
+	public void setQueryString(String queryString) {
+		this.queryString = queryString;
+	}
+
+	private void initComponents() {
         GridBagConstraints gridBagConstraints;
 
         topNavigationPanel = new JPanel();
@@ -95,6 +283,8 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         previousPageLabel.setFont(new Font("Tahoma", 1, 11)); 
         previousPageLabel.setForeground(new Color(0, 0, 255));
         previousPageLabel.setText("Prev");
+        previousPageLabel.addMouseListener(this);
+        
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new Insets(0, 2, 0, 0);
@@ -108,7 +298,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         rowsPerPageTextField.setFont(new Font("Tahoma", 1, 11));
         rowsPerPageTextField.setForeground(new Color(0, 0, 255));
         rowsPerPageTextField.setHorizontalAlignment(JTextField.CENTER);
-        rowsPerPageTextField.setText("5");
+        rowsPerPageTextField.setText("" + MIN_RECORDS_PER_PAGE);
         rowsPerPageTextField.setMinimumSize(new Dimension(60, 20));
         rowsPerPageTextField.setPreferredSize(new Dimension(60, 20));
         gridBagConstraints = new GridBagConstraints();
@@ -138,6 +328,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         nextPageLabel.setFont(new Font("Tahoma", 1, 11));
         nextPageLabel.setForeground(new Color(0, 0, 255));
         nextPageLabel.setText("Next");
+        nextPageLabel.addMouseListener(this);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 0;
@@ -202,7 +393,9 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         gridBagConstraints.weightx = 1.0;
         tablePanel.add(actionsToolBar, gridBagConstraints);
 
-        // TODO targetTable.setModel();
+        targetTable.setAutoCreateRowSorter(true);
+        targetTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        targetTable.setAutoscrolls(true);
         targetTableScrollPane.setViewportView(targetTable);
 
         gridBagConstraints = new GridBagConstraints();
@@ -383,8 +576,16 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		// TODO Auto-generated method stub
-
+		if(MouseEvent.BUTTON1 == e.getButton()
+				&& e.getClickCount() == 1){
+			if(e.getSource().equals(previousPageLabel)){
+				gotoPreviousPage();
+			}
+			else if(e.getSource().equals(nextPageLabel)){
+				gotoNextPage();
+			}
+		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -392,8 +593,12 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 	 */
 	@Override
 	public void mouseEntered(MouseEvent e) {
-		// TODO Auto-generated method stub
-
+		if(e.getSource().equals(previousPageLabel)){
+			previousPageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
+		else if(e.getSource().equals(nextPageLabel)){
+			nextPageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
 	}
 
 	/* (non-Javadoc)
@@ -401,8 +606,12 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 	 */
 	@Override
 	public void mouseExited(MouseEvent e) {
-		// TODO Auto-generated method stub
-
+		if(e.getSource().equals(previousPageLabel)){
+			previousPageLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+		else if(e.getSource().equals(nextPageLabel)){
+			nextPageLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
 	}
 
 	/* (non-Javadoc)

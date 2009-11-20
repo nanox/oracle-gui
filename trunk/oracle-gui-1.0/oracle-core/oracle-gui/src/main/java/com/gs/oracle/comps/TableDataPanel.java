@@ -35,6 +35,7 @@ import com.gs.oracle.dlg.QuickEditDialog;
 import com.gs.oracle.dlg.TableDataEditorDialog;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.model.Table;
+import com.gs.oracle.pagination.PaginatedTablePanel;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
 import com.gs.oracle.util.MenuBarUtil;
@@ -57,20 +58,24 @@ public class TableDataPanel extends JPanel implements ActionListener{
 	private String currentFilter = "";
 	private JFrame parentFrame;
 	
+	private PaginatedTablePanel paginatedTablePanel;
+	
 	public TableDataPanel(JFrame parent, String schemaName, String tableName,
 			ConnectionProperties connectionProperties) {
 		this.parentFrame = parent;
 		this.schemaName = schemaName;
 		this.tableName = tableName;
 		this.connectionProperties = connectionProperties;
-		try {
+		/*try {
 			this.resultSetTableModelFactory = new ResultSetTableModelFactory(connectionProperties.getDataSource().getConnection());
 		} catch (SQLException e) {
 			DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
-		}
+		}*/
 		queryString = "SELECT * FROM " + schemaName + "." + tableName.toUpperCase();
+		paginatedTablePanel = new PaginatedTablePanel(parentFrame, connectionProperties, queryString, 
+				"SELECT COUNT(*) FROM " + schemaName + "." + tableName.toUpperCase());
 		initComponent();
-		showTableData(queryString);
+		//showTableData(queryString);
 	}
 
 
@@ -262,7 +267,8 @@ public class TableDataPanel extends JPanel implements ActionListener{
 		gridBagConstraints.insets = insets;
 		
 		
-		add(new JScrollPane(dataTable), gridBagConstraints);
+		//add(new JScrollPane(dataTable), gridBagConstraints);
+		add(paginatedTablePanel, gridBagConstraints);
 
 	}
 	

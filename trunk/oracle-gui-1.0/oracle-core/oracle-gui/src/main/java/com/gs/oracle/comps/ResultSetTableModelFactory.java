@@ -17,6 +17,7 @@ import java.sql.Statement;
 public class ResultSetTableModelFactory {
 
 	private Connection connection;
+	//private ResultSet resultSet;
 
 	public ResultSetTableModelFactory(Connection connection) {
 		this.connection = connection;
@@ -41,12 +42,29 @@ public class ResultSetTableModelFactory {
 		Statement statement = connection.createStatement(
 				ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
 		// Run the query, creating a ResultSet
-		ResultSet r = statement.executeQuery(query);
+		
+		ResultSet resultSet = statement.executeQuery(query);
 		// Create and return a TableModel for the ResultSet
-		return new ResultSetTableModel(r);
+		return new ResultSetTableModel(resultSet);
 	}
 	
 	public ResultSetTableModel getResultSetTableModel(ResultSet resultSet, int rowCount) throws SQLException{
 		return new ResultSetTableModel(resultSet, rowCount);
+	}
+	
+	public int getRowCount(){
+		/*if(resultSet != null){
+			
+		}*/
+		return 0;
+	}
+	
+	@Override
+	public void finalize() throws Throwable {
+		super.finalize();
+		if(connection != null){
+			connection.close();
+			connection = null;
+		}
 	}
 }
