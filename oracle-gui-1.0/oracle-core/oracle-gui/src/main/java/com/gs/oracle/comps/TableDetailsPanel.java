@@ -19,6 +19,7 @@ import org.fife.plaf.Office2003.Office2003ToolBarUI;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.graph.TableDependencyPanel;
+import com.gs.oracle.model.Table;
 
 /**
  * @author sabuj.das
@@ -27,27 +28,35 @@ import com.gs.oracle.graph.TableDependencyPanel;
 public class TableDetailsPanel extends JPanel implements ActionListener,
 		OracleGuiConstants {
 
+	private Table databaseTable;
+	
 	private JFrame parentFrame;
 	private JTabbedPane tableDetailsTabbedPane;
 	private String tableName;
 	private String schemaName;
 	private ConnectionProperties connectionProperties;
 	
-	public TableDetailsPanel(JFrame parentFrame, String schemaName, String tableName) {
+/*	public TableDetailsPanel(JFrame parentFrame, String schemaName, String tableName) {
 		this(parentFrame, schemaName, tableName, null);
 	}
 	
 
 	public TableDetailsPanel(JFrame parentFrame, String schemaName, String tableName,
 			ConnectionProperties connectionProperties) {
-		this.parentFrame = parentFrame;
-		this.schemaName = schemaName;
-		this.tableName = tableName;
+		
+	}
+
+*/
+
+	public TableDetailsPanel(JFrame parent, Table table, ConnectionProperties connectionProperties) {
+		this.parentFrame = parent;
+		this.databaseTable = table;
+		this.schemaName = table.getSchemaName();
+		this.tableName = table.getModelName();
 		this.connectionProperties = connectionProperties;
 		this.connectionProperties.setDatabaseName(schemaName);
 		initComponents();
 	}
-
 
 
 	/**
@@ -66,6 +75,16 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 	}
 
 
+	public Table getDatabaseTable() {
+		return databaseTable;
+	}
+
+
+	public void setDatabaseTable(Table databaseTable) {
+		this.databaseTable = databaseTable;
+	}
+
+
 	private void initComponents() {
 		tableDetailsTabbedPane = new JTabbedPane();
 		tableDetailsTabbedPane.setFocusable(false);
@@ -73,7 +92,7 @@ public class TableDetailsPanel extends JPanel implements ActionListener,
 				TableDetailsPanel.class
 						.getResource(OracleGuiConstants.IMAGE_PATH
 								+ "table_data.gif")), 
-				new TableDataPanel(getParentFrame(), getSchemaName(), getTableName(), getConnectionProperties()));
+				new TableDataPanel(getParentFrame(), getDatabaseTable(), getConnectionProperties()));
 		tableDetailsTabbedPane.addTab("Columns",new ImageIcon(
 				TableDetailsPanel.class
 				.getResource(OracleGuiConstants.IMAGE_PATH

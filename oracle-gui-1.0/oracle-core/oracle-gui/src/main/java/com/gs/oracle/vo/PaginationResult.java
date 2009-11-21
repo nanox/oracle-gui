@@ -56,7 +56,11 @@ public class PaginationResult {
 				rowEnd = totalRows - 1;
 			}
 			this.totalRows = totalRows;
-			this.totalPages = (int)Math.ceil(totalRows / rowsPerPage);
+			if((totalRows % rowsPerPage) == 0){
+				this.totalPages = (int)(totalRows / rowsPerPage);
+			} else {
+				this.totalPages = (int)(totalRows / rowsPerPage) + 1;
+			}
 			this.startRow = rowStart;
 			this.endRow = rowEnd;
 			this.nextPage = true;

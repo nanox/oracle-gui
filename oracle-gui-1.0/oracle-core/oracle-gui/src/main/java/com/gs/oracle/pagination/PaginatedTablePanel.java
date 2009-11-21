@@ -85,8 +85,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         paginationResult = new PaginationResult();
         paginationResult.setStartRow(0);
         initComponents();
-        targetTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-		targetTable.setCellSelectionEnabled(true);
+        
         populatePaginatedResult(1);
         
     }
@@ -103,7 +102,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         }
     }
     
-    private void showTableData() {
+    private int getTotalRecords(){
     	int totalRows = 0;
 		Connection connection = null;
     	try {
@@ -135,21 +134,17 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 				}
 			}
 		}
-		paginationResult.setRowAttributes(totalRows);
+		return totalRows;
+    }
+    
+    private void showTableData() {
+		paginationResult.setRowAttributes(getTotalRecords());
 		paginationResult.setEndRow(paginationResult.getStartRow() + paginationResult.getRowsPerPage());
 		int rowNumFrom = paginationResult.getStartRow();
     	int rowNumTo = paginationResult.getEndRow();
-    	String query = getQueryString();
-    	if(query.toLowerCase().contains("where")){
-    		query += " " + "ROWNUM >= " + rowNumFrom + " AND ROWNUM < " + rowNumTo ;
-    	} else {
-    		query += " WHERE " + "ROWNUM >= " + rowNumFrom + " AND ROWNUM < " + rowNumTo ;
-    	}
-    	logger.info("Executing query : " + query);
+    	logger.info("Executing query : " + getQueryString() + " With LIMIT > " + rowNumFrom + " and < " + rowNumTo);
     	try {
-			targetTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-			targetTable.setCellSelectionEnabled(true);
-			targetTable.setModel(resultSetTableModelFactory.getResultSetTableModel(query));
+			targetTable.setModel(resultSetTableModelFactory.getResultSetTableModel(getQueryString(), rowNumFrom, rowNumTo));
 		} catch (SQLException e) {
 			DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
 		} catch(Exception e){
@@ -183,7 +178,12 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
     }
     
     public void gotoPreviousPage(){
-    	
+    	if(paginationResult.getCurrentPage() <= 0){
+    		return ;
+    	}
+    	paginationResult.setCurrentPage(
+    		paginationResult.getCurrentPage() - 1);
+    	gotoPage(paginationResult.getCurrentPage());
     }
     
     public void gotoPage(int pageNumber){

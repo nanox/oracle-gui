@@ -60,22 +60,61 @@ public class TableDataPanel extends JPanel implements ActionListener{
 	
 	private PaginatedTablePanel paginatedTablePanel;
 	
-	public TableDataPanel(JFrame parent, String schemaName, String tableName,
+	/*public TableDataPanel(JFrame parent, String schemaName, String tableName,
 			ConnectionProperties connectionProperties) {
 		this.parentFrame = parent;
 		this.schemaName = schemaName;
 		this.tableName = tableName;
 		this.connectionProperties = connectionProperties;
-		/*try {
+		try {
 			this.resultSetTableModelFactory = new ResultSetTableModelFactory(connectionProperties.getDataSource().getConnection());
 		} catch (SQLException e) {
 			DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
-		}*/
+		}
 		queryString = "SELECT * FROM " + schemaName + "." + tableName.toUpperCase();
 		paginatedTablePanel = new PaginatedTablePanel(parentFrame, connectionProperties, queryString, 
 				"SELECT COUNT(*) FROM " + schemaName + "." + tableName.toUpperCase());
 		initComponent();
 		//showTableData(queryString);
+		dataToolBar.setVisible(false);
+	}*/
+
+
+	public TableDataPanel(JFrame parentFrame, Table databaseTable,
+			ConnectionProperties connectionProperties) {
+		this.parentFrame = parentFrame;
+		this.schemaName = databaseTable.getSchemaName();
+		this.tableName = databaseTable.getModelName();
+		this.connectionProperties = connectionProperties;
+		
+		prepareQuery(databaseTable);
+				
+		paginatedTablePanel = new PaginatedTablePanel(parentFrame, connectionProperties, queryString, 
+				"SELECT COUNT(*) FROM " + schemaName + "." + tableName.toUpperCase());
+		
+		initComponent();
+		//showTableData(queryString);
+		dataToolBar.setVisible(false);
+	}
+
+
+	private void prepareQuery(Table databaseTable) {
+		StringBuffer buffer = new StringBuffer();
+		String s = "select " +
+				"* " +
+				"from (select " +
+				"a, b, c, rownum as limit from " +
+				"mytable where conditions order by whatiwant" +
+				") where limit&gt;x and limit &lt;y;";
+		buffer.append("SELECT ")
+			.append(databaseTable.getColumnNames(','))
+			.append(" FROM ( SELECT ")
+			.append(databaseTable.getColumnNames(',')).append(",").append(" ROWNUM AS LIMIT FROM ")
+			.append(schemaName.toUpperCase() + "." + tableName.toUpperCase())
+			.append(" ) WHERE LIMIT >= ? AND LIMIT < ?");
+		
+		this.queryString = buffer.toString();
+		
 	}
 
 
