@@ -98,5 +98,20 @@ public class Table extends BaseDbModel implements Serializable {
 	public void setExportedKeys(List<ForeignKey> exportedKeys) {
 		this.exportedKeys = exportedKeys;
 	}
-	
+
+	public String getColumnNames(char separator){
+		StringBuffer buffer = new StringBuffer();
+		List<Column> cList = getColumnlist();
+		if(cList != null){
+			for (int i = 0; i < cList.size(); i++) {
+				Column c = cList.get(i);
+				buffer.append(c.getModelName());
+				if(i != cList.size()-1){
+					buffer.append(" ").append(separator);
+				}
+			}
+		}
+		
+		return buffer.toString();
+	}
 }

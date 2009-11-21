@@ -306,7 +306,7 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 			}
 			if(!tableOpened){
 				TableDetailsPanel panel = new TableDetailsPanel((JFrame) getParent(), 
-						table.getSchemaName(), table.getModelName(), iFrame.getConnectionProperties());
+						table, iFrame.getConnectionProperties());
 				iFrame.getDbDetailsTabbedPane().addTab(table.getModelName(), panel);
 				int n = iFrame.getDbDetailsTabbedPane().getTabCount();
 				iFrame.getDbDetailsTabbedPane().setTabComponentAt(n - 1,

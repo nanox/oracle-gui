@@ -562,7 +562,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 				}
 			}
 			if(!tableOpened){
-				TableDetailsPanel panel = new TableDetailsPanel(getParentFrame(), table.getSchemaName(), table.getModelName(), iFrame.getConnectionProperties());
+				TableDetailsPanel panel = new TableDetailsPanel(getParentFrame(), table, iFrame.getConnectionProperties());
 				iFrame.getDbDetailsTabbedPane().addTab(table.getModelName(), panel);
 				int n = iFrame.getDbDetailsTabbedPane().getTabCount();
 				iFrame.getDbDetailsTabbedPane().setTabComponentAt(n - 1,

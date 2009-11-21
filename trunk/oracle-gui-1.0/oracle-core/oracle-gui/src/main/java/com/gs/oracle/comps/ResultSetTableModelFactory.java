@@ -6,6 +6,7 @@ package com.gs.oracle.comps;
 
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -47,17 +48,36 @@ public class ResultSetTableModelFactory {
 		// Create and return a TableModel for the ResultSet
 		return new ResultSetTableModel(resultSet);
 	}
+
+	
+	public ResultSetTableModel getResultSetTableModel(String query, int rowFrom, int rowTo) throws SQLException{
+		if (connection == null)
+			throw new IllegalStateException("Connection already closed.");
+
+		PreparedStatement ps = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		ps.setInt(1, rowFrom);
+		ps.setInt(2, rowTo);
+		
+		return new ResultSetTableModel(ps.executeQuery());
+		
+		/*Statement statement = connection.createStatement(
+				ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY);
+		// Run the query, creating a ResultSet
+		int pageSize = rowTo - rowFrom;
+		//statement.setFetchSize(pageSize);
+		ResultSet resultSet = statement.executeQuery(query);
+		if(rowFrom > 0)
+			resultSet.absolute(rowFrom);
+		resultSet.setFetchSize(pageSize);
+		// Create and return a TableModel for the ResultSet
+		return new ResultSetTableModel(resultSet);*/
+	}
+
 	
 	public ResultSetTableModel getResultSetTableModel(ResultSet resultSet, int rowCount) throws SQLException{
 		return new ResultSetTableModel(resultSet, rowCount);
 	}
 	
-	public int getRowCount(){
-		/*if(resultSet != null){
-			
-		}*/
-		return 0;
-	}
 	
 	@Override
 	public void finalize() throws Throwable {
