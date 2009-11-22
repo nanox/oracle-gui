@@ -91,7 +91,7 @@ public class TableDataPanel extends JPanel implements ActionListener{
 				
 		paginatedTablePanel = new PaginatedTablePanel(parentFrame, connectionProperties, queryString, 
 				"SELECT COUNT(*) FROM " + schemaName + "." + tableName.toUpperCase());
-		
+		paginatedTablePanel.setDatabaseTable(databaseTable);
 		initComponent();
 		//showTableData(queryString);
 		dataToolBar.setVisible(false);
