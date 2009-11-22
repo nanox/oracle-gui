@@ -4,7 +4,7 @@
 	debug="true">
 
 	<appender name="APP_LOG" class="org.apache.log4j.RollingFileAppender">
-		<param name="file" value="D:/OracleGui/logs/app/Application.log" />
+		<param name="file" value="./logs/app/Application.log" />
 		<param name="MaxFileSize" value="8000KB" />
 		<param name="maxBackupIndex" value="10" />
 		<layout class="org.apache.log4j.PatternLayout">
@@ -12,7 +12,7 @@
 		</layout>
 	</appender>
 	<appender name="CASTOR_LOG" class="org.apache.log4j.RollingFileAppender">
-		<param name="file" value="D:/OracleGui/logs/app/Castor.log" />
+		<param name="file" value="./logs/app/Castor.log" />
 		<param name="MaxFileSize" value="8000KB" />
 		<param name="maxBackupIndex" value="10" />
 		<layout class="org.apache.log4j.PatternLayout">
