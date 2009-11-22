@@ -5,24 +5,18 @@
  *	Type	: com.gs.oracle.dlg.ConnectionDialog.java
  *	Date	: Jul 30, 2009	9:48:50 AM
  *
- *	Author	: Green Moon
+ *	Author	: Sabuj Das
  *
  *	
  *****************************************************************************/
 package com.gs.oracle.dlg;
 
 import java.awt.BorderLayout;
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -54,13 +48,13 @@ import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
 
 /**
- * @author Green Moon
+ * @author Sabuj Das
  * 
  */
 public class ConnectionDialog extends JDialog {
 
 	/**
-	 * 
+	 * serialVersionUID = -2433429146983917444L;
 	 */
 	private static final long serialVersionUID = -2433429146983917444L;
 	
@@ -584,24 +578,7 @@ public class ConnectionDialog extends JDialog {
 		// TODO add your handling code here:
 	}
 
-	/**
-	 * @param args
-	 *            the command line arguments
-	 */
-	public static void main(String args[]) {
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				ConnectionDialog dialog = new ConnectionDialog(
-						new JFrame(), true);
-				dialog.addWindowListener(new WindowAdapter() {
-					public void windowClosing(WindowEvent e) {
-						System.exit(0);
-					}
-				});
-				dialog.setVisible(true);
-			}
-		});
-	}
+
 
 	// Variables declaration - do not modify
 	private JRadioButton SIDRadioButton;

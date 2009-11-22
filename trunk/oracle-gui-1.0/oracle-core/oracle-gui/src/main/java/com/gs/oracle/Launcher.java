@@ -5,7 +5,7 @@
  *	Type	: com.gs.oracle.Launcher.java
  *	Date	: Aug 3, 2009	11:04:09 AM
  *
- *	Author	: Green Moon
+ *	Author	: Sabuj Das
  *
  *	
  *****************************************************************************/
@@ -14,9 +14,6 @@ package com.gs.oracle;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.UIManager;
-import javax.swing.UnsupportedLookAndFeelException;
-import javax.swing.plaf.metal.MetalLookAndFeel;
-import javax.swing.plaf.synth.SynthLookAndFeel;
 
 import org.apache.log4j.Logger;
 
@@ -30,6 +27,7 @@ public class Launcher {
 	private static Logger logger = Logger.getLogger(Launcher.class);
 	
 	public static void main(String[] args) {
+		logger.info("Launching Application : Oracle GUI. -- ");
 		JFrame.setDefaultLookAndFeelDecorated(true);
 	    JDialog.setDefaultLookAndFeelDecorated(true);
 		try {
@@ -39,12 +37,7 @@ public class Launcher {
         }
 		
         OracleGuiMainFrame frame = new OracleGuiMainFrame();
-			frame.setVisible(true);
+        frame.setVisible(true);
 		
-	    /*SwingUtilities.invokeLater(new Runnable() {
-	      public void run() {
-	    	  
-	      }
-	    });*/
 	}
 }

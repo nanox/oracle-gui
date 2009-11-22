@@ -166,6 +166,75 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 		}else{
 			nextPageLabel.setVisible(false);
 		}
+		alterPageNumbers();
+	}
+    
+    public void alterPageNumbers(){
+		resetPageNumbers();
+		int first = getFirstPage();
+		if(first>0){
+			firstPageLinkLabel.setText(""+first);
+			if(first == paginationResult.getCurrentPage()){
+				firstPageLinkLabel.setForeground(Color.BLUE);
+			}else{
+				firstPageLinkLabel.setForeground(Color.BLACK);
+			}
+			if(first+1 <= paginationResult.getTotalPages()){
+				secondPageLinkLabel.setText(""+(first+1));
+				if(first+1 == paginationResult.getCurrentPage()){
+					secondPageLinkLabel.setForeground(Color.BLUE);
+				}else{
+					secondPageLinkLabel.setForeground(Color.BLACK);
+				}
+				if(first+2 <= paginationResult.getTotalPages()){
+					thirdPageLinkLabel.setText(""+(first+2));
+					if(first+2 == paginationResult.getCurrentPage()){
+						thirdPageLinkLabel.setForeground(Color.BLUE);
+					}else{
+						thirdPageLinkLabel.setForeground(Color.BLACK);
+					}
+					if(first+3 <= paginationResult.getTotalPages()){
+						fourthPageLinkLabel.setText(""+(first+3));
+						if(first+3 == paginationResult.getCurrentPage()){
+							fourthPageLinkLabel.setForeground(Color.BLUE);
+						}else{
+							fourthPageLinkLabel.setForeground(Color.BLACK);
+						}
+						if(first+4 <= paginationResult.getTotalPages()){
+							fifthPageLinkLabel.setText(""+(first+4));
+							if(first+4 == paginationResult.getCurrentPage()){
+								fifthPageLinkLabel.setForeground(Color.BLUE);
+							}else{
+								fifthPageLinkLabel.setForeground(Color.BLACK);
+							}
+						}
+					}
+				}
+			}
+		}
+		
+	}
+    
+    private void resetPageNumbers(){
+		firstPageLinkLabel.setText("");
+		secondPageLinkLabel.setText("");
+		thirdPageLinkLabel.setText("");
+		fourthPageLinkLabel.setText("");
+		fifthPageLinkLabel.setText("");
+	}
+    
+    private int getFirstPage(){
+		int page = 0;
+		if(paginationResult.getTotalPages() <=5 || paginationResult.getCurrentPage() <=3){
+			page = 1;
+		}else if(paginationResult.getCurrentPage() + 1 > paginationResult.getTotalPages()){
+			page = paginationResult.getCurrentPage() - 4;
+		}else if(paginationResult.getCurrentPage()+2 > paginationResult.getTotalPages()){
+			page = paginationResult.getCurrentPage()-3;
+		}else{
+			page = paginationResult.getCurrentPage()-2;
+		}
+		return page;
 	}
 
 	public void gotoNextPage(){
@@ -418,42 +487,47 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         bottomNavigationPanel.setPreferredSize(new Dimension(710, 30));
         bottomNavigationPanel.setLayout(new GridBagLayout());
 
-        totaPageslLabel.setText("999 pages found");
+        totaPageslLabel.setText("");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.insets = new Insets(0, 2, 0, 2);
         bottomNavigationPanel.add(totaPageslLabel, gridBagConstraints);
 
         pagerPanel.setLayout(new GridBagLayout());
 
-        firstPageLinkLabel.setText("1");
+        firstPageLinkLabel.setText("");
+        firstPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new Insets(0, 4, 0, 4);
         pagerPanel.add(firstPageLinkLabel, gridBagConstraints);
 
-        secondPageLinkLabel.setText("2");
+        secondPageLinkLabel.setText("");
+        secondPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 3;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new Insets(0, 4, 0, 4);
         pagerPanel.add(secondPageLinkLabel, gridBagConstraints);
 
-        thirdPageLinkLabel.setText("3");
+        thirdPageLinkLabel.setText("");
+        thirdPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new Insets(0, 4, 0, 4);
         pagerPanel.add(thirdPageLinkLabel, gridBagConstraints);
 
-        fourthPageLinkLabel.setText("4");
+        fourthPageLinkLabel.setText("");
+        fourthPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 5;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new Insets(0, 4, 0, 4);
         pagerPanel.add(fourthPageLinkLabel, gridBagConstraints);
 
-        fifthPageLinkLabel.setText("5");
+        fifthPageLinkLabel.setText("");
+        fifthPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 6;
         gridBagConstraints.gridy = 0;
@@ -461,6 +535,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         pagerPanel.add(fifthPageLinkLabel, gridBagConstraints);
 
         goToFirstPageLinkLabel.setText("<<");
+        goToFirstPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 0;
@@ -468,6 +543,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         pagerPanel.add(goToFirstPageLinkLabel, gridBagConstraints);
 
         goToPreviousPageLabel.setText("<");
+        goToPreviousPageLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -475,6 +551,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         pagerPanel.add(goToPreviousPageLabel, gridBagConstraints);
 
         goToNextPageLinkLabel.setText(">");
+        goToNextPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 7;
         gridBagConstraints.gridy = 0;
@@ -482,6 +559,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         pagerPanel.add(goToNextPageLinkLabel, gridBagConstraints);
 
         goToLastPageLinkLabel.setText(">>");
+        goToLastPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 0;

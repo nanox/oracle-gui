@@ -5,7 +5,7 @@
  *	Type	: com.gs.oracle.frame.OracleGuiMainFrame.java
  *	Date	: Jul 29, 2009	8:14:51 PM
  *
- *	Author	: Green Moon
+ *	Author	: Sabuj Das
  *
  *	
  *****************************************************************************/
@@ -37,7 +37,7 @@ import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
 import com.gs.oracle.util.WindowUtil;
 
 /**
- * @author Green Moon
+ * @author Sabuj Das
  *
  */
 public class OracleGuiMainFrame extends JFrame implements WindowListener{
@@ -76,7 +76,6 @@ public class OracleGuiMainFrame extends JFrame implements WindowListener{
 	}
 	
 	private void initComponents() {
-		logger.info("Starting init components.");
         java.awt.GridBagConstraints gridBagConstraints;
 
         mainPanel = new JPanel();
@@ -125,9 +124,6 @@ public class OracleGuiMainFrame extends JFrame implements WindowListener{
         gridBagConstraints.weighty = 0.0;
         mainPanel.add(statusBar, gridBagConstraints);
         
-        
-        
-        
         getContentPane().add(mainPanel, BorderLayout.CENTER);
 
         mainMenuBar.setName("mainMenuBar"); 
@@ -136,7 +132,6 @@ public class OracleGuiMainFrame extends JFrame implements WindowListener{
         setJMenuBar(mainMenuBar);
 
         pack();
-        logger.info("Init components done.");
     }
 
 	private void addMenubarComponents() {
