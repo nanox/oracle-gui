@@ -18,7 +18,9 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.io.Serializable;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -36,17 +38,22 @@ import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 
+import oracle.sql.ROWID;
+
 import org.apache.log4j.Logger;
 
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.comps.ResultSetTableModel;
 import com.gs.oracle.comps.ResultSetTableModelFactory;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.dlg.QuickEditDialog;
 import com.gs.oracle.grabber.OracleDbGrabber;
+import com.gs.oracle.model.Table;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
 import com.gs.oracle.util.MenuBarUtil;
 import com.gs.oracle.vo.PaginationResult;
+import com.gs.oracle.vo.QuickEditVO;
 
 
 
@@ -59,7 +66,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 
 	private static final Logger logger = Logger.getLogger(PaginatedTablePanel.class);
 	
-	public static final int MIN_RECORDS_PER_PAGE = 10;
+	public static final int MIN_RECORDS_PER_PAGE = 30;
 	public static final int MAX_RECORDS_PER_PAGE = 99999;
 	
 	private JFrame parentFrame;
@@ -70,6 +77,8 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 	private String queryString;
 	private String countQuery;
 	private PaginationResult paginationResult;
+	
+	private Table databaseTable;
 
     public PaginatedTablePanel(JFrame parentFrame, 
     		ConnectionProperties connectionProperties, String query, String countQuery) {
@@ -87,9 +96,9 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         
         paginationResult = new PaginationResult();
         paginationResult.setRowsPerPage(MIN_RECORDS_PER_PAGE);
-        paginationResult.setStartRow(0);
+        paginationResult.setStartRow(1);
         initComponents();
-        
+        targetTable.addMouseListener(this);
         populatePaginatedResult(1);
         
     }
@@ -174,7 +183,9 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 			goToLastPageLinkLabel.setVisible(false);
 		}
 		
-		totaPageslLabel.setText("Total [  " + paginationResult.getTotalPages() + "  ] page(s) found.");
+		totaPageslLabel.setText(""+ paginationResult.getStartRow() + " to " + paginationResult.getEndRow() +
+				" Records of - "+
+				"Total [  " + paginationResult.getTotalPages() + "  ] page(s).");
 		
 		alterPageNumbers();
 	}
@@ -313,6 +324,14 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 		this.queryString = queryString;
 	}
 
+	public Table getDatabaseTable() {
+		return databaseTable;
+	}
+
+	public void setDatabaseTable(Table databaseTable) {
+		this.databaseTable = databaseTable;
+	}
+
 	private void initComponents() {
         GridBagConstraints gridBagConstraints;
 
@@ -334,7 +353,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         exportTypeComboBox = new JComboBox();
         exportButton = new JButton();
         jSeparator2 = new JToolBar.Separator();
-        jButton1 = new JButton();
+        filterButton = new JButton();
         targetTableScrollPane = new JScrollPane();
         targetTable = new JTable();
         bottomNavigationPanel = new JPanel();
@@ -451,6 +470,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "add_plus.png"));
         addNewRecordButton.setIcon(image);
+        addNewRecordButton.addActionListener(this);
         addNewRecordButton.setFocusable(false);
         addNewRecordButton.setHorizontalTextPosition(SwingConstants.CENTER);
         addNewRecordButton.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -461,6 +481,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "editor_area.gif"));
         editRecordButton.setIcon(image);
+        editRecordButton.addActionListener(this);
         editRecordButton.setFocusable(false);
         editRecordButton.setHorizontalTextPosition(SwingConstants.CENTER);
         editRecordButton.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -471,6 +492,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "delete_edit.gif"));
         deleteRecordButton.setIcon(image);
+        deleteRecordButton.addActionListener(this);
         deleteRecordButton.setFocusable(false);
         deleteRecordButton.setHorizontalTextPosition(SwingConstants.CENTER);
         deleteRecordButton.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -491,17 +513,19 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "export_wiz.gif"));
         exportButton.setIcon(image);
+        exportButton.addActionListener(this);
         exportButton.setFocusable(false);
         exportButton.setHorizontalTextPosition(SwingConstants.CENTER);
         exportButton.setVerticalTextPosition(SwingConstants.BOTTOM);
         actionsToolBar.add(exportButton);
         actionsToolBar.add(jSeparator2);
 
-        jButton1.setText("Filter");
-        jButton1.setFocusable(false);
-        jButton1.setHorizontalTextPosition(SwingConstants.CENTER);
-        jButton1.setVerticalTextPosition(SwingConstants.BOTTOM);
-        actionsToolBar.add(jButton1);
+        filterButton.setText("Filter");
+        filterButton.addActionListener(this);
+        filterButton.setFocusable(false);
+        filterButton.setHorizontalTextPosition(SwingConstants.CENTER);
+        filterButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+        actionsToolBar.add(filterButton);
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -541,6 +565,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         pagerPanel.setLayout(new GridBagLayout());
 
         firstPageLinkLabel.setText("");
+        firstPageLinkLabel.addMouseListener(this);
         firstPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
@@ -549,6 +574,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         pagerPanel.add(firstPageLinkLabel, gridBagConstraints);
 
         secondPageLinkLabel.setText("");
+        secondPageLinkLabel.addMouseListener(this);
         secondPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 3;
@@ -557,6 +583,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         pagerPanel.add(secondPageLinkLabel, gridBagConstraints);
 
         thirdPageLinkLabel.setText("");
+        thirdPageLinkLabel.addMouseListener(this);
         thirdPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 4;
@@ -565,6 +592,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         pagerPanel.add(thirdPageLinkLabel, gridBagConstraints);
 
         fourthPageLinkLabel.setText("");
+        fourthPageLinkLabel.addMouseListener(this);
         fourthPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 5;
@@ -573,6 +601,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         pagerPanel.add(fourthPageLinkLabel, gridBagConstraints);
 
         fifthPageLinkLabel.setText("");
+        fifthPageLinkLabel.addMouseListener(this);
         fifthPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 6;
@@ -585,6 +614,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "first_page.png"));
         goToFirstPageLinkLabel.setIcon(image);
+        goToFirstPageLinkLabel.addMouseListener(this);
         goToFirstPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -598,6 +628,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 						+ "previous_page.png"));
         goToPreviousPageLabel.setIcon(image);
         goToPreviousPageLabel.setFont(new Font("Tahoma", 1, 11));
+        goToPreviousPageLabel.addMouseListener(this);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
@@ -610,6 +641,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 						+ "next_page.png"));
         goToNextPageLinkLabel.setIcon(image);
         goToNextPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
+        goToNextPageLinkLabel.addMouseListener(this);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 7;
         gridBagConstraints.gridy = 0;
@@ -622,6 +654,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 						+ "last_page.png"));
         goToLastPageLinkLabel.setIcon(image);
         goToLastPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
+        goToLastPageLinkLabel.addMouseListener(this);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 8;
         gridBagConstraints.gridy = 0;
@@ -643,6 +676,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         gotoPageTextField.setHorizontalAlignment(JTextField.RIGHT);
         gotoPageTextField.setMinimumSize(new Dimension(60, 20));
         gotoPageTextField.setPreferredSize(new Dimension(60, 20));
+        gotoPageTextField.addKeyListener(this);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.insets = new Insets(0, 2, 0, 2);
         bottomNavigationPanel.add(gotoPageTextField, gridBagConstraints);
@@ -652,6 +686,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "next.png"));
         goButtonLabel.setIcon(image);
+        goButtonLabel.addMouseListener(this);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.insets = new Insets(0, 2, 0, 2);
         bottomNavigationPanel.add(goButtonLabel, gridBagConstraints);
@@ -686,7 +721,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
     private JLabel gotoPageLabel;
     private JTextField gotoPageTextField;
     private JLabel hiddenLabel_01;
-    private JButton jButton1;
+    private JButton filterButton;
     private JToolBar.Separator jSeparator1;
     private JToolBar.Separator jSeparator2;
     private JLabel nextPageLabel;
@@ -723,12 +758,14 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 		}
 	}
 
-	private void refreshPage() {
+	private void refreshPage(int pageNumber) {
 		int recordCount = MIN_RECORDS_PER_PAGE;
 		try{
 			recordCount = Integer.parseInt(rowsPerPageTextField.getText());
 			if(recordCount < MIN_RECORDS_PER_PAGE){
 				recordCount = MIN_RECORDS_PER_PAGE;
+			} else if(recordCount > MAX_RECORDS_PER_PAGE){
+				recordCount = MAX_RECORDS_PER_PAGE;
 			}
 		}catch(NumberFormatException nfe){
 			DisplayUtils.displayMessage(getParentFrame(), "Invalid Number : " + rowsPerPageTextField.getText()
@@ -738,7 +775,11 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 			DisplayUtils.displayMessage(getParentFrame(), ex.getMessage(), DisplayTypeEnum.ERROR);
 		}
 		paginationResult.setRowsPerPage(recordCount);
-		gotoPage(1);
+		gotoPage(pageNumber);
+	}
+	
+	private void refreshPage() {
+		refreshPage(1);
 	}
 
 	/* (non-Javadoc)
@@ -746,16 +787,129 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 	 */
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		if(MouseEvent.BUTTON1 == e.getButton()
-				&& e.getClickCount() == 1){
-			if(e.getSource().equals(previousPageLabel)){
-				gotoPreviousPage();
+		if(MouseEvent.BUTTON1 == e.getButton()){
+			if(e.getClickCount() == 1){
+				if(e.getSource().equals(previousPageLabel) || e.getSource().equals(goToPreviousPageLabel)){
+					gotoPreviousPage();
+				}
+				else if(e.getSource().equals(nextPageLabel) || e.getSource().equals(goToNextPageLinkLabel)){
+					gotoNextPage();
+				}
+				else if(e.getSource().equals(goToFirstPageLinkLabel)){
+					gotoPage(1);
+				}
+				else if(e.getSource().equals(goToLastPageLinkLabel)){
+					gotoPage(paginationResult.getTotalPages());
+				}
+				else if(e.getSource().equals(firstPageLinkLabel)){
+					int page = Integer.parseInt(firstPageLinkLabel.getText());
+					gotoPage(page);
+				}
+				else if(e.getSource().equals(secondPageLinkLabel)){
+					int page = Integer.parseInt(secondPageLinkLabel.getText());
+					gotoPage(page);
+				}
+				else if(e.getSource().equals(thirdPageLinkLabel)){
+					int page = Integer.parseInt(thirdPageLinkLabel.getText());
+					gotoPage(page);
+				}
+				else if(e.getSource().equals(fourthPageLinkLabel)){
+					int page = Integer.parseInt(fourthPageLinkLabel.getText());
+					gotoPage(page);
+				}
+				else if(e.getSource().equals(fifthPageLinkLabel)){
+					int page = Integer.parseInt(fifthPageLinkLabel.getText());
+					gotoPage(page);
+				}
+				else if(e.getSource().equals(goButtonLabel)){
+					int page = paginationResult.getCurrentPage();
+					try{
+						page = Integer.parseInt(gotoPageTextField.getText());
+						if(page <= 0 || page > paginationResult.getTotalPages()){
+							DisplayUtils.displayMessage(getParentFrame(), "Page not exists : " + gotoPageTextField.getText(), DisplayTypeEnum.ERROR);
+						}else{
+							gotoPage(page);
+						}
+					}catch(NumberFormatException nfe){
+						DisplayUtils.displayMessage(getParentFrame(), "Invalid Number : " + gotoPageTextField.getText(), DisplayTypeEnum.ERROR);
+						gotoPageTextField.setText("");
+					}catch(Exception ex){
+						DisplayUtils.displayMessage(getParentFrame(), ex.getMessage(), DisplayTypeEnum.ERROR);
+					}
+				}
+			} else if(e.getClickCount() == 2){
+				if(e.getSource().equals(targetTable)){
+					if(getDatabaseTable() == null)
+						return;
+					
+					QuickEditVO vo = new QuickEditVO();
+					vo.setTableName(getDatabaseTable().getModelName());
+					vo.setSchemaName(getDatabaseTable().getSchemaName());
+					
+					int columnIndex = targetTable.getSelectedColumn();
+					int rowIndex = targetTable.getSelectedRow();
+					int columnCount = targetTable.getColumnCount();
+					String q = "SELECT ROWID, ORA_ROWSCN FROM " + vo.getSchemaName() + "." + vo.getTableName() + " WHERE ";
+					for (int i = 0; i < columnCount; i++) {
+						if(targetTable.getModel().getValueAt(rowIndex, i) == null)
+							continue;
+						Class clazz = targetTable.getColumnClass(i);
+						if(clazz.getCanonicalName().equalsIgnoreCase("java.util.Date") 
+								|| clazz.getCanonicalName().equalsIgnoreCase("java.sql.Date"))
+							continue;
+						q += targetTable.getModel().getColumnName(i) + " = '"
+							+ (
+							(targetTable.getModel().getValueAt(rowIndex, i) != null)
+							? targetTable.getModel().getValueAt(rowIndex, i).toString() : "") + "' ";
+						if(i != columnCount-1){
+							q += "AND ";
+						}
+					}
+					Connection con = null;
+					try{
+						con = getConnectionProperties().getDataSource().getConnection();
+						Statement stmt = con.prepareStatement(q);
+						ResultSet rs = stmt.executeQuery(q);
+						if(rs == null)
+							return;
+						while(rs.next()){
+							ROWID rid = (ROWID) rs.getObject("ROWID");
+							if(rid != null){
+								vo.setRowid(rid.stringValue());
+							}
+							String x = rs.getString("ORA_ROWSCN");
+							if(x != null){
+								vo.setOraRowscn(x);
+							}
+						}
+					}catch(Exception ex){
+						return;
+					}finally{
+						if(con != null){
+							try {
+								con.close();
+							} catch (SQLException e1) {
+								e1.printStackTrace();
+							}
+						}
+					}
+					vo.setCurrentColumnName(targetTable.getModel().getColumnName(columnIndex));
+					vo.setCurrentColumnValue(targetTable.getModel().getValueAt(rowIndex, columnIndex).toString());
+					vo.setConnectionProperties(getConnectionProperties());
+					openQuickEditDialog(vo);
+				}
 			}
-			else if(e.getSource().equals(nextPageLabel)){
-				gotoNextPage();
-			}
-		}
 		
+		
+		}
+	}
+	
+	public void openQuickEditDialog(QuickEditVO vo) {
+		QuickEditDialog editDialog = new QuickEditDialog(getParentFrame(), vo);
+		int opt = editDialog.showDialog();
+		if(opt == OracleGuiConstants.APPLY_OPTION){
+			refreshPage(paginationResult.getCurrentPage());
+		}
 	}
 
 	/* (non-Javadoc)
@@ -765,9 +919,51 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 	public void mouseEntered(MouseEvent e) {
 		if(e.getSource().equals(previousPageLabel)){
 			previousPageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			if(previousPageLabel.isEnabled()){
+				ImageIcon image = new ImageIcon(getClass()
+						.getResource(OracleGuiConstants.IMAGE_PATH
+								+ "previousPage_over.png"));
+		        previousPageLabel.setIcon(image);
+			}
 		}
 		else if(e.getSource().equals(nextPageLabel)){
 			nextPageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+			if(nextPageLabel.isEnabled()){
+				ImageIcon image = new ImageIcon(getClass()
+						.getResource(OracleGuiConstants.IMAGE_PATH
+								+ "nextPage_over.png"));
+				nextPageLabel.setIcon(image);
+			}
+		}
+		else if(e.getSource().equals(goToFirstPageLinkLabel)){
+			goToFirstPageLinkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
+		else if(e.getSource().equals(goToPreviousPageLabel)){
+			goToPreviousPageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
+		else if(e.getSource().equals(firstPageLinkLabel)){
+			firstPageLinkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
+		else if(e.getSource().equals(secondPageLinkLabel)){
+			secondPageLinkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
+		else if(e.getSource().equals(thirdPageLinkLabel)){
+			thirdPageLinkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
+		else if(e.getSource().equals(fourthPageLinkLabel)){
+			fourthPageLinkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
+		else if(e.getSource().equals(fifthPageLinkLabel)){
+			fifthPageLinkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
+		else if(e.getSource().equals(goToNextPageLinkLabel)){
+			goToNextPageLinkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
+		else if(e.getSource().equals(goToLastPageLinkLabel)){
+			goToLastPageLinkLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+		}
+		else if(e.getSource().equals(goButtonLabel)){
+			goButtonLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 		}
 	}
 
@@ -778,9 +974,47 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 	public void mouseExited(MouseEvent e) {
 		if(e.getSource().equals(previousPageLabel)){
 			previousPageLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			ImageIcon image = new ImageIcon(getClass()
+					.getResource(OracleGuiConstants.IMAGE_PATH
+							+ "previousPage_normal.png"));
+	        previousPageLabel.setIcon(image);
 		}
 		else if(e.getSource().equals(nextPageLabel)){
 			nextPageLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+			ImageIcon image = new ImageIcon(getClass()
+					.getResource(OracleGuiConstants.IMAGE_PATH
+							+ "nextPage_normal.png"));
+			nextPageLabel.setIcon(image);
+		}
+		else if(e.getSource().equals(goToFirstPageLinkLabel)){
+			goToFirstPageLinkLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+		else if(e.getSource().equals(goToPreviousPageLabel)){
+			goToPreviousPageLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+		else if(e.getSource().equals(firstPageLinkLabel)){
+			firstPageLinkLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+		else if(e.getSource().equals(secondPageLinkLabel)){
+			secondPageLinkLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+		else if(e.getSource().equals(thirdPageLinkLabel)){
+			thirdPageLinkLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+		else if(e.getSource().equals(fourthPageLinkLabel)){
+			fourthPageLinkLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+		else if(e.getSource().equals(fifthPageLinkLabel)){
+			fifthPageLinkLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+		else if(e.getSource().equals(goToNextPageLinkLabel)){
+			goToNextPageLinkLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+		else if(e.getSource().equals(goToLastPageLinkLabel)){
+			goToLastPageLinkLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+		}
+		else if(e.getSource().equals(goButtonLabel)){
+			goButtonLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 		}
 	}
 
