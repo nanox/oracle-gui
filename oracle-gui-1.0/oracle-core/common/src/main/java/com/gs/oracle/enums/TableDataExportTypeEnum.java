@@ -49,5 +49,22 @@ public enum TableDataExportTypeEnum {
 		return extension;
 	}
 	
-	
+	public static TableDataExportTypeEnum getTypeEnumByDescription(String description){
+		if(INSERT_STATEMENT.getDescription().equalsIgnoreCase(description)){
+			return INSERT_STATEMENT;
+		} else if(SQL_LOADER.getDescription().equalsIgnoreCase(description)){
+			return SQL_LOADER;
+		} else if(CSV.getDescription().equalsIgnoreCase(description)){
+			return CSV;
+		} else if(HTML.getDescription().equalsIgnoreCase(description)){
+			return HTML;
+		} else if(TEXT.getDescription().equalsIgnoreCase(description)){
+			return TEXT;
+		} else if(EXCEL.getDescription().equalsIgnoreCase(description)){
+			return EXCEL;
+		} else if(XML.getDescription().equalsIgnoreCase(description)){
+			return XML;
+		}
+		return null;
+	}
 }

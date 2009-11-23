@@ -16,6 +16,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.io.File;
 import java.io.Serializable;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -29,6 +30,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -42,13 +44,19 @@ import oracle.sql.ROWID;
 
 import org.apache.log4j.Logger;
 
+import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.common.StringUtil;
+import com.gs.oracle.comps.ExtensionFileFilter;
 import com.gs.oracle.comps.ResultSetTableModel;
 import com.gs.oracle.comps.ResultSetTableModelFactory;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.dlg.QuickEditDialog;
+import com.gs.oracle.enums.TableDataExportTypeEnum;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.model.Table;
+import com.gs.oracle.service.TableDataExportService;
+import com.gs.oracle.service.impl.TableDataExportServiceImpl;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
 import com.gs.oracle.util.MenuBarUtil;
@@ -79,6 +87,8 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 	private PaginationResult paginationResult;
 	
 	private Table databaseTable;
+	
+	private TableDataExportService dataExportService;
 
     public PaginatedTablePanel(JFrame parentFrame, 
     		ConnectionProperties connectionProperties, String query, String countQuery) {
@@ -93,6 +103,9 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         } catch(SQLException sqx){
         	DisplayUtils.displayMessage(parentFrame, "Cannot create connection to database.", DisplayTypeEnum.ERROR);
         }
+        
+        dataExportService = new TableDataExportServiceImpl(this.connectionProperties);
+        
         
         paginationResult = new PaginationResult();
         paginationResult.setRowsPerPage(MIN_RECORDS_PER_PAGE);
@@ -502,7 +515,19 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         exportAsLabel.setText("Export As ... ");
         actionsToolBar.add(exportAsLabel);
 
-        exportTypeComboBox.setModel(new DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        exportTypeComboBox.setModel(
+    		new DefaultComboBoxModel(
+    			new String[] { 
+    				TableDataExportTypeEnum.INSERT_STATEMENT.getDescription(),
+    				TableDataExportTypeEnum.SQL_LOADER.getDescription(),
+    				TableDataExportTypeEnum.TEXT.getDescription(),
+    				TableDataExportTypeEnum.CSV.getDescription(),
+    				TableDataExportTypeEnum.HTML.getDescription(),
+    				TableDataExportTypeEnum.EXCEL.getDescription(),
+    				TableDataExportTypeEnum.XML.getDescription()
+    			}
+    		)
+    	);
         exportTypeComboBox.setMaximumSize(new Dimension(100, 18));
         exportTypeComboBox.setMinimumSize(new Dimension(50, 18));
         exportTypeComboBox.setPreferredSize(new Dimension(50, 18));
@@ -756,6 +781,43 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 		else if(e.getSource().equals(refreshButton)){
 			refreshPage();
 		}
+		else if(e.getSource().equals(exportButton)){
+			TableDataExportTypeEnum dataExportTypeEnum = TableDataExportTypeEnum.getTypeEnumByDescription(
+					exportTypeComboBox.getSelectedItem().toString());
+			String fileName = getExportOutptFileName(dataExportTypeEnum);
+			if(!StringUtil.hasValidContent(fileName)){
+				return ;
+			}
+			if(TableDataExportTypeEnum.INSERT_STATEMENT.equals(dataExportTypeEnum) 
+					|| TableDataExportTypeEnum.SQL_LOADER.equals(dataExportTypeEnum)){
+				if(databaseTable == null){
+		        	return;
+		        }
+			} else {
+				try {
+					dataExportService.exportData(null, null, dataExportTypeEnum, fileName, getQueryString());
+				} catch (ApplicationException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+	}
+	
+	private String getExportOutptFileName(TableDataExportTypeEnum dataExportTypeEnum){
+		ExtensionFileFilter filter = new ExtensionFileFilter(new String[] { dataExportTypeEnum.getExtension()}, 
+				dataExportTypeEnum.getDescription());
+		JFileChooser chooser = new JFileChooser();
+		chooser.setFileFilter(filter);
+		chooser.setMultiSelectionEnabled(false);
+		chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		int opt = chooser.showOpenDialog(getParentFrame());
+		if(JFileChooser.APPROVE_OPTION == opt){
+			File selectedFile = chooser.getSelectedFile();
+			if(selectedFile != null){
+				return selectedFile.getAbsolutePath();
+			}
+		}
+		return null;
 	}
 
 	private void refreshPage(int pageNumber) {
