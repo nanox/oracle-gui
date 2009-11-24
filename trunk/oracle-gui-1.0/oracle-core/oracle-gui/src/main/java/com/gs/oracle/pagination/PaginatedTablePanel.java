@@ -528,9 +528,9 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
     			}
     		)
     	);
-        exportTypeComboBox.setMaximumSize(new Dimension(100, 18));
-        exportTypeComboBox.setMinimumSize(new Dimension(50, 18));
-        exportTypeComboBox.setPreferredSize(new Dimension(50, 18));
+        exportTypeComboBox.setMaximumSize(new Dimension(150, 18));
+        exportTypeComboBox.setMinimumSize(new Dimension(150, 18));
+        exportTypeComboBox.setPreferredSize(new Dimension(150, 18));
         actionsToolBar.add(exportTypeComboBox);
 
         exportButton.setText("");
@@ -788,17 +788,30 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 			if(!StringUtil.hasValidContent(fileName)){
 				return ;
 			}
+			StringBuffer queryBuffer = new StringBuffer(getQueryString());
+			queryBuffer.replace(queryBuffer.indexOf("?"), queryBuffer.indexOf("?")+1, ""+ paginationResult.getStartRow())
+				.replace(queryBuffer.lastIndexOf("?"), queryBuffer.lastIndexOf("?")+1, ""+ paginationResult.getEndRow());
 			if(TableDataExportTypeEnum.INSERT_STATEMENT.equals(dataExportTypeEnum) 
 					|| TableDataExportTypeEnum.SQL_LOADER.equals(dataExportTypeEnum)){
 				if(databaseTable == null){
 		        	return;
 		        }
-			} else {
 				try {
-					dataExportService.exportData(null, null, dataExportTypeEnum, fileName, getQueryString());
+					dataExportService.exportData(
+							databaseTable.getSchemaName(), databaseTable.getModelName(), 
+							dataExportTypeEnum, fileName, queryBuffer.toString());
 				} catch (ApplicationException e1) {
 					e1.printStackTrace();
 				}
+	        	return;
+			}
+			try {
+				dataExportService.exportData(
+						(databaseTable != null) ? databaseTable.getSchemaName() : "", 
+								(databaseTable != null) ? databaseTable.getModelName() : "",
+										dataExportTypeEnum, fileName, queryBuffer.toString());
+			} catch (ApplicationException e1) {
+				e1.printStackTrace();
 			}
 		}
 	}
@@ -814,7 +827,11 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 		if(JFileChooser.APPROVE_OPTION == opt){
 			File selectedFile = chooser.getSelectedFile();
 			if(selectedFile != null){
-				return selectedFile.getAbsolutePath();
+				String fileName = selectedFile.getAbsolutePath();
+				if(!fileName.endsWith(dataExportTypeEnum.getExtension())){
+					fileName += dataExportTypeEnum.getExtension();
+				}
+				return fileName;
 			}
 		}
 		return null;
