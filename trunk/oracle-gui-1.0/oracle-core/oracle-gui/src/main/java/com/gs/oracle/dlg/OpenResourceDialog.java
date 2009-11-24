@@ -232,12 +232,13 @@ public class OpenResourceDialog extends JDialog {
         }
 
         public void keyReleased(KeyEvent evt) {
+        	if (evt.getSource() == selectItemTextField) {
+                OpenResourceDialog.this.selectItemTextFieldKeyTyped(evt);
+            }
         }
 
         public void keyTyped(KeyEvent evt) {
-            if (evt.getSource() == selectItemTextField) {
-                OpenResourceDialog.this.selectItemTextFieldKeyTyped(evt);
-            }
+            
         }
 
         public void valueChanged(ListSelectionEvent evt) {

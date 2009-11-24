@@ -12,6 +12,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -19,11 +21,10 @@ import java.awt.event.MouseListener;
 import java.io.File;
 import java.io.Serializable;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
@@ -48,18 +49,15 @@ import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.common.StringUtil;
 import com.gs.oracle.comps.ExtensionFileFilter;
-import com.gs.oracle.comps.ResultSetTableModel;
 import com.gs.oracle.comps.ResultSetTableModelFactory;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.dlg.QuickEditDialog;
 import com.gs.oracle.enums.TableDataExportTypeEnum;
-import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.service.TableDataExportService;
 import com.gs.oracle.service.impl.TableDataExportServiceImpl;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
-import com.gs.oracle.util.MenuBarUtil;
 import com.gs.oracle.vo.PaginationResult;
 import com.gs.oracle.vo.QuickEditVO;
 
@@ -70,7 +68,12 @@ import com.gs.oracle.vo.QuickEditVO;
  *
  */
 public class PaginatedTablePanel extends JPanel implements Serializable,
-		ActionListener, MouseListener, KeyListener {
+		ActionListener, MouseListener, KeyListener, FocusListener {
+
+	/**
+	 * Generated serialVersionUID = -4196778703846255569L;
+	 */
+	private static final long serialVersionUID = -4196778703846255569L;
 
 	private static final Logger logger = Logger.getLogger(PaginatedTablePanel.class);
 	
@@ -196,9 +199,9 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 			goToLastPageLinkLabel.setVisible(false);
 		}
 		
-		totaPageslLabel.setText(""+ paginationResult.getStartRow() + " to " + paginationResult.getEndRow() +
-				" Records of - "+
-				"Total [  " + paginationResult.getTotalPages() + "  ] page(s).");
+		totaPageslLabel.setText("Page "+ paginationResult.getCurrentPage()
+				+ " of " + paginationResult.getTotalPages() + " page(s). { Total " +
+				paginationResult.getTotalRows() + " records. }");
 		
 		alterPageNumbers();
 	}
@@ -419,6 +422,8 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         rowsPerPageTextField.setText("" + MIN_RECORDS_PER_PAGE);
         rowsPerPageTextField.setMinimumSize(new Dimension(60, 20));
         rowsPerPageTextField.setPreferredSize(new Dimension(60, 20));
+        rowsPerPageTextField.addKeyListener(this);
+        rowsPerPageTextField.addFocusListener(this);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.insets = new Insets(0, 2, 0, 2);
         topNavigationPanel.add(rowsPerPageTextField, gridBagConstraints);
@@ -702,6 +707,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         gotoPageTextField.setMinimumSize(new Dimension(60, 20));
         gotoPageTextField.setPreferredSize(new Dimension(60, 20));
         gotoPageTextField.addKeyListener(this);
+        gotoPageTextField.addFocusListener(this);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.insets = new Insets(0, 2, 0, 2);
         bottomNavigationPanel.add(gotoPageTextField, gridBagConstraints);
@@ -901,20 +907,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 					gotoPage(page);
 				}
 				else if(e.getSource().equals(goButtonLabel)){
-					int page = paginationResult.getCurrentPage();
-					try{
-						page = Integer.parseInt(gotoPageTextField.getText());
-						if(page <= 0 || page > paginationResult.getTotalPages()){
-							DisplayUtils.displayMessage(getParentFrame(), "Page not exists : " + gotoPageTextField.getText(), DisplayTypeEnum.ERROR);
-						}else{
-							gotoPage(page);
-						}
-					}catch(NumberFormatException nfe){
-						DisplayUtils.displayMessage(getParentFrame(), "Invalid Number : " + gotoPageTextField.getText(), DisplayTypeEnum.ERROR);
-						gotoPageTextField.setText("");
-					}catch(Exception ex){
-						DisplayUtils.displayMessage(getParentFrame(), ex.getMessage(), DisplayTypeEnum.ERROR);
-					}
+					gotoThePage();
 				}
 			} else if(e.getClickCount() == 2){
 				if(e.getSource().equals(targetTable)){
@@ -929,17 +922,41 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 					int rowIndex = targetTable.getSelectedRow();
 					int columnCount = targetTable.getColumnCount();
 					String q = "SELECT ROWID, ORA_ROWSCN FROM " + vo.getSchemaName() + "." + vo.getTableName() + " WHERE ";
+					StringBuffer qbuf = new StringBuffer("SELECT ROWID, ORA_ROWSCN FROM ");
+					qbuf.append(vo.getSchemaName())
+						.append(".")
+						.append(vo.getTableName())
+						.append(" WHERE ");
+						
 					for (int i = 0; i < columnCount; i++) {
-						if(targetTable.getModel().getValueAt(rowIndex, i) == null)
+						Object value = targetTable.getModel().getValueAt(rowIndex, i);
+						
+						if(value == null)
 							continue;
+						
 						Class clazz = targetTable.getColumnClass(i);
 						if(clazz.getCanonicalName().equalsIgnoreCase("java.util.Date") 
-								|| clazz.getCanonicalName().equalsIgnoreCase("java.sql.Date"))
+								|| clazz.getCanonicalName().equalsIgnoreCase("java.sql.Date")
+								|| clazz.getCanonicalName().equalsIgnoreCase("java.sql.Timestamp")
+								|| clazz.getCanonicalName().equalsIgnoreCase("java.sql.Time")){
+							SimpleDateFormat dateFormat = new SimpleDateFormat(OracleGuiConstants.INSERT_DATE_FORMAT);
+							if(value instanceof java.util.Date){
+								java.util.Date utilDate = (java.util.Date) value;
+								value = OracleGuiConstants.SQL_DATE_FUNCTION + "('" +
+									dateFormat.format(utilDate) + "', " + OracleGuiConstants.SQL_DATE_FORMAT + ")";
+							}
+							q += targetTable.getModel().getColumnName(i) + " = "
+								+ (
+								(value != null) ? value.toString() : "") + " ";
+							if(i != columnCount-1){
+								q += "AND ";
+							}
 							continue;
+						}
+							
 						q += targetTable.getModel().getColumnName(i) + " = '"
 							+ (
-							(targetTable.getModel().getValueAt(rowIndex, i) != null)
-							? targetTable.getModel().getValueAt(rowIndex, i).toString() : "") + "' ";
+							(value != null) ? value.toString() : "") + "' ";
 						if(i != columnCount-1){
 							q += "AND ";
 						}
@@ -980,6 +997,23 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 			}
 		
 		
+		}
+	}
+	
+	public void gotoThePage(){
+		int page = paginationResult.getCurrentPage();
+		try{
+			page = Integer.parseInt(gotoPageTextField.getText());
+			if(page <= 0 || page > paginationResult.getTotalPages()){
+				DisplayUtils.displayMessage(getParentFrame(), "Page not exists : " + gotoPageTextField.getText(), DisplayTypeEnum.ERROR);
+			}else{
+				gotoPage(page);
+			}
+		}catch(NumberFormatException nfe){
+			DisplayUtils.displayMessage(getParentFrame(), "Invalid Number : " + gotoPageTextField.getText(), DisplayTypeEnum.ERROR);
+			gotoPageTextField.setText("");
+		}catch(Exception ex){
+			DisplayUtils.displayMessage(getParentFrame(), ex.getMessage(), DisplayTypeEnum.ERROR);
 		}
 	}
 	
@@ -1120,8 +1154,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 	 */
 	@Override
 	public void keyPressed(KeyEvent e) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	/* (non-Javadoc)
@@ -1129,8 +1162,14 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 	 */
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
-
+		if(KeyEvent.VK_ENTER == e.getKeyCode()){
+			if(e.getSource().equals(gotoPageTextField)){
+				gotoThePage();
+			} else if(e.getSource().equals(rowsPerPageTextField)){
+				refreshPage();
+			}
+		}
+		
 	}
 
 	/* (non-Javadoc)
@@ -1138,8 +1177,18 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 	 */
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
+		
+	}
 
+	@Override
+	public void focusGained(FocusEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void focusLost(FocusEvent e) {
+		
 	}
 
 }

@@ -62,4 +62,8 @@ public interface OracleGuiConstants {
 	
 	String[] LOGICAL_OPERATORS = {"","AND", "OR", "NOT"};
 	String[] SQL_CONDITION_OPERATORS = {"IN", "LIKE", "=", "<", ">", "<>", "NOT IN", "BETWEEN"};
+	
+	String INSERT_DATE_FORMAT = "dd-MMM-yy hh.mm.ss.SSS aaa";
+	String SQL_DATE_FORMAT = "'DD-MON-RR HH.MI.SS.FF AM'";
+	String SQL_DATE_FUNCTION = "to_timestamp";
 }
