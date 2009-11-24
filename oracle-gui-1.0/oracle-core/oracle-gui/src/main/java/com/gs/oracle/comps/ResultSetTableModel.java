@@ -10,10 +10,12 @@ import java.sql.Blob;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.text.SimpleDateFormat;
 
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.jdbc.JdbcUtil;
 
@@ -105,14 +107,35 @@ public class ResultSetTableModel implements TableModel, ActionListener{
 				}
 			}
 			
-			Object o = resultSet.getObject(columnIndex + 1); // Get value of the column
-			if (o == null)
+			Object cellValue = resultSet.getObject(columnIndex + 1); // Get value of the column
+			if (cellValue == null)
 				return null;
-			else if(o instanceof Blob){
+			else if(cellValue instanceof Blob){
 				return "BLOB [view is not implemented.]";
 			}
-			else
-				return o;
+			else{
+				/*int columnType = resultSetMetaData.getColumnType(columnIndex + 1);
+				if(o instanceof java.util.Date){
+					SimpleDateFormat dateFormat = new SimpleDateFormat(OracleGuiConstants.INSERT_DATE_FORMAT);
+					java.util.Date utilDate = (java.util.Date) o;
+					String s = dateFormat.format(utilDate);
+					o = s;
+				} else if(o instanceof java.sql.Date){
+					SimpleDateFormat dateFormat = new SimpleDateFormat(OracleGuiConstants.INSERT_DATE_FORMAT);
+					java.sql.Date sqlDate = (java.sql.Date) o;
+					String s = dateFormat.format(sqlDate);
+					o = s;
+				} else if(o instanceof java.sql.Timestamp){
+					SimpleDateFormat dateFormat = new SimpleDateFormat(OracleGuiConstants.INSERT_DATE_FORMAT);
+					java.sql.Timestamp ts = (java.sql.Timestamp) o;
+					java.util.Date utilDate = new java.util.Date();
+					utilDate.setTime(ts.getTime());
+					String s = dateFormat.format(utilDate);
+					o = s;
+				} */ 
+				return cellValue;
+			}
+				
 		} catch (SQLException e) {
 			return e.getMessage();
 		} 
