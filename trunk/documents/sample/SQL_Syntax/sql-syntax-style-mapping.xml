@@ -3,8 +3,8 @@
     "http://castor.org/mapping.dtd">
 
 <mapping>
-	<class name="com.gs.syntax.mapping.StyleConfigurator">
-		<map-to xml="style-configurator" />
+	<class name="com.gs.syntax.mapping.StyleConfiguration">
+		<map-to xml="style-configuration" />
 		<field name="syntaxStyleList" 
 			type="com.gs.syntax.mapping.SyntaxStyle"
 			collection="collection">

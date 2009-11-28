@@ -1,8 +1,8 @@
 <?xml version='1.0'  encoding='UTF-8' ?>
-<style-configurator>
+<style-configuration>
 	<syntax-style name="Some Style Name">
 		<display-order>1</display-order>
-		<line-highlight is-highlight="true">
+		<!--	<line-highlight is-highlight="true">
 			<word-style type="CURRENT_LINE">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
@@ -23,7 +23,7 @@
 					<blue>10</blue>
 				</bg-color>
 			</word-style>
-		</line-highlight>
+		</line-highlight> 
 		<bracket-highlight is-highlight="true">
 			<word-style type="MATCHED_BRACKET">
 				<word-font name="Font Name">
@@ -41,8 +41,8 @@
 					<blue>10</blue>
 				</bg-color>
 			</word-style>
-		</bracket-highlight>
-		<body-background code="#0A0A0A">
+		</bracket-highlight> -->
+		<body-background code="#0A0A0A"/>
 				<red>10</red>
 				<green>10</green>
 				<blue>10</blue>
@@ -258,4 +258,4 @@
 			</word-style>
 		</word-styles>
 	</syntax-style>
-</style-configurator>
+</style-configuration>

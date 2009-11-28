@@ -120,6 +120,7 @@ public class SqlProcessor extends AbstractProcessor {
         lookup(TokenType.KEYWORD, "AT");
         lookup(TokenType.KEYWORD, "AUTHORIZATION");
         lookup(TokenType.KEYWORD, "BEFORE");
+        lookup(TokenType.KEYWORD, "BETWEEN");
         lookup(TokenType.KEYWORD, "BEGIN");
         lookup(TokenType.KEYWORD, "BINARY");
         lookup(TokenType.KEYWORD, "BIT");
