@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapping PUBLIC "-//EXOLAB/Castor Mapping DTD Version 1.0//EN"
+    "http://castor.org/mapping.dtd">
+
+<mapping>
+	<class name="com.gs.syntax.mapping.StyleConfigurator">
+		<map-to xml="style-configurator" />
+		<field name="syntaxStyleList" 
+			type="com.gs.syntax.mapping.SyntaxStyle"
+			collection="collection">
+			<bind-xml name="syntax-style"/>
+		</field>
+	</class>
+	
+	<class name="com.gs.syntax.mapping.SyntaxStyle">
+		<map-to xml="syntax-style" />
+		
+		<field name="connectionName" type="string">
+			<bind-xml name="connection-name" node="attribute" />
+		</field>
+	</class>
+	
+</mapping>
