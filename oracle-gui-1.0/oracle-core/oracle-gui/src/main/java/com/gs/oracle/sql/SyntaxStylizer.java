@@ -83,6 +83,8 @@ public class SyntaxStylizer implements PreferenceChangeListener {
 
     private void initializeStyles() {
 
+    	readSavedStyles();
+    	
         changeStyle(TokenType.UNRECOGNIZED, Color.RED);
         changeStyle(TokenType.WHITESPACE, Color.BLACK);
         changeStyle(TokenType.WORD, Color.BLACK);
