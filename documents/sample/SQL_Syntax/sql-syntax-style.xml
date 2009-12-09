@@ -12,249 +12,335 @@
 						<underlined>true</underlined>
 					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 		</line-highlight> 
 		<bracket-highlight is-highlight="true">
 			<word-style type="MATCHED_BRACKET">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
-					<font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 		</bracket-highlight> -->
-		<body-background code="#0A0A0A"/>
-				<red>10</red>
-				<green>10</green>
-				<blue>10</blue>
-		</body-background >
+		<style-color code="#0A0A0A" type="BG">
+			<red>10</red>
+			<green>10</green>
+			<blue>10</blue>
+		</style-color>
 		<word-styles>
 			<word-style type="KEY_WORD">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
-					<font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 			<word-style type="SCHEMA_NAME">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
-					<font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 			<word-style type="TABLE_NAME">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
-					<font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 			<word-style type="COLUMN_NAME">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
-					<font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 			<word-style type="OPERATOR">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
-					<font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 			<word-style type="BRACKET">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
-					<font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 			<word-style type="NUMBER">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
-					<font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 			<word-style type="CHAR_VALUE">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
-					<font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 			<word-style type="STRING_VALUE">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
-					<font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 			<word-style type="DEFAULT">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
-					<font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 			<word-style type="UNKNOWN">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
-					<font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 			<word-style type="ERROR">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
-					<font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 			<word-style type="COMMENT">
 				<word-font name="Font Name">
 					<font-size>12</font-size>
-					<font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
 				</word-font>
-				<fore-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</fore-color>
-				<bg-color code="#0A0A0A">
-					<red>10</red>
-					<green>10</green>
-					<blue>10</blue>
-				</bg-color>
+				<style-colors>
+					<style-color code="#0A0A0A" type="BG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color code="#0A0A0A" type="FG">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
 			</word-style>
 		</word-styles>
 	</syntax-style>
