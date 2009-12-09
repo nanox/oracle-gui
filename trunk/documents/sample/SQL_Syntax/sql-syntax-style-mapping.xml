@@ -15,8 +15,94 @@
 	<class name="com.gs.syntax.mapping.SyntaxStyle">
 		<map-to xml="syntax-style" />
 		
-		<field name="connectionName" type="string">
-			<bind-xml name="connection-name" node="attribute" />
+		<field name="syntaxStyleName" type="string">
+			<bind-xml name="name" node="attribute" />
+		</field>
+		<field name="displayOrder" type="integer">
+			<bind-xml name="display-order" node="element" />
+		</field>
+		<field name="bodyBackgroundColor" type="com.gs.syntax.mapping.StyleColor">
+			<bind-xml name="style-color"/>
+		</field>
+		
+		<field name="wordStyleList" type="com.gs.syntax.mapping.WordStyles">
+			<bind-xml name="word-styles"/>
+		</field>
+	</class>
+	
+	<class name="com.gs.syntax.mapping.WordStyles">
+		<map-to xml="word-styles" />
+		<field name="wordStyleList" 
+			type="com.gs.syntax.mapping.WordStyle"
+			collection="collection">
+			<bind-xml name="word-style"/>
+		</field>
+	</class>
+	
+	<class name="com.gs.syntax.mapping.WordStyle">
+		<map-to xml="word-style" />
+		<field name="wordType" type="string">
+			<bind-xml name="type" node="attribute" />
+		</field>
+		<field name="wordFont" type="com.gs.syntax.mapping.WordFont">
+			<bind-xml name="word-font"/>
+		</field>
+		<field name="wordColorList" type="com.gs.syntax.mapping.StyleColors">
+			<bind-xml name="style-colors"/>
+		</field>
+	</class>
+	
+	<class name="com.gs.syntax.mapping.StyleColors">
+		<map-to xml="style-colors" />
+		<field name="colorList" 
+			type="com.gs.syntax.mapping.StyleColor"
+			collection="collection">
+			<bind-xml name="style-color"/>
+		</field>
+	</class>
+	
+	<class name="com.gs.syntax.mapping.StyleColor">
+		<map-to xml="style-color" />
+		<field name="type" type="string">
+			<bind-xml name="type" node="attribute" />
+		</field>
+		<field name="colorCode" type="string">
+			<bind-xml name="code" node="attribute" />
+		</field>
+		<field name="red" type="integer">
+			<bind-xml name="red" node="element" />
+		</field>
+		<field name="green" type="integer">
+			<bind-xml name="green" node="element" />
+		</field>
+		<field name="blue" type="integer">
+			<bind-xml name="blue" node="element" />
+		</field>
+	</class>
+	
+	<class name="com.gs.syntax.mapping.WordFont">
+		<map-to xml="word-font" />
+		<field name="fontName" type="string">
+			<bind-xml name="name" node="attribute" />
+		</field>
+		<field name="fontSize" type="integer">
+			<bind-xml name="font-size" node="element" />
+		</field>
+		<field name="fontStyle" type="com.gs.syntax.mapping.FontStyle">
+			<bind-xml name="font-style" node="element" />
+		</field>
+	</class>
+	
+	<class name="com.gs.syntax.mapping.FontStyle">
+		<map-to xml="font-style" />
+		<field name="bold" type="boolean">
+			<bind-xml name="bold" node="element" />
+		</field>
+		<field name="italic" type="boolean">
+			<bind-xml name="italic" node="element" />
+		</field>
+		<field name="underlined" type="boolean">
+			<bind-xml name="underlined" node="element" />
 		</field>
 	</class>
 	

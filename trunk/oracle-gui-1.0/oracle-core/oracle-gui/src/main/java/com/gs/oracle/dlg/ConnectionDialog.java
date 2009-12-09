@@ -17,6 +17,8 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.InputStream;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -38,11 +40,14 @@ import javax.swing.WindowConstants;
 
 import org.apache.log4j.Logger;
 
+import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.command.GuiEventHandler;
 import com.gs.oracle.common.StringUtil;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.connection.ConnectionPropertiesCatalog;
+import com.gs.oracle.io.IOUtils;
+import com.gs.oracle.io.XmlRWUtils;
 import com.gs.oracle.util.ConnectionPropertiesRWUtil;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
@@ -68,7 +73,12 @@ public class ConnectionDialog extends JDialog {
 	public ConnectionDialog(JFrame parent, boolean modal) {
 		super(parent, modal);
 		parentFrame = parent;
-		catalog = ConnectionPropertiesRWUtil.getInstance().getCatalog();
+		
+		InputStream is = IOUtils.getResourceAsStream(OracleGuiConstants.CONN_PROPERTIES_MAPPING_FILE);
+		File file = IOUtils.mkfile(OracleGuiConstants.CONNECTION_DATA_FILE);
+		
+		catalog = XmlRWUtils.readUsingCastor(file, is);
+		
 		if(catalog != null){
 			int i = 0;
 			for (ConnectionProperties p : catalog.getConnectionPropertiesList()) {

@@ -24,6 +24,7 @@ package com.gs.oracle.sql;
 
 import java.awt.Color;
 import java.awt.Font;
+import java.io.File;
 import java.util.Hashtable;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -32,7 +33,9 @@ import javax.swing.JTextPane;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
+import com.gs.oracle.io.XmlRWUtils;
 import com.gs.oracle.sql.processor.TokenType;
+import com.gs.syntax.mapping.StyleConfiguration;
 
 
 /**
@@ -110,5 +113,23 @@ public class SyntaxStylizer implements PreferenceChangeListener {
 
         styleMap.put(TokenType.TABLE_NAME, style);
     }
+
+    public static void main(String[] args) {
+    	File in = new File("D:\\SVN_HOME\\MY_PROJECTS\\oracle-gui\\trunk\\documents\\sample\\SQL_Syntax\\sql-syntax-style.xml");
+		File map = new File("D:\\SVN_HOME\\MY_PROJECTS\\oracle-gui\\trunk\\documents\\sample\\SQL_Syntax\\sql-syntax-style-mapping.xml");
+		StyleConfiguration configuration = XmlRWUtils.readUsingCastor(in, map);
+		if(configuration == null ){
+			System.out.println("kjdfhl kglkdjfg h");
+		}
+	}
+    
+	private void readSavedStyles() {
+		File in = new File("D:\\SVN_HOME\\MY_PROJECTS\\oracle-gui\\trunk\\documents\\sample\\SQL_Syntax\\sql-syntax-style.xml");
+		File map = new File("D:\\SVN_HOME\\MY_PROJECTS\\oracle-gui\\trunk\\documents\\sample\\SQL_Syntax\\sql-syntax-style-mapping.xml");
+		StyleConfiguration configuration = XmlRWUtils.readUsingCastor(in, map);
+		if(configuration == null ){
+			System.out.println("kjdfhl kglkdjfg h");
+		}
+	}
 
 }
