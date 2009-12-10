@@ -21,6 +21,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.InputStream;
 import java.util.List;
 
 import javax.swing.AbstractListModel;
@@ -41,6 +42,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.io.IOUtils;
 import com.gs.oracle.io.XmlRWUtils;
 import com.gs.syntax.mapping.FontStyle;
 import com.gs.syntax.mapping.StyleColor;
@@ -74,9 +76,11 @@ public class StyleConfigurationDialog extends JDialog {
     }
 
 	private void initValues(){
-		File in = new File("D:\\SVN_HOME\\MY_PROJECTS\\oracle-gui\\trunk\\documents\\sample\\SQL_Syntax\\sql-syntax-style.xml");
-		File map = new File("D:\\SVN_HOME\\MY_PROJECTS\\oracle-gui\\trunk\\documents\\sample\\SQL_Syntax\\sql-syntax-style-mapping.xml");
-		configuration = XmlRWUtils.readUsingCastor(in, map);
+		InputStream mappingInputStream = IOUtils.getResourceAsStream(OracleGuiConstants.SQL_SYNTAX_MAPPING_FILE);
+		File dataFile = IOUtils.mkfile(OracleGuiConstants.SYNTAX_DATA_FILE);
+		
+		configuration = XmlRWUtils.readUsingCastor(dataFile, mappingInputStream);
+		
 		if(configuration != null ){
 			configuration.loadStyleMap();
 			List<SyntaxStyle> sl = configuration.getSyntaxStyleList();
@@ -628,9 +632,10 @@ public class StyleConfigurationDialog extends JDialog {
     }
 
     private void saveButtonActionPerformed(ActionEvent evt) {
-    	File in = new File("D:\\SVN_HOME\\MY_PROJECTS\\oracle-gui\\trunk\\documents\\sample\\SQL_Syntax\\sql-syntax-style.xml");
-		File map = new File("D:\\SVN_HOME\\MY_PROJECTS\\oracle-gui\\trunk\\documents\\sample\\SQL_Syntax\\sql-syntax-style-mapping.xml");
-    	XmlRWUtils.writeUsingCastor(in, map, configuration);
+    	InputStream mappingInputStream = IOUtils.getResourceAsStream(OracleGuiConstants.SQL_SYNTAX_MAPPING_FILE);
+		File dataFile = IOUtils.mkfile(OracleGuiConstants.SYNTAX_DATA_FILE);
+		
+		XmlRWUtils.writeUsingCastor(dataFile, mappingInputStream, configuration);
     }
 
     private void cancelButtonActionPerformed(ActionEvent evt) {
