@@ -15,6 +15,7 @@ public class SyntaxStyle implements Serializable {
 
 	
 	private String syntaxStyleName;
+	private String Language;
 	private Integer displayOrder = 0;
 	private StyleColor bodyBackgroundColor;
 	
@@ -22,6 +23,20 @@ public class SyntaxStyle implements Serializable {
 	
 	public SyntaxStyle() {
 		
+	}
+
+	/**
+	 * @return the language
+	 */
+	public String getLanguage() {
+		return Language;
+	}
+
+	/**
+	 * @param language the language to set
+	 */
+	public void setLanguage(String language) {
+		Language = language;
 	}
 
 	/**
