@@ -75,12 +75,11 @@ public class XmlRWUtils {
 		return null;
 	}
 	
-	public static <T> void writeUsingCastor(File outputXml, File mappingFile, T data){
+	public static <T> void writeUsingCastor(File outputXml, InputStream mappingFileInputStream, T data){
 		Mapping mapping = new Mapping();
 		try {
-			InputStream is = new FileInputStream(mappingFile);
 			InputSource iso = new InputSource();
-			iso.setByteStream(is);
+			iso.setByteStream(mappingFileInputStream);
 			mapping.loadMapping(iso);
 			
 			OutputStream os = new FileOutputStream(outputXml);
@@ -98,6 +97,14 @@ public class XmlRWUtils {
 		} catch (MarshalException e) {
 			e.printStackTrace();
 		} catch (ValidationException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static <T> void writeUsingCastor(File outputXml, File mappingFile, T data){
+		try {
+			writeUsingCastor(outputXml, new FileInputStream(mappingFile), data);
+		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
 	}

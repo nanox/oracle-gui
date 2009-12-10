@@ -25,6 +25,7 @@ package com.gs.oracle.sql;
 import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
+import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
@@ -33,9 +34,13 @@ import javax.swing.JTextPane;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
+import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.io.IOUtils;
 import com.gs.oracle.io.XmlRWUtils;
 import com.gs.oracle.sql.processor.TokenType;
 import com.gs.syntax.mapping.StyleConfiguration;
+import com.gs.syntax.mapping.StyleConfigurationHelper;
+import com.gs.syntax.mapping.WordStyle;
 
 
 /**
@@ -86,7 +91,8 @@ public class SyntaxStylizer implements PreferenceChangeListener {
 
     private void initializeStyles() {
 
-    	readSavedStyles();
+    	StyleConfiguration configuration = readSavedStyles();
+    	configuration.loadStyleMap();
     	
         changeStyle(TokenType.UNRECOGNIZED, Color.RED);
         changeStyle(TokenType.WHITESPACE, Color.BLACK);
@@ -99,7 +105,18 @@ public class SyntaxStylizer implements PreferenceChangeListener {
 
         changeStyle(TokenType.VARIABLE, Color.decode("#003e85"), Font.ITALIC | Font.BOLD);
 
-        changeStyle(TokenType.KEYWORD, Color.decode("#7F0069"), Font.BOLD);
+        
+        WordStyle wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", "KEY_WORD", configuration);
+        if(wordStyle != null){
+        	String code = wordStyle.getWordColorList().getStyleByType("FG").getColorCode();
+        	int style = Font.PLAIN;
+        	if(wordStyle.getWordFont().getFontStyle().isBold()){
+        		style = Font.BOLD;
+        	}
+        	changeStyle(TokenType.KEYWORD, Color.decode(code), style);
+        }else
+        	changeStyle(TokenType.KEYWORD, Color.decode("#7F0069"), Font.BOLD);
+        
         changeStyle(TokenType.STRING, Color.BLUE);
         changeStyle(TokenType.CHARACTER, Color.decode("#008400"));
         changeStyle(TokenType.FUNCTION, Color.BLUE);
@@ -114,22 +131,21 @@ public class SyntaxStylizer implements PreferenceChangeListener {
         styleMap.put(TokenType.TABLE_NAME, style);
     }
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
     	File in = new File("D:\\SVN_HOME\\MY_PROJECTS\\oracle-gui\\trunk\\documents\\sample\\SQL_Syntax\\sql-syntax-style.xml");
 		File map = new File("D:\\SVN_HOME\\MY_PROJECTS\\oracle-gui\\trunk\\documents\\sample\\SQL_Syntax\\sql-syntax-style-mapping.xml");
 		StyleConfiguration configuration = XmlRWUtils.readUsingCastor(in, map);
 		if(configuration == null ){
 			System.out.println("kjdfhl kglkdjfg h");
 		}
-	}
+	}*/
     
-	private void readSavedStyles() {
-		File in = new File("D:\\SVN_HOME\\MY_PROJECTS\\oracle-gui\\trunk\\documents\\sample\\SQL_Syntax\\sql-syntax-style.xml");
-		File map = new File("D:\\SVN_HOME\\MY_PROJECTS\\oracle-gui\\trunk\\documents\\sample\\SQL_Syntax\\sql-syntax-style-mapping.xml");
-		StyleConfiguration configuration = XmlRWUtils.readUsingCastor(in, map);
-		if(configuration == null ){
-			System.out.println("kjdfhl kglkdjfg h");
-		}
+	private StyleConfiguration readSavedStyles() {
+		InputStream mappingInputStream = IOUtils.getResourceAsStream(OracleGuiConstants.SQL_SYNTAX_MAPPING_FILE);
+		File dataFile = IOUtils.mkfile(OracleGuiConstants.SYNTAX_DATA_FILE);
+		
+		return XmlRWUtils.readUsingCastor(dataFile, mappingInputStream);
+		
 	}
 
 }

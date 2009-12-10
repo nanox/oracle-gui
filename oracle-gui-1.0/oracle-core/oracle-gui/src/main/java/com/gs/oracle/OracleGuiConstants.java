@@ -29,7 +29,11 @@ public interface OracleGuiConstants {
 	String DATA_DIR = "./data/";
 	String CONNECTION_DATA_FILE = DATA_DIR
 			+ "connection/oracle_connections.xml";
+	String SYNTAX_DATA_FILE = DATA_DIR
+			+ "syntax/sql-syntax-style.xml";
+	
 	String CONN_PROPERTIES_MAPPING_FILE = "com/gs/oracle/castor/connection_properties-mapping.xml";
+	String SQL_SYNTAX_MAPPING_FILE = "com/gs/oracle/castor/sql-syntax-style-mapping.xml";
 
 	List<String> SQL_KEYWORD_LIST = new ArrayList<String>();
 
