@@ -57,6 +57,6 @@ public interface GuiCommandConstants {
 	String CASCADE_ACT_CMD 				= "CASCADE_ACT_CMD";
 	String TILES_2003_ACT_CMD 			= "TILES_2003_ACT_CMD";
 	//String FOREST_ACT_CMD 				= "FOREST_ACT_CMD";
-	
+	String STYLE_CFG_ACT_CMD			= "STYLE_CFG_ACT_CMD";
     
 }

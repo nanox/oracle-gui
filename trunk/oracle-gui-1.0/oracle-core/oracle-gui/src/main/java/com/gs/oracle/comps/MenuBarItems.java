@@ -93,6 +93,8 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 // Help menu items
 	public static final String _HELP_MENU_ITEM = "";
 	
+// Tools menu
+	public static final String STYLE_CFG_MENU_ITEM = "STYLE_CFG_MENU_ITEM";
 	
 	
 	private Map<String, JMenu> menuMap = new HashMap<String, JMenu>();
@@ -124,8 +126,14 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 		createViewMenu();
 		createWindowsMenu();
 		createHelpMenu();
+		createToolsMenu();
 	}
 	
+	private void createToolsMenu() {
+		addMenuItem(TOOLS_MENU_NAME, STYLE_CFG_MENU_ITEM, "Style Configuration", 
+				STYLE_CFG_ACT_CMD);
+	}
+
 	private void createHelpMenu() {
 		// TODO Auto-generated method stub
 		

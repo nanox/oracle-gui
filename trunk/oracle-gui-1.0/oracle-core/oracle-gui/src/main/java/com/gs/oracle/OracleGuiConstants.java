@@ -70,4 +70,7 @@ public interface OracleGuiConstants {
 	String INSERT_DATE_FORMAT = "dd-MMM-yy hh.mm.ss.SSS aaa";
 	String SQL_DATE_FORMAT = "'DD-MON-RR HH.MI.SS.FF AM'";
 	String SQL_DATE_FUNCTION = "to_timestamp";
+	
+	String FORE_GROUND = "FG";
+	String BACK_GROUND = "BG";
 }
