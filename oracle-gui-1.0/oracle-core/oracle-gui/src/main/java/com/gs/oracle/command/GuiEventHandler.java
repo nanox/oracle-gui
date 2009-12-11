@@ -42,6 +42,7 @@ import com.gs.oracle.comps.TableDetailsPanel;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.dlg.ConnectionDialog;
 import com.gs.oracle.dlg.OpenResourceDialog;
+import com.gs.oracle.dlg.StyleConfigurationDialog;
 import com.gs.oracle.frame.OracleGuiMainFrame;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
@@ -248,6 +249,26 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 		                new ButtonTabComponent(dbIframe.getDbDetailsTabbedPane(), new ImageIcon(this.getClass()
 		        				.getResource(OracleGuiConstants.IMAGE_PATH + "executesql.gif"))));
 				dbIframe.getDbDetailsTabbedPane().setSelectedIndex(n - 1);
+			} else if(STYLE_CFG_ACT_CMD.equals(cmd)){
+				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
+				JDesktopPane desktopPane = f.getMainDesktopPane();
+				if(desktopPane == null){
+					return;
+				}
+				JInternalFrame iFrame = desktopPane.getSelectedFrame();
+				if(iFrame == null){
+					return;
+				}
+				DatabaseViewerInternalFrame dbIframe = null;
+				if(iFrame instanceof DatabaseViewerInternalFrame){
+					dbIframe = (DatabaseViewerInternalFrame) iFrame;
+				}
+				if(dbIframe == null){
+					return;
+				}
+				// TODO:
+				StyleConfigurationDialog configurationDialog = new StyleConfigurationDialog(f, true);
+				configurationDialog.setVisible(true);
 			}
 		}
 	}

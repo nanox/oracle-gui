@@ -505,10 +505,10 @@ public class StyleConfigurationDialog extends JDialog {
         WordStyle wordStyle = syntaxStyle.getWordStyleList().getStyleByType(keyWord);
         
         styleNameLabel.setText(language + " : " + keyWord);
-        StyleColor foreColor = wordStyle.getWordColorList().getStyleByType("FG");
+        StyleColor foreColor = wordStyle.getWordColorList().getStyleByType(OracleGuiConstants.FORE_GROUND);
         if(foreColor != null)
         	foreColorPanel.setBackground(new Color(foreColor.getRed(), foreColor.getGreen(), foreColor.getBlue()));
-        StyleColor backColor = wordStyle.getWordColorList().getStyleByType("BG");
+        StyleColor backColor = wordStyle.getWordColorList().getStyleByType(OracleGuiConstants.BACK_GROUND);
         if(backColor != null)
         	bgColorPanel.setBackground(new Color(backColor.getRed(), backColor.getGreen(), backColor.getBlue()));
         
@@ -541,6 +541,8 @@ public class StyleConfigurationDialog extends JDialog {
     	String keyWord = styleList.getSelectedValue().toString();
     	SyntaxStyle syntaxStyle = configuration.getStyleByLanguage(language);
     	WordStyle wordStyle = syntaxStyle.getWordStyleList().getStyleByType(keyWord);
+    	
+    	
     }
 
     private void bgColorPanelMouseClicked(MouseEvent evt) {
