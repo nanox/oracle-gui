@@ -558,10 +558,10 @@ public class StyleConfigurationDialog extends JDialog {
     	
     	// single left click
     	if(MouseEvent.BUTTON1 == evt.getButton()){
-    		
-    		JColorChooser colorChooser = new JColorChooser(foreColorPanel.getBackground());
-    		JDialog dialog = JColorChooser.createDialog(this, "Select Color", true, colorChooser, null, null);
-    		dialog.setVisible(true);
+    		Color newColor = JColorChooser.showDialog(this, "Choose Color", foreColorPanel.getBackground());
+    		StyleColor color = wordStyle.getWordColorList().getStyleByType(OracleGuiConstants.FORE_GROUND);
+    		foreColorPanel.setBackground(newColor);
+    		color.setColor(newColor);
     	}
     	
     }
@@ -574,10 +574,10 @@ public class StyleConfigurationDialog extends JDialog {
     	
     	// single left click
     	if(MouseEvent.BUTTON1 == evt.getButton()){
-    		
-    		JColorChooser colorChooser = new JColorChooser(bgColorPanel.getBackground());
-    		JDialog dialog = JColorChooser.createDialog(this, "Select Color", true, colorChooser, null, null);
-    		dialog.setVisible(true);
+    		Color newColor = JColorChooser.showDialog(this, "Choose Color", bgColorPanel.getBackground());
+    		StyleColor color = wordStyle.getWordColorList().getStyleByType(OracleGuiConstants.BACK_GROUND);
+    		bgColorPanel.setBackground(newColor);
+    		color.setColor(newColor);
     	}
     }
 

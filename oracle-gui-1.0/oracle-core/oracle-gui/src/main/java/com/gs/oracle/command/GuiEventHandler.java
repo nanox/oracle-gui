@@ -242,7 +242,7 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 				if(dbIframe == null){
 					return;
 				}
-				SqlQueryPanel queryPanel = new SqlQueryPanel();
+				SqlQueryPanel queryPanel = new SqlQueryPanel(null, dbIframe.getConnectionProperties());
 				dbIframe.getDbDetailsTabbedPane().addTab("SQL", queryPanel);
 				int n = dbIframe.getDbDetailsTabbedPane().getTabCount();
 				dbIframe.getDbDetailsTabbedPane().setTabComponentAt(n - 1,

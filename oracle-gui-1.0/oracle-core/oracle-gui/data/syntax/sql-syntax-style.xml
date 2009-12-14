@@ -1,2 +1,597 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<style-configuration><syntax-style name="Default SQL Syntax Style"><language>SQL</language><display-order>1</display-order><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><word-styles><word-style type="KEY_WORD"><word-font name="Bitstream Vera Sans Mono"><font-size>454</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>255</red><green>255</green><blue>255</blue></style-color><style-color type="FG" code="#0A0A0A"><red>0</red><green>0</green><blue>0</blue></style-color></style-colors></word-style><word-style type="SCHEMA_NAME"><word-font name="HobbyHorse"><font-size>4</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="TABLE_NAME"><word-font name="Digital Readout ExpUpright"><font-size>23</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="COLUMN_NAME"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>false</bold><italic>false</italic><underlined>false</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="OPERATOR"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>false</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="BRACKET"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>false</italic><underlined>false</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="NUMBER"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>false</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="CHAR_VALUE"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="STRING_VALUE"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="DEFAULT"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="UNKNOWN"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="ERROR"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="COMMENT"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style></word-styles></syntax-style><syntax-style name="Default JAVA Syntax Style"><language>JAVA</language><display-order>2</display-order><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><word-styles><word-style type="KEY_WORD"><word-font name="Bitstream Vera Sans Mono"><font-size>15</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>255</red><green>255</green><blue>255</blue></style-color><style-color type="FG" code="#0A0A0A"><red>0</red><green>0</green><blue>0</blue></style-color></style-colors></word-style><word-style type="SCHEMA_NAME"><word-font name="HobbyHorse"><font-size>4</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="TABLE_NAME"><word-font name="Digital Readout ExpUpright"><font-size>23</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="COLUMN_NAME"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>false</bold><italic>false</italic><underlined>false</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="OPERATOR"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>false</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="BRACKET"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>false</italic><underlined>false</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="NUMBER"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>false</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="CHAR_VALUE"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="STRING_VALUE"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="DEFAULT"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="UNKNOWN"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="ERROR"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style><word-style type="COMMENT"><word-font name="Harry P"><font-size>12</font-size><font-style><bold>true</bold><italic>true</italic><underlined>true</underlined></font-style></word-font><style-colors><style-color type="BG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color><style-color type="FG" code="#0A0A0A"><red>10</red><green>10</green><blue>10</blue></style-color></style-colors></word-style></word-styles></syntax-style></style-configuration>
+<style-configuration>
+	<syntax-style name="Default SQL Syntax Style">
+		<language>SQL</language>
+		<display-order>1</display-order>
+		<style-color type="BG" code="#0A0A0A">
+			<red>10</red>
+			<green>10</green>
+			<blue>10</blue>
+		</style-color>
+		<word-styles>
+			<word-style type="KEY_WORD">
+				<word-font name="Bitstream Vera Sans Mono">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#ffffff">
+						<red>255</red>
+						<green>255</green>
+						<blue>255</blue>
+					</style-color>
+					<style-color type="FG" code="#0000cc">
+						<red>0</red>
+						<green>0</green>
+						<blue>204</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="SCHEMA_NAME">
+				<word-font name="Bitstream Vera Sans Mono">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#ffffff">
+						<red>255</red>
+						<green>255</green>
+						<blue>255</blue>
+					</style-color>
+					<style-color type="FG" code="#003366">
+						<red>0</red>
+						<green>51</green>
+						<blue>102</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="TABLE_NAME">
+				<word-font name="Bitstream Vera Sans Mono">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#ffffff">
+						<red>255</red>
+						<green>255</green>
+						<blue>255</blue>
+					</style-color>
+					<style-color type="FG" code="#00992a">
+						<red>0</red>
+						<green>153</green>
+						<blue>42</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="COLUMN_NAME">
+				<word-font name="Bitstream Vera Sans Mono">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>false</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#ffffff">
+						<red>255</red>
+						<green>255</green>
+						<blue>255</blue>
+					</style-color>
+					<style-color type="FG" code="#009933">
+						<red>0</red>
+						<green>153</green>
+						<blue>51</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="OPERATOR">
+				<word-font name="Bitstream Vera Sans Mono">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#ffffff">
+						<red>255</red>
+						<green>255</green>
+						<blue>255</blue>
+					</style-color>
+					<style-color type="FG" code="#0000cc">
+						<red>0</red>
+						<green>0</green>
+						<blue>204</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="BRACKET">
+				<word-font name="Bitstream Vera Sans Mono">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>false</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#ffffff">
+						<red>255</red>
+						<green>255</green>
+						<blue>255</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="NUMBER">
+				<word-font name="Bitstream Vera Sans Mono">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#ffffff">
+						<red>255</red>
+						<green>255</green>
+						<blue>255</blue>
+					</style-color>
+					<style-color type="FG" code="#0066ff">
+						<red>0</red>
+						<green>102</green>
+						<blue>255</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="CHAR_VALUE">
+				<word-font name="Bitstream Vera Sans Mono">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>false</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#ffffff">
+						<red>255</red>
+						<green>255</green>
+						<blue>255</blue>
+					</style-color>
+					<style-color type="FG" code="#009933">
+						<red>0</red>
+						<green>153</green>
+						<blue>51</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="STRING_VALUE">
+				<word-font name="Bitstream Vera Sans Mono">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>false</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#ffffff">
+						<red>255</red>
+						<green>255</green>
+						<blue>255</blue>
+					</style-color>
+					<style-color type="FG" code="#009966">
+						<red>0</red>
+						<green>153</green>
+						<blue>102</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="DEFAULT">
+				<word-font name="Bitstream Vera Sans Mono">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>false</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#ffffff">
+						<red>255</red>
+						<green>255</green>
+						<blue>255</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="UNKNOWN">
+				<word-font name="Bitstream Vera Sans Mono">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>false</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#ffffff">
+						<red>255</red>
+						<green>255</green>
+						<blue>255</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="ERROR">
+				<word-font name="Bitstream Vera Sans Mono">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>false</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#ffffff">
+						<red>255</red>
+						<green>255</green>
+						<blue>255</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="COMMENT">
+				<word-font name="Bitstream Vera Sans Mono">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>false</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#ffffff">
+						<red>255</red>
+						<green>255</green>
+						<blue>255</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+		</word-styles>
+	</syntax-style>
+	<syntax-style name="Default JAVA Syntax Style">
+		<language>JAVA</language>
+		<display-order>2</display-order>
+		<style-color type="BG" code="#0A0A0A">
+			<red>10</red>
+			<green>10</green>
+			<blue>10</blue>
+		</style-color>
+		<word-styles>
+			<word-style type="KEY_WORD">
+				<word-font name="Bitstream Vera Sans Mono">
+					<font-size>15</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#0A0A0A">
+						<red>255</red>
+						<green>255</green>
+						<blue>255</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>0</red>
+						<green>0</green>
+						<blue>0</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="SCHEMA_NAME">
+				<word-font name="HobbyHorse">
+					<font-size>4</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="TABLE_NAME">
+				<word-font name="Digital Readout ExpUpright">
+					<font-size>23</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="COLUMN_NAME">
+				<word-font name="Harry P">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>false</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="OPERATOR">
+				<word-font name="Harry P">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>false</italic>
+						<underlined>true</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="BRACKET">
+				<word-font name="Harry P">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>false</italic>
+						<underlined>false</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="NUMBER">
+				<word-font name="Harry P">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>false</italic>
+						<underlined>true</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="CHAR_VALUE">
+				<word-font name="Harry P">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="STRING_VALUE">
+				<word-font name="Harry P">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="DEFAULT">
+				<word-font name="Harry P">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="UNKNOWN">
+				<word-font name="Harry P">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="ERROR">
+				<word-font name="Harry P">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+			<word-style type="COMMENT">
+				<word-font name="Harry P">
+					<font-size>12</font-size>
+					<font-style>
+						<bold>true</bold>
+						<italic>true</italic>
+						<underlined>true</underlined>
+					</font-style>
+				</word-font>
+				<style-colors>
+					<style-color type="BG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+					<style-color type="FG" code="#0A0A0A">
+						<red>10</red>
+						<green>10</green>
+						<blue>10</blue>
+					</style-color>
+				</style-colors>
+			</word-style>
+		</word-styles>
+	</syntax-style>
+</style-configuration>
