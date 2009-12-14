@@ -268,6 +268,7 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 				}
 				// TODO:
 				StyleConfigurationDialog configurationDialog = new StyleConfigurationDialog(f, true);
+				WindowUtil.bringCenterTo(configurationDialog, f);
 				configurationDialog.setVisible(true);
 			}
 		}
