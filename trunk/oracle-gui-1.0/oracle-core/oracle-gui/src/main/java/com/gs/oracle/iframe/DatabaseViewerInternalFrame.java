@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.ImageIcon;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JInternalFrame;
 import javax.swing.JPanel;
@@ -153,7 +154,7 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		
 		dbDetailsTabbedPane = new JTabbedPane();
 		dbDetailsTabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
-		SqlQueryPanel panel = new SqlQueryPanel();
+		SqlQueryPanel panel = new SqlQueryPanel((JComponent) getParent(), getConnectionProperties());
 		panel.setParentFrame(parentFrame);
 		panel.setConnectionProperties(getConnectionProperties());
 		ResultSetTableModelFactory factory = null;

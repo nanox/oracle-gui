@@ -18,10 +18,12 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.image.DataBufferUShort;
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +34,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -86,11 +89,13 @@ UndoableEditListener, HyperlinkListener {
 	private JButton queryFontButton;
 	private QueryExecutionService queryExecutionService;
 	private UndoManager undoManager = new UndoManager();
-	
-	private SqlProcessor sqlProcessor = new SqlProcessor();
+	private JComponent parentComponent;
+	private SqlProcessor sqlProcessor;
 
 	/** Creates new form SqlQueryPanel */
-	public SqlQueryPanel() {
+	public SqlQueryPanel(JComponent parentComponent, ConnectionProperties connectionProperties) {
+		this.connectionProperties = connectionProperties;
+		this.parentComponent = parentComponent;
 		try {
 			bitstreamFont = Font.createFont(Font.TRUETYPE_FONT, 
 					getClass().getResourceAsStream("/fonts/VeraMono.ttf"));
@@ -103,6 +108,24 @@ UndoableEditListener, HyperlinkListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
+		Connection con = null;
+		try {
+			con = getConnectionProperties().getDataSource().getConnection();
+			sqlProcessor = new SqlProcessor();
+			sqlProcessor.installServiceKeywords(con.getMetaData(), "%", connectionProperties.getDatabaseName());
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if(con != null){
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
 		queryExecutionService = new QueryExecutionServiceImpl(getConnectionProperties());
 		initComponents();
 	}

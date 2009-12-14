@@ -3,7 +3,10 @@
  */
 package com.gs.syntax.mapping;
 
+import java.awt.Color;
 import java.io.Serializable;
+
+import com.gs.oracle.common.StringUtil;
 
 /**
  * @author sabuj.das
@@ -89,6 +92,15 @@ public class StyleColor implements Serializable {
 	 */
 	public void setBlue(Integer blue) {
 		this.blue = blue;
+	}
+
+	public void setColor(Color color) {
+		if(color == null)
+			return;
+		setRed(color.getRed());
+		setGreen(color.getGreen());
+		setBlue(color.getBlue());
+		setColorCode(StringUtil.encodeColor(color));
 	}
 
 	

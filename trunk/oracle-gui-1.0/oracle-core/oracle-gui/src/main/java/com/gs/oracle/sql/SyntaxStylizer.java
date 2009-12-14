@@ -35,11 +35,15 @@ import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.enums.SqlStyleEnum;
 import com.gs.oracle.io.IOUtils;
 import com.gs.oracle.io.XmlRWUtils;
 import com.gs.oracle.sql.processor.TokenType;
+import com.gs.syntax.mapping.FontStyle;
+import com.gs.syntax.mapping.StyleColor;
 import com.gs.syntax.mapping.StyleConfiguration;
 import com.gs.syntax.mapping.StyleConfigurationHelper;
+import com.gs.syntax.mapping.WordFont;
 import com.gs.syntax.mapping.WordStyle;
 
 
@@ -88,13 +92,85 @@ public class SyntaxStylizer implements PreferenceChangeListener {
             StyleConstants.setItalic(style, true);
         styleMap.put(type, style);
     }
+    
+    public void changeStyle(TokenType type, WordStyle wordStyle){
+    	if(wordStyle == null)
+    		return;
+    	Style style = componentOwner.addStyle(type.toString(), null);
+    	
+    	StyleColor fg = wordStyle.getWordColorList().getStyleByType(OracleGuiConstants.FORE_GROUND);
+    	StyleConstants.setForeground(style, Color.decode(fg.getColorCode()));
+    	
+    	StyleColor bg = wordStyle.getWordColorList().getStyleByType(OracleGuiConstants.BACK_GROUND);
+    	StyleConstants.setBackground(style, Color.decode(bg.getColorCode()));
+    	
+    	WordFont wordFont = wordStyle.getWordFont();
+    	StyleConstants.setFontFamily(style, wordFont.getFontName());
+    	StyleConstants.setFontSize(style, wordFont.getFontSize());
+    	
+    	FontStyle fontStyle = wordFont.getFontStyle();
+    	if(fontStyle.isBold()){
+    		StyleConstants.setBold(style, true);
+    	}
+    	if(fontStyle.isItalic()){
+    		StyleConstants.setItalic(style, true);
+    	}
+    	if(fontStyle.isUnderlined()){
+    		StyleConstants.setUnderline(style, true);
+    	}
+    	styleMap.put(type, style);
+    }
 
     private void initializeStyles() {
 
     	StyleConfiguration configuration = readSavedStyles();
     	configuration.loadStyleMap();
+    	WordStyle wordStyle = null;
+    	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
+        		SqlStyleEnum.KEY_WORD.getCode(), configuration);
+    	changeStyle(TokenType.KEYWORD, wordStyle);
     	
-        changeStyle(TokenType.UNRECOGNIZED, Color.RED);
+    	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
+        		SqlStyleEnum.BRACKET.getCode(), configuration);
+    	changeStyle(TokenType.BRACKET, wordStyle);
+
+    	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
+        		SqlStyleEnum.CHAR_VALUE.getCode(), configuration);
+    	changeStyle(TokenType.CHARACTER, wordStyle);
+
+    	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
+        		SqlStyleEnum.COMMENT.getCode(), configuration);
+    	changeStyle(TokenType.COMMENT, wordStyle);
+
+    	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
+        		SqlStyleEnum.DEFAULT.getCode(), configuration);
+    	changeStyle(TokenType.WHITESPACE, wordStyle);
+
+    	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
+        		SqlStyleEnum.ERROR.getCode(), configuration);
+    	changeStyle(TokenType.UNRECOGNIZED, wordStyle);
+
+    	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
+        		SqlStyleEnum.FUNCTION.getCode(), configuration);
+    	changeStyle(TokenType.FUNCTION, wordStyle);
+
+    	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
+        		SqlStyleEnum.NUMBER.getCode(), configuration);
+    	changeStyle(TokenType.NUMBER, wordStyle);
+
+    	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
+        		SqlStyleEnum.STRING_VALUE.getCode(), configuration);
+    	changeStyle(TokenType.STRING, wordStyle);
+
+    	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
+        		SqlStyleEnum.TABLE_NAME.getCode(), configuration);
+    	changeStyle(TokenType.TABLE_NAME, wordStyle);
+    	
+    	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
+        		SqlStyleEnum.OPERATOR.getCode(), configuration);
+    	changeStyle(TokenType.OPERATOR, wordStyle);
+    	
+        /*changeStyle(TokenType.UNRECOGNIZED, Color.RED);
         changeStyle(TokenType.WHITESPACE, Color.BLACK);
         changeStyle(TokenType.WORD, Color.BLACK);
 
@@ -106,7 +182,8 @@ public class SyntaxStylizer implements PreferenceChangeListener {
         changeStyle(TokenType.VARIABLE, Color.decode("#003e85"), Font.ITALIC | Font.BOLD);
 
         
-        WordStyle wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", "KEY_WORD", configuration);
+        WordStyle wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
+        		SqlStyleEnum.KEY_WORD.getCode(), configuration);
         if(wordStyle != null){
         	String code = wordStyle.getWordColorList().getStyleByType("FG").getColorCode();
         	int style = Font.PLAIN;
@@ -128,7 +205,7 @@ public class SyntaxStylizer implements PreferenceChangeListener {
         StyleConstants.setUnderline(style, true);
         style.addAttribute("hyperlinked", Boolean.TRUE);
 
-        styleMap.put(TokenType.TABLE_NAME, style);
+        styleMap.put(TokenType.TABLE_NAME, style);*/
     }
 
     /*public static void main(String[] args) {

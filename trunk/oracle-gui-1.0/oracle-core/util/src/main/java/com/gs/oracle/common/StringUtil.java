@@ -3,6 +3,7 @@
  */
 package com.gs.oracle.common;
 
+import java.awt.Color;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -53,4 +54,39 @@ public class StringUtil {
 		return commonWord;
 	}
 
+	public static String encodeColor(Color color){
+		char[] hex = new char[7];
+		hex[0] = '#';
+		String r = Integer.toHexString(color.getRed());
+		if(r.length() <= 0)
+			r = "00";
+		if(r.length() >= 2){
+			hex[1] = r.charAt(0);
+			hex[2] = r.charAt(1);
+		} else if(r.length() == 1){
+			hex[1] = '0';
+			hex[2] = r.charAt(0);
+		}
+		String g = Integer.toHexString(color.getGreen());
+		if(g.length() <= 0)
+			g = "00";
+		if(g.length() >= 2){
+			hex[3] = g.charAt(0);
+			hex[4] = g.charAt(1);
+		} else if(g.length() == 1){
+			hex[3] = '0';
+			hex[4] = g.charAt(0);
+		}
+		String b = Integer.toHexString(color.getBlue());
+		if(b.length() <= 0)
+			b = "00";
+		if(b.length() >= 2){
+			hex[5] = b.charAt(0);
+			hex[6] = b.charAt(1);
+		} else if(b.length() == 1){
+			hex[5] = '0';
+			hex[6] = b.charAt(0);
+		}
+		return new String(hex);
+	}
 }
