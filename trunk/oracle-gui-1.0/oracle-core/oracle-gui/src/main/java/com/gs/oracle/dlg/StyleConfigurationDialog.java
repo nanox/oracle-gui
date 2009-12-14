@@ -5,6 +5,7 @@ package com.gs.oracle.dlg;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Frame;
@@ -29,6 +30,7 @@ import javax.swing.BorderFactory;
 import javax.swing.DefaultComboBoxModel;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JColorChooser;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
@@ -156,7 +158,7 @@ public class StyleConfigurationDialog extends JDialog {
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Style Configurator");
 
-        mainPanel.setMinimumSize(new Dimension(620, 255));
+        mainPanel.setMinimumSize(new Dimension(620, 300));
         mainPanel.setPreferredSize(mainPanel.getMinimumSize());
         mainPanel.setLayout(new GridBagLayout());
 
@@ -457,9 +459,21 @@ public class StyleConfigurationDialog extends JDialog {
         }
 
         public void mouseEntered(MouseEvent evt) {
+        	if (evt.getSource() == foreColorPanel) {
+        		foreColorPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
+            else if (evt.getSource() == bgColorPanel) {
+                bgColorPanel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+            }
         }
 
         public void mouseExited(MouseEvent evt) {
+        	if (evt.getSource() == foreColorPanel) {
+                foreColorPanel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
+            else if (evt.getSource() == bgColorPanel) {
+                bgColorPanel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
+            }
         }
 
         public void mousePressed(MouseEvent evt) {
@@ -542,6 +556,13 @@ public class StyleConfigurationDialog extends JDialog {
     	SyntaxStyle syntaxStyle = configuration.getStyleByLanguage(language);
     	WordStyle wordStyle = syntaxStyle.getWordStyleList().getStyleByType(keyWord);
     	
+    	// single left click
+    	if(MouseEvent.BUTTON1 == evt.getButton()){
+    		
+    		JColorChooser colorChooser = new JColorChooser(foreColorPanel.getBackground());
+    		JDialog dialog = JColorChooser.createDialog(this, "Select Color", true, colorChooser, null, null);
+    		dialog.setVisible(true);
+    	}
     	
     }
 
@@ -550,6 +571,14 @@ public class StyleConfigurationDialog extends JDialog {
     	String keyWord = styleList.getSelectedValue().toString();
     	SyntaxStyle syntaxStyle = configuration.getStyleByLanguage(language);
     	WordStyle wordStyle = syntaxStyle.getWordStyleList().getStyleByType(keyWord);
+    	
+    	// single left click
+    	if(MouseEvent.BUTTON1 == evt.getButton()){
+    		
+    		JColorChooser colorChooser = new JColorChooser(bgColorPanel.getBackground());
+    		JDialog dialog = JColorChooser.createDialog(this, "Select Color", true, colorChooser, null, null);
+    		dialog.setVisible(true);
+    	}
     }
 
     private void selectThemeComboBoxActionPerformed(ActionEvent evt) {
