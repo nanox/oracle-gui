@@ -63,6 +63,7 @@ public class StyleConfigurationDialog extends JDialog {
 
     private int selectedOption = OracleGuiConstants.CANCEL_OPTION;
     private StyleConfiguration configuration;
+    private FormListener formListener;
     
     static{
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -154,6 +155,7 @@ public class StyleConfigurationDialog extends JDialog {
         saveButton = new JButton();
 
         FormListener formListener = new FormListener();
+        this.formListener = formListener;
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Style Configurator");
@@ -451,10 +453,12 @@ public class StyleConfigurationDialog extends JDialog {
 
         public void mouseClicked(MouseEvent evt) {
             if (evt.getSource() == foreColorPanel) {
-                StyleConfigurationDialog.this.foreColorPanelMouseClicked(evt);
+            	if(foreColorPanel.isEnabled())
+            		StyleConfigurationDialog.this.foreColorPanelMouseClicked(evt);
             }
             else if (evt.getSource() == bgColorPanel) {
-                StyleConfigurationDialog.this.bgColorPanelMouseClicked(evt);
+            	if(bgColorPanel.isEnabled())
+            		StyleConfigurationDialog.this.bgColorPanelMouseClicked(evt);
             }
         }
 
@@ -520,12 +524,25 @@ public class StyleConfigurationDialog extends JDialog {
         
         styleNameLabel.setText(language + " : " + keyWord);
         StyleColor foreColor = wordStyle.getWordColorList().getStyleByType(OracleGuiConstants.FORE_GROUND);
-        if(foreColor != null)
+        if(foreColor != null){
         	foreColorPanel.setBackground(new Color(foreColor.getRed(), foreColor.getGreen(), foreColor.getBlue()));
+        	/*if(!foreColor.isEditable()){
+        		foreColorPanel.removeMouseListener(formListener);
+        	} else {
+        		foreColorPanel.addMouseListener(formListener);
+        	}*/
+        	foreColorPanel.setEnabled(foreColor.isEditable());
+        }
         StyleColor backColor = wordStyle.getWordColorList().getStyleByType(OracleGuiConstants.BACK_GROUND);
-        if(backColor != null)
+        if(backColor != null){
         	bgColorPanel.setBackground(new Color(backColor.getRed(), backColor.getGreen(), backColor.getBlue()));
-        
+        	/*if(!backColor.isEditable()){
+        		bgColorPanel.removeMouseListener(formListener);
+        	} else {
+        		bgColorPanel.addMouseListener(formListener);
+        	}*/
+        	bgColorPanel.setEnabled(backColor.isEditable());
+        }
         WordFont wordFont = wordStyle.getWordFont();
         if(wordFont != null){
         	FontStyle fontStyle = wordFont.getFontStyle();
@@ -547,6 +564,11 @@ public class StyleConfigurationDialog extends JDialog {
         		italicCheckBox.setSelected(fontStyle.isItalic());
         		underlinedCheckBox.setSelected(fontStyle.isUnderlined());
         	}
+        	fontNamesComboBox.setEnabled(wordFont.isEditable());
+    		fontSizeTextField.setEnabled(wordFont.isEditable());
+    		boldCheckBox.setEnabled(wordFont.isEditable());
+    		italicCheckBox.setEnabled(wordFont.isEditable());
+    		underlinedCheckBox.setEnabled(wordFont.isEditable());
         }
     }
 

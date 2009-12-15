@@ -14,6 +14,7 @@ import com.gs.oracle.common.StringUtil;
  */
 public class StyleColor implements Serializable {
 
+	private boolean editable;
 	private String type;
 	private String colorCode;
 	private Integer red;
@@ -22,6 +23,20 @@ public class StyleColor implements Serializable {
 	
 	public StyleColor() {
 		
+	}
+
+	/**
+	 * @return the editable
+	 */
+	public boolean isEditable() {
+		return editable;
+	}
+
+	/**
+	 * @param editable the editable to set
+	 */
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 
 	/**
