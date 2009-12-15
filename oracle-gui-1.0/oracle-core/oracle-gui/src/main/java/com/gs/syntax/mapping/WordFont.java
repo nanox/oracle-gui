@@ -11,12 +11,27 @@ import java.io.Serializable;
  */
 public class WordFont implements Serializable {
 
+	private boolean editable;
 	private String fontName;
 	private Integer fontSize;
 	private FontStyle fontStyle;
 	
 	public WordFont() {
 		// TODO Auto-generated constructor stub
+	}
+
+	/**
+	 * @return the editable
+	 */
+	public boolean isEditable() {
+		return editable;
+	}
+
+	/**
+	 * @param editable the editable to set
+	 */
+	public void setEditable(boolean editable) {
+		this.editable = editable;
 	}
 
 	/**

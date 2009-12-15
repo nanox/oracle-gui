@@ -66,6 +66,9 @@
 	
 	<class name="com.gs.syntax.mapping.StyleColor">
 		<map-to xml="style-color" />
+		<field name="editable" type="boolean">
+			<bind-xml name="editable" node="attribute" />
+		</field>
 		<field name="type" type="string">
 			<bind-xml name="type" node="attribute" />
 		</field>
@@ -85,6 +88,9 @@
 	
 	<class name="com.gs.syntax.mapping.WordFont">
 		<map-to xml="word-font" />
+		<field name="editable" type="boolean">
+			<bind-xml name="editable" node="attribute" />
+		</field>
 		<field name="fontName" type="string">
 			<bind-xml name="name" node="attribute" />
 		</field>
