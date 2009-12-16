@@ -68,7 +68,7 @@ public class XmlRWUtils {
 	@SuppressWarnings("unchecked")
 	public static <T> T readUsingCastor(File inputXml, File mappingFile){
 		try {
-			return readUsingCastor(inputXml, new FileInputStream(mappingFile));
+			return (T)readUsingCastor(inputXml, new FileInputStream(mappingFile));
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}

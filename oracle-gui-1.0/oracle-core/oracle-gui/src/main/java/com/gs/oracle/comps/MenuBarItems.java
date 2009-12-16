@@ -131,7 +131,7 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 	
 	private void createToolsMenu() {
 		addMenuItem(TOOLS_MENU_NAME, STYLE_CFG_MENU_ITEM, "Style Configuration", 
-				STYLE_CFG_ACT_CMD);
+				STYLE_CFG_ACT_CMD, "syntax_style_edit.png");
 	}
 
 	private void createHelpMenu() {

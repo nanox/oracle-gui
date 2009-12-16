@@ -251,7 +251,7 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 				dbIframe.getDbDetailsTabbedPane().setSelectedIndex(n - 1);
 			} else if(STYLE_CFG_ACT_CMD.equals(cmd)){
 				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
-				JDesktopPane desktopPane = f.getMainDesktopPane();
+				/*JDesktopPane desktopPane = f.getMainDesktopPane();
 				if(desktopPane == null){
 					return;
 				}
@@ -265,7 +265,7 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 				}
 				if(dbIframe == null){
 					return;
-				}
+				}*/
 				// TODO:
 				StyleConfigurationDialog configurationDialog = new StyleConfigurationDialog(f, true);
 				WindowUtil.bringCenterTo(configurationDialog, f);
