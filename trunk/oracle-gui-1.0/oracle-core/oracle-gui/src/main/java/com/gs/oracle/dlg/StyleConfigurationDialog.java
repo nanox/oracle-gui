@@ -689,10 +689,11 @@ public class StyleConfigurationDialog extends JDialog {
 		File dataFile = IOUtils.mkfile(OracleGuiConstants.SYNTAX_DATA_FILE);
 		
 		XmlRWUtils.writeUsingCastor(dataFile, mappingInputStream, configuration);
+		dispose();
     }
 
     private void cancelButtonActionPerformed(ActionEvent evt) {
-        
+        dispose();
     }
 
     public static void main(String args[]) {
