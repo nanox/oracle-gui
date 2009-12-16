@@ -58,4 +58,19 @@ public class DisplayUtils {
 			JOptionPane.showMessageDialog(parent, displayText);
 		}
 	}
+	
+	public static int confirmOkCancel(Component parent, String displayText, DisplayTypeEnum displayType){
+		int messageType = -1;
+		if(DisplayTypeEnum.INFO.equals(displayType)){
+			messageType = INFO_MESSAGE;
+		}else if(DisplayTypeEnum.WARN.equals(displayType)){
+			messageType = WARN_MESSAGE;
+		}else if(DisplayTypeEnum.ERROR.equals(displayType)){
+			messageType = ERROR_MESSAGE;
+		}
+		if(messageType != -1){
+			return JOptionPane.showConfirmDialog(parent, displayText, "Confirm...", JOptionPane.OK_CANCEL_OPTION, messageType);
+		}
+		return JOptionPane.showConfirmDialog(parent, displayText);
+	}
 }

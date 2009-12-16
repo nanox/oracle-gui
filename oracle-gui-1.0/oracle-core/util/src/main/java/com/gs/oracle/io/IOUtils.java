@@ -1,7 +1,10 @@
 package com.gs.oracle.io;
 
+import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,5 +84,27 @@ public class IOUtils {
 		}finally{
 			IOUtils.closeWriter(bw);
 		}
+	}
+	
+	public static String readAsText(File file){
+		StringBuffer buffer = new StringBuffer();
+		
+		if(file.exists()){
+			BufferedReader reader = null;
+			try {
+				String line = "";
+				reader = new BufferedReader(new FileReader(file));
+				while((line = reader.readLine()) != null){
+					buffer.append(line + "\n");
+				}
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			closeReader(reader);
+		}
+		
+		return buffer.toString();
 	}
 }
