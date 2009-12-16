@@ -143,4 +143,8 @@ public class SyntaxHighlighter extends JTextPane implements DocumentListener {
             repaint(2);
         }
     }
+
+
+    
+    
 }

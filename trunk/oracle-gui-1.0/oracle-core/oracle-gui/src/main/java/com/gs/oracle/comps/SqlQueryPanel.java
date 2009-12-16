@@ -7,10 +7,11 @@
 package com.gs.oracle.comps;
 
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.FontFormatException;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -18,8 +19,8 @@ import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.image.DataBufferUShort;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.StringReader;
@@ -30,17 +31,29 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
 import javax.swing.KeyStroke;
+import javax.swing.SwingConstants;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.HyperlinkEvent;
@@ -65,10 +78,12 @@ import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.io.IOUtils;
 import com.gs.oracle.service.QueryExecutionService;
 import com.gs.oracle.service.impl.QueryExecutionServiceImpl;
-import com.gs.oracle.sql.SqlDocument;
 import com.gs.oracle.sql.SyntaxHighlighter;
 import com.gs.oracle.sql.processor.SqlProcessor;
 import com.gs.oracle.sql.text.WrapEditorKit;
+import com.gs.oracle.util.DisplayTypeEnum;
+import com.gs.oracle.util.DisplayUtils;
+import com.gs.oracle.util.FileIOUtil;
 import com.gs.oracle.util.MenuBarUtil;
 import com.gs.oracle.util.SwingUtilities;
 
@@ -76,13 +91,13 @@ import com.gs.oracle.util.SwingUtilities;
  * 
  * @author Green Moon
  */
-public class SqlQueryPanel extends javax.swing.JPanel implements ActionListener, CaretListener, FocusListener,
+public class SqlQueryPanel extends JPanel implements ActionListener, CaretListener, FocusListener,
 UndoableEditListener, HyperlinkListener {
 
 	private JFrame parentFrame;
-	public static final java.awt.Font DEFAULT_TEXT_FONT =
-        new java.awt.Font(java.awt.Font.MONOSPACED,
-            java.awt.Font.PLAIN, 12);
+	public static final Font DEFAULT_TEXT_FONT =
+        new Font(Font.MONOSPACED,
+            Font.PLAIN, 12);
 
 	private Font bitstreamFont;
 	private JMenuItem runSelectionMenuItem;
@@ -100,7 +115,7 @@ UndoableEditListener, HyperlinkListener {
 			bitstreamFont = Font.createFont(Font.TRUETYPE_FONT, 
 					getClass().getResourceAsStream("/fonts/VeraMono.ttf"));
 			bitstreamFont = new Font(bitstreamFont.getFontName(),
-            java.awt.Font.PLAIN, 12);
+            Font.PLAIN, 12);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (FontFormatException e) {
@@ -131,50 +146,54 @@ UndoableEditListener, HyperlinkListener {
 	}
 
 	private void initComponents() {
-		java.awt.GridBagConstraints gridBagConstraints;
+		GridBagConstraints gridBagConstraints;
 
-		queryPopupMenu = new javax.swing.JPopupMenu();
-		runQueryMenuItem = new javax.swing.JMenuItem();
-		runAllMenuItem = new javax.swing.JMenuItem();
-		runSelectionMenuItem = new javax.swing.JMenuItem();
-		jSeparator4 = new javax.swing.JSeparator();
-		commitMenuItem = new javax.swing.JMenuItem();
-		rollbackMenuItem = new javax.swing.JMenuItem();
-		jSeparator5 = new javax.swing.JSeparator();
-		openMenuItem = new javax.swing.JMenuItem();
-		saveMenuItem = new javax.swing.JMenuItem();
-		saveAsMenuItem = new javax.swing.JMenuItem();
-		clearMenuItem = new javax.swing.JMenuItem();
-		jSeparator6 = new javax.swing.JSeparator();
-		wrapCheckBoxMenuItem = new javax.swing.JCheckBoxMenuItem();
-		sqlQuerySplitPane = new javax.swing.JSplitPane();
-		queryPanel = new javax.swing.JPanel();
-		queryToolBar = new javax.swing.JToolBar();
-		runQueryButton = new javax.swing.JButton();
-		runAllButton = new javax.swing.JButton();
-		jSeparator1 = new javax.swing.JToolBar.Separator();
-		commitButton = new javax.swing.JButton();
-		rollbackButton = new javax.swing.JButton();
-		jSeparator2 = new javax.swing.JToolBar.Separator();
-		openButton = new javax.swing.JButton();
-		saveButton = new javax.swing.JButton();
-		saveAsButton = new javax.swing.JButton();
-		clearButton = new javax.swing.JButton();
-		jSeparator3 = new javax.swing.JToolBar.Separator();
-		wrapToggleButton = new javax.swing.JToggleButton();
-		jScrollPane1 = new javax.swing.JScrollPane();
-		//queryTextArea = new javax.swing.JTextArea();
+		queryPopupMenu = new JPopupMenu();
+		runQueryMenuItem = new JMenuItem();
+		runAllMenuItem = new JMenuItem();
+		runSelectionMenuItem = new JMenuItem();
+		jSeparator4 = new JSeparator();
+		commitMenuItem = new JMenuItem();
+		rollbackMenuItem = new JMenuItem();
+		jSeparator5 = new JSeparator();
+		openMenuItem = new JMenuItem();
+		saveMenuItem = new JMenuItem();
+		saveAsMenuItem = new JMenuItem();
+		clearMenuItem = new JMenuItem();
+		jSeparator6 = new JSeparator();
+		wrapCheckBoxMenuItem = new JCheckBoxMenuItem();
+		sqlQuerySplitPane = new JSplitPane();
+		queryPanel = new JPanel();
+		queryToolBar = new JToolBar();
+		runQueryButton = new JButton();
+		runAllButton = new JButton();
+		jSeparator1 = new JToolBar.Separator();
+		commitButton = new JButton();
+		rollbackButton = new JButton();
+		jSeparator2 = new JToolBar.Separator();
+		openButton = new JButton();
+		saveButton = new JButton();
+		saveAsButton = new JButton();
+		clearButton = new JButton();
+		jSeparator3 = new JToolBar.Separator();
+		wrapToggleButton = new JToggleButton();
+		jScrollPane1 = new JScrollPane();
+		//queryTextArea = new JTextArea();
+		schemaNameLabel = new JLabel("SCHEMA : ");
+		schemaNamesComboBox = new JComboBox();
+		fileNameLabel = new JLabel("File : ");
+		fileNameTextField = new JTextField();
 		
-		queryResultPanel = new javax.swing.JPanel();
-		queryResultTabbedPane = new javax.swing.JTabbedPane();
-		queryResultTabPanel = new javax.swing.JPanel();
-		messagePanel = new javax.swing.JPanel();
-		queryLogToolBar = new javax.swing.JToolBar();
-		jButton1 = new javax.swing.JButton();
-		jScrollPane2 = new javax.swing.JScrollPane();
-		queryLogTextArea = new javax.swing.JTextArea();
-		runSelectedQueryButton = new javax.swing.JButton();
-		queryFontButton = new  javax.swing.JButton();
+		queryResultPanel = new JPanel();
+		queryResultTabbedPane = new JTabbedPane();
+		queryResultTabPanel = new JPanel();
+		messagePanel = new JPanel();
+		queryLogToolBar = new JToolBar();
+		clearLogButton = new JButton();
+		jScrollPane2 = new JScrollPane();
+		queryLogTextArea = new JTextArea();
+		runSelectedQueryButton = new JButton();
+		queryFontButton = new  JButton();
 		
 		Icon image = null;
 
@@ -247,7 +266,8 @@ UndoableEditListener, HyperlinkListener {
 		queryPopupMenu.add(clearMenuItem);
 		queryPopupMenu.add(jSeparator6);
 
-		wrapCheckBoxMenuItem.setSelected(true);
+		wrapCheckBoxMenuItem.setEnabled(false);
+		wrapCheckBoxMenuItem.setSelected(false);
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH + "button-word-wrap.gif"));
 		wrapCheckBoxMenuItem.setIcon(image);
@@ -255,12 +275,12 @@ UndoableEditListener, HyperlinkListener {
 		wrapCheckBoxMenuItem.setText("Wrap");
 		queryPopupMenu.add(wrapCheckBoxMenuItem);
 
-		setLayout(new java.awt.BorderLayout());
+		setLayout(new BorderLayout());
 
 		sqlQuerySplitPane.setDividerLocation(250);
-		sqlQuerySplitPane.setOrientation(javax.swing.JSplitPane.VERTICAL_SPLIT);
+		sqlQuerySplitPane.setOrientation(JSplitPane.VERTICAL_SPLIT);
 
-		queryPanel.setLayout(new java.awt.GridBagLayout());
+		queryPanel.setLayout(new GridBagLayout());
 
 		queryToolBar.setFloatable(false);
 		queryToolBar.setRollover(true);
@@ -272,9 +292,9 @@ UndoableEditListener, HyperlinkListener {
 		runQueryButton.setIcon(image);
 		runQueryButton.addActionListener(this);
 		runQueryButton
-				.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+				.setHorizontalTextPosition(SwingConstants.CENTER);
 		runQueryButton
-				.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+				.setVerticalTextPosition(SwingConstants.BOTTOM);
 		runQueryButton.setToolTipText("Run the last query. [F9]");
 		queryToolBar.add(runQueryButton);
 
@@ -285,9 +305,9 @@ UndoableEditListener, HyperlinkListener {
 		runSelectedQueryButton.setIcon(image);
 		runSelectedQueryButton.addActionListener(this);
 		runSelectedQueryButton
-				.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+				.setHorizontalTextPosition(SwingConstants.CENTER);
 		runSelectedQueryButton
-				.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+				.setVerticalTextPosition(SwingConstants.BOTTOM);
 		runSelectedQueryButton.setToolTipText("Run selected query. [F10]");
 		queryToolBar.add(runSelectedQueryButton);
 		runAllButton.setFocusable(false);
@@ -297,8 +317,8 @@ UndoableEditListener, HyperlinkListener {
 		runAllButton.setIcon(image);
 		runAllButton.addActionListener(this);
 		runAllButton
-				.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-		runAllButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+				.setHorizontalTextPosition(SwingConstants.CENTER);
+		runAllButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 		runAllButton.setToolTipText("Run all the queries. [F5]");
 		queryToolBar.add(runAllButton);
 		queryToolBar.add(jSeparator1);
@@ -310,8 +330,8 @@ UndoableEditListener, HyperlinkListener {
 				.getResource(OracleGuiConstants.IMAGE_PATH + "commit.gif"));
 		commitButton.setIcon(image);
 		commitButton.addActionListener(this);
-		commitButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-		commitButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+		commitButton.setHorizontalTextPosition(SwingConstants.CENTER);
+		commitButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 		queryToolBar.add(commitButton);
 
 		rollbackButton.setFocusable(false);
@@ -322,9 +342,9 @@ UndoableEditListener, HyperlinkListener {
 		rollbackButton.setIcon(image);
 		rollbackButton.addActionListener(this);
 		rollbackButton
-				.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+				.setHorizontalTextPosition(SwingConstants.CENTER);
 		rollbackButton
-				.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+				.setVerticalTextPosition(SwingConstants.BOTTOM);
 		queryToolBar.add(rollbackButton);
 		queryToolBar.add(jSeparator2);
 
@@ -334,8 +354,8 @@ UndoableEditListener, HyperlinkListener {
 				.getResource(OracleGuiConstants.IMAGE_PATH + "open.gif"));
 		openButton.setIcon(image);
 		openButton.addActionListener(this);
-		openButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-		openButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+		openButton.setHorizontalTextPosition(SwingConstants.CENTER);
+		openButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 		queryToolBar.add(openButton);
 
 		saveButton.setFocusable(false);
@@ -344,8 +364,8 @@ UndoableEditListener, HyperlinkListener {
 		saveButton.setIcon(image);
 		saveButton.setToolTipText("Save");
 		saveButton.addActionListener(this);
-		saveButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-		saveButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+		saveButton.setHorizontalTextPosition(SwingConstants.CENTER);
+		saveButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 		queryToolBar.add(saveButton);
 
 		saveAsButton.setFocusable(false);
@@ -355,8 +375,8 @@ UndoableEditListener, HyperlinkListener {
 		saveAsButton.setIcon(image);
 		saveAsButton.addActionListener(this);
 		saveAsButton
-				.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-		saveAsButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+				.setHorizontalTextPosition(SwingConstants.CENTER);
+		saveAsButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 		queryToolBar.add(saveAsButton);
 
 		clearButton.setToolTipText("Clear");
@@ -366,33 +386,76 @@ UndoableEditListener, HyperlinkListener {
 		clearButton.setIcon(image);
 		clearButton.addActionListener(this);
 		clearButton
-				.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-		clearButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+				.setHorizontalTextPosition(SwingConstants.CENTER);
+		clearButton.setVerticalTextPosition(SwingConstants.BOTTOM);
 		queryToolBar.add(clearButton);
 		queryToolBar.add(jSeparator3);
 
-		queryFontButton.setToolTipText("Choose Font");
-		queryFontButton.setFocusable(false);
-		image = new ImageIcon(MenuBarUtil.class
-				.getResource(OracleGuiConstants.IMAGE_PATH + "font.gif"));
-		queryFontButton.setIcon(image);
-		queryFontButton.addActionListener(this);
-		queryToolBar.add(queryFontButton);
-		
-		wrapToggleButton.setSelected(true);
-		image = new ImageIcon(MenuBarUtil.class
+		wrapToggleButton.setEnabled(false);
+		wrapToggleButton.setSelected(false);
+		image = new ImageIcon(getClass()
 				.getResource(OracleGuiConstants.IMAGE_PATH + "button-word-wrap.gif"));
 		wrapToggleButton.setIcon(image);
 		wrapToggleButton.addActionListener(this);
 		wrapToggleButton.setFocusable(false);
 		wrapToggleButton
-				.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+				.setHorizontalTextPosition(SwingConstants.CENTER);
 		wrapToggleButton
-				.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+				.setVerticalTextPosition(SwingConstants.BOTTOM);
 		queryToolBar.add(wrapToggleButton);
+		queryToolBar.add(new JToolBar.Separator());
+		
+		
+		queryToolBar.add(schemaNameLabel);
+		queryToolBar.add(schemaNamesComboBox);
+		queryToolBar.add(new JToolBar.Separator());
+		queryToolBar.add(fileNameLabel);
+		queryToolBar.add(fileNameTextField); 
+		fileNameTextField.addKeyListener(new KeyListener() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				/*if (KeyEvent.VK_ENTER == e.getKeyCode()) {
+					String fileName = fileNameTextField.getText();
+					if(StringUtil.hasValidContent(fileName)){
+						openQueryFile(fileName);
+						//openFileButton.setEnabled(true);
+					} else {
+						//openFileButton.setEnabled(false);
+					}
+				}*/
+			}
+			@Override
+			public void keyReleased(KeyEvent e) {
+				
+				String fileName = fileNameTextField.getText();
+				if(StringUtil.hasValidContent(fileName)){
+					openFileButton.setEnabled(true);
+					if (KeyEvent.VK_ENTER == e.getKeyCode()) {
+						openQueryFile(fileName);
+					}
+				} else {
+					openFileButton.setEnabled(false);
+				}
+				
+			}
+			@Override
+			public void keyTyped(KeyEvent e) {
+				
+			}
 
-		gridBagConstraints = new java.awt.GridBagConstraints();
-		gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+		});
+
+		openFileButton = new JButton();
+		image = new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH + "open_file.png"));
+		openFileButton.setIcon(image);
+		openFileButton.setEnabled(false);
+		openFileButton.setFocusable(false);
+		openFileButton.addActionListener(this);
+		queryToolBar.add(openFileButton);
+		
+		gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.weightx = 1.0;
 		queryPanel.add(queryToolBar, gridBagConstraints);
 
@@ -468,19 +531,19 @@ UndoableEditListener, HyperlinkListener {
 		atc.setItems(OracleGuiConstants.SQL_KEYWORD_LIST);*/
 		jScrollPane1.setViewportView(commandEditor);
 
-		gridBagConstraints = new java.awt.GridBagConstraints();
+		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 0;
 		gridBagConstraints.gridy = 1;
-		gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+		gridBagConstraints.fill = GridBagConstraints.BOTH;
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
 		queryPanel.add(jScrollPane1, gridBagConstraints);
 
 		sqlQuerySplitPane.setTopComponent(queryPanel);
 
-		queryResultPanel.setLayout(new java.awt.GridBagLayout());
+		queryResultPanel.setLayout(new GridBagLayout());
 
-		queryResultTabPanel.setLayout(new java.awt.BorderLayout());
+		queryResultTabPanel.setLayout(new BorderLayout());
 		queryResultTable = new JTable();
 		queryResultTable.setAutoCreateRowSorter(true);
 		queryResultTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -489,45 +552,49 @@ UndoableEditListener, HyperlinkListener {
 				BorderLayout.CENTER);
 		queryResultTabbedPane.addTab("Result", queryResultTabPanel);
 
-		messagePanel.setLayout(new java.awt.GridBagLayout());
+		messagePanel.setLayout(new GridBagLayout());
 
 		queryLogToolBar.setRollover(true);
 		queryLogToolBar.setFloatable(false);
-		jButton1.setText("jButton1");
-		jButton1.setFocusable(false);
-		jButton1.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-		jButton1.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-		queryLogToolBar.add(jButton1);
+		clearLogButton.setToolTipText("Clear Log");
+		image = new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH + "clear_co.gif"));
+		clearLogButton.setIcon(image);
+		clearLogButton.setFocusable(false);
+		clearLogButton.setHorizontalTextPosition(SwingConstants.CENTER);
+		clearLogButton.setVerticalTextPosition(SwingConstants.BOTTOM);
+		queryLogToolBar.add(clearLogButton);
 
-		gridBagConstraints = new java.awt.GridBagConstraints();
-		gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
+		gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.weightx = 1.0;
 		messagePanel.add(queryLogToolBar, gridBagConstraints);
 
 		queryLogTextArea.setColumns(20);
 		queryLogTextArea.setRows(5);
+		queryLogTextArea.setEditable(false);
 		queryLogTextArea.setFont((null != bitstreamFont) ? bitstreamFont : DEFAULT_TEXT_FONT);
 		jScrollPane2.setViewportView(queryLogTextArea);
 
-		gridBagConstraints = new java.awt.GridBagConstraints();
+		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 0;
 		gridBagConstraints.gridy = 1;
-		gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+		gridBagConstraints.fill = GridBagConstraints.BOTH;
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
 		messagePanel.add(jScrollPane2, gridBagConstraints);
 
 		queryResultTabbedPane.addTab("Message", messagePanel);
 
-		gridBagConstraints = new java.awt.GridBagConstraints();
-		gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
+		gridBagConstraints = new GridBagConstraints();
+		gridBagConstraints.fill = GridBagConstraints.BOTH;
 		gridBagConstraints.weightx = 1.0;
 		gridBagConstraints.weighty = 1.0;
 		queryResultPanel.add(queryResultTabbedPane, gridBagConstraints);
 
 		sqlQuerySplitPane.setRightComponent(queryResultPanel);
 
-		add(sqlQuerySplitPane, java.awt.BorderLayout.CENTER);
+		add(sqlQuerySplitPane, BorderLayout.CENTER);
 	}
 	
 	protected void initKeyMap() {
@@ -561,46 +628,51 @@ UndoableEditListener, HyperlinkListener {
         }
     }
 
-	private javax.swing.JButton clearButton;
-	private javax.swing.JButton commitButton;
-	private javax.swing.JButton jButton1;
-	private javax.swing.JCheckBoxMenuItem wrapCheckBoxMenuItem;
-	private javax.swing.JMenuItem runQueryMenuItem;
-	private javax.swing.JMenuItem runAllMenuItem;
-	private javax.swing.JMenuItem commitMenuItem;
-	private javax.swing.JMenuItem rollbackMenuItem;
-	private javax.swing.JMenuItem openMenuItem;
-	private javax.swing.JMenuItem saveMenuItem;
-	private javax.swing.JMenuItem saveAsMenuItem;
-	private javax.swing.JMenuItem clearMenuItem;
-	private javax.swing.JPanel messagePanel;
-	private javax.swing.JScrollPane jScrollPane1;
-	private javax.swing.JScrollPane jScrollPane2;
-	private javax.swing.JToolBar.Separator jSeparator1;
-	private javax.swing.JToolBar.Separator jSeparator2;
-	private javax.swing.JToolBar.Separator jSeparator3;
-	private javax.swing.JSeparator jSeparator4;
-	private javax.swing.JSeparator jSeparator5;
-	private javax.swing.JSeparator jSeparator6;
-	private javax.swing.JButton openButton;
-	private javax.swing.JTextArea queryLogTextArea;
-	private javax.swing.JToolBar queryLogToolBar;
-	private javax.swing.JPanel queryPanel;
-	private javax.swing.JPopupMenu queryPopupMenu;
-	private javax.swing.JPanel queryResultPanel;
-	private javax.swing.JPanel queryResultTabPanel;
-	private javax.swing.JTabbedPane queryResultTabbedPane;
-	//private javax.swing.JTextArea queryTextArea;
+	private JButton clearButton;
+	private JButton commitButton;
+	private JButton clearLogButton;
+	private JCheckBoxMenuItem wrapCheckBoxMenuItem;
+	private JMenuItem runQueryMenuItem;
+	private JMenuItem runAllMenuItem;
+	private JMenuItem commitMenuItem;
+	private JMenuItem rollbackMenuItem;
+	private JMenuItem openMenuItem;
+	private JMenuItem saveMenuItem;
+	private JMenuItem saveAsMenuItem;
+	private JMenuItem clearMenuItem;
+	private JPanel messagePanel;
+	private JScrollPane jScrollPane1;
+	private JScrollPane jScrollPane2;
+	private JToolBar.Separator jSeparator1;
+	private JToolBar.Separator jSeparator2;
+	private JToolBar.Separator jSeparator3;
+	private JSeparator jSeparator4;
+	private JSeparator jSeparator5;
+	private JSeparator jSeparator6;
+	private JButton openButton;
+	private JTextArea queryLogTextArea;
+	private JToolBar queryLogToolBar;
+	private JPanel queryPanel;
+	private JPopupMenu queryPopupMenu;
+	private JPanel queryResultPanel;
+	private JPanel queryResultTabPanel;
+	private JTabbedPane queryResultTabbedPane;
+	//private JTextArea queryTextArea;
 	private SyntaxHighlighter commandEditor;
-	private javax.swing.JToolBar queryToolBar;
-	private javax.swing.JButton rollbackButton;
-	private javax.swing.JButton runAllButton;
-	private javax.swing.JButton runQueryButton;
-	private javax.swing.JButton runSelectedQueryButton;
-	private javax.swing.JButton saveAsButton;
-	private javax.swing.JButton saveButton;
-	private javax.swing.JSplitPane sqlQuerySplitPane;
-	private javax.swing.JToggleButton wrapToggleButton;
+	private JToolBar queryToolBar;
+	private JButton rollbackButton;
+	private JButton runAllButton;
+	private JButton runQueryButton;
+	private JButton runSelectedQueryButton;
+	private JButton saveAsButton;
+	private JButton saveButton;
+	private JLabel schemaNameLabel;
+	private JComboBox schemaNamesComboBox;
+	private JLabel fileNameLabel;
+	private JTextField fileNameTextField;
+	private JSplitPane sqlQuerySplitPane;
+	private JToggleButton wrapToggleButton;
+	private JButton openFileButton;
 	private JTable queryResultTable;
 	private ResultSetTableModelFactory factory;
 	
@@ -638,17 +710,57 @@ UndoableEditListener, HyperlinkListener {
 			
 		}
 		if (e.getSource().equals(saveAsButton) || e.getSource().equals(saveAsMenuItem)){
-					
+			saveQueryToFile(true);
 		}
 		if (e.getSource().equals(saveButton) || e.getSource().equals(saveMenuItem)){
-			
+			saveQueryToFile(false);
 		}
-		/*if (e.getSource().equals(queryFontButton)){
-			
+		if (e.getSource().equals(openFileButton)){
+			String fileName = fileNameTextField.getText();
+			if(StringUtil.hasValidContent(fileName)){
+				openQueryFile(fileName);
+			}
 		}
-		if (e.getSource().equals(queryFontButton)){
-			
-		}*/
+		if (e.getSource().equals(openButton) || e.getSource().equals(openMenuItem)){
+			browseAndOpenFile();
+		}
+	}
+
+	
+
+	private void saveQueryToFile(boolean saveAs) {
+		File target = null;
+		if(!saveAs){ // save is clicked..
+			String fileName = fileNameTextField.getText();
+			if(!StringUtil.hasValidContent(fileName)){
+				target = FileIOUtil.browseToSaveFile(parentComponent, ".", 
+						new ExtensionFileFilter(new String[]{"sql"}, "SQL Query files (.sql)"), Boolean.FALSE);
+			} else {
+				target = new File(fileName);
+			}
+		} else {
+			target = FileIOUtil.browseToSaveFile(parentComponent, ".", 
+					new ExtensionFileFilter(new String[]{"sql"}, "SQL Query files (.sql)"), Boolean.FALSE);
+		}
+		if(target != null){
+			String path = target.getAbsolutePath();
+			if(!path.endsWith(".sql")){
+				path = path + ".sql";
+			}
+			target = new File(path);
+			if(!target.exists()){
+				IOUtils.mkfile(path);
+			} else {
+				int opt = DisplayUtils.confirmOkCancel(parentFrame, "File already exists.\nDo you want to overwrite?", 
+						DisplayTypeEnum.WARN);
+				if(JOptionPane.CANCEL_OPTION == opt){
+					return;
+				}
+			}
+			IOUtils.writeAsText(target, commandEditor.getText());
+			fileNameTextField.setText(path);
+			openFileButton.setEnabled(true);
+		}
 	}
 
 	public void displayQueryResults(final String q) {
@@ -683,8 +795,22 @@ UndoableEditListener, HyperlinkListener {
 			}
 		}
 	}
-
-	/*public javax.swing.JTextArea getQueryTextArea() {
+	
+	private void openQueryFile(String fileName) {
+		File queryFile = new File(fileName);
+		commandEditor.setText(IOUtils.readAsText(queryFile));
+	}
+	
+	private void browseAndOpenFile() {
+		File queryFile = FileIOUtil.openSingleFile(parentFrame, 
+				new ExtensionFileFilter(new String[]{"sql"}, "SQL Query files (.sql)"), Boolean.FALSE);
+		if(queryFile != null){
+			fileNameTextField.setText(queryFile.getAbsolutePath());
+			openFileButton.setEnabled(true);
+			commandEditor.setText(IOUtils.readAsText(queryFile));
+		}
+	}
+	/*public JTextArea getQueryTextArea() {
 		return queryTextArea;
 	}*/
 
