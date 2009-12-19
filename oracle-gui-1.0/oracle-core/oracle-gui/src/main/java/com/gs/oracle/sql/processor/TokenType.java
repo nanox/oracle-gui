@@ -125,7 +125,15 @@ public enum TokenType {
     /**
      * 
      */
-    TABLE_NAME;
+    SCHEMA_NAME,
+    TABLE_NAME,
+    COLUMN_NAME,
+    /**
+     */
+    SYSTEM_FUNCTION,
+    SYSTEM_PROCEDURE,
+    USER_FUNCTION,
+    USER_PROCEDURE;
 
     public static TokenType forByte(byte index) {
 

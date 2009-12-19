@@ -163,8 +163,16 @@ public class SyntaxStylizer implements PreferenceChangeListener {
     	changeStyle(TokenType.STRING, wordStyle);
 
     	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
+        		SqlStyleEnum.SCHEMA_NAME.getCode(), configuration);
+    	changeStyle(TokenType.SCHEMA_NAME, wordStyle);
+    	
+    	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
         		SqlStyleEnum.TABLE_NAME.getCode(), configuration);
     	changeStyle(TokenType.TABLE_NAME, wordStyle);
+    	
+    	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
+        		SqlStyleEnum.COLUMN_NAME.getCode(), configuration);
+    	changeStyle(TokenType.COLUMN_NAME, wordStyle);
     	
     	wordStyle = StyleConfigurationHelper.getWordStyleByType("SQL", 
         		SqlStyleEnum.OPERATOR.getCode(), configuration);

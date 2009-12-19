@@ -25,6 +25,9 @@ package com.gs.oracle.sql.processor;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Set;
+
+import com.gs.oracle.model.util.DatabaseReservedWordsUtil;
 
 /**
  * @author Mark A. Kobold &lt;mkobold at isqlviewer dot com&gt;
@@ -34,7 +37,7 @@ public class SqlProcessor extends AbstractProcessor {
 
     private static final byte[] kind = new byte[128];
     private static final byte[] unikind = new byte[31];
-
+    private static final DatabaseReservedWordsUtil RESERVED_WORDS_UTIL = DatabaseReservedWordsUtil.getInstance();
     private int charlength = 1;
     private int pair = 0;
 
@@ -43,15 +46,38 @@ public class SqlProcessor extends AbstractProcessor {
         initKind();
         initUniKind();
     }
+    
+    public void installServiceKeywords(){
+    	initSymbolTable();
+    	Set<String> schemaNames = RESERVED_WORDS_UTIL.getSchemaNames();
+    	if(schemaNames != null){
+    		for (String s : schemaNames) {
+    			lookup(TokenType.SCHEMA_NAME, s);
+    			Set<String> tableNames = RESERVED_WORDS_UTIL.getTableNames(s);
+    	    	if(tableNames != null){
+    	    		for (String t : tableNames) {
+    					lookup(TokenType.TABLE_NAME, t);
+    					Set<String> colNames = RESERVED_WORDS_UTIL.getColumnNames(t);
+    					if(colNames != null){
+    						for (String c : colNames) {
+    							lookup(TokenType.COLUMN_NAME, c);
+    						}
+    					}
+    				}
+    	    	}
+			}
+    	}
+    }
 
-    public void installServiceKeywords(DatabaseMetaData metaData, String catalog, String schema) throws SQLException {
+    public void installServiceKeywords(DatabaseMetaData metaData) throws SQLException {
 
-        initSymbolTable();
+        //initSymbolTable();
         String wordSet = metaData.getSystemFunctions();
         StringTokenizer st = new StringTokenizer(wordSet, ",");
         while (st.hasMoreTokens()) {
             String nextToken = st.nextToken();
             lookup(TokenType.FUNCTION, nextToken);
+            RESERVED_WORDS_UTIL.addFunctionName(nextToken, true);
         }
 
         wordSet = metaData.getNumericFunctions();
@@ -59,6 +85,7 @@ public class SqlProcessor extends AbstractProcessor {
         while (st.hasMoreTokens()) {
             String nextToken = st.nextToken();
             lookup(TokenType.FUNCTION, nextToken);
+            RESERVED_WORDS_UTIL.addFunctionName(nextToken, true);
         }
 
         wordSet = metaData.getStringFunctions();
@@ -66,6 +93,7 @@ public class SqlProcessor extends AbstractProcessor {
         while (st.hasMoreTokens()) {
             String nextToken = st.nextToken();
             lookup(TokenType.FUNCTION, nextToken);
+            RESERVED_WORDS_UTIL.addFunctionName(nextToken, true);
         }
 
         wordSet = metaData.getTimeDateFunctions();
@@ -73,13 +101,9 @@ public class SqlProcessor extends AbstractProcessor {
         while (st.hasMoreTokens()) {
             String nextToken = st.nextToken();
             lookup(TokenType.FUNCTION, nextToken);
+            RESERVED_WORDS_UTIL.addFunctionName(nextToken, true);
         }
 
-        ResultSet set = metaData.getTables(catalog, schema, null, null);
-        while (set.next()) {
-            String tableName = set.getString("TABLE_NAME");
-            lookup(TokenType.TABLE_NAME, tableName);
-        }
     }
 
     @Override
