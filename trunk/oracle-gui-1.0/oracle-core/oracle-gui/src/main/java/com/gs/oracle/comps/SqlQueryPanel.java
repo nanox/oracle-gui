@@ -31,6 +31,8 @@ import java.util.List;
 
 import javax.swing.AbstractAction;
 import javax.swing.Action;
+import javax.swing.DefaultComboBoxModel;
+import javax.swing.DefaultListModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -76,6 +78,7 @@ import com.gs.oracle.command.GuiEventHandler;
 import com.gs.oracle.common.StringUtil;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.io.IOUtils;
+import com.gs.oracle.model.util.DatabaseReservedWordsUtil;
 import com.gs.oracle.service.QueryExecutionService;
 import com.gs.oracle.service.impl.QueryExecutionServiceImpl;
 import com.gs.oracle.sql.SyntaxHighlighter;
@@ -99,6 +102,8 @@ UndoableEditListener, HyperlinkListener {
         new Font(Font.MONOSPACED,
             Font.PLAIN, 12);
 
+	private static final DatabaseReservedWordsUtil RESERVED_WORDS_UTIL = DatabaseReservedWordsUtil.getInstance();
+	
 	private Font bitstreamFont;
 	private JMenuItem runSelectionMenuItem;
 	private JButton queryFontButton;
@@ -128,7 +133,8 @@ UndoableEditListener, HyperlinkListener {
 		try {
 			con = getConnectionProperties().getDataSource().getConnection();
 			sqlProcessor = new SqlProcessor();
-			sqlProcessor.installServiceKeywords(con.getMetaData(), "%", connectionProperties.getDatabaseName());
+			sqlProcessor.installServiceKeywords();//con.getMetaData(), "%", connectionProperties.getDatabaseName());
+			sqlProcessor.installServiceKeywords(con.getMetaData());
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
@@ -407,6 +413,12 @@ UndoableEditListener, HyperlinkListener {
 		
 		
 		queryToolBar.add(schemaNameLabel);
+		schemaNamesComboBox.setModel(new DefaultComboBoxModel(RESERVED_WORDS_UTIL.getSchemaNames().toArray()));
+		if(RESERVED_WORDS_UTIL.getSchemaNames().size() <= 1){
+			schemaNamesComboBox.setEnabled(false);
+		} else {
+			schemaNamesComboBox.setEnabled(true);
+		}
 		queryToolBar.add(schemaNamesComboBox);
 		queryToolBar.add(new JToolBar.Separator());
 		queryToolBar.add(fileNameLabel);

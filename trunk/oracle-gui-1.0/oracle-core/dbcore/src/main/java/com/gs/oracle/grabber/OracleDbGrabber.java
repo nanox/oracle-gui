@@ -22,6 +22,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.omg.CORBA.DATA_CONVERSION;
+
 import oracle.jdbc.driver.OracleTypes;
 
 import com.gs.oracle.ColumnMetaDataEnum;
@@ -33,12 +35,14 @@ import com.gs.oracle.model.ForeignKey;
 import com.gs.oracle.model.PrimaryKey;
 import com.gs.oracle.model.Schema;
 import com.gs.oracle.model.Table;
+import com.gs.oracle.model.util.DatabaseReservedWordsUtil;
 
 /**
  * @author Green Moon
  *
  */
 public class OracleDbGrabber {
+	private static final DatabaseReservedWordsUtil RESERVED_WORDS_UTIL = DatabaseReservedWordsUtil.getInstance();
 	
 	public OracleDbGrabber() {
 		// TODO Auto-generated constructor stub
@@ -68,6 +72,7 @@ public class OracleDbGrabber {
 					if(!databaseName.equalsIgnoreCase(cat)){
 						continue;
 					}
+				RESERVED_WORDS_UTIL.addSchemaName(cat);
 				Schema s = new Schema();
 				s.setModelName(cat);
 				ResultSet ret = databaseMetaData.getTables("", s.getModelName(), "%", new String[] {"TABLE"});
@@ -82,12 +87,14 @@ public class OracleDbGrabber {
 				if(ret != null){
 					ret.close();
 				}
+				
 				schemaList.add(s);
 				
 			}
 			if(rs != null){
 				rs.close();
 			}
+			
 		}
 		databaseMetaData = null;
 		db.setSchemaList(schemaList);
@@ -143,6 +150,8 @@ public class OracleDbGrabber {
 				table.setExportedKeys(grabExportedKeys(connection, schemaName, tableName));
 				if(tn.startsWith("BIN$"))
 					table.setDeleted(true);
+				else
+					RESERVED_WORDS_UTIL.addTableName(schemaName, tn);
 				try{
 					table.setColumnlist(getColumnList(table, connection));
 				}catch(Exception e){
@@ -179,6 +188,7 @@ public class OracleDbGrabber {
 			c.setTableName(table.getModelName());
 			// set column name
 			c.setModelName(colRs.getString(ColumnMetaDataEnum.COLUMN_NAME.getCode()));
+			RESERVED_WORDS_UTIL.addColumnName(table.getModelName(), c.getModelName());
 			// set PK
 			if(pkColSet.contains(c.getModelName())){
 				c.setPrimaryKey(true);
