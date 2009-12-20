@@ -128,7 +128,15 @@ UndoableEditListener, HyperlinkListener {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+		setConnectionProperties(getConnectionProperties());
+		ResultSetTableModelFactory factory = null;
+		try {
+			factory = new ResultSetTableModelFactory(
+					getConnectionProperties().getDataSource().getConnection());
+		} catch (SQLException e) {
+			DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
+		}
+		setFactory(factory);
 		Connection con = null;
 		try {
 			con = getConnectionProperties().getDataSource().getConnection();
