@@ -156,15 +156,7 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		dbDetailsTabbedPane.setTabLayoutPolicy(JTabbedPane.SCROLL_TAB_LAYOUT);
 		SqlQueryPanel panel = new SqlQueryPanel((JComponent) getParent(), getConnectionProperties());
 		panel.setParentFrame(parentFrame);
-		panel.setConnectionProperties(getConnectionProperties());
-		ResultSetTableModelFactory factory = null;
-		try {
-			factory = new ResultSetTableModelFactory(
-					getConnectionProperties().getDataSource().getConnection());
-		} catch (SQLException e) {
-			DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
-		}
-		panel.setFactory(factory);
+		
 		dbDetailsTabbedPane.addTab("SQL", panel);
 		int n = dbDetailsTabbedPane.getTabCount();
 		dbDetailsTabbedPane.setTabComponentAt(n - 1,
