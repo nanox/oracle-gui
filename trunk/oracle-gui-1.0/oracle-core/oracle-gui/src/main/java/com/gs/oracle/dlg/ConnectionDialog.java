@@ -529,6 +529,8 @@ public class ConnectionDialog extends JDialog {
 		ConnectionProperties p = catalog.getByName(name);
 		populatePropsToConnProps(p);
 		ConnectionPropertiesRWUtil.getInstance().saveCatalog(catalog);
+//		catalog.setSaved();
+//		XmlRWUtils.wr
 		saveConnectionButton.setEnabled(false);
 	}
 	
