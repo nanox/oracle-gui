@@ -8,33 +8,44 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.Connection;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
+import java.text.SimpleDateFormat;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 
+import oracle.sql.ROWID;
+
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.dlg.QuickEditDialog;
 import com.gs.oracle.grabber.OracleDbGrabber;
+import com.gs.oracle.model.Table;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
 import com.gs.oracle.util.MenuBarUtil;
+import com.gs.oracle.vo.QuickEditVO;
 
 /**
  * @author Green Moon
  *
  */
-public class TableContentPanel extends JPanel implements ActionListener{
+public class TableContentPanel extends JPanel implements ActionListener, MouseListener{
 	private String schemaName; 
 	private String tableName;
 	private ConnectionProperties connectionProperties;
-	
+	private Table databaseTable;
 	private JButton refreshButton, addRecordButton, editRecordButton, deleteRecordButton,
 		filterDataButton;
 	private JTable sampleContentTable;
@@ -42,13 +53,14 @@ public class TableContentPanel extends JPanel implements ActionListener{
 	private ResultSetTableModelFactory resultSetTableModelFactory;
 	private String queryString;
 	private String currentFilter = "";
+	private JFrame parentFrame;
 	
 	public TableContentPanel(String schemaName, String tableName,
-			ConnectionProperties connectionProperties) {
+			ConnectionProperties connectionProperties, Table table) {
 		this.schemaName = schemaName; 
 		this.tableName = tableName;
 		this.connectionProperties = connectionProperties;
-		
+		this.databaseTable = table;
 		try {
 			this.resultSetTableModelFactory = new ResultSetTableModelFactory(
 					connectionProperties.getDataSource().getConnection());
@@ -167,7 +179,7 @@ public class TableContentPanel extends JPanel implements ActionListener{
 		sampleContentTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		sampleContentTable.setCellSelectionEnabled(true);
 		sampleContentTable.setAutoscrolls(true);
-		
+		sampleContentTable.addMouseListener(this);
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.fill = GridBagConstraints.BOTH;
 		gridBagConstraints.weightx = 1.0;
@@ -204,6 +216,22 @@ public class TableContentPanel extends JPanel implements ActionListener{
 		this.connectionProperties = connectionProperties;
 	}
 
+	public Table getDatabaseTable() {
+		return databaseTable;
+	}
+
+	public void setDatabaseTable(Table databaseTable) {
+		this.databaseTable = databaseTable;
+	}
+
+	public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent evt) {
 		if(evt.getSource().equals(refreshButton)){
@@ -224,6 +252,129 @@ public class TableContentPanel extends JPanel implements ActionListener{
 			currentFilter = filterDialog.getFilterQuery();
 			showContent(filterDialog.getOutputQuery());
 		}
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent e) {
+		if(e.getClickCount() == 2){
+			if(e.getSource().equals(sampleContentTable)){
+				if(getDatabaseTable() == null)
+					return;
+				
+				QuickEditVO vo = new QuickEditVO();
+				vo.setTableName(getDatabaseTable().getModelName());
+				vo.setSchemaName(getDatabaseTable().getSchemaName());
+				
+				int columnIndex = sampleContentTable.getSelectedColumn();
+				int rowIndex = sampleContentTable.getSelectedRow();
+				int columnCount = sampleContentTable.getColumnCount();
+				String q = "SELECT ROWID, ORA_ROWSCN FROM " + vo.getSchemaName() + "." + vo.getTableName() + " WHERE ";
+				StringBuffer qbuf = new StringBuffer("SELECT ROWID, ORA_ROWSCN FROM ");
+				qbuf.append(vo.getSchemaName())
+					.append(".")
+					.append(vo.getTableName())
+					.append(" WHERE ");
+					
+				for (int i = 0; i < columnCount; i++) {
+					Object value = sampleContentTable.getModel().getValueAt(rowIndex, i);
+					
+					if(value == null)
+						continue;
+					
+					Class clazz = sampleContentTable.getColumnClass(i);
+					if(clazz.getCanonicalName().equalsIgnoreCase("java.util.Date") 
+							|| clazz.getCanonicalName().equalsIgnoreCase("java.sql.Date")
+							|| clazz.getCanonicalName().equalsIgnoreCase("java.sql.Timestamp")
+							|| clazz.getCanonicalName().equalsIgnoreCase("java.sql.Time")){
+						SimpleDateFormat dateFormat = new SimpleDateFormat(OracleGuiConstants.INSERT_DATE_FORMAT);
+						if(value instanceof java.util.Date){
+							java.util.Date utilDate = (java.util.Date) value;
+							value = OracleGuiConstants.SQL_DATE_FUNCTION + "('" +
+								dateFormat.format(utilDate) + "', " + OracleGuiConstants.SQL_DATE_FORMAT + ")";
+						}
+						q += sampleContentTable.getModel().getColumnName(i) + " = "
+							+ (
+							(value != null) ? value.toString() : "") + " ";
+						if(i != columnCount-1){
+							q += "AND ";
+						}
+						continue;
+					}
+						
+					q += sampleContentTable.getModel().getColumnName(i) + " = '"
+						+ (
+						(value != null) ? value.toString() : "") + "' ";
+					if(i != columnCount-1){
+						q += "AND ";
+					}
+				}
+				Connection con = null;
+				try{
+					con = getConnectionProperties().getDataSource().getConnection();
+					Statement stmt = con.prepareStatement(q);
+					ResultSet rs = stmt.executeQuery(q);
+					if(rs == null)
+						return;
+					while(rs.next()){
+						ROWID rid = (ROWID) rs.getObject("ROWID");
+						if(rid != null){
+							vo.setRowid(rid.stringValue());
+						}
+						String x = rs.getString("ORA_ROWSCN");
+						if(x != null){
+							vo.setOraRowscn(x);
+						}
+					}
+				}catch(Exception ex){
+					return;
+				}finally{
+					if(con != null){
+						try {
+							con.close();
+						} catch (SQLException e1) {
+							e1.printStackTrace();
+						}
+					}
+				}
+				vo.setCurrentColumnName(sampleContentTable.getModel().getColumnName(columnIndex));
+				vo.setCurrentColumnValue(sampleContentTable.getModel().getValueAt(rowIndex, columnIndex).toString());
+				vo.setConnectionProperties(getConnectionProperties());
+				openQuickEditDialog(vo);
+			
+			}
+		}
+	}
+
+	public void openQuickEditDialog(QuickEditVO vo) {
+		QuickEditDialog editDialog = new QuickEditDialog(getParentFrame(), vo);
+		int opt = editDialog.showDialog();
+		if(opt == OracleGuiConstants.APPLY_OPTION){
+			showContent(this.queryString);
+		}
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

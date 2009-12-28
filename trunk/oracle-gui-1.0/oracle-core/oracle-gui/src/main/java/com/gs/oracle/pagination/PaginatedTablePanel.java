@@ -115,6 +115,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         paginationResult.setStartRow(1);
         initComponents();
         targetTable.addMouseListener(this);
+        targetTable.setCellSelectionEnabled(true);
         populatePaginatedResult(1);
         
     }
