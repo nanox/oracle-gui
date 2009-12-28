@@ -36,7 +36,7 @@ public class DatabaseAccessControl {
 				if(tableName.startsWith("BIN$"))
 					continue;
 				
-				ResultSet tablePrvRs = databaseMetaData.getTablePrivileges(connection.getCatalog(), schemaName, tableName);
+				ResultSet tablePrvRs = databaseMetaData.getTablePrivileges(null, schemaName, tableName);
 				List<TableAccessPrivilege> tablePrivilegeList = new ArrayList<TableAccessPrivilege>();
 				while(tablePrvRs.next()){
 					TableAccessPrivilege tap = new TableAccessPrivilege();
@@ -62,7 +62,7 @@ public class DatabaseAccessControl {
 				ResultSet columnRs = databaseMetaData.getColumns("", schemaName, tableName, "%");
 				while(columnRs.next()){
 					String columnName = columnRs.getString("COLUMN_NAME");
-					ResultSet colPrevRs = databaseMetaData.getColumnPrivileges(connection.getCatalog(), schemaName, tableName, columnName);
+					ResultSet colPrevRs = databaseMetaData.getColumnPrivileges(null, schemaName, tableName, columnName);
 					List<ColumnAccessPrivilege> capList = new ArrayList<ColumnAccessPrivilege>();
 					while(colPrevRs.next()){
 						ColumnAccessPrivilege cap = new ColumnAccessPrivilege();
