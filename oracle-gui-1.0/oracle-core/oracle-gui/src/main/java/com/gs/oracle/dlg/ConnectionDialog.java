@@ -74,10 +74,10 @@ public class ConnectionDialog extends JDialog {
 		super(parent, modal);
 		parentFrame = parent;
 		
-		InputStream is = IOUtils.getResourceAsStream(OracleGuiConstants.CONN_PROPERTIES_MAPPING_FILE);
-		File file = IOUtils.mkfile(OracleGuiConstants.CONNECTION_DATA_FILE);
+		InputStream mappingStream = IOUtils.getResourceAsStream(OracleGuiConstants.CONN_PROPERTIES_MAPPING_FILE);
+		File dataFile = IOUtils.mkfile(OracleGuiConstants.CONNECTION_DATA_FILE);
 		
-		catalog = XmlRWUtils.readUsingCastor(file, is);
+		catalog = XmlRWUtils.readUsingCastor(dataFile, mappingStream);
 		
 		if(catalog != null){
 			int i = 0;

@@ -36,13 +36,12 @@ import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.dlg.TableDataExportDialog;
+import com.gs.oracle.enums.TableDataExportTypeEnum;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.model.Table;
-import com.gs.oracle.util.DisplayUtils;
 import com.gs.oracle.util.MenuBarUtil;
-import com.gs.oracle.enums.*;
 
 /**
  * @author sabuj.das
@@ -50,6 +49,11 @@ import com.gs.oracle.enums.*;
  */
 public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		OracleGuiConstants, TreeSelectionListener, MouseListener{
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1696098987835135193L;
 
 	private static final String CONTENT_TEXT = "Content of "; 
 	
@@ -106,6 +110,8 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 	
 	private void initComponents(){
 		refreshTreeButton = new JButton();
+		collaspeAllButton = new JButton();
+		expandAllButton = new JButton();
 		databaseDirectoryToolBar = new JToolBar();
 		dbDirectoryTreePopupMenu = new JPopupMenu();
 		
@@ -137,7 +143,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		commentObjectMenuItem.addActionListener(this);
 		commentObjectMenuItem.setIcon(new ImageIcon(getClass()
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "comments.gif")));
+						+ "comments.png")));
 		
 		renameColumnMenuItem = new JMenuItem("Rename");
 		renameColumnMenuItem.addActionListener(this);
@@ -155,7 +161,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		commentColumnMenuItem.addActionListener(this);
 		commentColumnMenuItem.setIcon(new ImageIcon(getClass()
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "comments.gif")));
+						+ "comments.png")));
 		
 		columnPopupMenu = new JPopupMenu();
 		columnPopupMenu.add(renameColumnMenuItem);
@@ -171,7 +177,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		openTableDetailsMenuItem.addActionListener(this);
 		openTableDetailsMenuItem.setIcon(new ImageIcon(getClass()
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "openTable.gif")));
+						+ "folder_open_table.png")));
 		showTableContentMenuItem = new JMenuItem("Show Content");
 		showTableContentMenuItem.addActionListener(this);
 		showTableContentMenuItem.setIcon(new ImageIcon(getClass()
@@ -203,7 +209,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		commentTableMenuItem.addActionListener(this);
 		commentTableMenuItem.setIcon(new ImageIcon(getClass()
 				.getResource(OracleGuiConstants.IMAGE_PATH
-						+ "comments.gif")));
+						+ "comments.png")));
 		truncateTableMenuItem = new JMenuItem("Truncate");
 		truncateTableMenuItem.addActionListener(this);
 		/*truncateTableMenuItem.setIcon(new ImageIcon(getClass()
@@ -348,6 +354,23 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		refreshTreeButton.setIcon(image);
 		refreshTreeButton.addActionListener(this);
 		databaseDirectoryToolBar.add(refreshTreeButton);
+		databaseDirectoryToolBar.addSeparator();
+		expandAllButton.setFocusable(false);
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "expandall.gif"));
+		expandAllButton.setIcon(image);
+		expandAllButton.addActionListener(this);
+		databaseDirectoryToolBar.add(expandAllButton);
+		collaspeAllButton.setFocusable(false);
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "collapseall.gif"));
+		collaspeAllButton.setIcon(image);
+		collaspeAllButton.addActionListener(this);
+		databaseDirectoryToolBar.add(collaspeAllButton);
+		
+		
 		
 		gridBagConstraints = new java.awt.GridBagConstraints();
 		gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
@@ -366,7 +389,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		add(jScrollPane1, gridBagConstraints);
 	}
 	
-	private JButton refreshTreeButton;
+	private JButton refreshTreeButton, collaspeAllButton, expandAllButton;
 	private JToolBar databaseDirectoryToolBar;
 	
 	
@@ -388,6 +411,10 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
             }
 		}else if(e.getSource().equals(refreshTreeButton)){
 			reloadDatabaseTree();
+		}else if(e.getSource().equals(expandAllButton)){
+			expandDatabaseTree();
+		}else if(e.getSource().equals(collaspeAllButton)){
+			collapseDatabaseTree();
 		}else if(e.getSource().equals(openTableDetailsMenuItem)){
 			openTableFromTreePath(mouseClickedTreePath);
 		}else if(e.getSource().equals(showTableContentMenuItem)){
@@ -409,6 +436,16 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		}
 	}
 	
+	private void expandDatabaseTree() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	private void collapseDatabaseTree() {
+		// TODO Auto-generated method stub
+		
+	}
+
 	public void exportTableData(TreePath clickedPath,
 			TableDataExportTypeEnum exportTypeEnum) {
 		Table table = getTableFromTreePath(clickedPath);
