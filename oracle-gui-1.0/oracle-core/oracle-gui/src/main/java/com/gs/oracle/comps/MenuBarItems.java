@@ -66,6 +66,7 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 	public static final String NEW_QUERY_TAB_FILE_MENU_ITEM = "NEW_QUERY_TAB_FILE_MENU_ITEM";
 	public static final String OPEN_QUERY_FILE_MENU_ITEM = "OPEN_QUERY_FILE_MENU_ITEM";
 	public static final String OPEN_RESS_MENU_ITEM = "OPEN_RESS_MENU_ITEM";
+	public static final String TABLE_CONTENT_MENU_ITEM = "TABLE_CONTENT_MENU_ITEM";
 	public static final String SAVE_QUERY_FILE_MENU_ITEM = "SAVE_QUERY_FILE_MENU_ITEM";
 	public static final String SAVE_AS_QUERY_FILE_MENU_ITEM = "SAVE_AS_QUERY_FILE_MENU_ITEM";
 	public static final String NEW_QUERY_BUILDER_FILE_MENU_ITEM = "NEW_QUERY_BUILDER_FILE_MENU_ITEM";
@@ -207,6 +208,8 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 				OPEN_QUERY_FILE_ACT_CMD, "open.gif", KeyEvent.VK_O, InputEvent.CTRL_MASK);
 		addMenuItem(FILE_MENU_NAME, OPEN_RESS_MENU_ITEM, "Open Resource", 
 				OPEN_RESS_ACT_CMD, "openResource.gif", KeyEvent.VK_R, InputEvent.CTRL_MASK+InputEvent.SHIFT_MASK);
+		addMenuItem(FILE_MENU_NAME, TABLE_CONTENT_MENU_ITEM, "Show Table Content", 
+				TABLE_CONTENT_ACT_CMD, "sampleContents.gif", KeyEvent.VK_C, InputEvent.CTRL_MASK+InputEvent.SHIFT_MASK);
 		addMenuItem(FILE_MENU_NAME, OPEN_RECENT_SQL_FILE_MENU_ITEM, "Open Recent SQL Files", 
 				OPEN_RECENT_SQL_FILE_ACT_CMD);
 		addMenuItem(FILE_MENU_NAME, OPEN_RECENT_SCHEMA_FILE_MENU_ITEM, "Open Recent Schema Designs", 

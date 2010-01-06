@@ -38,6 +38,7 @@ import com.gs.oracle.common.StringUtil;
 import com.gs.oracle.comps.ButtonTabComponent;
 import com.gs.oracle.comps.MenuBarItems;
 import com.gs.oracle.comps.SqlQueryPanel;
+import com.gs.oracle.comps.TableContentPanel;
 import com.gs.oracle.comps.TableDetailsPanel;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.dlg.ConnectionDialog;
@@ -224,7 +225,25 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 				if(dbIframe == null){
 					return;
 				}
-				openResource((JFrame) getParent(), dbIframe);
+				openResource((JFrame) getParent(), dbIframe, false);
+			} else if(TABLE_CONTENT_ACT_CMD.equals(cmd)){
+				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
+				JDesktopPane desktopPane = f.getMainDesktopPane();
+				if(desktopPane == null){
+					return;
+				}
+				JInternalFrame iFrame = desktopPane.getSelectedFrame();
+				if(iFrame == null){
+					return;
+				}
+				DatabaseViewerInternalFrame dbIframe = null;
+				if(iFrame instanceof DatabaseViewerInternalFrame){
+					dbIframe = (DatabaseViewerInternalFrame) iFrame;
+				}
+				if(dbIframe == null){
+					return;
+				}
+				openResource((JFrame) getParent(), dbIframe, true);
 			} else if(NEW_QUERY_TAB_ACT_CMD.equals(cmd)){
 				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
 				JDesktopPane desktopPane = f.getMainDesktopPane();
@@ -274,7 +293,49 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 		}
 	}
 	
-	private void openResource(JFrame parent, DatabaseViewerInternalFrame dbIframe) {
+	
+	private void showContent(DatabaseViewerInternalFrame dbIframe, Table table) {
+		DatabaseViewerInternalFrame iFrame = dbIframe;
+		if(iFrame != null){
+			boolean tableOpened = false;
+			int selectedTabIndex = -1;
+			int tabCount = iFrame.getDbDetailsTabbedPane().getTabCount();
+			for (int i = 0; i < tabCount; i++) {
+				Component tabComponent = iFrame.getDbDetailsTabbedPane().getComponentAt(i);
+				if(tabComponent instanceof TableDetailsPanel){
+					TableDetailsPanel ti = (TableDetailsPanel) tabComponent;
+					if(ti != null){
+						if(table.getModelName().equals(ti.getTableName())){
+							tableOpened = true;
+							selectedTabIndex = i;
+							break;
+						}
+					}
+				}
+			}
+			if(!tableOpened){
+				TableContentPanel contentPanel = new TableContentPanel(
+						table.getSchemaName(), table.getModelName(), dbIframe.getConnectionProperties(), table	
+					);
+					contentPanel.setParentFrame(dbIframe.getParentFrame());
+					iFrame.getDbDetailsTabbedPane().addTab(OracleGuiConstants.CONTENT_TEXT + table.getModelName(), contentPanel);
+					int n = iFrame.getDbDetailsTabbedPane().getTabCount();
+					iFrame.getDbDetailsTabbedPane().setTabComponentAt(n - 1,
+			                new ButtonTabComponent(iFrame.getDbDetailsTabbedPane(), new ImageIcon(getClass()
+			        				.getResource(OracleGuiConstants.IMAGE_PATH + "sampleContents.gif"))));
+					iFrame.getDbDetailsTabbedPane().setSelectedIndex(n-1);
+					iFrame.getDbDetailsTabbedPane().updateUI();
+			}else{
+				// call the refresh method of this tab
+			}
+			if(selectedTabIndex > -1){
+				iFrame.getDbDetailsTabbedPane().setSelectedIndex(selectedTabIndex);
+				iFrame.getDbDetailsTabbedPane().updateUI();
+			}
+		}
+	}
+	
+	private void openResource(JFrame parent, DatabaseViewerInternalFrame dbIframe, boolean isTableContent) {
 		OpenResourceDialog openResourceDialog = new OpenResourceDialog(
 				parent, dbIframe.getSchemaNameList(), dbIframe.getTableNameList(), dbIframe
 			);
@@ -289,7 +350,10 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 					con = dbIframe.getConnectionProperties().getDataSource().getConnection();
 					Table table = dbGrabber.grabTable(con, schemaName, tableName);
 					if(table != null){
-						openTableDetails(dbIframe, table);
+						if(!isTableContent)
+							openTableDetails(dbIframe, table);
+						else
+							showContent(dbIframe, table);
 					}
 				} catch (SQLException e) {
 					DisplayUtils.displayMessage(parent, e.getMessage(), DisplayTypeEnum.ERROR);
