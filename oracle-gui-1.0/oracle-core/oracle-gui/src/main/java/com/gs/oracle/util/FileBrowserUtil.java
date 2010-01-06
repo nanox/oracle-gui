@@ -15,7 +15,7 @@ import com.gs.oracle.comps.ExtensionFileFilter;
  * @author sabuj.das
  *
  */
-public class FileIOUtil {
+public class FileBrowserUtil {
 
 	
 	public static File openSingleFile(Component parent, ExtensionFileFilter fileFilter, Boolean isDir){
