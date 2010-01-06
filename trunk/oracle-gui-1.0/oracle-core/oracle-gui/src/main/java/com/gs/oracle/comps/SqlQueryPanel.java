@@ -86,7 +86,7 @@ import com.gs.oracle.sql.processor.SqlProcessor;
 import com.gs.oracle.sql.text.WrapEditorKit;
 import com.gs.oracle.util.DisplayTypeEnum;
 import com.gs.oracle.util.DisplayUtils;
-import com.gs.oracle.util.FileIOUtil;
+import com.gs.oracle.util.FileBrowserUtil;
 import com.gs.oracle.util.MenuBarUtil;
 import com.gs.oracle.util.SwingUtilities;
 
@@ -753,13 +753,13 @@ UndoableEditListener, HyperlinkListener {
 		if(!saveAs){ // save is clicked..
 			String fileName = fileNameTextField.getText();
 			if(!StringUtil.hasValidContent(fileName)){
-				target = FileIOUtil.browseToSaveFile(parentComponent, ".", 
+				target = FileBrowserUtil.browseToSaveFile(parentComponent, ".", 
 						new ExtensionFileFilter(new String[]{"sql"}, "SQL Query files (.sql)"), Boolean.FALSE);
 			} else {
 				target = new File(fileName);
 			}
 		} else {
-			target = FileIOUtil.browseToSaveFile(parentComponent, ".", 
+			target = FileBrowserUtil.browseToSaveFile(parentComponent, ".", 
 					new ExtensionFileFilter(new String[]{"sql"}, "SQL Query files (.sql)"), Boolean.FALSE);
 		}
 		if(target != null){
@@ -822,7 +822,7 @@ UndoableEditListener, HyperlinkListener {
 	}
 	
 	private void browseAndOpenFile() {
-		File queryFile = FileIOUtil.openSingleFile(parentFrame, 
+		File queryFile = FileBrowserUtil.openSingleFile(parentFrame, 
 				new ExtensionFileFilter(new String[]{"sql"}, "SQL Query files (.sql)"), Boolean.FALSE);
 		if(queryFile != null){
 			fileNameTextField.setText(queryFile.getAbsolutePath());
