@@ -932,9 +932,13 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 					for (int i = 0; i < columnCount; i++) {
 						Object value = targetTable.getModel().getValueAt(rowIndex, i);
 						
-						if(value == null)
+						if(value == null){
+							q += targetTable.getModel().getColumnName(i) + " IS NULL ";
+							if(i != columnCount-1){
+								q += "AND ";
+							}
 							continue;
-						
+						}
 						Class clazz = targetTable.getColumnClass(i);
 						if(clazz.getCanonicalName().equalsIgnoreCase("java.util.Date") 
 								|| clazz.getCanonicalName().equalsIgnoreCase("java.sql.Date")
@@ -980,6 +984,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 							}
 						}
 					}catch(Exception ex){
+						logger.error("Cannot execute query [ : " + q + "\n\tReasone: " + ex.getMessage());
 						return;
 					}finally{
 						if(con != null){
@@ -991,7 +996,8 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 						}
 					}
 					vo.setCurrentColumnName(targetTable.getModel().getColumnName(columnIndex));
-					vo.setCurrentColumnValue(targetTable.getModel().getValueAt(rowIndex, columnIndex).toString());
+					Object value = targetTable.getModel().getValueAt(rowIndex, columnIndex);
+					vo.setCurrentColumnValue((value != null) ? value.toString() : "");
 					vo.setConnectionProperties(getConnectionProperties());
 					openQuickEditDialog(vo);
 				}

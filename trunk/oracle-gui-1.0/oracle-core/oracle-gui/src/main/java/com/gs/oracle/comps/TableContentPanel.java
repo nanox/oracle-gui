@@ -278,8 +278,13 @@ public class TableContentPanel extends JPanel implements ActionListener, MouseLi
 				for (int i = 0; i < columnCount; i++) {
 					Object value = sampleContentTable.getModel().getValueAt(rowIndex, i);
 					
-					if(value == null)
+					if(value == null){
+						q += sampleContentTable.getModel().getColumnName(i) + " IS NULL ";
+						if(i != columnCount-1){
+							q += "AND ";
+						}
 						continue;
+					}
 					
 					Class clazz = sampleContentTable.getColumnClass(i);
 					if(clazz.getCanonicalName().equalsIgnoreCase("java.util.Date") 
@@ -337,7 +342,8 @@ public class TableContentPanel extends JPanel implements ActionListener, MouseLi
 					}
 				}
 				vo.setCurrentColumnName(sampleContentTable.getModel().getColumnName(columnIndex));
-				vo.setCurrentColumnValue(sampleContentTable.getModel().getValueAt(rowIndex, columnIndex).toString());
+				Object value = sampleContentTable.getModel().getValueAt(rowIndex, columnIndex);
+				vo.setCurrentColumnValue((value != null) ? value.toString() : "");
 				vo.setConnectionProperties(getConnectionProperties());
 				openQuickEditDialog(vo);
 			

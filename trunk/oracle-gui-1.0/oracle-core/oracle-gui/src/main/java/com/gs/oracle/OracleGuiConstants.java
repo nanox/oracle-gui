@@ -73,4 +73,6 @@ public interface OracleGuiConstants {
 	
 	String FORE_GROUND = "FG";
 	String BACK_GROUND = "BG";
+	
+	String CONTENT_TEXT = "Content of ";
 }

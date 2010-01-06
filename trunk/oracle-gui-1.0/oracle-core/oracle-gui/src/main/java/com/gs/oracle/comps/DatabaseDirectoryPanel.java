@@ -13,6 +13,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.sql.SQLException;
+import java.util.Enumeration;
 
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
@@ -26,10 +27,12 @@ import javax.swing.JPopupMenu;
 import javax.swing.JScrollPane;
 import javax.swing.JSeparator;
 import javax.swing.JToolBar;
+import javax.swing.JTree;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
 
 import com.gs.oracle.OracleGuiConstants;
@@ -55,7 +58,6 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 	 */
 	private static final long serialVersionUID = 1696098987835135193L;
 
-	private static final String CONTENT_TEXT = "Content of "; 
 	
 	private static final ImageIcon EXPAND_IMAGE = new ImageIcon(DatabaseDirectoryPanel.class
 			.getResource(OracleGuiConstants.IMAGE_PATH
@@ -112,6 +114,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		refreshTreeButton = new JButton();
 		collaspeAllButton = new JButton();
 		expandAllButton = new JButton();
+		linkToTabButton = new JButton();
 		databaseDirectoryToolBar = new JToolBar();
 		dbDirectoryTreePopupMenu = new JPopupMenu();
 		
@@ -348,7 +351,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		GridBagConstraints gridBagConstraints = null;
 		
 		refreshTreeButton.setFocusable(false);
-		image = new ImageIcon(MenuBarUtil.class
+		image = new ImageIcon(getClass()
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "reload_green.png"));
 		refreshTreeButton.setIcon(image);
@@ -356,20 +359,29 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		databaseDirectoryToolBar.add(refreshTreeButton);
 		databaseDirectoryToolBar.addSeparator();
 		expandAllButton.setFocusable(false);
-		image = new ImageIcon(MenuBarUtil.class
+		expandAllButton.setToolTipText("Expand All");
+		image = new ImageIcon(getClass()
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "expandall.gif"));
 		expandAllButton.setIcon(image);
 		expandAllButton.addActionListener(this);
 		databaseDirectoryToolBar.add(expandAllButton);
 		collaspeAllButton.setFocusable(false);
-		image = new ImageIcon(MenuBarUtil.class
+		image = new ImageIcon(getClass()
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "collapseall.gif"));
 		collaspeAllButton.setIcon(image);
+		collaspeAllButton.setToolTipText("Collapse All");  
 		collaspeAllButton.addActionListener(this);
 		databaseDirectoryToolBar.add(collaspeAllButton);
-		
+		//databaseDirectoryToolBar.addSeparator();
+		linkToTabButton.setFocusable(false);
+		image = new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "link_to_editor.gif"));
+		linkToTabButton.setIcon(image);
+		linkToTabButton.addActionListener(this);
+		//databaseDirectoryToolBar.add(linkToTabButton);
 		
 		
 		gridBagConstraints = new java.awt.GridBagConstraints();
@@ -389,7 +401,8 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		add(jScrollPane1, gridBagConstraints);
 	}
 	
-	private JButton refreshTreeButton, collaspeAllButton, expandAllButton;
+	private JButton refreshTreeButton, collaspeAllButton, expandAllButton,
+		linkToTabButton;
 	private JToolBar databaseDirectoryToolBar;
 	
 	
@@ -437,14 +450,32 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 	}
 	
 	private void expandDatabaseTree() {
-		// TODO Auto-generated method stub
-		
+		expandAll(databaseDirectoryTree, new TreePath((TreeNode)databaseDirectoryTree.getModel().getRoot()), true);
 	}
 
 	private void collapseDatabaseTree() {
-		// TODO Auto-generated method stub
-		
+		expandAll(databaseDirectoryTree, new TreePath((TreeNode)databaseDirectoryTree.getModel().getRoot()), false);
 	}
+	
+	private void expandAll(JTree tree, TreePath parent, boolean expand) {
+        // Traverse children
+        TreeNode node = (TreeNode)parent.getLastPathComponent();
+        if (node.getChildCount() >= 0) {
+            for (Enumeration e=node.children(); e.hasMoreElements(); ) {
+                TreeNode n = (TreeNode)e.nextElement();
+                TreePath path = parent.pathByAddingChild(n);
+                expandAll(tree, path, expand);
+            }
+        }
+    
+        // Expansion or collapse must be done bottom-up
+        if (expand) {
+            tree.expandPath(parent);
+        } else {
+            tree.collapsePath(parent);
+        }
+    }
+
 
 	public void exportTableData(TreePath clickedPath,
 			TableDataExportTypeEnum exportTypeEnum) {
@@ -527,6 +558,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 				databaseDirectoryTree.expandPath(mouseClickedTreePath);
 				databaseDirectoryTree.updateUI();
 			}
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
