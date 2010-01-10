@@ -99,11 +99,17 @@ public class QueryExecutionServiceImpl implements QueryExecutionService {
 				}
 			}
 		}catch(SQLException e){
-			
+			throw new ApplicationException(e.getMessage());
 		}catch(Exception e){
-			
+			throw new ApplicationException(e.getMessage());
 		}finally{
-			
+			if(con != null){
+				try {
+					con.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return ddlBuffer.toString();
 	}
