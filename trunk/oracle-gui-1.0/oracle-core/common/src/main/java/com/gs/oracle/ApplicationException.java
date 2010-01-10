@@ -3,6 +3,8 @@
  */
 package com.gs.oracle;
 
+import java.sql.SQLException;
+
 /**
  * @author Green Moon
  *
@@ -24,6 +26,10 @@ public class ApplicationException extends Exception {
 	public ApplicationException(String string) {
 		super(string);
 		message = string; 
+	}
+
+	public ApplicationException(Exception e) {
+		super(e);
 	}
 
 	public String getCode() {
