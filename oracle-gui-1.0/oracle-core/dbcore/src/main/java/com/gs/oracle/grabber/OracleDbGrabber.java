@@ -17,6 +17,7 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -29,6 +30,7 @@ import oracle.jdbc.driver.OracleTypes;
 import com.gs.oracle.ColumnMetaDataEnum;
 import com.gs.oracle.ForeignKeyMetaDataEnum;
 import com.gs.oracle.PKMetaDataEnum;
+import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.model.ForeignKey;
@@ -38,7 +40,7 @@ import com.gs.oracle.model.Table;
 import com.gs.oracle.model.util.DatabaseReservedWordsUtil;
 
 /**
- * @author Green Moon
+ * @author Sabuj Das
  *
  */
 public class OracleDbGrabber {
@@ -342,6 +344,27 @@ public class OracleDbGrabber {
 			fkRs.close();
 		}
 		return fks;
+	}
+
+	public Set<String> getAvailableSchemaNames(
+			Connection connection) throws SQLException {
+		Set<String> schemaNames = new HashSet<String>();
+		if(null == connection)
+			return schemaNames;
+		
+		DatabaseMetaData metaData = connection.getMetaData();
+		if(metaData != null){
+			ResultSet rs = metaData.getSchemas();
+			while(rs.next()){
+				String cat = rs.getString("TABLE_SCHEM");
+				schemaNames.add(cat);
+			}
+			if(rs != null){
+				rs.close();
+			}
+		}
+		
+		return schemaNames;
 	}
 	
 }
