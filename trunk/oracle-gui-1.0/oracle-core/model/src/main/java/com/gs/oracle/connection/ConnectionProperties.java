@@ -28,6 +28,7 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	private String sid;
 	private String serviceName;
 	private String databaseName;
+	private String[] allDatabaseNames;
 	private Integer displayOrder = 0;
 	private Boolean isModified = Boolean.TRUE;
 	
@@ -144,6 +145,12 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	}
 	public void setIsModified(Boolean isModified) {
 		this.isModified = isModified;
+	}
+	public String[] getAllDatabaseNames() {
+		return allDatabaseNames;
+	}
+	public void setAllDatabaseNames(String[] allDatabaseNames) {
+		this.allDatabaseNames = allDatabaseNames;
 	}
 
 	

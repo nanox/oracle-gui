@@ -5,18 +5,18 @@
 
 	<appender name="APP_LOG" class="org.apache.log4j.RollingFileAppender">
 		<param name="file" value="./logs/app/Application.log" />
-		<param name="MaxFileSize" value="8000KB" />
+		<param name="MaxFileSize" value="10485760KB" />
 		<param name="maxBackupIndex" value="10" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{dd-MMM-yy HH:mm:ss} %-5p %C{1} %m%n" />
+			<param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss.SSS} %-5p %C{1}: %m%n" />
 		</layout>
 	</appender>
 	<appender name="CASTOR_LOG" class="org.apache.log4j.RollingFileAppender">
 		<param name="file" value="./logs/app/Castor.log" />
-		<param name="MaxFileSize" value="8000KB" />
+		<param name="MaxFileSize" value="10485760KB" />
 		<param name="maxBackupIndex" value="10" />
 		<layout class="org.apache.log4j.PatternLayout">
-			<param name="ConversionPattern" value="%d{dd-MMM-yy HH:mm:ss} %-5p %C{1} %m%n" />
+			<param name="ConversionPattern" value="%d{dd-MMM-yyyy HH:mm:ss.SSS} %-5p %C{1}: %m%n" />
 		</layout>
 	</appender>
 

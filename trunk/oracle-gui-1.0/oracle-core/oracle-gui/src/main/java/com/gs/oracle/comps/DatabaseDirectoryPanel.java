@@ -38,7 +38,10 @@ import javax.swing.tree.TreePath;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.dlg.ResourceEditDialog;
 import com.gs.oracle.dlg.TableDataExportDialog;
+import com.gs.oracle.enums.ResourceEditTypeEnum;
+import com.gs.oracle.enums.ResourceTypeEnum;
 import com.gs.oracle.enums.TableDataExportTypeEnum;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
@@ -446,9 +449,20 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 			exportTableData(mouseClickedTreePath, TableDataExportTypeEnum.EXCEL);
 		}else if(e.getSource().equals(exportDataToXmlMenuItem)){
 			exportTableData(mouseClickedTreePath, TableDataExportTypeEnum.XML);
+		}else if(e.getSource().equals(renameTableMenuItem)){
+			modifyResource(mouseClickedTreePath, ResourceTypeEnum.TABLE, ResourceEditTypeEnum.RENAME);
+		}else if(e.getSource().equals(dropTableMenuItem)){
+			modifyResource(mouseClickedTreePath, ResourceTypeEnum.TABLE, ResourceEditTypeEnum.DROP);
+		}else if(e.getSource().equals(copyTableMenuItem)){
+			modifyResource(mouseClickedTreePath, ResourceTypeEnum.TABLE, ResourceEditTypeEnum.COPY);
+		}else if(e.getSource().equals(truncateTableMenuItem)){
+			modifyResource(mouseClickedTreePath, ResourceTypeEnum.TABLE, ResourceEditTypeEnum.TRUNCATE);
+		}else if(e.getSource().equals(commentTableMenuItem)){
+			modifyResource(mouseClickedTreePath, ResourceTypeEnum.TABLE, ResourceEditTypeEnum.COMMENT);
 		}
 	}
 	
+
 	private void expandDatabaseTree() {
 		expandAll(databaseDirectoryTree, new TreePath((TreeNode)databaseDirectoryTree.getModel().getRoot()), true);
 	}
@@ -648,6 +662,35 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 			}
 		}
 	}
+	
+	private void modifyResource(TreePath mouseClickedTreePath,
+			ResourceTypeEnum resourceTypeEnum, ResourceEditTypeEnum resourceEditTypeEnum) {
+		if(ResourceTypeEnum.TABLE.equals(resourceTypeEnum)){
+			Table table = getTableFromTreePath(mouseClickedTreePath);
+			if(table != null){
+				ResourceEditDialog<Table> editTableDialog = new ResourceEditDialog<Table>(
+						getParentFrame(), true,
+						connectionProperties,
+						table.getSchemaName(),
+						table,
+						resourceTypeEnum,
+						resourceEditTypeEnum
+					);
+				int opt = editTableDialog.showEditDialog();
+				if(APPLY_OPTION == opt){
+					reloadDatabaseTree();
+				}
+			}
+		}
+	}
+
+	
+	
+	
+	
+	
+	
+	
 
 	@Override
 	public void mouseEntered(MouseEvent e) {

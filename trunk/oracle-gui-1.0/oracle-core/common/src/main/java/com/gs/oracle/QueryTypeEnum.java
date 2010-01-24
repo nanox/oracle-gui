@@ -13,7 +13,8 @@ public enum QueryTypeEnum {
 	UPDATE("UPDATE"), 
 	INSERT("INSERT"), 
 	CREATE("CREATE"), 
-	ALTER("ALTER");
+	ALTER("ALTER"),
+	TRUNCATE("TRUNCATE");
 	
 	
 	private String code;

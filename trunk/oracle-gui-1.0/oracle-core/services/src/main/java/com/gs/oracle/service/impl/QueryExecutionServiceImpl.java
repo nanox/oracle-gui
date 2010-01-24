@@ -12,6 +12,7 @@ import java.sql.Statement;
 import java.util.List;
 
 import com.gs.oracle.ApplicationException;
+import com.gs.oracle.QueryTypeEnum;
 import com.gs.oracle.SqlQuery;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.service.QueryExecutionService;
@@ -38,7 +39,10 @@ public class QueryExecutionServiceImpl implements QueryExecutionService {
 		try{
 			con = getConnectionProperties().getDataSource().getConnection();
 			Statement stmt = con.createStatement();
-			update =  stmt.executeUpdate(sqlQuery.getQuery());
+			if(QueryTypeEnum.TRUNCATE.equals(sqlQuery.getQueryType())){
+				stmt.execute(sqlQuery.getQuery());
+			}else
+				update =  stmt.executeUpdate(sqlQuery.getQuery());
 			if(stmt != null){
 				stmt.close();
 			}
