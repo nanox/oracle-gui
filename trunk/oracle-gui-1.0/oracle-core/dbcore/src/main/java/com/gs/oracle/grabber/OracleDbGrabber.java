@@ -30,6 +30,7 @@ import oracle.jdbc.driver.OracleTypes;
 import com.gs.oracle.ColumnMetaDataEnum;
 import com.gs.oracle.ForeignKeyMetaDataEnum;
 import com.gs.oracle.PKMetaDataEnum;
+import com.gs.oracle.TableMetaDataEnum;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Database;
@@ -79,7 +80,7 @@ public class OracleDbGrabber {
 				s.setModelName(cat);
 				ResultSet ret = databaseMetaData.getTables("", s.getModelName(), "%", new String[] {"TABLE"});
 				while(ret.next()){
-					String tn = ret.getString("TABLE_NAME");
+					String tn = ret.getString(TableMetaDataEnum.TABLE_NAME.getCode());
 					
 					Table t = grabTable(connection, s.getModelName(), tn);
 					if(tn.startsWith("BIN$"))
@@ -144,8 +145,9 @@ public class OracleDbGrabber {
 			DatabaseMetaData meta = connection.getMetaData();
 			ResultSet ret = meta.getTables("", schemaName, tableName, new String[] {"TABLE"});
 			while(ret.next()){
-				String tn = ret.getString("TABLE_NAME");
+				String tn = ret.getString(TableMetaDataEnum.TABLE_NAME.getCode());
 				table.setSchemaName(schemaName);
+				table.setComments(ret.getString(TableMetaDataEnum.REMARKS.getCode()));
 				table.setModelName(tn);
 				table.setPrimaryKeys(grabPrimaryKeys(connection, schemaName, tableName));
 				table.setImportedKeys(grabImportedKeys(connection, schemaName, tableName));
@@ -218,6 +220,8 @@ public class OracleDbGrabber {
 			c.setPrecision(colRs.getInt(ColumnMetaDataEnum.DECIMAL_DIGITS.getCode()));
 			// set default value
 			//c.setDefaultValue(colRs.getString(ColumnMetaDataEnum.COLUMN_DEF.getCode()));
+			// comment
+			c.setComments(colRs.getString(ColumnMetaDataEnum.REMARKS.getCode()));
 			list.add(c);
 		}
 		if(colRs != null){
@@ -276,6 +280,8 @@ public class OracleDbGrabber {
 			c.setSize(colRs.getInt(ColumnMetaDataEnum.COLUMN_SIZE.getCode()));
 			// set default value
 			//c.setDefaultValue(colRs.getString(ColumnMetaDataEnum.COLUMN_DEF.getCode()));
+			// comment
+			c.setComments(colRs.getString(ColumnMetaDataEnum.REMARKS.getCode()));
 			list.add(c);
 		}
 		if(colRs != null){

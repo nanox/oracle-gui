@@ -15,18 +15,27 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import com.gs.oracle.BaseDbModel;
+
 /**
  * @author sabuj.das
  *
  */
-public class ResourceCommentPanel extends JPanel {
+public class ResourceCommentPanel<T> extends JPanel {
 
-    public ResourceCommentPanel() {
+	
+    public ResourceCommentPanel(T resource) {
+    	String oldComment = "";
+    	if(resource != null && resource instanceof BaseDbModel){
+    		oldComment = ((BaseDbModel)resource).getComments();
+    	}
         initComponents();
+        commentTextArea.setText(oldComment);
     }
 
- 
-    private void initComponents() {
+
+
+	private void initComponents() {
         GridBagConstraints gridBagConstraints;
 
         jLabel1 = new JLabel();
