@@ -45,6 +45,7 @@ import com.gs.oracle.enums.ResourceTypeEnum;
 import com.gs.oracle.enums.TableDataExportTypeEnum;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
+import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.util.MenuBarUtil;
@@ -459,6 +460,12 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 			modifyResource(mouseClickedTreePath, ResourceTypeEnum.TABLE, ResourceEditTypeEnum.TRUNCATE);
 		}else if(e.getSource().equals(commentTableMenuItem)){
 			modifyResource(mouseClickedTreePath, ResourceTypeEnum.TABLE, ResourceEditTypeEnum.COMMENT);
+		}else if(e.getSource().equals(renameColumnMenuItem)){
+			modifyResource(mouseClickedTreePath, ResourceTypeEnum.COLUMN, ResourceEditTypeEnum.RENAME);
+		}else if(e.getSource().equals(dropColumnMenuItem)){
+			modifyResource(mouseClickedTreePath, ResourceTypeEnum.COLUMN, ResourceEditTypeEnum.DROP);
+		}else if(e.getSource().equals(commentColumnMenuItem)){
+			modifyResource(mouseClickedTreePath, ResourceTypeEnum.COLUMN, ResourceEditTypeEnum.COMMENT);
 		}
 	}
 	
@@ -541,6 +548,23 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
         	Table table = ((TableNode)dbNode).getTable();
 			if(table != null){
 				return table;
+			}
+        }
+        return null;
+	}
+	
+	private Column getColumnFromTreePath(TreePath clickedPath){
+		DefaultMutableTreeNode node = getDatabaseDirectoryTree().getTreeNode(clickedPath);
+        if(node == null)
+            return null;
+        DatabaseNode dbNode = getDatabaseDirectoryTree().getDatabaseNode(node);
+        if (dbNode == null) {
+            return null;
+        }
+        if(dbNode instanceof ColumnNode){
+        	Column column = ((ColumnNode)dbNode).getColumn();
+			if(column != null){
+				return column;
 			}
         }
         return null;
@@ -673,6 +697,22 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 						connectionProperties,
 						table.getSchemaName(),
 						table,
+						resourceTypeEnum,
+						resourceEditTypeEnum
+					);
+				int opt = editTableDialog.showEditDialog();
+				if(APPLY_OPTION == opt){
+					reloadDatabaseTree();
+				}
+			}
+		} else if(ResourceTypeEnum.COLUMN.equals(resourceTypeEnum)){
+			Column column = getColumnFromTreePath(mouseClickedTreePath);
+			if(column != null){
+				ResourceEditDialog<Column> editTableDialog = new ResourceEditDialog<Column>(
+						getParentFrame(), true,
+						connectionProperties,
+						column.getSchemaName(),
+						column,
 						resourceTypeEnum,
 						resourceEditTypeEnum
 					);

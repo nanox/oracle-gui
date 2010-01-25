@@ -45,12 +45,13 @@ import com.gs.oracle.SqlQuery;
 import com.gs.oracle.common.StringUtil;
 import com.gs.oracle.comps.CopyTablePanel;
 import com.gs.oracle.comps.ResourceCommentPanel;
-import com.gs.oracle.comps.TableRenamePanel;
+import com.gs.oracle.comps.ResourceRenamePanel;
 import com.gs.oracle.comps.TruncateTablePanel;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.enums.ResourceEditTypeEnum;
 import com.gs.oracle.enums.ResourceTypeEnum;
 import com.gs.oracle.grabber.OracleDbGrabber;
+import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.service.QueryExecutionService;
 import com.gs.oracle.service.impl.QueryExecutionServiceImpl;
@@ -69,16 +70,19 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
 	private int selectedOption = OracleGuiConstants.CANCEL_OPTION;
 	
 	private T resource;
-	
-	private TableRenamePanel tableRenamePanel;
-	private CopyTablePanel copyTablePanel;
-	private ResourceCommentPanel resourceCommentPanel;
-	private TruncateTablePanel truncateTablePanel;
-	
 	private String schemaName;
 	private ConnectionProperties connectionProperties;
 	private JFrame parentFrame;
-    /**
+	private ResourceTypeEnum resourceTypeEnum;
+	private ResourceEditTypeEnum resourceEditTypeEnum;
+	
+	private ResourceRenamePanel resourceRenamePanel;
+	private CopyTablePanel copyTablePanel;
+	private ResourceCommentPanel<T> resourceCommentPanel;
+	private TruncateTablePanel truncateTablePanel;
+	
+
+	/**
 	 * Generated serialVersionUID = 8219746741623031954L
 	 */
 	private static final long serialVersionUID = 8219746741623031954L;
@@ -91,6 +95,9 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
         this.connectionProperties = connectionProperties;
         this.schemaName = schemaName;
         this.resource = resource;
+        resourceTypeEnum = resourceType;
+        resourceEditTypeEnum = resourceEditType;
+        
         if(connectionProperties == null)
         	return; //TODO: throw exception
         if(!StringUtil.hasValidContent(schemaName))
@@ -99,13 +106,13 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
         	return; //TODO: throw exception
         
         initComponents();
-        
+        if(logger.isDebugEnabled()){
+    		logger.debug("Resource Type : " + resourceType.getResourceName());
+    		logger.debug("Resource Edit Type : " + resourceEditType.getDescription());
+    	}
         // if the resource is a Table
         if(ResourceTypeEnum.TABLE.equals(resourceType)){
-        	if(logger.isDebugEnabled()){
-        		logger.debug("Resource Type : " + resourceType.getResourceName());
-        		logger.debug("Resource Edit Type : " + resourceEditType.getDescription());
-        	}
+        	
         	Table table = null;
         	if(resource instanceof Table){
         		table = (Table)resource;
@@ -114,13 +121,14 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
         	if(ResourceEditTypeEnum.RENAME.equals(resourceEditType)){
         		setTitle("Rename Table");
         		logger.info("Rename Table");
-        		tableRenamePanel = new TableRenamePanel();
+        		resourceRenamePanel = new ResourceRenamePanel();
+        		resourceRenamePanel.getResourceLabel().setText("New Table Name: ");
         		variableComponentPanel.removeAll();
-        		variableComponentPanel.add(tableRenamePanel, BorderLayout.CENTER);
+        		variableComponentPanel.add(resourceRenamePanel, BorderLayout.CENTER);
         		String sql = SqlGeneratorUtil.generateTableRenameSQL(schemaName, table.getModelName(), 
-        				tableRenamePanel.getNewTableNameTextField().getText());
+        				resourceRenamePanel.getNewResourceNameTextField().getText());
         		sqlTextArea.setText(sql);
-        		tableRenamePanel.getNewTableNameTextField().addKeyListener(this);
+        		resourceRenamePanel.getNewResourceNameTextField().addKeyListener(this);
         	} else if(ResourceEditTypeEnum.DROP.equals(resourceEditType)){
         		setTitle("Drop Table");
         		logger.info("Drop Table");
@@ -191,7 +199,7 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
         		setTitle("Comment on Table");
         		logger.info("Comment on Table");
         		variableComponentPanel.removeAll();
-        		resourceCommentPanel = new ResourceCommentPanel(resource);
+        		resourceCommentPanel = new ResourceCommentPanel<T>(resource);
         		resourceCommentPanel.getCommentTextArea().addKeyListener(this);
         		variableComponentPanel.add(resourceCommentPanel, BorderLayout.CENTER);
         		sqlTextArea.setText(SqlGeneratorUtil.generateCommentTableSQL(getSchemaName(), 
@@ -199,7 +207,52 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
         				resourceCommentPanel.getCommentTextArea().getText()));
         	}
         	
+        } else if(ResourceTypeEnum.COLUMN.equals(resourceType)){
+        	Column column = null;
+        	if(resource instanceof Column){
+        		column = (Column) resource;
+        		tableNameTextField.setText(column.getTableName());
+        	}
+        	
+        	if(ResourceEditTypeEnum.RENAME.equals(resourceEditType)){
+        		setTitle("Rename Column - " + column.getModelName());
+        		logger.info("Rename Column - " + column.getModelName());
+        		resourceRenamePanel = new ResourceRenamePanel();
+        		resourceRenamePanel.getResourceLabel().setText("New Column Name: ");
+        		variableComponentPanel.removeAll();
+        		variableComponentPanel.add(resourceRenamePanel, BorderLayout.CENTER);
+        		String sql = SqlGeneratorUtil.generateColumnRenameSQL(schemaName, 
+        				column.getTableName(),
+        				column.getModelName(),
+        				resourceRenamePanel.getNewResourceNameTextField().getText());
+        		sqlTextArea.setText(sql);
+        		resourceRenamePanel.getNewResourceNameTextField().addKeyListener(this);
+        	} else if(ResourceEditTypeEnum.DROP.equals(resourceEditType)){
+        		setTitle("Drop Table");
+        		logger.info("Drop Table");
+        		variableComponentPanel.removeAll();
+        		variableComponentPanel.add(
+        				new JLabel("Do you want to DROP the column [ " 
+        						+ column.getTableName() + "." + column.getModelName() + " ] " +
+        						"?"), BorderLayout.NORTH);
+        		sqlTextArea.setText(SqlGeneratorUtil.generateDropColumnSQL(getSchemaName(), 
+        				column.getTableName(),
+        				column.getModelName()));
+        	} else if(ResourceEditTypeEnum.COMMENT.equals(resourceEditType)){
+        		setTitle("Comment on Table");
+        		logger.info("Comment on Table");
+        		variableComponentPanel.removeAll();
+        		resourceCommentPanel = new ResourceCommentPanel<T>(resource);
+        		resourceCommentPanel.getCommentTextArea().addKeyListener(this);
+        		variableComponentPanel.add(resourceCommentPanel, BorderLayout.CENTER);
+        		sqlTextArea.setText(SqlGeneratorUtil.generateCommentColumnSQL(
+        				getSchemaName(),
+        				column.getTableName(),
+        				column.getModelName(),
+        				resourceCommentPanel.getCommentTextArea().getText()));
+        	}
         }
+        
         setMinimumSize(new Dimension(450, 350));
         setPreferredSize(getMinimumSize());
         setSize(getPreferredSize());
@@ -478,12 +531,20 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		if(tableRenamePanel != null){
-			if(e.getSource().equals(tableRenamePanel.getNewTableNameTextField())){
-				sqlTextArea.setText(SqlGeneratorUtil.generateTableRenameSQL(
-						getSchemaName(),
-						tableNameTextField.getText(), 
-						tableRenamePanel.getNewTableNameTextField().getText()));
+		if(resourceRenamePanel != null){
+			if(e.getSource().equals(resourceRenamePanel.getNewResourceNameTextField())){
+				if(ResourceTypeEnum.TABLE.equals(getResourceTypeEnum())){
+					sqlTextArea.setText(SqlGeneratorUtil.generateTableRenameSQL(
+							getSchemaName(),
+							tableNameTextField.getText(), 
+							resourceRenamePanel.getNewResourceNameTextField().getText()));
+				} else if(ResourceTypeEnum.COLUMN.equals(getResourceTypeEnum())){
+					String sql = SqlGeneratorUtil.generateColumnRenameSQL(schemaName, 
+	        				tableNameTextField.getText(),
+	        				((Column)getResource()).getModelName(),
+	        				resourceRenamePanel.getNewResourceNameTextField().getText());
+	        		sqlTextArea.setText(sql);
+				}
 			}
 		}
 		if(copyTablePanel != null){
@@ -500,9 +561,18 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
 		}
 		if(resourceCommentPanel != null){
 			if(e.getSource().equals(resourceCommentPanel.getCommentTextArea())){
-				sqlTextArea.setText(SqlGeneratorUtil.generateCommentTableSQL(getSchemaName(), 
-        				tableNameTextField.getText(),
-        				resourceCommentPanel.getCommentTextArea().getText()));
+				if(ResourceTypeEnum.TABLE.equals(getResourceTypeEnum())){
+					sqlTextArea.setText(SqlGeneratorUtil.generateCommentTableSQL(getSchemaName(), 
+	        				tableNameTextField.getText(),
+	        				resourceCommentPanel.getCommentTextArea().getText()));
+				} else if(ResourceTypeEnum.COLUMN.equals(getResourceTypeEnum())){
+					sqlTextArea.setText(SqlGeneratorUtil.generateCommentColumnSQL(
+	        				getSchemaName(),
+	        				((Column)getResource()).getTableName(),
+	        				((Column)getResource()).getModelName(),
+	        				resourceCommentPanel.getCommentTextArea().getText()));
+				}
+				
 			}
 		}
 	}
@@ -515,13 +585,13 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
 	}
 
 
-	public TableRenamePanel getTableRenamePanel() {
-		return tableRenamePanel;
+	public ResourceRenamePanel getTableRenamePanel() {
+		return resourceRenamePanel;
 	}
 
 
-	public void setTableRenamePanel(TableRenamePanel tableRenamePanel) {
-		this.tableRenamePanel = tableRenamePanel;
+	public void setTableRenamePanel(ResourceRenamePanel tableRenamePanel) {
+		this.resourceRenamePanel = tableRenamePanel;
 	}
 
 
@@ -562,6 +632,36 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
 
 	public void setSelectedOption(int selectedOption) {
 		this.selectedOption = selectedOption;
+	}
+
+
+	public T getResource() {
+		return resource;
+	}
+
+
+	public void setResource(T resource) {
+		this.resource = resource;
+	}
+
+
+	public ResourceTypeEnum getResourceTypeEnum() {
+		return resourceTypeEnum;
+	}
+
+
+	public void setResourceTypeEnum(ResourceTypeEnum resourceTypeEnum) {
+		this.resourceTypeEnum = resourceTypeEnum;
+	}
+
+
+	public ResourceEditTypeEnum getResourceEditTypeEnum() {
+		return resourceEditTypeEnum;
+	}
+
+
+	public void setResourceEditTypeEnum(ResourceEditTypeEnum resourceEditTypeEnum) {
+		this.resourceEditTypeEnum = resourceEditTypeEnum;
 	}
 
 

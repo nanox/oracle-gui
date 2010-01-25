@@ -22,7 +22,14 @@ public abstract class BaseDbModel implements Serializable {
 	private String modelName;
 	private String comments;
 	private boolean deleted = false;
+	private String schemaName;
 	
+	public String getSchemaName() {
+		return schemaName;
+	}
+	public void setSchemaName(String schemaName) {
+		this.schemaName = schemaName;
+	}
 	public String getModelName() {
 		return modelName;
 	}

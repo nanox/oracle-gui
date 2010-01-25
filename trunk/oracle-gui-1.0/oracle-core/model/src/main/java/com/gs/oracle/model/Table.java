@@ -27,7 +27,7 @@ public class Table extends BaseDbModel implements Serializable {
 	private List<Column> columnlist;
 	private List<ForeignKey> importedKeys;
 	private List<ForeignKey> exportedKeys;
-	private String schemaName;
+	
 	
 	public Table() {
 		primaryKeys = new ArrayList<PrimaryKey>();
@@ -69,12 +69,6 @@ public class Table extends BaseDbModel implements Serializable {
 		this.columnlist = columnlist;
 	}
 	
-	public String getSchemaName() {
-		return schemaName;
-	}
-	public void setSchemaName(String schemaName) {
-		this.schemaName = schemaName;
-	}
 	@Override
 	public String toString() {
 		return super.getModelName();

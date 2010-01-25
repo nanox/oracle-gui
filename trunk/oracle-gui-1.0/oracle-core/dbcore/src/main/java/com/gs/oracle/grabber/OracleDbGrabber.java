@@ -5,7 +5,7 @@
  *	Type	: com.gs.oracle.grabber.OracleDbGrabber.java
  *	Date	: Jul 29, 2009	3:21:27 PM
  *
- *	Author	: Green Moon
+ *	Author	: Sabuj Das
  *
  *	
  *****************************************************************************/
@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.omg.CORBA.DATA_CONVERSION;
 
+import oracle.jdbc.driver.OracleConnection;
 import oracle.jdbc.driver.OracleTypes;
 
 import com.gs.oracle.ColumnMetaDataEnum;
@@ -139,6 +140,8 @@ public class OracleDbGrabber {
 	}
 	
 	public Table grabTable(Connection connection, String schemaName, String tableName){
+		if(connection instanceof OracleConnection)
+			((OracleConnection)connection).setRemarksReporting(true);
 		Table table = new Table();
 		table.setModelName(tableName);
 		try{
@@ -170,6 +173,8 @@ public class OracleDbGrabber {
 	}
 	
 	public List<Column> getColumnList(Table table, Connection connection) throws SQLException{
+		if(connection instanceof OracleConnection)
+			((OracleConnection)connection).setRemarksReporting(true);
 		List<Column> list = new ArrayList<Column>();
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 		List<PrimaryKey> pkList = table.getPrimaryKeys();
@@ -188,6 +193,8 @@ public class OracleDbGrabber {
 		int cc = rsm.getColumnCount();
 		while(colRs.next()){
 			Column c = new Column();
+			// set the schema name
+			c.setSchemaName(table.getSchemaName());
 			//set table name
 			c.setTableName(table.getModelName());
 			// set column name
@@ -231,6 +238,8 @@ public class OracleDbGrabber {
 	}
 	
 	public List<Column> getColumnList(String schemaName, String tableName, Connection connection) throws SQLException{
+		if(connection instanceof OracleConnection)
+			((OracleConnection)connection).setRemarksReporting(true);
 		List<Column> list = new ArrayList<Column>();
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 		
@@ -251,6 +260,8 @@ public class OracleDbGrabber {
 		int cc = rsm.getColumnCount();
 		while(colRs.next()){
 			Column c = new Column();
+			//set schema name
+			c.setSchemaName(schemaName);
 			//set table name
 			c.setTableName(tableName);
 			// set column name

@@ -13,7 +13,6 @@ public class SqlGeneratorUtil {
 */	
 	public static String generateTableRenameSQL(String schemaName, String oldName, String newName){
 		if(!StringUtil.hasValidContent(schemaName)
-				|| !StringUtil.hasValidContent(newName) 
 				|| !StringUtil.hasValidContent(oldName)){
 			return "";
 		}
@@ -90,6 +89,65 @@ public class SqlGeneratorUtil {
 			.append('.')
 			.append(tableName)
 			.append((drop) ? " DROP STORAGE " : " REUSE STORAGE ");
+			
+		return queryBuffer.toString();
+	}
+
+	public static String generateColumnRenameSQL(String schemaName,
+			String tableName, String oldColumnName, String newColumnName) {
+		if(!StringUtil.hasValidContent(schemaName)
+				|| !StringUtil.hasValidContent(tableName)
+				|| !StringUtil.hasValidContent(oldColumnName)){
+			return "";
+		}
+		StringBuffer queryBuffer = new StringBuffer("ALTER TABLE ");
+		queryBuffer
+			.append(schemaName)
+			.append('.')
+			.append(tableName)
+			.append(" RENAME COLUMN ")
+			.append(oldColumnName)
+			.append(" TO ")
+			.append(newColumnName);
+		return queryBuffer.toString();
+	}
+
+	public static String generateDropColumnSQL(String schemaName,
+			String tableName, String columnName) {
+		if(!StringUtil.hasValidContent(schemaName)
+				|| !StringUtil.hasValidContent(tableName)
+				|| !StringUtil.hasValidContent(columnName)){
+			return "";
+		}
+		StringBuffer queryBuffer = new StringBuffer("ALTER TABLE ");
+		queryBuffer
+			.append(schemaName)
+			.append('.')
+			.append(tableName)
+			.append(" DROP COLUMN ")
+			.append(columnName);
+			
+		return queryBuffer.toString();
+	}
+
+	public static String generateCommentColumnSQL(String schemaName,
+			String tableName, String columnName, String comment) {
+		if(!StringUtil.hasValidContent(schemaName)
+				|| !StringUtil.hasValidContent(tableName)
+				|| !StringUtil.hasValidContent(columnName)){
+			return "";
+		}
+		StringBuffer queryBuffer = new StringBuffer("COMMENT ON COLUMN ");
+		queryBuffer
+			.append(schemaName)
+			.append('.')
+			.append(tableName)
+			.append('.')
+			.append(columnName)
+			.append(" IS ")
+			.append('\'')
+			.append(comment)
+			.append('\'');
 			
 		return queryBuffer.toString();
 	}

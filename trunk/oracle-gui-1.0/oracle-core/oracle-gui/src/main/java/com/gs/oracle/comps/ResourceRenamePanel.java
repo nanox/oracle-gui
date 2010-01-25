@@ -16,34 +16,34 @@ import javax.swing.JTextField;
  * @author sabuj.das
  *
  */
-public class TableRenamePanel extends JPanel {
+public class ResourceRenamePanel extends JPanel {
 
-    public TableRenamePanel() {
+    public ResourceRenamePanel() {
         initComponents();
     }
 
     private void initComponents() {
         GridBagConstraints gridBagConstraints;
 
-        jLabel1 = new JLabel();
-        newTableNameTextField = new JTextField();
+        resourceLabel = new JLabel();
+        newResourceNameTextField = new JTextField();
         jPanel1 = new JPanel();
 
         setLayout(new GridBagLayout());
 
-        jLabel1.setText("New Table Name: ");
+        resourceLabel.setText("");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.anchor = GridBagConstraints.NORTH;
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
-        add(jLabel1, gridBagConstraints);
+        add(resourceLabel, gridBagConstraints);
 
-        newTableNameTextField.setText("NewTableName");
+        newResourceNameTextField.setText("");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = GridBagConstraints.NORTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
-        add(newTableNameTextField, gridBagConstraints);
+        add(newResourceNameTextField, gridBagConstraints);
 
         jPanel1.setLayout(new BorderLayout());
         gridBagConstraints = new GridBagConstraints();
@@ -58,12 +58,16 @@ public class TableRenamePanel extends JPanel {
 
 
 
-    private JLabel jLabel1;
+    private JLabel resourceLabel;
     private JPanel jPanel1;
-    private JTextField newTableNameTextField;
+    private JTextField newResourceNameTextField;
     
-	public JTextField getNewTableNameTextField() {
-		return newTableNameTextField;
+	public JTextField getNewResourceNameTextField() {
+		return newResourceNameTextField;
+	}
+
+	public JLabel getResourceLabel() {
+		return resourceLabel;
 	}
 
     
