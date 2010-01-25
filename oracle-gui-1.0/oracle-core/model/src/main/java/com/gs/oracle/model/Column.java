@@ -132,6 +132,11 @@ public class Column extends BaseDbModel implements Serializable, Comparable<Colu
 		this.tableName = tableName;
 	}
 
+	@ColumnHeader(title="COMMENTS", index=9)
+	public String getComments() {
+		return super.getComments();
+	}
+
 	@Override
 	public String toString() {
 		return getModelName() + " [ " + typeName + ", (" + size +") " + 
