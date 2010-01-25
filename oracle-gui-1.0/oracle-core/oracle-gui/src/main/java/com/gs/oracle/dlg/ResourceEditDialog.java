@@ -191,7 +191,8 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
         		setTitle("Comment on Table");
         		logger.info("Comment on Table");
         		variableComponentPanel.removeAll();
-        		resourceCommentPanel = new ResourceCommentPanel();
+        		resourceCommentPanel = new ResourceCommentPanel(resource);
+        		resourceCommentPanel.getCommentTextArea().addKeyListener(this);
         		variableComponentPanel.add(resourceCommentPanel, BorderLayout.CENTER);
         		sqlTextArea.setText(SqlGeneratorUtil.generateCommentTableSQL(getSchemaName(), 
         				table.getModelName(),
@@ -495,6 +496,13 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
 	    						copyTablePanel.getNewTableNameTextField().getText(), 
 	    						copyTablePanel.getCopyDataCheckBox().isSelected())
 	    			);
+			}
+		}
+		if(resourceCommentPanel != null){
+			if(e.getSource().equals(resourceCommentPanel.getCommentTextArea())){
+				sqlTextArea.setText(SqlGeneratorUtil.generateCommentTableSQL(getSchemaName(), 
+        				tableNameTextField.getText(),
+        				resourceCommentPanel.getCommentTextArea().getText()));
 			}
 		}
 	}
