@@ -43,6 +43,7 @@ import com.gs.oracle.comps.TableDetailsPanel;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.dlg.ConnectionDialog;
 import com.gs.oracle.dlg.OpenResourceDialog;
+import com.gs.oracle.dlg.SearchObjectDialog;
 import com.gs.oracle.dlg.StyleConfigurationDialog;
 import com.gs.oracle.frame.OracleGuiMainFrame;
 import com.gs.oracle.grabber.OracleDbGrabber;
@@ -289,6 +290,77 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 				StyleConfigurationDialog configurationDialog = new StyleConfigurationDialog(f, true);
 				WindowUtil.bringCenterTo(configurationDialog, f);
 				configurationDialog.setVisible(true);
+			} else if(SEARCH_ITEM_ACT_CMD.equals(cmd)){
+				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
+				JDesktopPane desktopPane = f.getMainDesktopPane();
+				if(desktopPane == null){
+					return;
+				}
+				JInternalFrame iFrame = desktopPane.getSelectedFrame();
+				if(iFrame == null){
+					return;
+				}
+				DatabaseViewerInternalFrame dbIframe = null;
+				if(iFrame instanceof DatabaseViewerInternalFrame){
+					dbIframe = (DatabaseViewerInternalFrame) iFrame;
+				}
+				if(dbIframe == null){
+					return;
+				}
+				SearchObjectDialog dialog = new SearchObjectDialog(f, false,
+						dbIframe.getConnectionProperties(), dbIframe);
+				dialog.setVisible(true);
+			} else if(SEARCH_TABLE_ACT_CMD.equals(cmd)){
+				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
+				JDesktopPane desktopPane = f.getMainDesktopPane();
+				if(desktopPane == null){
+					return;
+				}
+				JInternalFrame iFrame = desktopPane.getSelectedFrame();
+				if(iFrame == null){
+					return;
+				}
+				DatabaseViewerInternalFrame dbIframe = null;
+				if(iFrame instanceof DatabaseViewerInternalFrame){
+					dbIframe = (DatabaseViewerInternalFrame) iFrame;
+				}
+				if(dbIframe == null){
+					return;
+				}
+			} else if(SEARCH_COLUMN_ACT_CMD.equals(cmd)){
+				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
+				JDesktopPane desktopPane = f.getMainDesktopPane();
+				if(desktopPane == null){
+					return;
+				}
+				JInternalFrame iFrame = desktopPane.getSelectedFrame();
+				if(iFrame == null){
+					return;
+				}
+				DatabaseViewerInternalFrame dbIframe = null;
+				if(iFrame instanceof DatabaseViewerInternalFrame){
+					dbIframe = (DatabaseViewerInternalFrame) iFrame;
+				}
+				if(dbIframe == null){
+					return;
+				}
+			} else if(SEARCH_DATA_ACT_CMD.equals(cmd)){
+				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
+				JDesktopPane desktopPane = f.getMainDesktopPane();
+				if(desktopPane == null){
+					return;
+				}
+				JInternalFrame iFrame = desktopPane.getSelectedFrame();
+				if(iFrame == null){
+					return;
+				}
+				DatabaseViewerInternalFrame dbIframe = null;
+				if(iFrame instanceof DatabaseViewerInternalFrame){
+					dbIframe = (DatabaseViewerInternalFrame) iFrame;
+				}
+				if(dbIframe == null){
+					return;
+				}
 			}
 		}
 	}
