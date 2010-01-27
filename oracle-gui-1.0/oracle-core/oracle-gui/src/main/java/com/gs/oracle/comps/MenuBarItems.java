@@ -43,6 +43,7 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 	public static final String WINDOW_MENU_NAME = "wINDOW_MENU_NAME";
 	public static final String VIEW_MENU_NAME = "VIEW_MENU_NAME";
 	public static final String HELP_MENU_NAME = "HELP_MENU_NAME";
+	private static final String SEARCH_MENU_NAME = "SEARCH_MENU_NAME";
 	
 	public static final String FILE_MENU_TEXT = "File";
 	public static final String EDIT_MENU_TEXT = "Edit";
@@ -55,6 +56,8 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 	public static final String WINDOW_MENU_TEXT = "Window";
 	public static final String VIEW_MENU_TEXT = "View";
 	public static final String HELP_MENU_TEXT = "Help";
+	private static final String SEARCH_MENU_TEXT = "Search";
+
 	
 // File menu Items
 	public static final String NEW_CONN_FILE_MENU_ITEM = "NEW_CONN_FILE_MENU_ITEM";
@@ -73,6 +76,7 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 	public static final String NEW_SCHEMA_DESIGNER_FILE_MENU_ITEM = "NEW_SCHEMA_DESIGNER_FILE_MENU_ITEM";
 	public static final String OPEN_RECENT_SQL_FILE_MENU_ITEM = "OPEN_RECENT_SQL_FILE_MENU_ITEM";
 	public static final String OPEN_RECENT_SCHEMA_FILE_MENU_ITEM = "OPEN_RECENT_SCHEMA_FILE_MENU_ITEM";
+	
 	
 // Edit menu Items
 	public static final String _EDIT_MENU_ITEM = "";
@@ -96,6 +100,15 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 	
 // Tools menu
 	public static final String STYLE_CFG_MENU_ITEM = "STYLE_CFG_MENU_ITEM";
+	private static final String SEARCH_MENU_ITEM = "SEARCH_MENU_ITEM";
+	private static final String SEARCH_ITEM_ACT_CMD = "SEARCH_ITEM_ACT_CMD";
+	private static final String SEARCH_TAVLE_MENU_ITEM = "SEARCH_TAVLE_MENU_ITEM";
+	private static final String SEARCH_COLUMN_MENU_ITEM = "SEARCH_COLUMN_MENU_ITEM";
+	private static final String SEARCH_TABLE_ACT_CMD = "SEARCH_TABLE_ACT_CMD";
+	private static final String SEARCH_COLUMN_ACT_CMD = "SEARCH_COLUMN_ACT_CMD";
+	private static final String SEARCH_DATA_MENU_ITEM = "SEARCH_DATA_MENU_ITEM";
+	private static final String SEARCH_DATA_ACT_CMD = "SEARCH_DATA_ACT_CMD";
+
 	
 	
 	private Map<String, JMenu> menuMap = new HashMap<String, JMenu>();
@@ -117,6 +130,7 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 		addMenu(DB_MENU_NAME, DB_MENU_TEXT);
 		addMenu(TABLE_MENU_NAME, TABLE_MENU_TEXT);
 		addMenu(OBJECTS_MENU_NAME, OBJECTS_MENU_TEXT);
+		addMenu(SEARCH_MENU_NAME, SEARCH_MENU_TEXT);
 		addMenu(TOOLS_MENU_NAME, TOOLS_MENU_TEXT);
 		addMenu(POWER_TOOLS_MENU_NAME, POWER_TOOLS_MENU_TEXT);
 		addMenu(WINDOW_MENU_NAME, WINDOW_MENU_TEXT);
@@ -128,8 +142,21 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 		createWindowsMenu();
 		createHelpMenu();
 		createToolsMenu();
+		createSearchMenu();
 	}
 	
+	private void createSearchMenu() {
+		addMenuItem(SEARCH_MENU_NAME, SEARCH_MENU_ITEM, "Search ...", 
+				SEARCH_ITEM_ACT_CMD, null);
+		addMenuItem(SEARCH_MENU_NAME, SEARCH_TAVLE_MENU_ITEM, "Search Table", 
+				SEARCH_TABLE_ACT_CMD, null);
+		addMenuItem(SEARCH_MENU_NAME, SEARCH_COLUMN_MENU_ITEM, "Search Column", 
+				SEARCH_COLUMN_ACT_CMD, null);
+		getMenu(SEARCH_MENU_NAME).addSeparator();
+		addMenuItem(SEARCH_MENU_NAME, SEARCH_DATA_MENU_ITEM, "Search Data", 
+				SEARCH_DATA_ACT_CMD, null);
+	}
+
 	private void createToolsMenu() {
 		addMenuItem(TOOLS_MENU_NAME, STYLE_CFG_MENU_ITEM, "Style Configuration", 
 				STYLE_CFG_ACT_CMD, "syntax_style_edit.png");
@@ -234,6 +261,7 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 		//menuBar.add(menuMap.get(DB_MENU_NAME));
 		//menuBar.add(menuMap.get(TABLE_MENU_NAME));
 		//menuBar.add(menuMap.get(OBJECTS_MENU_NAME));
+		menuBar.add(menuMap.get(SEARCH_MENU_NAME));
 		menuBar.add(menuMap.get(TOOLS_MENU_NAME));
 		//menuBar.add(menuMap.get(POWER_TOOLS_MENU_NAME));
 		menuBar.add(menuMap.get(WINDOW_MENU_NAME));
