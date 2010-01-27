@@ -43,7 +43,7 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 	public static final String WINDOW_MENU_NAME = "wINDOW_MENU_NAME";
 	public static final String VIEW_MENU_NAME = "VIEW_MENU_NAME";
 	public static final String HELP_MENU_NAME = "HELP_MENU_NAME";
-	private static final String SEARCH_MENU_NAME = "SEARCH_MENU_NAME";
+	public static final String SEARCH_MENU_NAME = "SEARCH_MENU_NAME";
 	
 	public static final String FILE_MENU_TEXT = "File";
 	public static final String EDIT_MENU_TEXT = "Edit";
@@ -56,7 +56,7 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 	public static final String WINDOW_MENU_TEXT = "Window";
 	public static final String VIEW_MENU_TEXT = "View";
 	public static final String HELP_MENU_TEXT = "Help";
-	private static final String SEARCH_MENU_TEXT = "Search";
+	public static final String SEARCH_MENU_TEXT = "Search";
 
 	
 // File menu Items
@@ -100,14 +100,10 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 	
 // Tools menu
 	public static final String STYLE_CFG_MENU_ITEM = "STYLE_CFG_MENU_ITEM";
-	private static final String SEARCH_MENU_ITEM = "SEARCH_MENU_ITEM";
-	private static final String SEARCH_ITEM_ACT_CMD = "SEARCH_ITEM_ACT_CMD";
-	private static final String SEARCH_TAVLE_MENU_ITEM = "SEARCH_TAVLE_MENU_ITEM";
-	private static final String SEARCH_COLUMN_MENU_ITEM = "SEARCH_COLUMN_MENU_ITEM";
-	private static final String SEARCH_TABLE_ACT_CMD = "SEARCH_TABLE_ACT_CMD";
-	private static final String SEARCH_COLUMN_ACT_CMD = "SEARCH_COLUMN_ACT_CMD";
-	private static final String SEARCH_DATA_MENU_ITEM = "SEARCH_DATA_MENU_ITEM";
-	private static final String SEARCH_DATA_ACT_CMD = "SEARCH_DATA_ACT_CMD";
+	public static final String SEARCH_MENU_ITEM = "SEARCH_MENU_ITEM";
+	public static final String SEARCH_TAVLE_MENU_ITEM = "SEARCH_TAVLE_MENU_ITEM";
+	public static final String SEARCH_COLUMN_MENU_ITEM = "SEARCH_COLUMN_MENU_ITEM";
+	public static final String SEARCH_DATA_MENU_ITEM = "SEARCH_DATA_MENU_ITEM";
 
 	
 	
