@@ -41,6 +41,7 @@ import javax.swing.JComboBox;
 import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -162,6 +163,7 @@ UndoableEditListener, HyperlinkListener {
 	private void initComponents() {
 		GridBagConstraints gridBagConstraints;
 
+		fileMenu = new JMenu("File");
 		queryPopupMenu = new JPopupMenu();
 		runQueryMenuItem = new JMenuItem();
 		runAllMenuItem = new JMenuItem();
@@ -209,6 +211,21 @@ UndoableEditListener, HyperlinkListener {
 		runSelectedQueryButton = new JButton();
 		queryFontButton = new  JButton();
 		
+		editMenu = new JMenu("Edit");
+		undoMenuItem  = new JMenuItem();
+		redoMenuItem = new JMenuItem();
+		cutMenuItem  = new JMenuItem();
+		copyMenuItem  = new JMenuItem();
+		pasteMenuItem = new JMenuItem();
+		findMenuItem  = new JMenuItem();
+		findNextMenuItem  = new JMenuItem();
+		replaceMenuItem  = new JMenuItem();
+		replaceNextMenuItem = new JMenuItem();
+			
+		printMenu = new JMenu("Print");
+		printPreviewMenuItem  = new JMenuItem();
+		printMenuItem = new JMenuItem();
+		
 		Icon image = null;
 
 		runQueryMenuItem.setText("Run Last Query");
@@ -251,34 +268,97 @@ UndoableEditListener, HyperlinkListener {
 		queryPopupMenu.add(rollbackMenuItem);
 		queryPopupMenu.add(jSeparator5);
 
+		
+		
 		openMenuItem.setText("Open");
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH + "open.gif"));
 		openMenuItem.setIcon(image);
 		openMenuItem.addActionListener(this);
-		queryPopupMenu.add(openMenuItem);
+		fileMenu.add(openMenuItem);
 
 		saveMenuItem.setText("Save");
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH + "save_edit.gif"));
 		saveMenuItem.setIcon(image);
 		saveMenuItem.addActionListener(this);
-		queryPopupMenu.add(saveMenuItem);
+		fileMenu.add(saveMenuItem);
 
 		saveAsMenuItem.setText("Save As...");
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH + "saveas_edit.gif"));
 		saveAsMenuItem.setIcon(image);
 		saveAsMenuItem.addActionListener(this);
-		queryPopupMenu.add(saveAsMenuItem);
-
+		fileMenu.add(saveAsMenuItem);
+		
+		queryPopupMenu.add(fileMenu);
+		
+		undoMenuItem.setText("Undo");
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.EDITOR_IMAGE_PATH + "undo.gif"));
+		undoMenuItem.setIcon(image);
+		undoMenuItem.addActionListener(this);
+		editMenu.add(undoMenuItem);
+		redoMenuItem.setText("Redo");
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.EDITOR_IMAGE_PATH + "redo.gif"));
+		redoMenuItem.setIcon(image);
+		redoMenuItem.addActionListener(this);
+		editMenu.add(redoMenuItem);
+		editMenu.addSeparator();
+		cutMenuItem.setText("Cut");
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.EDITOR_IMAGE_PATH + "cut.gif"));
+		cutMenuItem.setIcon(image);
+		cutMenuItem.addActionListener(this);
+		editMenu.add(cutMenuItem);
+		copyMenuItem.setText("Copy");
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.EDITOR_IMAGE_PATH + "copy.gif"));
+		copyMenuItem.setIcon(image);
+		copyMenuItem.addActionListener(this);
+		editMenu.add(copyMenuItem);
+		pasteMenuItem.setText("Paste");
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.EDITOR_IMAGE_PATH + "paste.gif"));
+		pasteMenuItem.setIcon(image);
+		pasteMenuItem.addActionListener(this);
+		editMenu.add(pasteMenuItem);
+		editMenu.addSeparator();
+		findMenuItem.setText("Find");
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.EDITOR_IMAGE_PATH + "find.gif"));
+		findMenuItem.setIcon(image);
+		findMenuItem.addActionListener(this);
+		editMenu.add(findMenuItem);
+		findNextMenuItem.setText("Find Next");
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.EDITOR_IMAGE_PATH + "findnext.gif"));
+		findNextMenuItem.setIcon(image);
+		findNextMenuItem.addActionListener(this);
+		editMenu.add(findNextMenuItem);
+		replaceMenuItem.setText("Replace");
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.EDITOR_IMAGE_PATH + "replace.gif"));
+		replaceMenuItem.setIcon(image);
+		replaceMenuItem.addActionListener(this);
+		editMenu.add(replaceMenuItem);
+		replaceNextMenuItem.setText("Replace Next");
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.EDITOR_IMAGE_PATH + "replacenext.gif"));
+		replaceNextMenuItem.setIcon(image);
+		replaceNextMenuItem.addActionListener(this);
+		editMenu.add(replaceNextMenuItem);
+		
+		queryPopupMenu.add(editMenu);
+		queryPopupMenu.add(jSeparator6);
+		
 		clearMenuItem.setText("Clear");
 		image = new ImageIcon(MenuBarUtil.class
 				.getResource(OracleGuiConstants.IMAGE_PATH + "clear_co.gif"));
 		clearMenuItem.setIcon(image);
 		clearMenuItem.addActionListener(this);
 		queryPopupMenu.add(clearMenuItem);
-		queryPopupMenu.add(jSeparator6);
 
 		wrapCheckBoxMenuItem.setEnabled(false);
 		wrapCheckBoxMenuItem.setSelected(false);
@@ -288,7 +368,22 @@ UndoableEditListener, HyperlinkListener {
 		wrapCheckBoxMenuItem.addActionListener(this);
 		wrapCheckBoxMenuItem.setText("Wrap");
 		queryPopupMenu.add(wrapCheckBoxMenuItem);
-
+		queryPopupMenu.addSeparator();
+		
+		printPreviewMenuItem.setText("Print Preview");
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.EDITOR_IMAGE_PATH + "print.gif"));
+		printPreviewMenuItem.setIcon(image);
+		printPreviewMenuItem.addActionListener(this);
+		printMenu.add(printPreviewMenuItem); 
+		printMenuItem.setText("Print ...");
+		image = new ImageIcon(MenuBarUtil.class
+				.getResource(OracleGuiConstants.EDITOR_IMAGE_PATH + "printpreview.gif"));
+		printMenuItem.setIcon(image);
+		printMenuItem.addActionListener(this);
+		printMenu.add(printMenuItem); 
+		queryPopupMenu.add(printMenu);
+		
 		setLayout(new BorderLayout());
 
 		sqlQuerySplitPane.setDividerLocation(250);
@@ -695,6 +790,14 @@ UndoableEditListener, HyperlinkListener {
 	private JButton openFileButton;
 	private JTable queryResultTable;
 	private ResultSetTableModelFactory factory;
+	
+	private JMenu editMenu, fileMenu;
+	private JMenuItem undoMenuItem, redoMenuItem,
+				cutMenuItem, copyMenuItem, pasteMenuItem,
+				findMenuItem, findNextMenuItem, replaceMenuItem, replaceNextMenuItem;
+	
+	private JMenu printMenu;
+	private JMenuItem printPreviewMenuItem, printMenuItem;
 	
 
 	private GuiEventHandler guiEventHandler = new GuiEventHandler();

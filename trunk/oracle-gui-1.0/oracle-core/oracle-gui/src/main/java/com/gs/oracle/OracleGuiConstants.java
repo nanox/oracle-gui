@@ -25,6 +25,7 @@ public interface OracleGuiConstants {
 	int APPLY_OPTION = 1001; 
 
 	String IMAGE_PATH = "/images/";
+	String EDITOR_IMAGE_PATH = "/images/com/gs/oracle/comps/editor/";
 	String QUERY_IMAGE_PATH = "/images/query/";
 	String DATA_DIR = "./data/";
 	String CONNECTION_DATA_FILE = DATA_DIR
