@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Archiver-Version: Plexus Archiver
+Created-By: Apache Maven
+Built-By: Maven
+Author: Sabuj Das
+Build-Jdk: 1.6.0
+Main-Class: com.gs.oracle.Launcher
+Class-Path: libs/ojdbc14.jar libs/tinylaf.jar libs/OfficeLnFs_2.7.jar libs/substance.jar libs/jdbc_rowset_tiger-1_0_1.jar

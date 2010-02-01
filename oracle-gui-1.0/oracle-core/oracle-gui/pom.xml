@@ -133,9 +133,13 @@
 						<descriptorRef>jar-with-dependencies</descriptorRef>
 					</descriptorRefs>
 					<archive>
+						<!--
 						<manifest>
-							<mainClass>com.gs.oracle.Launcher</mainClass>
+							 <mainClass>com.gs.oracle.Launcher</mainClass> 
+							
 						</manifest>
+						-->
+						<manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
 					</archive>
 				</configuration>
 				<executions>
@@ -144,6 +148,30 @@
 						<phase>package</phase>
 						<goals>
 							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<!-- Coping JAR to release directory-->
+					<execution>
+						<id>defaultcopy</id>
+						<phase>release</phase>
+						<configuration>
+							<tasks>
+								<!-- Coping JAR to release directory-->
+								<copy todir="${release.dir}"
+									overwrite="true" failonerror="true" includeEmptyDirs="false">
+									<fileset dir="target">
+										<include name="oracle-gui-1.0-SNAPSHOT-jar-with-dependencies.jar" />
+									</fileset>
+								</copy>
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
 						</goals>
 					</execution>
 				</executions>
