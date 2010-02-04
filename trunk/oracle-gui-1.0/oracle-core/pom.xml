@@ -58,7 +58,7 @@
 	</build>
 	
 	<properties>
-		<libs.dir>E:/SVN_HOME/MyProjects/oracle-gui/trunk/oracle-gui-1.0/setup/app/libs</libs.dir>
+		<libs.dir>/home/sabuj/SVN_HOME/oracle-gui/trunk/oracle-gui-1.0/setup/app/libs</libs.dir>
 		<jdk.version>1.6</jdk.version>
 	</properties>
 	
