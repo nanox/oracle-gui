@@ -63,6 +63,7 @@ public class OracleGuiMainFrame extends JFrame implements WindowListener{
 		logger.info("Starting application.");
 		initComponents();
 		setInitialProperties();
+		addWindowListener(this);
 	}
 	
 	private void setInitialProperties(){
@@ -72,7 +73,6 @@ public class OracleGuiMainFrame extends JFrame implements WindowListener{
 				.getResource(OracleGuiConstants.IMAGE_PATH + "Oracle-Gui.gif")))
 				.getImage());
 		WindowUtil.bringToCenter(this);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 	
 	private void initComponents() {
@@ -88,7 +88,7 @@ public class OracleGuiMainFrame extends JFrame implements WindowListener{
         toolbarButtons = new ToolbarButtons(this);
         menuBarItems = new MenuBarItems(this);
 
-        setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
         setName("OracleGuiMainFrame"); 
 
         mainPanel.setName("mainPanel"); 
@@ -269,12 +269,12 @@ public class OracleGuiMainFrame extends JFrame implements WindowListener{
 
 	@Override
 	public void windowClosed(WindowEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void windowClosing(WindowEvent e) {
+		logger.info("Closing application.");
 		JInternalFrame[] iFrames = mainDesktopPane.getAllFrames();
 		for (JInternalFrame internalFrame : iFrames) {
 			if(internalFrame == null){
@@ -284,6 +284,8 @@ public class OracleGuiMainFrame extends JFrame implements WindowListener{
 				((DatabaseViewerInternalFrame) internalFrame).closeWindow();
 			}
 		}
+		logger.info("Application Closed.");
+		System.exit(0);
 	}
 
 	@Override

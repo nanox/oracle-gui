@@ -58,7 +58,8 @@
 	</build>
 	
 	<properties>
-		<libs.dir>/home/sabuj/SVN_HOME/oracle-gui/trunk/oracle-gui-1.0/setup/app/libs</libs.dir>
+		<libs.dir>D:/SVN_HOME/MY_PROJECTS/oracle-gui/trunk/oracle-gui-1.0/setup/app/libs</libs.dir>
+		<release.dir>D:/SVN_HOME/MY_PROJECTS/oracle-gui/trunk/release/Oracle-GUI-1.0-beta-1</release.dir>
 		<jdk.version>1.6</jdk.version>
 	</properties>
 	

@@ -12,6 +12,7 @@
 package com.gs.oracle.dlg;
 
 import java.awt.BorderLayout;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -72,25 +73,41 @@ public class ConnectionDialog extends JDialog {
 	
 	public ConnectionDialog(JFrame parent, boolean modal) {
 		super(parent, modal);
+		if(logger.isDebugEnabled())
+			logger.debug("Opening connection dialog.");
 		parentFrame = parent;
 		
 		InputStream mappingStream = IOUtils.getResourceAsStream(OracleGuiConstants.CONN_PROPERTIES_MAPPING_FILE);
 		File dataFile = IOUtils.mkfile(OracleGuiConstants.CONNECTION_DATA_FILE);
 		
 		catalog = XmlRWUtils.readUsingCastor(dataFile, mappingStream);
-		
-		if(catalog != null){
-			int i = 0;
-			for (ConnectionProperties p : catalog.getConnectionPropertiesList()) {
-				connectionNames.add(p.getConnectionName());
-				i++;
+		ConnectionProperties connectionProperties = null;
+		if(catalog != null ){
+			if(catalog.getConnectionPropertiesList() != null
+				&& catalog.getConnectionPropertiesList().size() > 0){
+				if(logger.isDebugEnabled())
+					logger.debug("[ " + catalog.getConnectionPropertiesList().size() + " ] saved connection(s) found.");
+				connectionProperties = catalog.getConnectionPropertiesList().first();
+				int i = 0;
+				for (ConnectionProperties p : catalog.getConnectionPropertiesList()) {
+					connectionNames.add(p.getConnectionName());
+					i++;
+				}
 			}
+		} else{
+			if(logger.isDebugEnabled())
+				logger.debug("No saved connections found.");
 		}
 		setSize(400, 300);
 		initComponents();
 		setResizable(false);
 		setTitle("Connect to Oracle Database");
 		getRootPane().setDefaultButton(connectButton);
+		if(connectionProperties != null){
+			if(logger.isDebugEnabled())
+				logger.debug("Populating default connection details.");
+			populateConnectionProperties(connectionProperties);
+		}
 	}
 
 	private void initComponents() {
@@ -144,6 +161,7 @@ public class ConnectionDialog extends JDialog {
 		parentPanel.add(jLabel1, gridBagConstraints);
 
 		newConnectionButton.setText("New ...");
+		newConnectionButton.setFocusable(false);
 		newConnectionButton.setActionCommand(GuiCommandConstants.NEW_CONNECTION_ACT_CMD);
 		newConnectionButton
 				.addActionListener(new ActionListener() {
@@ -158,6 +176,7 @@ public class ConnectionDialog extends JDialog {
 
 		saveConnectionButton.setText("Save");
 		saveConnectionButton.setEnabled(false);
+		saveConnectionButton.setFocusable(false);
 		saveConnectionButton
 				.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -169,6 +188,7 @@ public class ConnectionDialog extends JDialog {
 		parentPanel.add(saveConnectionButton, gridBagConstraints);
 
 		deleteConnectionButton.setText("Delete");
+		deleteConnectionButton.setFocusable(false);
 		deleteConnectionButton
 				.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -204,6 +224,7 @@ public class ConnectionDialog extends JDialog {
 		parentPanel.add(connectionNamesComboBox, gridBagConstraints);
 
 		editConnNameButton.setText("Edit ...");
+		editConnNameButton.setFocusable(false);
 		editConnNameButton
 				.addActionListener(new ActionListener() {
 					public void actionPerformed(ActionEvent evt) {
@@ -225,7 +246,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(1, 1, 1, 1);
 		httpHostPanel.add(jLabel3, gridBagConstraints);
 
-		hostAddrTextField.setText("db001");
+		hostAddrTextField.setText("localhost");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridwidth = 3;
 		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
@@ -240,7 +261,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(1, 1, 1, 1);
 		httpHostPanel.add(jLabel4, gridBagConstraints);
 
-		userNameTextField.setText("pos_user");
+		userNameTextField.setText("user_name");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 1;
@@ -257,7 +278,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(1, 1, 1, 1);
 		httpHostPanel.add(jLabel5, gridBagConstraints);
 
-		pwdPasswordField.setText("pos_user");
+		pwdPasswordField.setText("password");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 2;
@@ -287,6 +308,8 @@ public class ConnectionDialog extends JDialog {
 		httpHostPanel.add(jLabel7, gridBagConstraints);
 
 		portTextField.setText("1521");
+//		portTextField.setPreferredSize(new Dimension(55, 20));
+//		portTextField.setMinimumSize(portTextField.getPreferredSize());
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 3;
@@ -295,16 +318,16 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.insets = new Insets(1, 1, 1, 1);
 		httpHostPanel.add(portTextField, gridBagConstraints);
 
-		jLabel8.setText("Default Character Set");
+		jLabel8.setText("Character Set");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 2;
 		gridBagConstraints.gridy = 3;
-		gridBagConstraints.anchor = GridBagConstraints.WEST;
+		gridBagConstraints.anchor = GridBagConstraints.EAST;
 		gridBagConstraints.insets = new Insets(1, 1, 1, 1);
 		httpHostPanel.add(jLabel8, gridBagConstraints);
 
 		charSetComboBox.setModel(new DefaultComboBoxModel(
-				new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+				new String[] {"Default"}));
 		charSetComboBox.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent evt) {
 				charSetComboBoxActionPerformed(evt);
@@ -313,11 +336,12 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 3;
 		gridBagConstraints.gridy = 3;
-		gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
+		gridBagConstraints.anchor = GridBagConstraints.EAST;
+		//gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
 		gridBagConstraints.insets = new Insets(1, 1, 1, 1);
 		httpHostPanel.add(charSetComboBox, gridBagConstraints);
 
-		sidTextField.setText("BK53DV01");
+		sidTextField.setText("XE");
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 4;
@@ -357,6 +381,7 @@ public class ConnectionDialog extends JDialog {
 		httpHostPanel.add(serviceNameRadioButton, gridBagConstraints);
 
 		serviceNameTextField.setText("");
+		serviceNameTextField.setEnabled(serviceNameRadioButton.isSelected() );
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 5;
@@ -414,7 +439,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.gridx = 1;
 		gridBagConstraints.gridy = 4;
 		gridBagConstraints.anchor = GridBagConstraints.WEST;
-		parentPanel.add(connectButton, gridBagConstraints);
+		parentPanel.add(cancelButton, gridBagConstraints);
 
 		cancelButton.setText("Cancel");
 		cancelButton.addActionListener(new ActionListener() {
@@ -425,7 +450,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints = new GridBagConstraints();
 		gridBagConstraints.gridx = 2;
 		gridBagConstraints.gridy = 4;
-		parentPanel.add(cancelButton, gridBagConstraints);
+		parentPanel.add(testConnectionButton, gridBagConstraints);
 
 		testConnectionButton.setText("Test Connection");
 		testConnectionButton.setActionCommand(GuiCommandConstants.TEST_CONNECTION_ACT_CMD);
@@ -440,7 +465,7 @@ public class ConnectionDialog extends JDialog {
 		gridBagConstraints.gridy = 4;
 		gridBagConstraints.anchor = GridBagConstraints.EAST;
 		gridBagConstraints.insets = new Insets(5, 5, 5, 5);
-		parentPanel.add(testConnectionButton, gridBagConstraints);
+		parentPanel.add(connectButton, gridBagConstraints);
 
 		getContentPane().add(parentPanel, BorderLayout.CENTER);
 
@@ -469,7 +494,7 @@ public class ConnectionDialog extends JDialog {
 	}
 
 	private void cancelButtonActionPerformed(ActionEvent evt) {
-		// TODO add your handling code here:
+		dispose();
 	}
 
 	private void connectButtonActionPerformed(ActionEvent evt) {
@@ -491,11 +516,23 @@ public class ConnectionDialog extends JDialog {
 
 	private void serviceNameRadioButtonActionPerformed(
 			ActionEvent evt) {
-		// TODO add your handling code here:
+		if(serviceNameRadioButton.isSelected()){
+			serviceNameTextField.setEnabled(true);
+			sidTextField.setEnabled(false);
+		} else if(!serviceNameRadioButton.isSelected()){
+			serviceNameTextField.setEnabled(false);
+			sidTextField.setEnabled(true);
+		}
 	}
 
 	private void SIDRadioButtonActionPerformed(ActionEvent evt) {
-		// TODO add your handling code here:
+		if(SIDRadioButton.isSelected()){
+			sidTextField.setEnabled(true);
+			serviceNameTextField.setEnabled(false);
+		} else if(!SIDRadioButton.isSelected()){
+			sidTextField.setEnabled(false);
+			serviceNameTextField.setEnabled(true);
+		}
 	}
 
 	private void charSetComboBoxActionPerformed(ActionEvent evt) {

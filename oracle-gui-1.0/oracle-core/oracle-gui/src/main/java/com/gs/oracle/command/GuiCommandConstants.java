@@ -53,6 +53,7 @@ public interface GuiCommandConstants {
 	String SYS_LnF_ACT_CMD 				= "SYS_LnF_ACT_CMD";
 	String METAL_ACT_CMD 				= "METAL_ACT_CMD";
 	String OFFICE_2003_ACT_CMD 			= "OFFICE_2003_ACT_CMD";
+	String OFFICE_XP_ACT_CMD 			= "OFFICE_XP_ACT_CMD";
 	String FOREST_ACT_CMD 				= "FOREST_ACT_CMD";
 	
 	String CASCADE_ACT_CMD 				= "CASCADE_ACT_CMD";

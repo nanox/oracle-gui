@@ -20,6 +20,9 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
+import javax.swing.UIManager;
+
+import org.fife.plaf.Office2003.Office2003LookAndFeel;
 
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiCommandConstants;
@@ -86,6 +89,7 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 	public static final String SYS_LnF_VIEW_MENU_ITEM = "SYS_LnF_VIEW_MENU_ITEM";
 	public static final String METAL_LnF_VIEW_MENU_ITEM = "METAL_LnF_VIEW_MENU_ITEM";
 	public static final String OFFICE_2003_VIEW_MENU_ITEM = "OFFICE_2003_VIEW_MENU_ITEM";
+	public static final String OFFICE_XP_VIEW_MENU_ITEM = "OFFICE_XP_VIEW_MENU_ITEM";
 	public static final String FOREST_VIEW_MENU_ITEM = "FOREST_VIEW_MENU_ITEM";
 	/*public static final String _VIEW_MENU_ITEM = "";
 	public static final String _VIEW_MENU_ITEM = "";
@@ -181,25 +185,40 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 		JMenu lNfMenu = new JMenu("Look 'n' Feel");
 		JRadioButtonMenuItem sysLnfItel = createRadioButtonMenuItem(SYS_LnF_VIEW_MENU_ITEM,
 						"System", SYS_LnF_ACT_CMD, null);
-		sysLnfItel.setSelected(true);
+		
 		JRadioButtonMenuItem metalLnfItel = createRadioButtonMenuItem(METAL_LnF_VIEW_MENU_ITEM,
 				"Metal", METAL_ACT_CMD, null);
 		JRadioButtonMenuItem forestLnfItel = createRadioButtonMenuItem(FOREST_VIEW_MENU_ITEM,
 				"Forest", FOREST_ACT_CMD, null);
 		JRadioButtonMenuItem office2003LnfItel = createRadioButtonMenuItem(OFFICE_2003_VIEW_MENU_ITEM,
 				"Office 2003", OFFICE_2003_ACT_CMD, null);
+		JRadioButtonMenuItem officeXpLnfItel = createRadioButtonMenuItem(OFFICE_XP_VIEW_MENU_ITEM,
+				"Office XP", OFFICE_XP_ACT_CMD, null);
+		String osName = System.getProperty("os.name");
+	    if(osName.toLowerCase().startsWith("win")){
+	    	office2003LnfItel.setEnabled(true);
+	    	office2003LnfItel.setSelected(true);
+	    	officeXpLnfItel.setEnabled(true);
+	    } else {
+	    	office2003LnfItel.setEnabled(false);
+	    	sysLnfItel.setSelected(true);
+	    	officeXpLnfItel.setEnabled(false);
+	    }
+		
 		JRadioButtonMenuItem LnfItel = createRadioButtonMenuItem(SYS_LnF_VIEW_MENU_ITEM,
 				"System", SYS_LnF_VIEW_MENU_ITEM, null);
 		lnfButtonGroup.add(sysLnfItel);
 		lnfButtonGroup.add(metalLnfItel);
 		lnfButtonGroup.add(forestLnfItel);
 		lnfButtonGroup.add(office2003LnfItel);
+		lnfButtonGroup.add(officeXpLnfItel);
 		
 		lNfMenu.add(sysLnfItel);
 		lNfMenu.addSeparator();
 		lNfMenu.add(metalLnfItel);
 		lNfMenu.add(forestLnfItel);
 		lNfMenu.add(office2003LnfItel);
+		lNfMenu.add(officeXpLnfItel);
 		
 		getMenu(VIEW_MENU_NAME).add(lNfMenu);
 	}
