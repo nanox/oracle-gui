@@ -20,12 +20,13 @@ import javax.swing.JTabbedPane;
 
 import oracle.jdbc.pool.OracleDataSource;
 
+import org.apache.log4j.Logger;
+
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.comps.ButtonTabComponent;
 import com.gs.oracle.comps.DatabaseDirectoryPanel;
 import com.gs.oracle.comps.DatabaseDirectoryTree;
-import com.gs.oracle.comps.ResultSetTableModelFactory;
 import com.gs.oracle.comps.SqlQueryPanel;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.model.Database;
@@ -41,7 +42,7 @@ import com.gs.oracle.util.DisplayUtils;
  *
  */
 public class DatabaseViewerInternalFrame extends JInternalFrame implements WindowListener{
-	
+	private static final Logger logger = Logger.getLogger(DatabaseViewerInternalFrame.class);
 	private JFrame parentFrame;
 	
 	private ConnectionProperties connectionProperties;
@@ -60,6 +61,7 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		service = new OracleDatabaseServiceImpl();
 		Database database = getDataBaseInformation();
 		initComponents(database);
+		
 	}
 	
 	
@@ -127,7 +129,7 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 	
 	private void initComponents(Database database){
 		if(connectionProperties != null)
-			setTitle(connectionProperties.getUserName() + " @ " + connectionProperties.getHostName());
+			setTitle((connectionProperties.getUserName() + " @ " + connectionProperties.getHostName()).toUpperCase());
 		
 		setLocation(0, 0);
 		setSize(600, 450);
@@ -228,6 +230,7 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 	
 	public void closeWindow(){
 		if(connectionProperties.getDataSource() != null){
+			logger.info("Closing Datasource");
 			try {
 				if(connectionProperties.getDataSource() instanceof OracleDataSource){
 					((OracleDataSource)connectionProperties.getDataSource()).close();

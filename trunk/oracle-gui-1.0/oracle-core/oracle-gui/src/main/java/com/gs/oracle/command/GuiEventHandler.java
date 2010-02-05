@@ -30,6 +30,7 @@ import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.fife.plaf.Office2003.Office2003LookAndFeel;
+import org.fife.plaf.OfficeXP.OfficeXPLookAndFeel;
 
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
@@ -197,7 +198,11 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 				updateLnF(TinyLookAndFeel.class.getCanonicalName());
 			} else if(OFFICE_2003_ACT_CMD.equals(cmd)){
 				updateLnF(Office2003LookAndFeel.class.getCanonicalName());
-			} else if(CASCADE_ACT_CMD.equals(cmd)){
+			}
+			else if(OFFICE_XP_ACT_CMD.equals(cmd)){
+				updateLnF(OfficeXPLookAndFeel.class.getCanonicalName());
+			}
+			else if(CASCADE_ACT_CMD.equals(cmd)){
 				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
 				JDesktopPane desktopPane = f.getMainDesktopPane();
 				if(desktopPane != null){
@@ -488,7 +493,7 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 			UIManager.setLookAndFeel(lnfName);
         } catch (Exception ex) {
         	try {
-				UIManager.setLookAndFeel(TinyLookAndFeel.class.getCanonicalName());
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			} catch (InstantiationException e) {
@@ -499,7 +504,8 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 				e.printStackTrace();
 			}
         }
-        SwingUtilities.updateComponentTreeUI(getParent());
+        
+        SwingUtilities.updateComponentTreeUI((JFrame)getParent());
 	}
 	
 	
