@@ -4,6 +4,7 @@
 package com.gs.oracle.comps;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
@@ -752,7 +753,8 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 
 	@Override
 	public void mouseReleased(MouseEvent e) {
-		if(e.isPopupTrigger()){
+		if(e.isPopupTrigger() || MouseEvent.BUTTON3 == e.getButton()){ 
+			setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			int x = e.getX();
             int y = e.getY();
             TreePath path = getDatabaseDirectoryTree().getPathForLocation(x, y);

@@ -198,7 +198,7 @@ UndoableEditListener, HyperlinkListener {
 		schemaNameLabel = new JLabel("SCHEMA : ");
 		schemaNamesComboBox = new JComboBox();
 		fileNameLabel = new JLabel("File : ");
-		fileNameTextField = new JTextField();
+		fileNameTextField = new JTextField("", 8);
 		
 		queryResultPanel = new JPanel();
 		queryResultTabbedPane = new JTabbedPane();
