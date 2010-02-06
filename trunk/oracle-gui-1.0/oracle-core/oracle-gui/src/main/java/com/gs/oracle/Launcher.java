@@ -35,6 +35,7 @@ public class Launcher {
 	    JDialog.setDefaultLookAndFeelDecorated(true);
 	    String osName = System.getProperty("os.name");
 	    logger.info("Operating System : " + osName);
+	    //String lnfClass = UIManager.getCrossPlatformLookAndFeelClassName();
 	    String lnfClass = UIManager.getSystemLookAndFeelClassName();
 	    if(osName.toLowerCase().startsWith("win")){
 	    	lnfClass = Office2003LookAndFeel.class.getCanonicalName();
