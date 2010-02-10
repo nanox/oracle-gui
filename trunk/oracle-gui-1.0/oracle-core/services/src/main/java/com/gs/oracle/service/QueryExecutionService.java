@@ -3,6 +3,7 @@
  */
 package com.gs.oracle.service;
 
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.util.List;
 
@@ -19,7 +20,7 @@ public interface QueryExecutionService {
 	
 	public void executeBatch(List<SqlQuery> queryList) throws ApplicationException;
 	
-	public ResultSet executeSelect(SqlQuery sqlQuery) throws ApplicationException;
+	public ResultSet executeSelect(Connection connection, String sqlQuery) throws ApplicationException;
 	
 	public String generateDdlForTable(String tableName) throws ApplicationException;
 	

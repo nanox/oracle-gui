@@ -71,10 +71,18 @@ public class QueryExecutionServiceImpl implements QueryExecutionService {
 	}
 
 	
-	public ResultSet executeSelect(SqlQuery sqlQuery)
-			throws ApplicationException {
-		
-		return null;
+	public ResultSet executeSelect(Connection connection, String sqlQuery) throws ApplicationException{
+		if(connection == null){
+			throw new ApplicationException("Not Connected.");
+		}
+		ResultSet rs = null;
+		try {
+			Statement stmt = connection.prepareStatement(sqlQuery);
+			rs = stmt.executeQuery(sqlQuery);
+		} catch (SQLException e) {
+			throw new ApplicationException(e.getMessage());
+		}
+		return rs;
 	}
 	
 	public String generateDdlForTable(String tableName) throws ApplicationException{

@@ -9,12 +9,17 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Set;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -24,7 +29,12 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
+import org.apache.log4j.Logger;
+
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.collection.CollectionUtils;
+import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.grabber.OracleDbGrabber;
 
 /**
  * @author sabuj.das
@@ -32,16 +42,98 @@ import com.gs.oracle.OracleGuiConstants;
  */
 public class SearchColumnPanel extends JPanel implements ActionListener {
 	
+	private static final Logger logger = Logger.getLogger(SearchColumnPanel.class);
+	
 	private static final Icon DB_SEARCH_ICON = new ImageIcon(
 			SearchTablePanel.class.getResource(OracleGuiConstants.IMAGE_PATH + "database_search.png"));
 	private static final Icon LOADING_SEARCH_RESULT_ICON = new ImageIcon(
 			SearchTablePanel.class.getResource(OracleGuiConstants.IMAGE_PATH + "loading_001.gif"));
 	
-    public SearchColumnPanel() {
+	private JFrame parentFrame;
+	private ConnectionProperties connectionProperties;
+	private String[] availableSchemaNames;
+	
+	
+    public SearchColumnPanel(JFrame parentFrame,
+			ConnectionProperties connectionProperties) {
+    	this.connectionProperties = connectionProperties;
+    	this.parentFrame = parentFrame;
+    	Connection connection = null;
+    	String[] schemaNames = null;
+		try{
+			connection = connectionProperties.getDataSource().getConnection();
+			Set<String> schemas = new OracleDbGrabber().getAvailableSchemaNames(connection);
+			if(logger.isDebugEnabled()){
+				logger.debug("[ " + schemas.size() + " ] available schema found.");
+			}
+			schemaNames = new String[schemas.size()];
+			int i=0;
+			for (String s : schemas) {
+				schemaNames[i++] = s;
+			}
+			availableSchemaNames = schemaNames;
+		}catch(SQLException se){
+			logger.error("Cannot copy table", se);
+		}finally{
+			if(connection != null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+    	
         initComponents();
+        if(availableSchemaNames != null){
+        	availableSchemasComboBox.setModel(new DefaultComboBoxModel(availableSchemaNames));
+        	int pos = CollectionUtils.getLocation(connectionProperties.getDatabaseName(), availableSchemaNames);
+        	if(pos > -1){
+        		availableSchemasComboBox.setSelectedIndex(pos);
+        	}
+        }
+
     }
 
-    private void initComponents() {
+    
+    
+    public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+
+
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
+	}
+
+
+
+	public ConnectionProperties getConnectionProperties() {
+		return connectionProperties;
+	}
+
+
+
+	public void setConnectionProperties(ConnectionProperties connectionProperties) {
+		this.connectionProperties = connectionProperties;
+	}
+
+
+
+	public String[] getAvailableSchemaNames() {
+		return availableSchemaNames;
+	}
+
+
+
+	public void setAvailableSchemaNames(String[] availableSchemaNames) {
+		this.availableSchemaNames = availableSchemaNames;
+	}
+
+
+
+	private void initComponents() {
         GridBagConstraints gridBagConstraints;
 
         jLabel1 = new JLabel();
@@ -126,32 +218,6 @@ public class SearchColumnPanel extends JPanel implements ActionListener {
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         add(jLabel5, gridBagConstraints);
 
-        searchResultTable.setModel(new DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Matching column", "Table", "Owner", "Open Table"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Object.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
         searchResultTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         searchResultTable.setColumnSelectionAllowed(true);
         searchResultTable.setGridColor(new Color(153, 204, 255));
@@ -176,7 +242,7 @@ public class SearchColumnPanel extends JPanel implements ActionListener {
         add(clearButton, gridBagConstraints);
 
         imageLabel.setHorizontalAlignment(SwingConstants.RIGHT);
-        imageLabel.setIcon(LOADING_SEARCH_RESULT_ICON);
+        imageLabel.setIcon(DB_SEARCH_ICON);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 0;

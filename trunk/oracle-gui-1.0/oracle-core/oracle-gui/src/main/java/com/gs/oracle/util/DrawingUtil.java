@@ -5,7 +5,11 @@ package com.gs.oracle.util;
 
 import java.awt.Graphics;
 
+import javax.swing.JTable;
+import javax.swing.table.TableColumn;
+
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.common.StringUtil;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Table;
 
@@ -56,5 +60,32 @@ public class DrawingUtil{
 	
 	public static int calculateCellHeight(Graphics graphics){
 		return graphics.getFontMetrics().getHeight() + 5;
+	}
+	
+	public static int calculateTextWidth(Graphics graphics, String text){
+		int width = 0;
+		int charWidth = graphics.getFontMetrics().charWidth('H');
+		if(StringUtil.hasValidContent(text)){
+			width = charWidth * (text.length() + 1);
+		}
+		return width;
+	}
+	
+	public static void updateTableColumnWidth(JTable jTable){
+		int colCount = jTable.getColumnModel().getColumnCount();
+		Graphics g = jTable.getGraphics();
+		if(colCount > 0){
+			for (int i = 0; i < colCount; i++) {
+				TableColumn col = jTable.getColumnModel().getColumn(i);
+				if(col != null){
+					if(null != col.getHeaderValue()){
+						String header = col.getHeaderValue().toString();
+						col.setPreferredWidth(DrawingUtil.calculateTextWidth(g, header));
+					}
+					
+				}
+			}
+		}
+		jTable.updateUI();
 	}
 }

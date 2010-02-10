@@ -17,22 +17,16 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.omg.CORBA.DATA_CONVERSION;
-
 import oracle.jdbc.driver.OracleConnection;
-import oracle.jdbc.driver.OracleTypes;
 
 import com.gs.oracle.ColumnMetaDataEnum;
 import com.gs.oracle.ForeignKeyMetaDataEnum;
 import com.gs.oracle.PKMetaDataEnum;
 import com.gs.oracle.TableMetaDataEnum;
-import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.model.ForeignKey;
@@ -383,5 +377,7 @@ public class OracleDbGrabber {
 		
 		return schemaNames;
 	}
+	
+	
 	
 }

@@ -21,70 +21,77 @@ public class TableSearchResult extends SearchResult {
 	private Character nested;
 	
 	
-	@Override
-	@ColumnHeader(title="Table Name", index=0)
+	@ColumnHeader(title="Matching Table(s)", index=0)
 	public String getObjectName() {
 		return super.getObjectName();
 	}
 	
-	@Override
-	@ColumnHeader(title="Owner Name", index=1)
+	@ColumnHeader(title="Owner(s)", index=1)
 	public String getOwnerName() {
 		return super.getOwnerName();
 	}
 	
-	@Override
-	@ColumnHeader(title="Status", index=2)
+	@ColumnHeader(title="Table Space", index=2)
+	public String getTableSpaceName() {
+		return tableSpaceName;
+	}
+	
+	@ColumnHeader(title="Row Count", index=3)
+	public Long getNumberOfRows() {
+		return numberOfRows;
+	}
+	
+	@ColumnHeader(title="Status", index=4)
 	public String getStatus() {
 		return super.getStatus();
 	}
-	@Override
-	@ColumnHeader(title="Date Created", index=3)
+	
+	@ColumnHeader(title="Date Created", index=5)
 	public Timestamp getCreatedDate() {
 		return super.getCreatedDate();
 	}
 	
-	@Override
-	@ColumnHeader(title="Is Temporary", index=4)
+	//@ColumnHeader(title="Is Temporary", index=6)
 	public Character getTemporary() {
 		return super.getTemporary();
 	}
 	
-	@Override
+	//@ColumnHeader(title="Is Granted", index=7)
 	public Character getGranted() {
 		return super.getGranted();
 	}
-	@Override
+	
+	//@ColumnHeader(title="Last DDL Date", index=8)
 	public Timestamp getLastDDLDate() {
 		return super.getLastDDLDate();
 	}
 	
-	
-	@Override
+	//@ColumnHeader(title="Is Secondary", index=9)
 	public Character getSecondary() {
 		return super.getSecondary();
 	}
 	
-	
-	
-	public String getTableSpaceName() {
-		return tableSpaceName;
-	}
+	//@ColumnHeader(title="Cluster", index=10)
 	public String getClusterName() {
 		return clusterName;
 	}
-	public Long getNumberOfRows() {
-		return numberOfRows;
-	}
+	
+	//@ColumnHeader(title="Cache", index=11)
 	public Character getCacheIndicator() {
 		return cacheIndicator;
 	}
+	
+	//@ColumnHeader(title="Lock", index=12)
 	public String getTableLock() {
 		return tableLock;
 	}
+	
+	//@ColumnHeader(title="Is Nested", index=13)
 	public Character getNested() {
 		return nested;
 	}
+	
+	
 	public void setTableSpaceName(String tableSpaceName) {
 		this.tableSpaceName = tableSpaceName;
 	}

@@ -23,19 +23,21 @@ public class TableSearchCriteria extends SearchCriteria {
 	
 	private String tableType;
 	private String searchQuery;
-
+	
 	public TableSearchCriteria(String ownerName, String searchString,
 			String searchObjectType, boolean inAllOwners) {
 		super(ownerName, searchString, searchObjectType, inAllOwners);
 		initSearchQuery();
 	}
 	
-	private void initSearchQuery() {
+	
+	
+	public void initSearchQuery() {
 		StringBuffer queryBuffer = new StringBuffer(TABLE_SEARCH_QUERY_PART_1);
 		if(!isInAllOwners()){
 			if(StringUtil.hasValidContent(getOwnerName())){
 				queryBuffer.append(" AND OBJ.OWNER = '")
-					.append(getOwnerName())
+					.append(getOwnerName().toUpperCase())
 					.append("' ");
 			}
 		}
@@ -52,8 +54,14 @@ public class TableSearchCriteria extends SearchCriteria {
 		StringBuffer nameBuffer = new StringBuffer();
 		if(searchString.contains("*") || searchString.contains("?")){
 			nameBuffer.append(" LIKE ")
-				.append(searchString.replaceAll("\\*", "%"))
-				.append(searchString.replaceAll("\\?", "_"));
+				.append("'")
+				.append(searchString.replaceAll("\\*", "%").replaceAll("\\?", "_").toUpperCase())
+				.append("'");
+		} else {
+			nameBuffer.append(" = ")
+				.append("'")
+				.append(searchString.toUpperCase())
+				.append("'");
 		}
 		return nameBuffer.toString();
 	}

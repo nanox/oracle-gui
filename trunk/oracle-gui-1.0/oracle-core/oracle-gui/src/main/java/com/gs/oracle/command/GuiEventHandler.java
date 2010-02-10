@@ -99,6 +99,7 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 						}
 						//TODO: Need to change the condition
 						if(conn != null){
+							dlg.dispose();
 							ConnectionProperties p = (ConnectionProperties) data;
 							String sqlKeyWords = OracleGuiConstants.SQL_KEYWORD.toLowerCase();
 							/*try {
