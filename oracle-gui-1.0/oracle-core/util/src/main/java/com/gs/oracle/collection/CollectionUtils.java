@@ -53,6 +53,25 @@ public class CollectionUtils {
 		for (List<Integer> list : lll) {
 			System.out.println(list.size() + "\t ::> " + list);
 		}
-
+		getLocation("dhfgsjdf", "sdfsd", "sdfsdf", "sdfsdf");
+	}
+	
+	/**
+	 *  Find out the location of a value in an array
+	 * @param <T>
+	 * @param key
+	 * @param values
+	 * @return
+	 */
+	public static <T> int getLocation(T key, T ...values){
+		if(values == null)
+			return -1;
+		if(values.length <= 0)
+			return -1;
+		for (int i = 0; i < values.length; i++) {
+			if(key.equals(values[i]))
+				return i;
+		}
+		return -1;
 	}
 }

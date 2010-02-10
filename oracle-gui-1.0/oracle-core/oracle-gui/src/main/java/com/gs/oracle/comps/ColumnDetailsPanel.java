@@ -31,6 +31,7 @@ import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Table;
+import com.gs.oracle.util.DrawingUtil;
 import com.gs.oracle.util.MenuBarUtil;
 
 /**

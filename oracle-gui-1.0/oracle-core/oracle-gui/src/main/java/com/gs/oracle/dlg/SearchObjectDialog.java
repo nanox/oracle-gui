@@ -49,11 +49,11 @@ public class SearchObjectDialog extends JDialog {
         setTitle("Search ...");
 
         searchTablePanel.setLayout(new BorderLayout());
-        searchTablePanel.add(new SearchTablePanel(), BorderLayout.CENTER);
+        searchTablePanel.add(new SearchTablePanel(getParentFrame(), getConnectionProperties() ), BorderLayout.CENTER);
         searchTabbedPane.addTab("Table ... ", searchTablePanel);
 
         searchColumnPanel.setLayout(new BorderLayout());
-        searchColumnPanel.add(new SearchColumnPanel(), BorderLayout.CENTER);
+        searchColumnPanel.add(new SearchColumnPanel(getParentFrame(), getConnectionProperties() ), BorderLayout.CENTER);
         searchTabbedPane.addTab("Column ... ", searchColumnPanel);
 
         getContentPane().add(searchTabbedPane, BorderLayout.CENTER);

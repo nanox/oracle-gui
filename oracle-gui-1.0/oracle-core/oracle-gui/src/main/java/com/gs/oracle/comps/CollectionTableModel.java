@@ -3,6 +3,7 @@
  */
 package com.gs.oracle.comps;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -11,42 +12,55 @@ import java.util.List;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableModel;
 
+import com.gs.oracle.model.Column;
 import com.gs.oracle.model.ColumnHeader;
 
 /**
  * @author sabuj.das
  *
  */
-public class CollectionTableModel implements TableModel {
+public class CollectionTableModel<T> implements TableModel {
 	
-	private Class collectionClass;
-	private List objectCollection = new ArrayList();
+	private List<T> dataList = new ArrayList<T>();
 	private List<String> columnNameList = new ArrayList<String>(100);
 	private int columnCount;
 	private int rowCount;
+	private String className;
 	
-
-	public CollectionTableModel(List objectCollection) {
-		this.objectCollection = objectCollection;
+	public CollectionTableModel(List<T> data, String className) {
+		this.dataList = data;
+		this.className = className;
+		prepareModel();
 	}
 	
 	private void prepareModel(){
-		rowCount = objectCollection.size();
-		Method[] ms = collectionClass.getMethods();
+		rowCount = dataList.size();
+		Method[] ms = null;
+		try {
+			Class<?> clazz = Class.forName(getClassName());
+			ms = clazz.getMethods();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(ms == null){
+			columnCount = 0;
+			return;
+		}
 		for (Method method : ms) {
-			if(method.getName().startsWith("get") && method.isAnnotationPresent(ColumnHeader.class)){
+			if(method.getName().startsWith("get") ){
 				ColumnHeader ch = method.getAnnotation(ColumnHeader.class);
 				if(ch != null){
-					System.out.println(ch.title());
-					columnNameList.add(ch.index(), ch.title());
-					System.out.println(ch.index());
+					columnNameList.add(ch.title());
 				}
 			}
 		}
 		columnCount = columnNameList.size();
 		
 	}
-	
 	
 
 	
@@ -56,12 +70,22 @@ public class CollectionTableModel implements TableModel {
 
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.swing.table.TableModel#getColumnClass(int)
-	 */
+	
 	@Override
 	public Class<?> getColumnClass(int columnIndex) {
-		Method[] ms = collectionClass.getMethods();
+		Method[] ms = null;
+		try {
+			Class<?> clazz = Class.forName(getClassName());
+			ms = clazz.getMethods();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(ms == null)
+			return String.class;
 		for (Method method : ms) {
 			if(method.getName().startsWith("get") && method.isAnnotationPresent(ColumnHeader.class)){
 				ColumnHeader ch = method.getAnnotation(ColumnHeader.class);
@@ -83,7 +107,20 @@ public class CollectionTableModel implements TableModel {
 	
 	@Override
 	public String getColumnName(int columnIndex) {
-		Method[] ms = collectionClass.getMethods();
+		
+		Method[] ms = null;
+		try {
+			Class<?> clazz = Class.forName(getClassName());
+			ms = clazz.getMethods();
+		} catch (SecurityException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(ms == null)
+			return "";
 		for (Method method : ms) {
 			if(method.getName().startsWith("get") && method.isAnnotationPresent(ColumnHeader.class)){
 				ColumnHeader ch = method.getAnnotation(ColumnHeader.class);
@@ -104,61 +141,54 @@ public class CollectionTableModel implements TableModel {
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		
-		Object o = objectCollection.get(rowIndex);
-		Method[] ms = o.getClass().getMethods();
+		T data = dataList.get(rowIndex);
+		Method[] ms = data.getClass().getMethods();
 		for (Method method : ms) {
 			if(method.getName().startsWith("get") && method.isAnnotationPresent(ColumnHeader.class)){
 				ColumnHeader ch = method.getAnnotation(ColumnHeader.class);
 				if(ch != null){
 					if(columnIndex == ch.index())
-						return method.getDeclaringClass();
+						try {
+							return method.invoke(data, null);
+						} catch (IllegalArgumentException e) {
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						} catch (InvocationTargetException e) {
+							e.printStackTrace();
+						}
 				}
 			}
 		}
 		return "";
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.swing.table.TableModel#isCellEditable(int, int)
-	 */
+	
 	@Override
 	public boolean isCellEditable(int rowIndex, int columnIndex) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.swing.table.TableModel#removeTableModelListener(javax.swing.event.TableModelListener)
-	 */
 	@Override
 	public void removeTableModelListener(TableModelListener l) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.swing.table.TableModel#setValueAt(java.lang.Object, int, int)
-	 */
 	@Override
 	public void setValueAt(Object value, int rowIndex, int columnIndex) {
 		// TODO Auto-generated method stub
 
 	}
+	
+	
 
-	public Class getCollectionClass() {
-		return collectionClass;
+	public List<T> getDataList() {
+		return dataList;
 	}
 
-	public void setCollectionClass(Class collectionClass) {
-		this.collectionClass = collectionClass;
-	}
-
-	public Collection getObjectCollection() {
-		return objectCollection;
-	}
-
-	public void setObjectCollection(List objectCollection) {
-		this.objectCollection = objectCollection;
+	public void setDataList(List<T> dataList) {
+		this.dataList = dataList;
 	}
 
 	public List<String> getColumnNameList() {
@@ -177,5 +207,13 @@ public class CollectionTableModel implements TableModel {
 		this.rowCount = rowCount;
 	}
 
-	
+	public String getClassName() {
+		return className;
+	}
+
+	public void setClassName(String className) {
+		this.className = className;
+	}
+
+
 }

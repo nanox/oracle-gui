@@ -5,17 +5,28 @@ package com.gs.oracle.comps.search;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComboBox;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -25,10 +36,25 @@ import javax.swing.JTextField;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableColumn;
 
+import org.apache.log4j.Logger;
+
+import com.gs.oracle.ApplicationException;
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.collection.CollectionUtils;
+import com.gs.oracle.common.StringUtil;
+import com.gs.oracle.comps.CollectionTableModel;
+import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.enums.ObjectTypeEnum;
+import com.gs.oracle.enums.SearchObjectMetaDataEnum;
+import com.gs.oracle.grabber.OracleDbGrabber;
+import com.gs.oracle.service.QueryExecutionService;
+import com.gs.oracle.service.impl.QueryExecutionServiceImpl;
+import com.gs.oracle.util.DisplayUtils;
+import com.gs.oracle.util.DrawingUtil;
 import com.gs.oracle.vo.TableSearchCriteria;
+import com.gs.oracle.vo.TableSearchResult;
 
 /**
  * @author sabuj.das
@@ -36,16 +62,96 @@ import com.gs.oracle.vo.TableSearchCriteria;
  */
 public class SearchTablePanel extends JPanel implements ActionListener {
 
+	private static final Logger logger = Logger.getLogger(SearchTablePanel.class);
+	
 	private static final Icon DB_SEARCH_ICON = new ImageIcon(
 			SearchTablePanel.class.getResource(OracleGuiConstants.IMAGE_PATH + "database_search.png"));
 	private static final Icon LOADING_SEARCH_RESULT_ICON = new ImageIcon(
 			SearchTablePanel.class.getResource(OracleGuiConstants.IMAGE_PATH + "loading_001.gif"));
 	
-    public SearchTablePanel() {
+	private JFrame parentFrame;
+	private ConnectionProperties connectionProperties;
+	private String[] availableSchemaNames;
+	
+    public SearchTablePanel(JFrame parentFrame,
+			ConnectionProperties connectionProperties) {
+    	this.connectionProperties = connectionProperties;
+    	this.parentFrame = parentFrame;
+    	Connection connection = null;
+    	String[] schemaNames = null;
+		try{
+			connection = connectionProperties.getDataSource().getConnection();
+			Set<String> schemas = new OracleDbGrabber().getAvailableSchemaNames(connection);
+			if(logger.isDebugEnabled()){
+				logger.debug("[ " + schemas.size() + " ] available schema found.");
+			}
+			schemaNames = new String[schemas.size()];
+			int i=0;
+			for (String s : schemas) {
+				schemaNames[i++] = s;
+			}
+			availableSchemaNames = schemaNames;
+		}catch(SQLException se){
+			logger.error("Cannot copy table", se);
+		}finally{
+			if(connection != null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+    	
         initComponents();
+        if(availableSchemaNames != null){
+        	availableSchemasComboBox.setModel(new DefaultComboBoxModel(availableSchemaNames));
+        	int pos = CollectionUtils.getLocation(connectionProperties.getDatabaseName(), availableSchemaNames);
+        	if(pos > -1){
+        		availableSchemasComboBox.setSelectedIndex(pos);
+        	}
+        }
     }
 
-    private void initComponents() {
+    
+    
+    public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+
+
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
+	}
+
+
+
+	public ConnectionProperties getConnectionProperties() {
+		return connectionProperties;
+	}
+
+
+
+	public void setConnectionProperties(ConnectionProperties connectionProperties) {
+		this.connectionProperties = connectionProperties;
+	}
+
+
+
+	public String[] getAvailableSchemaNames() {
+		return availableSchemaNames;
+	}
+
+
+
+	public void setAvailableSchemaNames(String[] availableSchemaNames) {
+		this.availableSchemaNames = availableSchemaNames;
+	}
+
+
+
+	private void initComponents() {
         GridBagConstraints gridBagConstraints;
 
         jLabel1 = new JLabel();
@@ -184,36 +290,11 @@ public class SearchTablePanel extends JPanel implements ActionListener {
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         add(jLabel5, gridBagConstraints);
 
-        searchResultTable.setModel(new DefaultTableModel(
-            new Object [][] {
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null},
-                {null, null, null, null}
-            },
-            new String [] {
-                "Matching Table", "Owner", "Open Table", "Show Content"
-            }
-        ) {
-            Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.Object.class, java.lang.Object.class
-            };
-            boolean[] canEdit = new boolean [] {
-                false, false, false, false
-            };
-
-            public Class getColumnClass(int columnIndex) {
-                return types [columnIndex];
-            }
-
-            public boolean isCellEditable(int rowIndex, int columnIndex) {
-                return canEdit [columnIndex];
-            }
-        });
         searchResultTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
         searchResultTable.setColumnSelectionAllowed(true);
         searchResultTable.setGridColor(new Color(153, 204, 255));
-        searchResultTable.setPreferredSize(new Dimension(400, 64));
+        searchResultTable.setAutoCreateRowSorter(true);
+        searchResultTable.setAutoscrolls(true);
         jScrollPane1.setViewportView(searchResultTable);
         searchResultTable.getColumnModel().getSelectionModel()
         	.setSelectionMode(ListSelectionModel.MULTIPLE_INTERVAL_SELECTION);
@@ -276,11 +357,91 @@ public class SearchTablePanel extends JPanel implements ActionListener {
 
     private void search() {
 		String searchString = tableNameTextField.getText();
-		//String ownerName = availableSchemasComboBox.getSelectedItem().toString();
-		TableSearchCriteria criteria = new TableSearchCriteria("", 
-				searchString, ObjectTypeEnum.TABLE.getTypeCode(), true);
-		System.out.println(criteria.getSearchQuery());
+		boolean allSchemas = allSchemaCheckBox.isSelected();
+		String ownerName = null;
+		if(!allSchemas)
+			ownerName = availableSchemasComboBox.getSelectedItem().toString();
+		boolean valid = validateCriteria(searchString, allSchemas, ownerName);
+		if(!valid)
+			return;
+		TableSearchCriteria criteria = new TableSearchCriteria(
+				ownerName, 
+				searchString, 
+				ObjectTypeEnum.TABLE.getTypeCode(), 
+				allSchemas);
+		displayResult(criteria);
 	}
+
+    public boolean validateCriteria(String searchString, boolean allSchemas, String schemaName){
+		boolean valid = true;
+		StringBuffer messageBuffer = new StringBuffer("Required Fields: \n");
+		if(!StringUtil.hasValidContent(searchString)){
+			messageBuffer.append("1.\tTable Name\n");
+			valid = valid & false;
+		} else {
+			valid = valid & true;
+		}
+		if(!allSchemaCheckBox.isSelected()){
+			if(availableSchemasComboBox.getSelectedItem() == null){
+				valid = valid & false;
+				messageBuffer.append("2.\tOwner Name\n");
+			}
+		}
+		
+		if(!valid){
+			DisplayUtils.displayMessage(getParentFrame(), messageBuffer.toString());
+		}
+		return valid;
+	}
+    
+	private void displayResult(TableSearchCriteria criteria) {
+		if(criteria == null)
+			return;
+		List<TableSearchResult> resultList = new ArrayList<TableSearchResult>();
+		
+		Connection connection = null;
+		try {
+			connection = getConnectionProperties().getDataSource().getConnection();
+			QueryExecutionService service = new QueryExecutionServiceImpl(connectionProperties);
+			ResultSet rs = service.executeSelect(connection, criteria.getSearchQuery());
+			if(rs != null){
+				while(rs.next()){
+					TableSearchResult r = new TableSearchResult();
+					r.setObjectName(rs.getString(SearchObjectMetaDataEnum.TABLE_NAME.getType()));
+					r.setOwnerName(rs.getString(SearchObjectMetaDataEnum.OWNER.getType()));
+					r.setTableSpaceName(rs.getString(SearchObjectMetaDataEnum.TABLESPACE_NAME.getType()));
+					r.setNumberOfRows(rs.getLong(SearchObjectMetaDataEnum.NUM_ROWS.getType()));
+					r.setStatus(rs.getString(SearchObjectMetaDataEnum.STATUS.getType()));
+					
+					r.setCreatedDate(rs.getTimestamp(SearchObjectMetaDataEnum.CREATED.getType()));
+					resultList.add(r);
+				}
+			}
+			if(rs != null){
+				rs.close();
+			}
+		} catch (ApplicationException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} catch (SQLException e) {
+			logger.error(e);
+			e.printStackTrace();
+		} finally {
+			if(connection != null){
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					logger.error(e);
+				}
+			}
+		}
+		
+		searchResultTable.setModel(new CollectionTableModel<TableSearchResult>(resultList, TableSearchResult.class.getCanonicalName()));
+		
+		DrawingUtil.updateTableColumnWidth(searchResultTable);
+	}
+
+
 
 	private void allSchemaCheckBoxActionPerformed(ActionEvent evt) {
         if(allSchemaCheckBox.isSelected()){
