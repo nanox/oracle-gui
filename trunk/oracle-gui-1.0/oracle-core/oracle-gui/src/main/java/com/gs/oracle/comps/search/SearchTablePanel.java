@@ -27,6 +27,8 @@ import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
 
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.enums.ObjectTypeEnum;
+import com.gs.oracle.vo.TableSearchCriteria;
 
 /**
  * @author sabuj.das
@@ -242,6 +244,7 @@ public class SearchTablePanel extends JPanel implements ActionListener {
         add(searchResultLabel, gridBagConstraints);
 
         searchButton.setText("Search");
+        searchButton.addActionListener(this);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 8;
@@ -266,10 +269,20 @@ public class SearchTablePanel extends JPanel implements ActionListener {
     public void actionPerformed(ActionEvent evt) {
         if (evt.getSource() == allSchemaCheckBox) {
             SearchTablePanel.this.allSchemaCheckBoxActionPerformed(evt);
+        } else if (evt.getSource() == searchButton) {
+            search();
         }
     }
 
-    private void allSchemaCheckBoxActionPerformed(ActionEvent evt) {
+    private void search() {
+		String searchString = tableNameTextField.getText();
+		//String ownerName = availableSchemasComboBox.getSelectedItem().toString();
+		TableSearchCriteria criteria = new TableSearchCriteria("", 
+				searchString, ObjectTypeEnum.TABLE.getTypeCode(), true);
+		System.out.println(criteria.getSearchQuery());
+	}
+
+	private void allSchemaCheckBoxActionPerformed(ActionEvent evt) {
         if(allSchemaCheckBox.isSelected()){
             availableSchemasComboBox.setEnabled(false);
         } else if(!allSchemaCheckBox.isSelected()){
