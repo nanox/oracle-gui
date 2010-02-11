@@ -1,2 +1,3 @@
-rem set JAVA_HOME=%JAVA_6_HOME%
+set JAVA_HOME=%JAVA_6_HOME%
 mvn clean install
+pause

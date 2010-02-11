@@ -58,10 +58,12 @@
 	</build>
 	
 	<properties>
+		<project.title>Oracle-GUI</project.title>
 		<release.version>1.0-BETA-1.2</release.version>
 		<libs.dir>D:/SVN_HOME/MY_PROJECTS/oracle-gui/trunk/oracle-gui-1.0/setup/app/libs</libs.dir>
-		<release.dir>D:/SVN_HOME/MY_PROJECTS/oracle-gui/trunk/release/Oracle-GUI-1.0-beta-1</release.dir>
+		<release.dir>D:/SVN_HOME/MY_PROJECTS/oracle-gui/trunk/release</release.dir>
 		<jdk.version>1.6</jdk.version>
+		<maven.test.skip>true</maven.test.skip>
 	</properties>
 	
  </project>
