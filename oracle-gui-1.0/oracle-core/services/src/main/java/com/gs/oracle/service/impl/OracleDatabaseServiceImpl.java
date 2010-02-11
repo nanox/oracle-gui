@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.enums.ReadDepthEnum;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Database;
@@ -75,7 +76,7 @@ public class OracleDatabaseServiceImpl implements OracleDatabaseService {
 		try {
 			connection = connectionProperties.getDataSource().getConnection();
 			db = oracleDbGrabber.grabDatabase(connection, 
-					connectionProperties.getDatabaseName());
+					connectionProperties.getDatabaseName(), ReadDepthEnum.SHALLOW);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

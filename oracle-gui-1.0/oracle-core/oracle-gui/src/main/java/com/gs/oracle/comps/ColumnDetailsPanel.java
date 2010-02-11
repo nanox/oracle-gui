@@ -28,6 +28,7 @@ import org.apache.log4j.Logger;
 
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.enums.ReadDepthEnum;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Table;
@@ -67,7 +68,7 @@ public class ColumnDetailsPanel extends JPanel implements ActionListener,
 		Connection conn = null;
 		try {
 			conn = connectionProperties.getDataSource().getConnection();
-			Table table = dbGrabber.grabTable(conn, schemaName, tableName);
+			Table table = dbGrabber.grabTable(conn, schemaName, tableName, ReadDepthEnum.DEEP);
 			List<Column> columnList = new ArrayList<Column>();
 			if(table != null){
 				if(columnList != null){

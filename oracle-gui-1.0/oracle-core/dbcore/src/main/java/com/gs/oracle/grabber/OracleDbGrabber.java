@@ -27,6 +27,7 @@ import com.gs.oracle.ColumnMetaDataEnum;
 import com.gs.oracle.ForeignKeyMetaDataEnum;
 import com.gs.oracle.PKMetaDataEnum;
 import com.gs.oracle.TableMetaDataEnum;
+import com.gs.oracle.enums.ReadDepthEnum;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.model.ForeignKey;
@@ -54,7 +55,17 @@ public class OracleDbGrabber {
 		return databaseMetaData.getSQLKeywords();
 	}
 	
-	public Database grabDatabase(Connection connection, String databaseName) throws SQLException{
+	/**
+	 * Read the complete database information. The amount of information depends
+	 * on the readDepth (DEEP/ SHALLOW).
+	 * 
+	 * @param connection
+	 * @param databaseName
+	 * @param readDepth
+	 * @return
+	 * @throws SQLException
+	 */
+	public Database grabDatabase(Connection connection, String databaseName, ReadDepthEnum readDepth) throws SQLException{
 		if(connection == null){
 			return null;
 		}
@@ -77,7 +88,7 @@ public class OracleDbGrabber {
 				while(ret.next()){
 					String tn = ret.getString(TableMetaDataEnum.TABLE_NAME.getCode());
 					
-					Table t = grabTable(connection, s.getModelName(), tn);
+					Table t = grabTable(connection, s.getModelName(), tn, readDepth);
 					if(tn.startsWith("BIN$"))
 						t.setDeleted(true);
 					s.getTableList().add(t);
@@ -133,7 +144,15 @@ public class OracleDbGrabber {
 		return count;
 	}
 	
-	public Table grabTable(Connection connection, String schemaName, String tableName){
+	/**
+	 * 
+	 * @param connection
+	 * @param schemaName
+	 * @param tableName
+	 * @param readDepth
+	 * @return
+	 */
+	public Table grabTable(Connection connection, String schemaName, String tableName, ReadDepthEnum readDepth){
 		if(connection instanceof OracleConnection)
 			((OracleConnection)connection).setRemarksReporting(true);
 		Table table = new Table();
@@ -143,18 +162,20 @@ public class OracleDbGrabber {
 			ResultSet ret = meta.getTables("", schemaName, tableName, new String[] {"TABLE"});
 			while(ret.next()){
 				String tn = ret.getString(TableMetaDataEnum.TABLE_NAME.getCode());
-				table.setSchemaName(schemaName);
-				table.setComments(ret.getString(TableMetaDataEnum.REMARKS.getCode()));
 				table.setModelName(tn);
-				table.setPrimaryKeys(grabPrimaryKeys(connection, schemaName, tableName));
-				table.setImportedKeys(grabImportedKeys(connection, schemaName, tableName));
-				table.setExportedKeys(grabExportedKeys(connection, schemaName, tableName));
+				table.setSchemaName(schemaName);
+				if(ReadDepthEnum.DEEP.equals(readDepth)){
+					table.setComments(ret.getString(TableMetaDataEnum.REMARKS.getCode()));
+				}
+				table.setPrimaryKeys(grabPrimaryKeys(connection, schemaName, tableName, readDepth));
+				table.setImportedKeys(grabImportedKeys(connection, schemaName, tableName, readDepth));
+				table.setExportedKeys(grabExportedKeys(connection, schemaName, tableName, readDepth));
 				if(tn.startsWith("BIN$"))
 					table.setDeleted(true);
 				else
 					RESERVED_WORDS_UTIL.addTableName(schemaName, tn);
 				try{
-					table.setColumnlist(getColumnList(table, connection));
+					table.setColumnlist(getColumnList(table, connection, readDepth));
 				}catch(Exception e){
 					System.err.println("Table : " + table.getModelName() );
 					e.printStackTrace();
@@ -166,7 +187,7 @@ public class OracleDbGrabber {
 		return table;
 	}
 	
-	public List<Column> getColumnList(Table table, Connection connection) throws SQLException{
+	public List<Column> getColumnList(Table table, Connection connection, ReadDepthEnum readDepth) throws SQLException{
 		if(connection instanceof OracleConnection)
 			((OracleConnection)connection).setRemarksReporting(true);
 		List<Column> list = new ArrayList<Column>();
@@ -211,18 +232,25 @@ public class OracleDbGrabber {
 			}else{
 				c.setNullable(false);
 			}
-			// set sql type
-			c.setDataType(colRs.getInt(ColumnMetaDataEnum.SQL_DATA_TYPE.getCode()));
-			// set column id
-			c.setColumnID(colRs.getInt(ColumnMetaDataEnum.ORDINAL_POSITION.getCode()));
+			
+			
 			// set size
 			c.setSize(colRs.getInt(ColumnMetaDataEnum.COLUMN_SIZE.getCode()));
-			// Precision
-			c.setPrecision(colRs.getInt(ColumnMetaDataEnum.DECIMAL_DIGITS.getCode()));
-			// set default value
-			//c.setDefaultValue(colRs.getString(ColumnMetaDataEnum.COLUMN_DEF.getCode()));
-			// comment
-			c.setComments(colRs.getString(ColumnMetaDataEnum.REMARKS.getCode()));
+			
+			
+			if(ReadDepthEnum.DEEP.equals(readDepth)){
+				// set sql type
+				c.setDataType(colRs.getInt(ColumnMetaDataEnum.SQL_DATA_TYPE.getCode()));
+				// set column id
+				c.setColumnID(colRs.getInt(ColumnMetaDataEnum.ORDINAL_POSITION.getCode()));
+				// Precision
+				c.setPrecision(colRs.getInt(ColumnMetaDataEnum.DECIMAL_DIGITS.getCode()));
+				// set default value
+				//c.setDefaultValue(colRs.getString(ColumnMetaDataEnum.COLUMN_DEF.getCode()));
+				// comment
+				c.setComments(colRs.getString(ColumnMetaDataEnum.REMARKS.getCode()));
+			}
+			
 			list.add(c);
 		}
 		if(colRs != null){
@@ -231,20 +259,20 @@ public class OracleDbGrabber {
 		return list;
 	}
 	
-	public List<Column> getColumnList(String schemaName, String tableName, Connection connection) throws SQLException{
+	public List<Column> getColumnList(String schemaName, String tableName, Connection connection, ReadDepthEnum readDepth) throws SQLException{
 		if(connection instanceof OracleConnection)
 			((OracleConnection)connection).setRemarksReporting(true);
 		List<Column> list = new ArrayList<Column>();
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 		
-		List<PrimaryKey> pkList = grabPrimaryKeys(connection, schemaName, tableName);
+		List<PrimaryKey> pkList = grabPrimaryKeys(connection, schemaName, tableName, readDepth);
 		Set<String> pkColSet = new HashSet<String>();
 		for (PrimaryKey pk : pkList) {
 			pkColSet.add(pk.getColumnName());
 		}
 		
 		Set<String> fkColSet = new HashSet<String>();
-		List<ForeignKey> importedKeys = grabImportedKeys(connection, schemaName, tableName);
+		List<ForeignKey> importedKeys = grabImportedKeys(connection, schemaName, tableName, readDepth);
 		for (ForeignKey fk : importedKeys) {
 			fkColSet.add(fk.getFkColumnName());
 		}
@@ -277,16 +305,20 @@ public class OracleDbGrabber {
 			}else{
 				c.setNullable(false);
 			}
-			// set sql type
-			c.setDataType(colRs.getInt(ColumnMetaDataEnum.SQL_DATA_TYPE.getCode()));
-			// set column id
-			c.setColumnID(colRs.getInt(ColumnMetaDataEnum.ORDINAL_POSITION.getCode()));
 			// set size
 			c.setSize(colRs.getInt(ColumnMetaDataEnum.COLUMN_SIZE.getCode()));
-			// set default value
-			//c.setDefaultValue(colRs.getString(ColumnMetaDataEnum.COLUMN_DEF.getCode()));
-			// comment
-			c.setComments(colRs.getString(ColumnMetaDataEnum.REMARKS.getCode()));
+			if(ReadDepthEnum.DEEP.equals(readDepth)){
+				// set sql type
+				c.setDataType(colRs.getInt(ColumnMetaDataEnum.SQL_DATA_TYPE.getCode()));
+				// set column id
+				c.setColumnID(colRs.getInt(ColumnMetaDataEnum.ORDINAL_POSITION.getCode()));
+				// Precision
+				c.setPrecision(colRs.getInt(ColumnMetaDataEnum.DECIMAL_DIGITS.getCode()));
+				// set default value
+				//c.setDefaultValue(colRs.getString(ColumnMetaDataEnum.COLUMN_DEF.getCode()));
+				// comment
+				c.setComments(colRs.getString(ColumnMetaDataEnum.REMARKS.getCode()));
+			}
 			list.add(c);
 		}
 		if(colRs != null){
@@ -295,20 +327,34 @@ public class OracleDbGrabber {
 		return list;
 	}
 	
-	public List<PrimaryKey> grabPrimaryKeys(Connection connection, String schemaName, String tableName) throws SQLException{
+	/**
+	 * 
+	 * @param connection
+	 * @param schemaName
+	 * @param tableName
+	 * @param readDepth
+	 * @return
+	 * @throws SQLException
+	 */
+	public List<PrimaryKey> grabPrimaryKeys(Connection connection, String schemaName, 
+			String tableName, ReadDepthEnum readDepth) throws SQLException{
 		List<PrimaryKey> pkList = new ArrayList<PrimaryKey>();
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 		ResultSet pkRs = databaseMetaData.getPrimaryKeys("", schemaName, tableName);
 		while(pkRs.next()){
 			PrimaryKey pk = new PrimaryKey();
-			pk.setTableCat(pkRs.getString(PKMetaDataEnum.TABLE_CAT.getCode()));
-			pk.setTableSchem(pkRs.getString(PKMetaDataEnum.TABLE_SCHEM.getCode()));
-			pk.setTableName(tableName);
-			pk.setModelName(pkRs.getString(PKMetaDataEnum.PK_NAME.getCode()));
 			pk.setColumnName(pkRs.getString(PKMetaDataEnum.COLUMN_NAME.getCode()));
-			//pk.setDeleted(pkRs.getBoolean(PKMetaDataEnum.))
-			pk.setKeySeq(pkRs.getShort(PKMetaDataEnum.KEY_SEQ.getCode()));
-			//pk.setComments(pkRs.getString(PKMetaDataEnum.comments))
+			
+			if(ReadDepthEnum.DEEP.equals(readDepth)){
+				pk.setTableCat(pkRs.getString(PKMetaDataEnum.TABLE_CAT.getCode()));
+				pk.setTableSchem(pkRs.getString(PKMetaDataEnum.TABLE_SCHEM.getCode()));
+				pk.setTableName(tableName);
+				pk.setModelName(pkRs.getString(PKMetaDataEnum.PK_NAME.getCode()));
+				//pk.setDeleted(pkRs.getBoolean(PKMetaDataEnum.))
+				pk.setKeySeq(pkRs.getShort(PKMetaDataEnum.KEY_SEQ.getCode()));
+				//pk.setComments(pkRs.getString(PKMetaDataEnum.comments))
+			}
+			
 			pkList.add(pk);
 		}
 		if(pkRs != null){
@@ -317,37 +363,39 @@ public class OracleDbGrabber {
 		return pkList;
 	}
 	
-	public List<ForeignKey> grabImportedKeys(Connection connection, String schemaName, String tableName) throws SQLException{
+	public List<ForeignKey> grabImportedKeys(Connection connection, String schemaName, String tableName, ReadDepthEnum readDepth) throws SQLException{
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 		ResultSet fkRs = databaseMetaData.getImportedKeys("", schemaName, tableName);
-		return readFksFromRS(fkRs, true);
+		return readFksFromRS(fkRs, true, readDepth);
 	}
 	
-	public List<ForeignKey> grabExportedKeys(Connection connection, String schemaName, String tableName) throws SQLException{
+	public List<ForeignKey> grabExportedKeys(Connection connection, String schemaName, String tableName, ReadDepthEnum readDepth) throws SQLException{
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 		ResultSet fkRs = databaseMetaData.getExportedKeys("", schemaName, tableName);
-		return readFksFromRS(fkRs, false);
+		return readFksFromRS(fkRs, false, readDepth);
 	}
 	
-	private List<ForeignKey> readFksFromRS(ResultSet fkRs, Boolean imported) throws SQLException{
+	private List<ForeignKey> readFksFromRS(ResultSet fkRs, Boolean imported, ReadDepthEnum readDepth) throws SQLException{
 		List<ForeignKey> fks = new ArrayList<ForeignKey>();
 		
 		while(fkRs.next()){
 			ForeignKey fk = new ForeignKey();
-			fk.setPkTableCat(fkRs.getString(ForeignKeyMetaDataEnum.PKTABLE_CAT.getCode()));
-			fk.setPkTableSchem(fkRs.getString(ForeignKeyMetaDataEnum.PKTABLE_SCHEM.getCode()));
-			fk.setPkTableName(fkRs.getString(ForeignKeyMetaDataEnum.PKTABLE_NAME.getCode()));
 			fk.setPkColumnName(fkRs.getString(ForeignKeyMetaDataEnum.PKCOLUMN_NAME.getCode()));
-			fk.setFkTableCat(fkRs.getString(ForeignKeyMetaDataEnum.FKTABLE_CAT.getCode()));
-			fk.setFkTableSchem(fkRs.getString(ForeignKeyMetaDataEnum.FKTABLE_SCHEM.getCode()));
-			fk.setFkTableName(fkRs.getString(ForeignKeyMetaDataEnum.FKTABLE_NAME.getCode()));
-			fk.setFkColumnName(fkRs.getString(ForeignKeyMetaDataEnum.FKCOLUMN_NAME.getCode()));
-			fk.setKeySeq(fkRs.getShort(ForeignKeyMetaDataEnum.KEY_SEQ.getCode()));
-			fk.setUpdateRule(fkRs.getShort(ForeignKeyMetaDataEnum.UPDATE_RULE.getCode()));
-			fk.setDeleteRule(fkRs.getShort(ForeignKeyMetaDataEnum.DELETE_RULE.getCode()));
-			fk.setPkName(fkRs.getString(ForeignKeyMetaDataEnum.PK_NAME.getCode()));
-			fk.setFkName(fkRs.getString(ForeignKeyMetaDataEnum.FK_NAME.getCode()));
-			fk.setDeferrability(fkRs.getShort(ForeignKeyMetaDataEnum.DEFERRABILITY.getCode()));
+			if(ReadDepthEnum.DEEP.equals(readDepth)){
+				fk.setPkTableCat(fkRs.getString(ForeignKeyMetaDataEnum.PKTABLE_CAT.getCode()));
+				fk.setPkTableSchem(fkRs.getString(ForeignKeyMetaDataEnum.PKTABLE_SCHEM.getCode()));
+				fk.setPkTableName(fkRs.getString(ForeignKeyMetaDataEnum.PKTABLE_NAME.getCode()));
+				fk.setFkTableCat(fkRs.getString(ForeignKeyMetaDataEnum.FKTABLE_CAT.getCode()));
+				fk.setFkTableSchem(fkRs.getString(ForeignKeyMetaDataEnum.FKTABLE_SCHEM.getCode()));
+				fk.setFkTableName(fkRs.getString(ForeignKeyMetaDataEnum.FKTABLE_NAME.getCode()));
+				fk.setFkColumnName(fkRs.getString(ForeignKeyMetaDataEnum.FKCOLUMN_NAME.getCode()));
+				fk.setKeySeq(fkRs.getShort(ForeignKeyMetaDataEnum.KEY_SEQ.getCode()));
+				fk.setUpdateRule(fkRs.getShort(ForeignKeyMetaDataEnum.UPDATE_RULE.getCode()));
+				fk.setDeleteRule(fkRs.getShort(ForeignKeyMetaDataEnum.DELETE_RULE.getCode()));
+				fk.setPkName(fkRs.getString(ForeignKeyMetaDataEnum.PK_NAME.getCode()));
+				fk.setFkName(fkRs.getString(ForeignKeyMetaDataEnum.FK_NAME.getCode()));
+				fk.setDeferrability(fkRs.getShort(ForeignKeyMetaDataEnum.DEFERRABILITY.getCode()));
+			}
 			fk.setImportedKey(imported);
 			fks.add(fk);
 		}

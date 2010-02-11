@@ -78,6 +78,7 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 
 
 	private Database getDataBaseInformation() {
+		logger.info("STRT: Reading Database.");
 		Database db = null;
 		if(connectionProperties != null){
 			try {
@@ -86,6 +87,7 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 				e.printStackTrace();
 			}
 		}
+		logger.info("DONE: Reading Database.");
 		if(db != null){
 			List<Schema> schemaList = db.getSchemaList();
 			for (Schema schema : schemaList) {
