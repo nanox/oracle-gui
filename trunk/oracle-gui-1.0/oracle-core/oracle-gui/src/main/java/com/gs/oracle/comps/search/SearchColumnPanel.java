@@ -269,15 +269,23 @@ public class SearchColumnPanel extends JPanel implements ActionListener {
         add(resultLabel, gridBagConstraints);
     }
 
-    // Code for dispatching events from components to event handlers.
+    
 
     public void actionPerformed(ActionEvent evt) {
         if (evt.getSource() == allSchemaCheckBox) {
             SearchColumnPanel.this.allSchemaCheckBoxActionPerformed(evt);
+        } else if (evt.getSource() == allSchemaCheckBox) {
+            search();
         }
-    }// </editor-fold>
+    }
 
-    private void allSchemaCheckBoxActionPerformed(ActionEvent evt) {
+    private void search() {
+		
+	}
+
+
+
+	private void allSchemaCheckBoxActionPerformed(ActionEvent evt) {
         if(allSchemaCheckBox.isSelected()){
             availableSchemasComboBox.setEnabled(false);
         } else if(!allSchemaCheckBox.isSelected()){
@@ -286,7 +294,6 @@ public class SearchColumnPanel extends JPanel implements ActionListener {
     }
 
 
-    // Variables declaration - do not modify
     private JCheckBox allSchemaCheckBox;
     private JComboBox availableSchemasComboBox;
     private JButton clearButton;
@@ -301,6 +308,5 @@ public class SearchColumnPanel extends JPanel implements ActionListener {
     private JLabel resultLabel;
     private JButton searchButton;
     private JTable searchResultTable;
-    // End of variables declaration
 
 }

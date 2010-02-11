@@ -3,12 +3,12 @@
 	<parent>
 		<artifactId>OracleGUI</artifactId>
 		<groupId>com.gs.oracle</groupId>
-		<version>1.0-SNAPSHOT</version>
+		<version>${release.version}</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>util</artifactId>
 	<name>OracleGUI-util</name>
-	<version>1.0-SNAPSHOT</version>
+	<version>${release.version}</version>
 	<packaging>jar</packaging>
 	<description>OracleGUI-util</description>
 	
