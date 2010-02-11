@@ -127,7 +127,7 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<groupId>org.apache.maven.plugins</groupId>
-				<version>2.2-beta-3</version>
+				<version>2.2-beta-5</version>
 				<configuration>
 					<descriptorRefs>
 						<descriptorRef>jar-with-dependencies</descriptorRef>
@@ -150,6 +150,7 @@
 							<goal>single</goal>
 						</goals>
 					</execution>
+					
 				</executions>
 			</plugin>
 			<plugin>
@@ -158,14 +159,44 @@
 					<!-- Coping JAR to release directory-->
 					<execution>
 						<id>defaultcopy</id>
-						<phase>release</phase>
+						<phase>package</phase>
 						<configuration>
 							<tasks>
 								<!-- Coping JAR to release directory-->
-								<copy todir="${release.dir}"
-									overwrite="true" failonerror="true" includeEmptyDirs="false">
+								<copy todir="${release.dir}/${project.title}/${release.version}/"
+									overwrite="true" failonerror="true" includeEmptyDirs="true">
 									<fileset dir="target">
-										<include name="oracle-gui-1.0-SNAPSHOT-jar-with-dependencies.jar" />
+										<include name="oracle-gui-${release.version}-jar-with-dependencies.jar" />
+									</fileset>
+								</copy>
+								<!-- Coping connection data to release directory-->
+								<copy todir="${release.dir}/${project.title}/${release.version}/data/connection"
+									overwrite="true" failonerror="true" includeEmptyDirs="true">
+									<fileset dir="data/connection">
+										<include name="**/*.xml" />
+									</fileset>
+								</copy>
+								<!-- Coping syntax data to release directory-->
+								<copy todir="${release.dir}/${project.title}/${release.version}/data/syntax"
+									overwrite="true" failonerror="true" includeEmptyDirs="true">
+									<fileset dir="data/syntax">
+										<include name="**/*.xml" />
+									</fileset>
+								</copy>
+								<!-- Coping syntax data to release directory-->
+								<copy todir="${release.dir}/${project.title}/${release.version}/libs"
+									overwrite="true" failonerror="true" includeEmptyDirs="true">
+									<fileset dir="${libs.dir}">
+										<include name="**/*.jar" />
+									</fileset>
+								</copy>
+								<!-- Coping bin directory to release directory-->
+								<copy todir="${release.dir}/${project.title}/${release.version}/"
+									overwrite="true" failonerror="true" includeEmptyDirs="true">
+									<fileset dir="${release.dir}/bin">
+										<include name="**/*.sh" />
+										<include name="**/*.bat" />
+										<include name="**/*.vbs" />
 									</fileset>
 								</copy>
 							</tasks>

@@ -1,0 +1,1 @@
+java -Xms64m -Xmx512m -jar ./oracle-gui-*-jar-with-dependencies.jar 
