@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 
 import com.gs.oracle.ApplicationException;
+import com.gs.oracle.enums.ReadDepthEnum;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.model.ExportedTableRelation;
 import com.gs.oracle.model.ForeignKey;
@@ -35,7 +36,7 @@ public class DependencyServiceImpl implements DependencyService {
 		OracleDbGrabber dbGrabber = new OracleDbGrabber();
 		TableDependency dependency = new TableDependency();
 		
-		Table currentTable = dbGrabber.grabTable(connection, schemaName, tableName);
+		Table currentTable = dbGrabber.grabTable(connection, schemaName, tableName, ReadDepthEnum.DEEP);
 		if(currentTable == null){
 			return null;
 		}
@@ -54,7 +55,7 @@ public class DependencyServiceImpl implements DependencyService {
 				r.setImportedKey(impKey);
 				Table importedTable = dbGrabber.grabTable(connection, 
 						impKey.getPkTableSchem(), 
-						impKey.getPkTableName());
+						impKey.getPkTableName(), ReadDepthEnum.DEEP);
 				r.setImportedTable(importedTable);
 				r.setForeignColumnName(impKey.getPkColumnName());
 				importedRelations.add(r);
@@ -69,7 +70,7 @@ public class DependencyServiceImpl implements DependencyService {
 				r.setExportedKey(expKey);
 				Table importedTable = dbGrabber.grabTable(connection, 
 						expKey.getFkTableSchem(), 
-						expKey.getFkTableName());
+						expKey.getFkTableName(), ReadDepthEnum.DEEP);
 				r.setExportedTable(importedTable);
 				r.setForeignColumnName(expKey.getFkColumnName());
 				exportedRelations.add(r);

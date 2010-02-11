@@ -20,6 +20,7 @@ import javax.swing.JTextField;
 import javax.swing.table.TableModel;
 
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.enums.ReadDepthEnum;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.ForeignKey;
@@ -70,7 +71,7 @@ public class TableRowEditorPanel extends JPanel implements ActionListener {
 		Connection con = null;
 		try{
 			con = getConnectionProperties().getDataSource().getConnection();
-			databaseTable = new OracleDbGrabber().grabTable(con, schemaName, tableName);
+			databaseTable = new OracleDbGrabber().grabTable(con, schemaName, tableName, ReadDepthEnum.DEEP);
 			List<PrimaryKey> primaryKeyList = databaseTable.getPrimaryKeys();
 			for (PrimaryKey pk : primaryKeyList) {
 				primaryKeyColumnNameList.add(pk.getColumnName());

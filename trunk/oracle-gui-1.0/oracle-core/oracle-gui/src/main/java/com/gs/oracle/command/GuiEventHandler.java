@@ -46,6 +46,7 @@ import com.gs.oracle.dlg.ConnectionDialog;
 import com.gs.oracle.dlg.OpenResourceDialog;
 import com.gs.oracle.dlg.SearchObjectDialog;
 import com.gs.oracle.dlg.StyleConfigurationDialog;
+import com.gs.oracle.enums.ReadDepthEnum;
 import com.gs.oracle.frame.OracleGuiMainFrame;
 import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
@@ -426,7 +427,7 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 				Connection con = null;
 				try {
 					con = dbIframe.getConnectionProperties().getDataSource().getConnection();
-					Table table = dbGrabber.grabTable(con, schemaName, tableName);
+					Table table = dbGrabber.grabTable(con, schemaName, tableName, ReadDepthEnum.DEEP);
 					if(table != null){
 						if(!isTableContent)
 							openTableDetails(dbIframe, table);

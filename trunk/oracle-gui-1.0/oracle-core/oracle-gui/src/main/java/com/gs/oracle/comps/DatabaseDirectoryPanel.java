@@ -41,6 +41,7 @@ import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.dlg.ResourceEditDialog;
 import com.gs.oracle.dlg.TableDataExportDialog;
+import com.gs.oracle.enums.ReadDepthEnum;
 import com.gs.oracle.enums.ResourceEditTypeEnum;
 import com.gs.oracle.enums.ResourceTypeEnum;
 import com.gs.oracle.enums.TableDataExportTypeEnum;
@@ -591,7 +592,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		try {
 			Database db = new OracleDbGrabber().grabDatabase(
 					connectionProperties.getDataSource().getConnection(), 
-					connectionProperties.getDatabaseName());
+					connectionProperties.getDatabaseName(), ReadDepthEnum.SHALLOW);
 			databaseDirectoryTree.reload(db);
 			if(mouseClickedTreePath != null){
 				databaseDirectoryTree.expandPath(mouseClickedTreePath);
