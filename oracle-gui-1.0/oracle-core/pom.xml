@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>com.gs.oracle</groupId>
 	<artifactId>OracleGUI</artifactId>
-	<version>1.0-SNAPSHOT</version>
+	<version>${release.version}</version>
 	<packaging>pom</packaging>
 	<name>OracleGUI</name>
 	
@@ -58,6 +58,7 @@
 	</build>
 	
 	<properties>
+		<release.version>1.0-BETA-1.2</release.version>
 		<libs.dir>D:/SVN_HOME/MY_PROJECTS/oracle-gui/trunk/oracle-gui-1.0/setup/app/libs</libs.dir>
 		<release.dir>D:/SVN_HOME/MY_PROJECTS/oracle-gui/trunk/release/Oracle-GUI-1.0-beta-1</release.dir>
 		<jdk.version>1.6</jdk.version>
