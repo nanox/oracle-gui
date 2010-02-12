@@ -164,22 +164,26 @@ public class OracleDbGrabber {
 				String tn = ret.getString(TableMetaDataEnum.TABLE_NAME.getCode());
 				table.setModelName(tn);
 				table.setSchemaName(schemaName);
-				if(ReadDepthEnum.DEEP.equals(readDepth)){
-					table.setComments(ret.getString(TableMetaDataEnum.REMARKS.getCode()));
+				if(ReadDepthEnum.DEEP.equals(readDepth) || ReadDepthEnum.MEDIUM.equals(readDepth)){
+					table.setPrimaryKeys(grabPrimaryKeys(connection, schemaName, tableName, readDepth));
+					table.setImportedKeys(grabImportedKeys(connection, schemaName, tableName, readDepth));
+					table.setExportedKeys(grabExportedKeys(connection, schemaName, tableName, readDepth));
+					try{
+						table.setColumnlist(getColumnList(table, connection, readDepth));
+					}catch(Exception e){
+						System.err.println("Table : " + table.getModelName() );
+						e.printStackTrace();
+					}
+					if(ReadDepthEnum.DEEP.equals(readDepth)){
+						table.setComments(ret.getString(TableMetaDataEnum.REMARKS.getCode()));
+					}
 				}
-				table.setPrimaryKeys(grabPrimaryKeys(connection, schemaName, tableName, readDepth));
-				table.setImportedKeys(grabImportedKeys(connection, schemaName, tableName, readDepth));
-				table.setExportedKeys(grabExportedKeys(connection, schemaName, tableName, readDepth));
+				
 				if(tn.startsWith("BIN$"))
 					table.setDeleted(true);
 				else
 					RESERVED_WORDS_UTIL.addTableName(schemaName, tn);
-				try{
-					table.setColumnlist(getColumnList(table, connection, readDepth));
-				}catch(Exception e){
-					System.err.println("Table : " + table.getModelName() );
-					e.printStackTrace();
-				}
+				
 			}
 		}catch(Exception e){
 			e.printStackTrace();

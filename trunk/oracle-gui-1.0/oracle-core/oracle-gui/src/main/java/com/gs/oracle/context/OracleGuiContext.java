@@ -22,7 +22,7 @@ import java.io.Serializable;
 public class OracleGuiContext implements Serializable {
 
 	public static final String CONTEXT_FILE_NAME = "OracleGuiContext.ctx";
-	
+
 	protected static OracleGuiContext instance;
 	private OracleGuiContext() {
 		

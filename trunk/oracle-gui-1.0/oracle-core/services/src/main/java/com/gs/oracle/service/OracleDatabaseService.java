@@ -7,6 +7,7 @@ import java.util.List;
 
 import com.gs.oracle.ApplicationException;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.enums.ReadDepthEnum;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.model.Schema;
@@ -32,7 +33,7 @@ public interface OracleDatabaseService {
 	
 	public Schema getCompleteSchema(ConnectionProperties connectionProperties) throws ApplicationException;
 	
-	public Database getDatabase(ConnectionProperties connectionProperties) throws ApplicationException;
+	public Database getDatabase(ConnectionProperties connectionProperties, ReadDepthEnum readDepth) throws ApplicationException;
 	
 	public List<Database> getDatabaseList(ConnectionProperties connectionProperties) throws ApplicationException;
 }

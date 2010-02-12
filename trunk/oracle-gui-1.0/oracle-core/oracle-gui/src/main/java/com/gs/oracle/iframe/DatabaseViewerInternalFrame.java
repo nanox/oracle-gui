@@ -29,6 +29,8 @@ import com.gs.oracle.comps.DatabaseDirectoryPanel;
 import com.gs.oracle.comps.DatabaseDirectoryTree;
 import com.gs.oracle.comps.SqlQueryPanel;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.context.OracleGuiResourceContext;
+import com.gs.oracle.enums.ReadDepthEnum;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.model.Schema;
 import com.gs.oracle.model.Table;
@@ -43,6 +45,10 @@ import com.gs.oracle.util.DisplayUtils;
  */
 public class DatabaseViewerInternalFrame extends JInternalFrame implements WindowListener{
 	private static final Logger logger = Logger.getLogger(DatabaseViewerInternalFrame.class);
+	
+	private static final OracleGuiResourceContext guiResourceContext
+		= OracleGuiResourceContext.getInstance();
+	
 	private JFrame parentFrame;
 	
 	private ConnectionProperties connectionProperties;
@@ -57,34 +63,37 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 	private List<String> schemaNameList = new ArrayList<String>();
 	private List<String> tableNameList = new ArrayList<String>();
 	
-	public DatabaseViewerInternalFrame() {
-		service = new OracleDatabaseServiceImpl();
-		Database database = getDataBaseInformation();
-		initComponents(database);
-		
-	}
-	
 	
 	
 	public DatabaseViewerInternalFrame(JFrame parent,
 			ConnectionProperties connectionProperties) {
+		guiResourceContext.internalFrameCount += 1;
+		setName(getClass().getCanonicalName() + guiResourceContext.internalFrameCount);
+		if(logger.isDebugEnabled()){
+			logger.debug("DatabaseViewerInternalFrame : Frame count = " 
+					+ guiResourceContext.internalFrameCount);
+			logger.debug("DatabaseViewerInternalFrame : Frame name = " 
+					+ getName());
+		}
+		
 		parentFrame = parent;
 		service = new OracleDatabaseServiceImpl();
 		this.connectionProperties = connectionProperties;
-		Database database = getDataBaseInformation();
+		Database database = getDataBaseInformation(ReadDepthEnum.SHALLOW);
+		guiResourceContext.connectedDatabaseMap.put(getName(), database);
 		initComponents(database);
 	}
 
 
 
-	private Database getDataBaseInformation() {
-		logger.info("STRT: Reading Database.");
+	private Database getDataBaseInformation(ReadDepthEnum readDepth) {
+		logger.info("STRT: Reading Database. " + readDepth.getCode());
 		Database db = null;
 		if(connectionProperties != null){
 			try {
-				db = service.getDatabase(connectionProperties);
+				db = service.getDatabase(connectionProperties, readDepth);
 			} catch (ApplicationException e) {
-				e.printStackTrace();
+				logger.error(e);
 			}
 		}
 		logger.info("DONE: Reading Database.");
@@ -231,6 +240,8 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 	}
 	
 	public void closeWindow(){
+		guiResourceContext.internalFrameCount -= 1;
+		guiResourceContext.connectedDatabaseMap.remove(getName());
 		if(connectionProperties.getDataSource() != null){
 			logger.info("Closing Datasource");
 			try {

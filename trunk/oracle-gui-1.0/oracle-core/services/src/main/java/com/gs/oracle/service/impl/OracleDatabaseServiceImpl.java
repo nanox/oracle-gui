@@ -69,14 +69,14 @@ public class OracleDatabaseServiceImpl implements OracleDatabaseService {
 
 
 	
-	public Database getDatabase(ConnectionProperties connectionProperties)
+	public Database getDatabase(ConnectionProperties connectionProperties, ReadDepthEnum readDepth)
 			throws ApplicationException {
 		Database db = null;
 		Connection connection = null;
 		try {
 			connection = connectionProperties.getDataSource().getConnection();
 			db = oracleDbGrabber.grabDatabase(connection, 
-					connectionProperties.getDatabaseName(), ReadDepthEnum.SHALLOW);
+					connectionProperties.getDatabaseName(), readDepth);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
