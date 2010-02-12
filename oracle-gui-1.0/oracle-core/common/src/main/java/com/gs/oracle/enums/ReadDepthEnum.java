@@ -10,6 +10,7 @@ package com.gs.oracle.enums;
 public enum ReadDepthEnum {
 
 	DEEP("DEEP", "Deep Reading - Read all the informations."),
+	MEDIUM("MEDIUM", "Medium Reading - Read avarage amount of informations."),
 	SHALLOW("SHALLOW", "Shallow Reading - Read minimum amount of informations.");
 	
 	private String code;

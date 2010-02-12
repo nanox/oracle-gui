@@ -7,6 +7,8 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.Vector;
 
@@ -17,8 +19,11 @@ import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTextField;
 import javax.swing.JTree;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import javax.swing.UIManager;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeCellRenderer;
@@ -26,6 +31,7 @@ import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
 import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.model.Schema;
@@ -36,6 +42,12 @@ import com.gs.oracle.model.Table;
  * 
  */
 public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
+	
+	/**
+	 * serialVersionUID = -5007366575847331963L;
+	 */
+	private static final long serialVersionUID = -5007366575847331963L;
+	
 	public static final ImageIcon ICON_ROOT_DATABASES = new ImageIcon(
 			DatabaseDirectoryTree.class.getResource(IMAGE_PATH
 					+ "DB_dev_perspective.gif"));
@@ -61,11 +73,13 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 
 	private String rootNodeName;
 	private Database database;
+	private ConnectionProperties connectionProperties;
 
 	public DatabaseDirectoryTree() {
 	}
 
-	public DatabaseDirectoryTree(Database db) {
+	public DatabaseDirectoryTree(ConnectionProperties connectionProperties, Database db) {
+		this.connectionProperties = connectionProperties;
 		this.database = db;
 		initComponents();
 	}
@@ -82,7 +96,7 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 		putClientProperty("JTree.lineStyle", "Angled");
 		TreeCellRenderer renderer = new IconCellRenderer();
 		setCellRenderer(renderer);
-		// addTreeExpansionListener(new DirExpansionListener());
+		addTreeExpansionListener(new DatabaseExpansionListener());
 		// addTreeSelectionListener(new DirSelectionListener());
 
 		getSelectionModel().setSelectionMode(
@@ -107,16 +121,20 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 					new IconData(ICON_SCHEMA, null, new SchemaNode(schema)));
 			// add all the tables in the table folder.
 			DefaultMutableTreeNode tableFolderNode = new DefaultMutableTreeNode(
-					new IconData(ICON_FOLDER_TABLE, null, new FolderNode<Table>("Tables", schema.getTableList())));
+					new IconData(ICON_FOLDER_TABLE, ICON_SCHEMA, 
+							new FolderNode<Table>("Tables", schema.getTableList())));
 			if(null != schema.getTableList() && schema.getTableList().size() > 0){
 				for (Table t : schema.getTableList()) {
 					DefaultMutableTreeNode tNode = null;
+					TableNode tn = new TableNode(t);
+					
 					if(t.isDeleted()){
 						tNode = new DefaultMutableTreeNode(
-								new IconData(ICON_TABLE_DELETED, null, new TableNode(t)));
+								new IconData(ICON_TABLE_DELETED, null, tn), true);
 					}else{
 						tNode = new DefaultMutableTreeNode(
-								new IconData(ICON_TABLE, null, new TableNode(t)));
+								new IconData(ICON_TABLE, null, tn), true);
+						
 					}
 					for (Column c : t.getColumnlist()) {
 						DefaultMutableTreeNode cNode = new DefaultMutableTreeNode(
@@ -130,9 +148,11 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 						} 
 						tNode.add(cNode);
 					}
+					tNode.add(new DefaultMutableTreeNode(new Boolean(true)));
 					tableFolderNode.add(tNode);
 				}
 			}
+			tableFolderNode.add(new DefaultMutableTreeNode(new Boolean(true)));
 			sNode.add(tableFolderNode);
 			dbNode.add(sNode);
 		}
@@ -187,6 +207,37 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 
 
 	private static String selectedPath = "";
+	
+	
+	class DatabaseExpansionListener implements TreeExpansionListener{
+
+		@Override
+		public void treeCollapsed(TreeExpansionEvent event) {
+			
+		}
+
+		@Override
+		public void treeExpanded(TreeExpansionEvent event) {
+			final DefaultMutableTreeNode node = getTreeNode(
+	                event.getPath());
+			final DatabaseNode<Object> databaseNode = getDatabaseNode(node);
+			Thread runner = new Thread() {
+				public void run() {
+					if (databaseNode != null && databaseNode.expand(node)) {
+						Runnable runnable = new Runnable() {
+							public void run() {
+								defaultTreeModel.reload(node);
+							}
+						};
+						SwingUtilities.invokeLater(runnable);
+					}
+				}
+			};
+            
+            runner.start();
+		}
+		
+	}
 
 }
 
@@ -219,9 +270,12 @@ class IconCellRenderer extends JLabel implements TreeCellRenderer {
 		Object obj = node.getUserObject();
 		setText(obj.toString());
 
-		if (obj instanceof Boolean)
+		if (obj instanceof Boolean){
 			setText("Retrieving data...");
-
+			setIcon(new ImageIcon(this.getClass()
+								.getResource(OracleGuiConstants.IMAGE_PATH + "loading.gif")));
+			updateUI();
+		}
 		if (obj instanceof IconData) {
 			IconData idata = (IconData) obj;
 			if (expanded)
@@ -292,7 +346,7 @@ class IconData {
 
 }
 
-interface DatabaseNode<T> {
+interface DatabaseNode<T>{
 	public boolean expand(DefaultMutableTreeNode parent);
 }
 
@@ -481,9 +535,11 @@ class SchemaNode implements DatabaseNode<Schema>, Comparable<SchemaNode> {
 
 class TableNode implements DatabaseNode<Table>, Comparable<TableNode> {
 	protected Table table;
+	protected ConnectionProperties connectionProperties;
 
-	public TableNode(Table table) {
+	public TableNode(Table table, ConnectionProperties p) {
 		this.table = table;
+		this.connectionProperties = p;
 	}
 
 	public boolean hasColumns() {
@@ -526,9 +582,19 @@ class TableNode implements DatabaseNode<Table>, Comparable<TableNode> {
 		parent.removeAllChildren(); // Remove Flag
 
 		List<Column> columns = table.getColumnlist();
-		if (columns == null) {
-			return true;
+		boolean hasCols = false;
+		if (columns == null || columns.size() <= 0) {
+			Connection connection = null;
+			try {
+				connection = connectionProperties.getDataSource().getConnection();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			
 		}
+		
+		if(!hasCols)
+			return true;
 
 		Vector<ColumnNode> columnNodeVector = new Vector<ColumnNode>();
 
@@ -656,3 +722,4 @@ class FolderNode<T> implements DatabaseNode<T>, Comparable<FolderNode<T>>{
 		return false;
 	}
 }
+

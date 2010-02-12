@@ -30,6 +30,8 @@ import javax.swing.JSeparator;
 import javax.swing.JToolBar;
 import javax.swing.JTree;
 import javax.swing.event.PopupMenuEvent;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -57,7 +59,8 @@ import com.gs.oracle.util.MenuBarUtil;
  *
  */
 public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
-		OracleGuiConstants, TreeSelectionListener, MouseListener{
+		OracleGuiConstants, TreeSelectionListener, MouseListener
+		{
 
 	/**
 	 * 
@@ -110,6 +113,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		this.parentFrame = parent;
 		this.databaseDirectoryTree = tree;
 		this.databaseDirectoryTree.addTreeSelectionListener(this);
+		
 		this.databaseDirectoryTree.addMouseListener(this);
 		this.connectionProperties = connectionProperties;
 		addMouseListener(this);
@@ -859,7 +863,6 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 
 
 
-
 	public JComponent getParentComponent() {
 		return parentComponent;
 	}
@@ -881,5 +884,6 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 	public void setParentFrame(JFrame parentFrame) {
 		this.parentFrame = parentFrame;
 	}
+
 
 }
