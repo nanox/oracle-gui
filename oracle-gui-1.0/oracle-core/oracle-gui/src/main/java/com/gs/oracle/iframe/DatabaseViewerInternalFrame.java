@@ -159,7 +159,7 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		outterSplitPane.setOrientation(JSplitPane.HORIZONTAL_SPLIT);
 		
 		DatabaseDirectoryPanel directoryPanel = new DatabaseDirectoryPanel(getParentFrame(), 
-				new DatabaseDirectoryTree(database), getConnectionProperties());
+				new DatabaseDirectoryTree(getConnectionProperties(), database ), getConnectionProperties());
 		directoryPanel.setParentComponent(this);
 		outterSplitPane.setLeftComponent(directoryPanel);
 		mainPanel.add(outterSplitPane, BorderLayout.CENTER);
