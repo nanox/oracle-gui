@@ -32,6 +32,8 @@ import javax.swing.tree.TreeSelectionModel;
 
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.enums.ReadDepthEnum;
+import com.gs.oracle.grabber.OracleDbGrabber;
 import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Database;
 import com.gs.oracle.model.Schema;
@@ -115,10 +117,10 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 	public DefaultMutableTreeNode populateDatabaseTree(Database database) {
 		DefaultMutableTreeNode dbNode = new DefaultMutableTreeNode(
 				new IconData(ICON_ROOT_DATABASES, null, new DatabaseTreeNode(
-						database)));
+						database, getConnectionProperties())));
 		for (Schema schema : database.getSchemaList()) {
 			DefaultMutableTreeNode sNode = new DefaultMutableTreeNode(
-					new IconData(ICON_SCHEMA, null, new SchemaNode(schema)));
+					new IconData(ICON_SCHEMA, null, new SchemaNode(schema, getConnectionProperties())));
 			// add all the tables in the table folder.
 			DefaultMutableTreeNode tableFolderNode = new DefaultMutableTreeNode(
 					new IconData(ICON_FOLDER_TABLE, ICON_SCHEMA, 
@@ -126,7 +128,7 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 			if(null != schema.getTableList() && schema.getTableList().size() > 0){
 				for (Table t : schema.getTableList()) {
 					DefaultMutableTreeNode tNode = null;
-					TableNode tn = new TableNode(t);
+					TableNode tn = new TableNode(t, getConnectionProperties());
 					
 					if(t.isDeleted()){
 						tNode = new DefaultMutableTreeNode(
@@ -152,7 +154,7 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 					tableFolderNode.add(tNode);
 				}
 			}
-			tableFolderNode.add(new DefaultMutableTreeNode(new Boolean(true)));
+			//tableFolderNode.add(new DefaultMutableTreeNode(new Boolean(true)));
 			sNode.add(tableFolderNode);
 			dbNode.add(sNode);
 		}
@@ -227,6 +229,7 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 						Runnable runnable = new Runnable() {
 							public void run() {
 								defaultTreeModel.reload(node);
+								updateUI();
 							}
 						};
 						SwingUtilities.invokeLater(runnable);
@@ -238,6 +241,25 @@ public class DatabaseDirectoryTree extends JTree implements OracleGuiConstants{
 		}
 		
 	}
+
+
+	public Database getDatabase() {
+		return database;
+	}
+
+	public void setDatabase(Database database) {
+		this.database = database;
+	}
+
+	public ConnectionProperties getConnectionProperties() {
+		return connectionProperties;
+	}
+
+	public void setConnectionProperties(ConnectionProperties connectionProperties) {
+		this.connectionProperties = connectionProperties;
+	}
+	
+	
 
 }
 
@@ -258,6 +280,7 @@ class IconCellRenderer extends JLabel implements TreeCellRenderer {
 		m_bkNonSelectionColor = UIManager.getColor("Tree.textBackground");
 		m_borderSelectionColor = UIManager
 				.getColor("Tree.selectionBorderColor");
+		
 		setOpaque(false);
 	}
 
@@ -273,10 +296,9 @@ class IconCellRenderer extends JLabel implements TreeCellRenderer {
 		if (obj instanceof Boolean){
 			setText("Retrieving data...");
 			setIcon(new ImageIcon(this.getClass()
-								.getResource(OracleGuiConstants.IMAGE_PATH + "loading.gif")));
-			updateUI();
+					.getResource(OracleGuiConstants.IMAGE_PATH + "hourglass.png")));
 		}
-		if (obj instanceof IconData) {
+		else if (obj instanceof IconData) {
 			IconData idata = (IconData) obj;
 			if (expanded)
 				setIcon(idata.getExpandedIcon());
@@ -353,8 +375,9 @@ interface DatabaseNode<T>{
 class DatabaseTreeNode implements DatabaseNode<Database> {
 
 	protected Database database;
+	protected ConnectionProperties connectionProperties;
 
-	public DatabaseTreeNode(Database database) {
+	public DatabaseTreeNode(Database database, ConnectionProperties connectionProperties) {
 		this.database = database;
 	}
 
@@ -379,7 +402,7 @@ class DatabaseTreeNode implements DatabaseNode<Database> {
 
 		for (int k = 0; k < schemas.size(); k++) {
 			Schema s = schemas.get(k);
-			SchemaNode schemaNode = new SchemaNode(s);
+			SchemaNode schemaNode = new SchemaNode(s, connectionProperties);
 			boolean isAdded = false;
 			for (int i = 0; i < schemaNodeVector.size(); i++) {
 				SchemaNode nd = schemaNodeVector.elementAt(i);
@@ -435,8 +458,9 @@ class DatabaseTreeNode implements DatabaseNode<Database> {
 
 class SchemaNode implements DatabaseNode<Schema>, Comparable<SchemaNode> {
 	protected Schema schema;
-
-	public SchemaNode(Schema s) {
+	protected ConnectionProperties connectionProperties;
+	
+	public SchemaNode(Schema s, ConnectionProperties connectionProperties) {
 		this.schema = s;
 	}
 
@@ -487,7 +511,7 @@ class SchemaNode implements DatabaseNode<Schema>, Comparable<SchemaNode> {
 
 		for (int k = 0; k < tables.size(); k++) {
 			Table t = tables.get(k);
-			TableNode tableNode = new TableNode(t);
+			TableNode tableNode = new TableNode(t, connectionProperties);
 			boolean isAdded = false;
 			for (int i = 0; i < tableNodeVector.size(); i++) {
 				TableNode nd = tableNodeVector.elementAt(i);
@@ -587,14 +611,18 @@ class TableNode implements DatabaseNode<Table>, Comparable<TableNode> {
 			Connection connection = null;
 			try {
 				connection = connectionProperties.getDataSource().getConnection();
+				table = new OracleDbGrabber().grabTable(connection, 
+						table.getSchemaName(), table.getModelName(), ReadDepthEnum.MEDIUM);
 			} catch (SQLException e) {
 				e.printStackTrace();
+				return true;
 			}
-			
+			if (table.getColumnlist() == null || table.getColumnlist().size() <= 0) {
+				return true;
+			} 
+			columns = table.getColumnlist();
 		}
-		
-		if(!hasCols)
-			return true;
+			
 
 		Vector<ColumnNode> columnNodeVector = new Vector<ColumnNode>();
 
@@ -718,8 +746,7 @@ class FolderNode<T> implements DatabaseNode<T>, Comparable<FolderNode<T>>{
 
 	@Override
 	public boolean expand(DefaultMutableTreeNode parent) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 }
 

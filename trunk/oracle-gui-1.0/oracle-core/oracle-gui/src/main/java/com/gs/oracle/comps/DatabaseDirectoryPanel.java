@@ -501,6 +501,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
         } else {
             tree.collapsePath(parent);
         }
+        tree.updateUI();
     }
 
 
