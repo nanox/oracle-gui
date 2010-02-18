@@ -12,7 +12,6 @@
 		<module>dbex-model</module>
 		<module>dbex-core</module>
 		<module>dbex-integration</module>
-		<module>dbex-util</module>
 		<module>dbex-service</module>
 		<module>dbex-application</module>
 	</modules>
