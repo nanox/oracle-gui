@@ -23,6 +23,8 @@ import org.fife.plaf.Office2003.Office2003LookAndFeel;
 import com.gs.oracle.frame.OracleGuiMainFrame;
 
 /**
+ * This is the entry point of the application.
+ * 
  * @author sabuj.das
  *
  */

@@ -39,6 +39,7 @@ import com.gs.oracle.util.WindowUtil;
 /**
  * @author Sabuj Das
  *
+ *	Main window of the application.
  */
 public class OracleGuiMainFrame extends JFrame implements WindowListener{
 

@@ -16,6 +16,7 @@ import java.sql.RowId;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.Icon;
@@ -27,13 +28,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JToolBar;
 
+import org.apache.log4j.Logger;
+
 import oracle.sql.ROWID;
 
 import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.dlg.QuickEditDialog;
 import com.gs.oracle.dlg.TableDataEditorDialog;
+import com.gs.oracle.enums.ReadDepthEnum;
 import com.gs.oracle.grabber.OracleDbGrabber;
+import com.gs.oracle.model.Column;
 import com.gs.oracle.model.Table;
 import com.gs.oracle.pagination.PaginatedTablePanel;
 import com.gs.oracle.util.DisplayTypeEnum;
@@ -47,6 +52,8 @@ import com.gs.oracle.vo.QuickEditVO;
  */
 public class TableDataPanel extends JPanel implements ActionListener{
 
+	private static final Logger logger = Logger.getLogger(TableDataPanel.class);
+	
 	private JButton refreshButton, addRecordButton, editRecordButton, deleteRecordButton,
 		filterDataButton;
 	private JTable dataTable;
@@ -88,6 +95,8 @@ public class TableDataPanel extends JPanel implements ActionListener{
 		this.connectionProperties = connectionProperties;
 		
 		prepareQuery(databaseTable);
+		//if(queryString == null)
+			
 				
 		paginatedTablePanel = new PaginatedTablePanel(parentFrame, connectionProperties, queryString, 
 				"SELECT COUNT(*) FROM " + schemaName + "." + tableName.toUpperCase());
@@ -100,12 +109,30 @@ public class TableDataPanel extends JPanel implements ActionListener{
 
 	private void prepareQuery(Table databaseTable) {
 		StringBuffer buffer = new StringBuffer();
-		String s = "select " +
+		
+		if (databaseTable.getColumnlist() == null || databaseTable.getColumnlist().size() <= 0) {
+			Connection connection = null;
+			try {
+				connection = connectionProperties.getDataSource().getConnection();
+				databaseTable = new OracleDbGrabber().grabTable(connection, 
+						databaseTable.getSchemaName(), databaseTable.getModelName(), ReadDepthEnum.DEEP);
+			} catch (SQLException e) {
+				logger.error(e);
+			}
+			if (databaseTable.getColumnlist() == null || databaseTable.getColumnlist().size() <= 0) {
+				DisplayUtils.displayMessage(getParentFrame(), "Cannot Read Column details.", DisplayTypeEnum.ERROR);
+				queryString = null;
+				return;
+			} 
+		}
+		
+		
+		/*String s = "select " +
 				"* " +
 				"from (select " +
 				"a, b, c, rownum as limit from " +
 				"mytable where conditions order by whatiwant" +
-				") where limit&gt;x and limit &lt;y;";
+				") where limit&gt;x and limit &lt;y;";*/
 		buffer.append("SELECT ")
 			.append(databaseTable.getColumnNames(','))
 			.append(" FROM ( SELECT ")

@@ -110,7 +110,6 @@ public class OpenResourceDialog extends JDialog {
         FormListener formListener = new FormListener();
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
-        setTitle("Open Resource");
 
         mainPanel.setLayout(new GridBagLayout());
 
