@@ -60,7 +60,9 @@ import com.gs.oracle.util.WindowUtil;
 import de.muntjak.tinylookandfeel.TinyLookAndFeel;
 
 /**
- * @author Green Moon
+ * @author Sabuj Das
+ *
+ *	This is an EventHandler for handling common events.
  *
  */
 public class GuiEventHandler implements ActionListener, GuiCommandConstants {
@@ -418,6 +420,11 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 		OpenResourceDialog openResourceDialog = new OpenResourceDialog(
 				parent, dbIframe.getSchemaNameList(), dbIframe.getTableNameList(), dbIframe
 			);
+		if(isTableContent)
+			openResourceDialog.setTitle("Open Content");
+		else
+			openResourceDialog.setTitle("Open Resource");
+		
 		int opt = openResourceDialog.showOpenDialog();
 		if(OracleGuiConstants.APPLY_OPTION == opt){
 			String schemaName = openResourceDialog.getSelectedSchemaName();
