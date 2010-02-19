@@ -40,11 +40,7 @@
 			<artifactId>dbex-service</artifactId>
 			<version>${release.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>com.gs.utils</groupId>
-			<artifactId>gs-utils</artifactId>
-			<version>1.0.18.02.2010</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>castor</groupId>
 			<artifactId>castor</artifactId>
