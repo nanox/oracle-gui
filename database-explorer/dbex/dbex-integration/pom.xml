@@ -32,11 +32,6 @@
 		</dependency>
 		<dependency>
 			<groupId>com.gs.dbex</groupId>
-			<artifactId>dbex-util</artifactId>
-			<version>${release.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.gs.dbex</groupId>
 			<artifactId>dbex-service</artifactId>
 			<version>${release.version}</version>
 		</dependency>

@@ -86,7 +86,7 @@
 
 	<properties>
 		<project.title>DBEX</project.title>
-		<project.home>D:/SVN_HOME/MY_PROJECTS/oracle-gui/trunk/database-explorer</project.home>
+		<project.home>/home/sabuj/SVN_HOME/oracle-gui/trunk/database-explorer</project.home>
 		<release.version>1.0-BETA-0.1</release.version>
 		<libs.dir>${project.home}/dbex-setup/libs</libs.dir>
 		<release.dir>${project.home}/release</release.dir>
