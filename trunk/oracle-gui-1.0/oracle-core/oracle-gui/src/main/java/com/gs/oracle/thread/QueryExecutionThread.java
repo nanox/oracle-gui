@@ -57,13 +57,13 @@ public class QueryExecutionThread<V>
 		if(QueryTypeEnum.SELECT.equals(sqlQuery.getQueryType())){
 			EventQueue.invokeLater(new Runnable() {
 				public void run() {
-					try {
+					/*try {
 						
 					} catch (SQLException ex) {
 						
 					} catch (Exception ex) {
 						
-					}
+					}*/
 				}
 			});
 		}
