@@ -9,6 +9,7 @@
 
 	<modules>
 		<module>dbex-common</module>
+		<module>dbex-context</module>
 		<module>dbex-model</module>
 		<module>dbex-core</module>
 		<module>dbex-integration</module>
@@ -86,7 +87,7 @@
 
 	<properties>
 		<project.title>DBEX</project.title>
-		<project.home>/home/sabuj/SVN_HOME/oracle-gui/trunk/database-explorer</project.home>
+		<project.home>D:/SVN_HOME/oracle-gui/trunk/database-explorer</project.home>
 		<release.version>1.0-BETA-0.1</release.version>
 		<libs.dir>${project.home}/dbex-setup/libs</libs.dir>
 		<release.dir>${project.home}/release</release.dir>
