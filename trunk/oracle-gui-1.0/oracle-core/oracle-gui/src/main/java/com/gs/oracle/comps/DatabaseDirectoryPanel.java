@@ -13,6 +13,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Enumeration;
 
@@ -42,6 +43,7 @@ import com.gs.oracle.OracleGuiConstants;
 import com.gs.oracle.command.GuiCommandConstants;
 import com.gs.oracle.connection.ConnectionProperties;
 import com.gs.oracle.dlg.ResourceEditDialog;
+import com.gs.oracle.dlg.ShowTableContentDialog;
 import com.gs.oracle.dlg.TableDataExportDialog;
 import com.gs.oracle.enums.ReadDepthEnum;
 import com.gs.oracle.enums.ResourceEditTypeEnum;
@@ -327,6 +329,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		tablePopupMenu.add(new JSeparator());
 		tablePopupMenu.add(openTableDetailsMenuItem);
 		tablePopupMenu.add(showTableContentMenuItem);
+		tablePopupMenu.add(showTableContentByColumnMenuItem);
 		tablePopupMenu.add(new JSeparator());
 		tablePopupMenu.add(editTableMenu);
 		tablePopupMenu.add(new JSeparator());
@@ -562,18 +565,71 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
         if(dbNode instanceof TableNode){
         	Table table = ((TableNode)dbNode).getTable();
 			if(table != null){
-				TableContentPanel contentPanel = new TableContentPanel(
-					table.getSchemaName(), table.getModelName(), connectionProperties, table	
-				);
-				contentPanel.setParentFrame(getParentFrame());
-				DatabaseViewerInternalFrame iFrame = (DatabaseViewerInternalFrame) getParentComponent();
-				iFrame.getDbDetailsTabbedPane().addTab(CONTENT_TEXT + table.getModelName(), contentPanel);
-				int n = iFrame.getDbDetailsTabbedPane().getTabCount();
-				iFrame.getDbDetailsTabbedPane().setTabComponentAt(n - 1,
-		                new ButtonTabComponent(iFrame.getDbDetailsTabbedPane(), new ImageIcon(DatabaseViewerInternalFrame.class
-		        				.getResource(OracleGuiConstants.IMAGE_PATH + "sampleContents.gif"))));
-				iFrame.getDbDetailsTabbedPane().setSelectedIndex(n-1);
-				iFrame.getDbDetailsTabbedPane().updateUI();
+				boolean showCompleteTable = false;
+				if(table.getColumnlist() == null || table.getColumnlist().size() <= 0){
+					Connection connection = null;
+					try {
+						connection = connectionProperties.getDataSource().getConnection();
+						table = new OracleDbGrabber().grabTable(connection, 
+								table.getSchemaName(), table.getModelName(), ReadDepthEnum.MEDIUM);
+					} catch (SQLException e) {
+						e.printStackTrace();
+						showCompleteTable = true;
+					}
+					if (table.getColumnlist() == null || table.getColumnlist().size() <= 0) {
+						showCompleteTable = true;
+					}
+				}
+				if(showCompleteTable){
+					TableContentPanel contentPanel = new TableContentPanel(
+							table.getSchemaName(), table.getModelName(), connectionProperties, table	
+						);
+						contentPanel.setParentFrame(getParentFrame());
+						DatabaseViewerInternalFrame iFrame = (DatabaseViewerInternalFrame) getParentComponent();
+						iFrame.getDbDetailsTabbedPane().addTab(CONTENT_TEXT + table.getModelName(), contentPanel);
+						int n = iFrame.getDbDetailsTabbedPane().getTabCount();
+						iFrame.getDbDetailsTabbedPane().setTabComponentAt(n - 1,
+				                new ButtonTabComponent(iFrame.getDbDetailsTabbedPane(), new ImageIcon(DatabaseViewerInternalFrame.class
+				        				.getResource(OracleGuiConstants.IMAGE_PATH + "sampleContents.gif"))));
+						iFrame.getDbDetailsTabbedPane().setSelectedIndex(n-1);
+						iFrame.getDbDetailsTabbedPane().updateUI();
+						return;
+				}
+				String[] selectedColumns = null;
+				ShowTableContentDialog d = new ShowTableContentDialog(this.getParentFrame(), true, table);
+				int opt = d.showDialog();
+				if(opt == OracleGuiConstants.APPLY_OPTION){
+					TreePath[] paths = d.getCheckTreeManager().getSelectionModel().getSelectionPaths();
+					if(paths != null){
+						selectedColumns = new String[paths.length];
+						int i=0;
+						for (TreePath treePath : paths) {
+							String colName = treePath.getLastPathComponent().toString();
+							if(!TableColumnTree.ALL_COLUMN_TEXT.equalsIgnoreCase(colName))
+								selectedColumns[i++] = colName;
+							else{
+								selectedColumns = null;
+								break;
+							}
+						}
+					}
+					
+					if(selectedColumns != null && selectedColumns.length == 0)
+						selectedColumns = null;
+					TableContentPanel contentPanel = new TableContentPanel(
+						table.getSchemaName(), table.getModelName(), connectionProperties, table, selectedColumns	
+					);
+					contentPanel.setParentFrame(getParentFrame());
+					DatabaseViewerInternalFrame iFrame = (DatabaseViewerInternalFrame) getParentComponent();
+					iFrame.getDbDetailsTabbedPane().addTab(CONTENT_TEXT + table.getModelName(), contentPanel);
+					int n = iFrame.getDbDetailsTabbedPane().getTabCount();
+					iFrame.getDbDetailsTabbedPane().setTabComponentAt(n - 1,
+			                new ButtonTabComponent(iFrame.getDbDetailsTabbedPane(), new ImageIcon(DatabaseViewerInternalFrame.class
+			        				.getResource(OracleGuiConstants.IMAGE_PATH + "sampleContents.gif"))));
+					iFrame.getDbDetailsTabbedPane().setSelectedIndex(n-1);
+					iFrame.getDbDetailsTabbedPane().updateUI();
+				}
+				
 			}
         }
 	}
