@@ -54,20 +54,42 @@ public class TableContentPanel extends JPanel implements ActionListener, MouseLi
 	private String queryString;
 	private String currentFilter = "";
 	private JFrame parentFrame;
+	private String []selectedColumns;
+	
+	
 	
 	public TableContentPanel(String schemaName, String tableName,
 			ConnectionProperties connectionProperties, Table table) {
+		this(schemaName, tableName, connectionProperties, table, null);
+	}
+	
+	public TableContentPanel(String schemaName, String tableName,
+			ConnectionProperties connectionProperties, Table table, String []selectedColumns) {
 		this.schemaName = schemaName; 
 		this.tableName = tableName;
 		this.connectionProperties = connectionProperties;
 		this.databaseTable = table;
+		this.selectedColumns = selectedColumns;
 		try {
 			this.resultSetTableModelFactory = new ResultSetTableModelFactory(
 					connectionProperties.getDataSource().getConnection());
 		} catch (SQLException e) {
 			DisplayUtils.displayMessage(null, e.getMessage(), DisplayTypeEnum.ERROR);
 		}
-		queryString = "SELECT * FROM " + schemaName + "." + tableName.toUpperCase();
+		String comaSeparatedColumns = " ";
+		if(null != selectedColumns && selectedColumns.length > 0){
+			for(int i=0; i<selectedColumns.length; i++){
+				comaSeparatedColumns += selectedColumns[i];
+				if(i != selectedColumns.length-1){
+					comaSeparatedColumns += ", ";
+				}
+			}
+			comaSeparatedColumns += " ";
+		} else {
+			comaSeparatedColumns = " * ";
+		}
+		
+		queryString = "SELECT "+ comaSeparatedColumns +" FROM " + schemaName + "." + tableName.toUpperCase();
 		initComponents();
 		
 		showContent(queryString);
@@ -230,6 +252,14 @@ public class TableContentPanel extends JPanel implements ActionListener, MouseLi
 
 	public void setParentFrame(JFrame parentFrame) {
 		this.parentFrame = parentFrame;
+	}
+
+	public String[] getSelectedColumns() {
+		return selectedColumns;
+	}
+
+	public void setSelectedColumns(String[] selectedColumns) {
+		this.selectedColumns = selectedColumns;
 	}
 
 	@Override

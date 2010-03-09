@@ -175,12 +175,12 @@ UndoableEditListener, HyperlinkListener {
 		dsb.add(runQueryButton);
 		dsb.add(runQueryMenuItem);
 		
-		t = new QueryExecutionThread(getParentFrame(),
-				getConnectionProperties(), 
-				getFactory(), 
-				queryResultTable, 
-				queryResultTabbedPane, 
-				queryLogTextArea, enb, dsb);
+//		t = new QueryExecutionThread(getParentFrame(),
+//				getConnectionProperties(), 
+//				getFactory(), 
+//				queryResultTable, 
+//				queryResultTabbedPane, 
+//				queryLogTextArea, enb, dsb);
 	}
 
 	private void initComponents() {

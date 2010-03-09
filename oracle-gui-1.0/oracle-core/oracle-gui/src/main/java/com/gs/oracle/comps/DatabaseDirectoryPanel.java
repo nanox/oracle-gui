@@ -95,7 +95,8 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 	private ConnectionProperties connectionProperties;
 	
 	private JMenuItem expandCollaspTableMenuItem, renameTableMenuItem,
-		dropTableMenuItem, commentTableMenuItem, openTableDetailsMenuItem, showTableContentMenuItem,
+		dropTableMenuItem, commentTableMenuItem, openTableDetailsMenuItem, showTableContentMenuItem, 
+		showTableContentByColumnMenuItem,
 		importDataToTableMenuItem, modifyTableMenuItem, truncateTableMenuItem,
 		copyTableMenuItem, exportDataToInsertScriptMenuItem, exportDataToLoaderMenuItem,
 		exportDataToCsvMenuItem, exportDataToHtmlMenuItem, exportDataToTextMenuItem,
@@ -194,6 +195,11 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 		showTableContentMenuItem = new JMenuItem("Show Content");
 		showTableContentMenuItem.addActionListener(this);
 		showTableContentMenuItem.setIcon(new ImageIcon(getClass()
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "sampleContents.gif")));
+		showTableContentByColumnMenuItem = new JMenuItem("Show Content - By Column");
+		showTableContentByColumnMenuItem.addActionListener(this);
+		showTableContentByColumnMenuItem.setIcon(new ImageIcon(getClass()
 				.getResource(OracleGuiConstants.IMAGE_PATH
 						+ "sampleContents.gif")));
 		importDataToTableMenuItem = new JMenuItem("Import Data");
@@ -442,6 +448,8 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 			openTableFromTreePath(mouseClickedTreePath);
 		}else if(e.getSource().equals(showTableContentMenuItem)){
 			showTableContentFromTreePath(mouseClickedTreePath);
+		}else if(e.getSource().equals(showTableContentByColumnMenuItem)){
+			showTableContentByColumnFromTreePath(mouseClickedTreePath);
 		}else if(e.getSource().equals(exportDataToInsertScriptMenuItem)){
 			exportTableData(mouseClickedTreePath, TableDataExportTypeEnum.INSERT_STATEMENT);
 		}else if(e.getSource().equals(exportDataToLoaderMenuItem)){
@@ -517,6 +525,33 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 	}
 
 	public void showTableContentFromTreePath(TreePath clickedPath){
+		DefaultMutableTreeNode node = getDatabaseDirectoryTree().getTreeNode(clickedPath);
+        if(node == null)
+            return;
+        DatabaseNode dbNode = getDatabaseDirectoryTree().getDatabaseNode(node);
+        if (dbNode == null) {
+            return;
+        }
+        if(dbNode instanceof TableNode){
+        	Table table = ((TableNode)dbNode).getTable();
+			if(table != null){
+				TableContentPanel contentPanel = new TableContentPanel(
+					table.getSchemaName(), table.getModelName(), connectionProperties, table	
+				);
+				contentPanel.setParentFrame(getParentFrame());
+				DatabaseViewerInternalFrame iFrame = (DatabaseViewerInternalFrame) getParentComponent();
+				iFrame.getDbDetailsTabbedPane().addTab(CONTENT_TEXT + table.getModelName(), contentPanel);
+				int n = iFrame.getDbDetailsTabbedPane().getTabCount();
+				iFrame.getDbDetailsTabbedPane().setTabComponentAt(n - 1,
+		                new ButtonTabComponent(iFrame.getDbDetailsTabbedPane(), new ImageIcon(DatabaseViewerInternalFrame.class
+		        				.getResource(OracleGuiConstants.IMAGE_PATH + "sampleContents.gif"))));
+				iFrame.getDbDetailsTabbedPane().setSelectedIndex(n-1);
+				iFrame.getDbDetailsTabbedPane().updateUI();
+			}
+        }
+	}
+	
+	public void showTableContentByColumnFromTreePath(TreePath clickedPath){
 		DefaultMutableTreeNode node = getDatabaseDirectoryTree().getTreeNode(clickedPath);
         if(node == null)
             return;

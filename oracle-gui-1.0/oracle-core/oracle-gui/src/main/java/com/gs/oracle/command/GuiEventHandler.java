@@ -254,6 +254,24 @@ public class GuiEventHandler implements ActionListener, GuiCommandConstants {
 					return;
 				}
 				openResource((JFrame) getParent(), dbIframe, true);
+			} else if(TABLE_COLUMN_CONTENT_ACT_CMD.equals(cmd)){
+				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
+				JDesktopPane desktopPane = f.getMainDesktopPane();
+				if(desktopPane == null){
+					return;
+				}
+				JInternalFrame iFrame = desktopPane.getSelectedFrame();
+				if(iFrame == null){
+					return;
+				}
+				DatabaseViewerInternalFrame dbIframe = null;
+				if(iFrame instanceof DatabaseViewerInternalFrame){
+					dbIframe = (DatabaseViewerInternalFrame) iFrame;
+				}
+				if(dbIframe == null){
+					return;
+				}
+				openResource((JFrame) getParent(), dbIframe, true);
 			} else if(NEW_QUERY_TAB_ACT_CMD.equals(cmd)){
 				OracleGuiMainFrame f = (OracleGuiMainFrame) getParent();
 				JDesktopPane desktopPane = f.getMainDesktopPane();
