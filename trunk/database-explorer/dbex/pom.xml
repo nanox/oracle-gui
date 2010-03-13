@@ -15,6 +15,7 @@
 		<module>dbex-integration</module>
 		<module>dbex-service</module>
 		<module>dbex-application</module>
+		<module>dbex-launcher</module>
 	</modules>
 
 	<dependencyManagement>
@@ -39,7 +40,19 @@
 				<artifactId>gs-utils</artifactId>
 				<version>1.0.02.2010</version>
 			</dependency>
+			<dependency>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-context</artifactId>
+				<version>3.0.0.RELEASE</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
 		</dependencies>
+		
 	</dependencyManagement>
 
 	<dependencies>
@@ -58,6 +71,10 @@
 		<dependency>
 			<groupId>com.gs.utils</groupId>
 			<artifactId>gs-utils</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
 		</dependency>
 	</dependencies>
 	
