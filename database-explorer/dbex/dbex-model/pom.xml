@@ -11,8 +11,13 @@
 	<name>dbex-model</name>
 	<version>${release.version}</version>
 	<packaging>jar</packaging>
-	
+
 	<dependencies>
+		<dependency>
+			<groupId>commons-lang</groupId>
+			<artifactId>commons-lang</artifactId>
+			<version>2.5</version>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>

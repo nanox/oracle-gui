@@ -7,12 +7,14 @@
 		<version>${release.version}</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>dbex-service</artifactId>
-	<name>dbex-service</name>
+	<artifactId>dbex-launcher</artifactId>
+	<name>dbex-launcher</name>
 	<version>${release.version}</version>
 	<packaging>jar</packaging>
 
 	<dependencies>
+
+
 		<dependency>
 			<groupId>com.gs.dbex</groupId>
 			<artifactId>dbex-common</artifactId>
@@ -21,6 +23,21 @@
 		<dependency>
 			<groupId>com.gs.dbex</groupId>
 			<artifactId>dbex-model</artifactId>
+			<version>${release.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.gs.dbex</groupId>
+			<artifactId>dbex-service</artifactId>
+			<version>${release.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.gs.dbex</groupId>
+			<artifactId>dbex-context</artifactId>
+			<version>${release.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.gs.dbex</groupId>
+			<artifactId>dbex-application</artifactId>
 			<version>${release.version}</version>
 		</dependency>
 
