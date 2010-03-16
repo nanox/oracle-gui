@@ -40,7 +40,7 @@
 				<artifactId>gs-utils</artifactId>
 				<version>1.0.02.2010</version>
 			</dependency>
-			<dependency>
+			<!-- <dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-context</artifactId>
 				<version>3.0.0.RELEASE</version>
@@ -50,7 +50,7 @@
 						<artifactId>commons-logging</artifactId>
 					</exclusion>
 				</exclusions>
-			</dependency>
+			</dependency> -->
 		</dependencies>
 		
 	</dependencyManagement>
@@ -72,10 +72,10 @@
 			<groupId>com.gs.utils</groupId>
 			<artifactId>gs-utils</artifactId>
 		</dependency>
-		<dependency>
+		<!-- <dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-context</artifactId>
-		</dependency>
+		</dependency> -->
 	</dependencies>
 	
 	<build>

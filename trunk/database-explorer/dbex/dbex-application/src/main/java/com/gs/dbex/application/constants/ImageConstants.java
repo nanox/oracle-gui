@@ -9,6 +9,7 @@ package com.gs.dbex.application.constants;
  */
 public interface ImageConstants extends ApplicationConstants {
 
+	/* ---------------   Image Paths   --------------------------------- */
 	/**
 	 * Image location for Common Application
 	 */
@@ -24,10 +25,11 @@ public interface ImageConstants extends ApplicationConstants {
 	String DRIVER_MGR_IMG_LOC = IMAGE_LOCATION
 			+ "com/gs/dbex/application/connection/driver/";
 
+	
+	/* ---------------   Image File Names   ------------------------------ */
 	String DRIVER_IMG_NAME = "driver.png";
 	String JAR_IMG_NAME = "jar_file.png";
-
 	String CONNECTION_MGR_IMG_NAME = "Connection_Manager.png";
-
 	String HOUR_GLASS_IMG_NAME = "Connection_Manager.png";
+	String MAIN_FRAME_ICON_IMG_NAME = "database_ico_16x16.png";
 }
