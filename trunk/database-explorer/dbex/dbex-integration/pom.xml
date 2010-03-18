@@ -30,7 +30,14 @@
 			<artifactId>dbex-model</artifactId>
 			<version>${release.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.gs.dbex</groupId>
+			<artifactId>dbex-core</artifactId>
+			<version>${release.version}</version>
+		</dependency>
 		
+		
+		<!-- Integration Point Dependencies -->
 		<dependency>
 			<groupId>castor</groupId>
 			<artifactId>castor</artifactId>
