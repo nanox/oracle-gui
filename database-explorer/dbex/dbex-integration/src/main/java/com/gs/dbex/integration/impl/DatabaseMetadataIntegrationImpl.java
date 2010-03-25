@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gs.dbex.integration.impl.oracle;
+package com.gs.dbex.integration.impl;
 
 import com.gs.dbex.integration.DatabaseMetadataIntegration;
 
@@ -9,7 +9,7 @@ import com.gs.dbex.integration.DatabaseMetadataIntegration;
  * @author sabuj.das
  *
  */
-public class DatabaseMetadataIntegrationImpl implements
+public abstract class DatabaseMetadataIntegrationImpl implements
 		DatabaseMetadataIntegration {
 
 }

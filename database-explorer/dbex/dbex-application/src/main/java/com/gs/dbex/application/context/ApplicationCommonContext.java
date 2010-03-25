@@ -4,7 +4,6 @@
 package com.gs.dbex.application.context;
 
 import com.gs.dbex.application.constants.ApplicationConstants;
-import com.gs.dbex.context.InitialContextLoader;
 
 /**
  * A singleton class to hold the runtime context
@@ -38,7 +37,6 @@ public class ApplicationCommonContext{
 	
 	/* -----  Context Variables   ------------------------------------------ */
 	
-	private InitialContextLoader springContextLoader;
 	
 	private String applicationDataDirName = ApplicationConstants.DEFAULT_APP_DATA_DIR;
 	private String driverLoaderLastAccessedDirName = "./";
@@ -78,18 +76,5 @@ public class ApplicationCommonContext{
 		this.driverLoaderLastAccessedDirName = driverLoaderLastAccessedDirName;
 	}
 
-	/**
-	 * @return the springContextLoader
-	 */
-	public InitialContextLoader getSpringContextLoader() {
-		return springContextLoader;
-	}
-
-	/**
-	 * @param springContextLoader the springContextLoader to set
-	 */
-	public void setSpringContextLoader(InitialContextLoader springContextLoader) {
-		this.springContextLoader = springContextLoader;
-	} 
 
 }
