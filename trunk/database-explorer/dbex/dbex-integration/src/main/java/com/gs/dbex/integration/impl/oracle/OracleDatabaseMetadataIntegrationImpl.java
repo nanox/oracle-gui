@@ -20,7 +20,7 @@ public class OracleDatabaseMetadataIntegrationImpl extends
 	
 	public Database readDatabase(ConnectionProperties connectionProperties,
 			ReadDepthEnum readDepthEnum) {
-		// TODO Auto-generated method stub
+		System.out.println("Reading OracleDatabaseMetadata");
 		return null;
 	}
 

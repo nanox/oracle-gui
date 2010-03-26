@@ -1,9 +1,10 @@
 /**
  * 
  */
-package com.gs.dbex.integration.impl;
+package com.gs.dbex.integration.impl.mysql;
 
 import com.gs.dbex.common.enums.ReadDepthEnum;
+import com.gs.dbex.integration.impl.DatabaseMetadataIntegrationImpl;
 import com.gs.dbex.model.cfg.ConnectionProperties;
 import com.gs.dbex.model.db.Database;
 import com.gs.dbex.model.db.Schema;
@@ -18,7 +19,7 @@ public class MysqlDatabaseMetadataIntegrationImpl extends
 
 	public Database readDatabase(ConnectionProperties connectionProperties,
 			ReadDepthEnum readDepthEnum) {
-		// TODO Auto-generated method stub
+		System.out.println("Reading MySqlDatabaseMetadata");
 		return null;
 	}
 

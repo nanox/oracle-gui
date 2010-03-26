@@ -11,7 +11,7 @@ import com.gs.dbex.model.cfg.ConnectionProperties;
  */
 public interface DatabaseConnectionService {
 
-	
+	String BEAN_NAME = "databaseConnectionService";
 	
 	public Boolean connectToDatabase(ConnectionProperties connectionProperties);
 	

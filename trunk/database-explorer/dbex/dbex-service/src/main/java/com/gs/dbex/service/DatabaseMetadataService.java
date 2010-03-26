@@ -14,10 +14,10 @@ import com.gs.dbex.model.db.Schema;
  */
 public interface DatabaseMetadataService {
 
+	String BEAN_NAME = "databaseMetadataService";
 	
-	public Set<Schema> getSchemaDetails();
+	public Set<Schema> getSchemaDetails(ConnectionProperties connectionProperties);
 	
-	public ConnectionProperties getConnectionProperties(); 
-	public void setConnectionProperties(ConnectionProperties connectionProperties);
+	
 	
 }
