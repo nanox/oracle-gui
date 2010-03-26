@@ -3,12 +3,21 @@
  */
 package com.gs.dbex.integration.impl.oracle;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import org.apache.log4j.Logger;
+
 import com.gs.dbex.common.enums.ReadDepthEnum;
+import com.gs.dbex.common.exception.DbexException;
+import com.gs.dbex.common.exception.ErrorCodeConstants;
+import com.gs.dbex.core.oracle.OracleDbGrabber;
 import com.gs.dbex.integration.impl.DatabaseMetadataIntegrationImpl;
 import com.gs.dbex.model.cfg.ConnectionProperties;
 import com.gs.dbex.model.db.Database;
 import com.gs.dbex.model.db.Schema;
 import com.gs.dbex.model.db.Table;
+import com.gs.utils.jdbc.JdbcUtil;
 
 /**
  * @author Sabuj.das
@@ -17,11 +26,28 @@ import com.gs.dbex.model.db.Table;
 public class OracleDatabaseMetadataIntegrationImpl extends
 		DatabaseMetadataIntegrationImpl {
 
+	private static final Logger logger = Logger.getLogger(OracleDatabaseMetadataIntegrationImpl.class);
 	
 	public Database readDatabase(ConnectionProperties connectionProperties,
-			ReadDepthEnum readDepthEnum) {
-		System.out.println("Reading OracleDatabaseMetadata");
-		return null;
+			ReadDepthEnum readDepthEnum) throws DbexException {
+		logger.debug("START:: Reading Full database.");
+		if(connectionProperties == null){
+			throw new DbexException(ErrorCodeConstants.CANNOT_CONNECT_DB);
+		}
+		Connection connection = null; 
+		Database database = null;
+		try {
+			connection = connectionProperties.getDataSource().getConnection();
+			OracleDbGrabber dbGrabber = new OracleDbGrabber();
+			database = dbGrabber.grabDatabase(connection, "", readDepthEnum);
+		} catch (SQLException e) {
+			logger.error(e);
+			throw new DbexException(null, e.getMessage());
+		} finally {
+			JdbcUtil.close(connection);
+		}
+		logger.debug("END:: Reading Full database.");
+		return database;
 	}
 
 	
