@@ -13,5 +13,5 @@ public interface ApplicationConstants {
 	
 	String DEFAULT_APP_DATA_DIR = "./application-data/";
 	
-	
+	String PRIVATE_DATA_DIR = "private_data/";
 }

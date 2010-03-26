@@ -36,7 +36,7 @@
 		</layout>
 	</appender>
 
-	<category name="com.gs.oracle">
+	<category name="com.gs.dbex">
 		<priority value="DEBUG" />
 		<appender-ref ref="APP_LOG" />
 	</category>

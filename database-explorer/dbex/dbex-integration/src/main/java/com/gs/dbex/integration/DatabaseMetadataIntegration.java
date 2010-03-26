@@ -4,6 +4,7 @@
 package com.gs.dbex.integration;
 
 import com.gs.dbex.common.enums.ReadDepthEnum;
+import com.gs.dbex.common.exception.DbexException;
 import com.gs.dbex.model.cfg.ConnectionProperties;
 import com.gs.dbex.model.db.Database;
 import com.gs.dbex.model.db.Schema;
@@ -20,8 +21,9 @@ public interface DatabaseMetadataIntegration {
 	 * @param connectionProperties
 	 * @param readDepthEnum
 	 * @return
+	 * @throws DbexException 
 	 */
-	public Database readDatabase(ConnectionProperties connectionProperties, ReadDepthEnum readDepthEnum);
+	public Database readDatabase(ConnectionProperties connectionProperties, ReadDepthEnum readDepthEnum) throws DbexException;
 	
 	/**
 	 * Read the complete schema.

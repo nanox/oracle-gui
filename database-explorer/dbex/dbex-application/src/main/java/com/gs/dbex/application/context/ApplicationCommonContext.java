@@ -16,6 +16,7 @@ public class ApplicationCommonContext{
 	private static final String DRIVER_MGR_DIR = "driver-manager/";
 	private static final String JDBC_DRIVER_DIR = DRIVER_MGR_DIR + "jdbc-driver/";
 	private static final String DRIVER_MGR_DATA_FILE = "jdbc-driver-manager.xml";
+	private static final String USER_DATA_DIR = "user_data/";
 
 	private static ApplicationCommonContext instance;
 	
@@ -24,6 +25,7 @@ public class ApplicationCommonContext{
 	public static ApplicationCommonContext getInstance() {
 		if(instance == null)
 			instance = new ApplicationCommonContext();
+		
 		return instance;
 	}
 	
@@ -44,6 +46,9 @@ public class ApplicationCommonContext{
 	private String driverManagerDir = getApplicationDataDirName() + DRIVER_MGR_DIR;
 	private String jdbcDriverDir = getApplicationDataDirName() + JDBC_DRIVER_DIR;
 	private String driverMgrDataFileName = getDriverManagerDir() + DRIVER_MGR_DATA_FILE;
+	
+	private final String errorMsgConstFileName = ApplicationConstants.DEFAULT_APP_DATA_DIR
+		+ "properties/ErrorMessage.properties";
 		
 	/* -----  get/set methods for Context Variables  ----------------------- */
 	
@@ -74,6 +79,10 @@ public class ApplicationCommonContext{
 	public void setDriverLoaderLastAccessedDirName(
 			String driverLoaderLastAccessedDirName) {
 		this.driverLoaderLastAccessedDirName = driverLoaderLastAccessedDirName;
+	}
+
+	public String getErrorMsgConstFileName() {
+		return errorMsgConstFileName;
 	}
 
 
