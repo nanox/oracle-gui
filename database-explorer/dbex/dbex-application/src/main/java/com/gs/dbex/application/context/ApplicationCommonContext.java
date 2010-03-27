@@ -3,7 +3,12 @@
  */
 package com.gs.dbex.application.context;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
+
 import com.gs.dbex.application.constants.ApplicationConstants;
+import com.gs.dbex.model.cfg.ConnectionProperties;
 
 /**
  * A singleton class to hold the runtime context
@@ -30,6 +35,7 @@ public class ApplicationCommonContext{
 	}
 	
 	protected void finalize() throws Throwable {
+		resetContext();
 		super.finalize();
 	}
 	
@@ -50,6 +56,10 @@ public class ApplicationCommonContext{
 	private final String errorMsgConstFileName = ApplicationConstants.DEFAULT_APP_DATA_DIR
 		+ "properties/ErrorMessage.properties";
 		
+	private final Properties errorMessageProperties = ApplicationPropertyLoader.loadProperties(getErrorMsgConstFileName());
+	
+	private final Map<String, ConnectionProperties> connectionPropertiesMap = new HashMap<String, ConnectionProperties>();
+	
 	/* -----  get/set methods for Context Variables  ----------------------- */
 	
 	public String getApplicationDataDirName() {
@@ -83,6 +93,15 @@ public class ApplicationCommonContext{
 
 	public String getErrorMsgConstFileName() {
 		return errorMsgConstFileName;
+	}
+
+
+	public Properties getErrorMessageProperties() {
+		return errorMessageProperties;
+	}
+
+	public Map<String, ConnectionProperties> getConnectionPropertiesMap() {
+		return connectionPropertiesMap;
 	}
 
 

@@ -18,11 +18,16 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	 */
 	private static final long serialVersionUID = 2717753646686919478L;
 	
+	private String hostName;
+	private Integer portNumber;
+	private String driverClassName;
 	private String connectionName;
 	private String userName;
 	private String password;
 	private String connectionUrl;
 	private String databaseType;
+	private String sidServiceName;
+	private String schemaName;
 	
 	private transient DataSource dataSource;
 
@@ -33,6 +38,27 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	protected void finalize() throws Throwable {
 		super.finalize();
 		dataSource = null;
+	}
+
+	
+	public String getSchemaName() {
+		return schemaName;
+	}
+
+	public void setSchemaName(String schemaName) {
+		this.schemaName = schemaName;
+	}
+
+	public String getSidServiceName() {
+		return sidServiceName;
+	}
+
+	/**
+	 * This property is for oracle.
+	 * @param sidServiceName
+	 */
+	public void setSidServiceName(String sidServiceName) {
+		this.sidServiceName = sidServiceName;
 	}
 
 	/**
@@ -117,6 +143,30 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	 */
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
+	}
+
+	public String getHostName() {
+		return hostName;
+	}
+
+	public void setHostName(String hostName) {
+		this.hostName = hostName;
+	}
+
+	public Integer getPortNumber() {
+		return portNumber;
+	}
+
+	public void setPortNumber(Integer portNumber) {
+		this.portNumber = portNumber;
+	}
+
+	public String getDriverClassName() {
+		return driverClassName;
+	}
+
+	public void setDriverClassName(String driverClassName) {
+		this.driverClassName = driverClassName;
 	}
 
 	

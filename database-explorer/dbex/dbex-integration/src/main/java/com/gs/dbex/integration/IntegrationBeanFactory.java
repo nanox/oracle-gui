@@ -15,6 +15,8 @@ public final class IntegrationBeanFactory {
 	
 	private DatabaseMetadataIntegration oracleDatabaseMetadataIntegration;
 	private DatabaseMetadataIntegration mysqlDatabaseMetadataIntegration;
+	private DatabaseConnectionIntegration oracleDatabaseConnectionIntegration;
+	private DatabaseConnectionIntegration mysqlDatabaseConnectionIntegration;
 	
 	private IntegrationBeanFactory() {
 		
@@ -31,6 +33,15 @@ public final class IntegrationBeanFactory {
 			return getOracleDatabaseMetadataIntegration();
 		} else if(DatabaseTypeEnum.MYSQL.equals(databaseTypeEnum)){
 			return getMysqlDatabaseMetadataIntegration();
+		}
+		return null;
+	}
+	
+	public DatabaseConnectionIntegration getDatabaseConnectionIntegration(DatabaseTypeEnum databaseTypeEnum){
+		if(DatabaseTypeEnum.ORACLE.equals(databaseTypeEnum)){
+			return getOracleDatabaseConnectionIntegration();
+		} else if(DatabaseTypeEnum.MYSQL.equals(databaseTypeEnum)){
+			return getMysqlDatabaseConnectionIntegration();
 		}
 		return null;
 	}
@@ -52,6 +63,25 @@ public final class IntegrationBeanFactory {
 			DatabaseMetadataIntegration mysqlDatabaseMetadataIntegration) {
 		this.mysqlDatabaseMetadataIntegration = mysqlDatabaseMetadataIntegration;
 	}
+
+	public DatabaseConnectionIntegration getOracleDatabaseConnectionIntegration() {
+		return oracleDatabaseConnectionIntegration;
+	}
+
+	public void setOracleDatabaseConnectionIntegration(
+			DatabaseConnectionIntegration oracleDatabaseConnectionIntegration) {
+		this.oracleDatabaseConnectionIntegration = oracleDatabaseConnectionIntegration;
+	}
+
+	public DatabaseConnectionIntegration getMysqlDatabaseConnectionIntegration() {
+		return mysqlDatabaseConnectionIntegration;
+	}
+
+	public void setMysqlDatabaseConnectionIntegration(
+			DatabaseConnectionIntegration mysqlDatabaseConnectionIntegration) {
+		this.mysqlDatabaseConnectionIntegration = mysqlDatabaseConnectionIntegration;
+	}
+
 	
 	
 }
