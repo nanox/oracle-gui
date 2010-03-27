@@ -12,4 +12,5 @@ import com.gs.dbex.integration.DatabaseMetadataIntegration;
 public abstract class DatabaseMetadataIntegrationImpl implements
 		DatabaseMetadataIntegration {
 
+	
 }

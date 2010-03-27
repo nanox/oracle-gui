@@ -9,4 +9,5 @@ package com.gs.dbex.common.exception;
  */
 public interface ErrorCodeConstants {
 	String CANNOT_CONNECT_DB = "CANNOT_CONNECT_DB";
+	String UNSUPPORTED_OPERATION = "UNSUPPORTED_OPERATION";
 }
