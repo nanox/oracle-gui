@@ -37,22 +37,22 @@ public class ApplicationTest {
 			connectionProperties.setPassword("hr");
 			connectionProperties.setHostName("localhost");
 			connectionProperties.setPortNumber(1521);
-			connectionProperties.setSidServiceName("XE");
+			connectionProperties.setSidServiceName("XE");*/
 			
 			connectionProperties.setConnectionName("TestMysql");
-			connectionProperties.setDatabaseType(DatabaseTypeEnum.ALL.getCode());
+			connectionProperties.setDatabaseType(DatabaseTypeEnum.MYSQL.getCode());
 			connectionProperties.setUserName("root");
 			connectionProperties.setPassword("root");
 			connectionProperties.setHostName("localhost");
 			connectionProperties.setPortNumber(3306);
-			connectionProperties.setDriverClassName("com.mysql.jdbc.Driver"); */
+			connectionProperties.setDriverClassName("com.mysql.jdbc.Driver"); 
 			
-			connectionProperties.setConnectionName("OtherDB");
+			/*connectionProperties.setConnectionName("OtherDB");
 			connectionProperties.setDatabaseType(DatabaseTypeEnum.OTHER.getCode());
 			connectionProperties.setUserName("root");
 			connectionProperties.setPassword("root");
 			connectionProperties.setConnectionUrl("");
-			connectionProperties.setDriverClassName("com.mysql.jdbc.Driver");
+			connectionProperties.setDriverClassName("com.mysql.jdbc.Driver");*/
 			
 			DatabaseConnectionService connectionService = DbexServiceBeanFactory
 					.getBeanFactory().getDatabaseConnectionService();
