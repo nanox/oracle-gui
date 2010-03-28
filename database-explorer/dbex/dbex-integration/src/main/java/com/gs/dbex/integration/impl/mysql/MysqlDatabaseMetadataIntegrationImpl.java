@@ -41,7 +41,7 @@ public class MysqlDatabaseMetadataIntegrationImpl extends
 		try {
 			connection = connectionProperties.getDataSource().getConnection();
 			MysqlDbGrabber dbGrabber = new MysqlDbGrabber();
-			database = dbGrabber.grabDatabase(connection, "", readDepthEnum);
+			database = dbGrabber.grabDatabaseByCatalog(connection, "", readDepthEnum);
 		} catch (SQLException e) {
 			logger.error(e);
 			throw new DbexException(null, e.getMessage());

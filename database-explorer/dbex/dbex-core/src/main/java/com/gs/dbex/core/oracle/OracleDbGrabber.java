@@ -17,7 +17,7 @@ import com.gs.dbex.common.enums.ForeignKeyMetaDataEnum;
 import com.gs.dbex.common.enums.PKMetaDataEnum;
 import com.gs.dbex.common.enums.ReadDepthEnum;
 import com.gs.dbex.common.enums.TableMetaDataEnum;
-import com.gs.dbex.core.DbGrabber;
+import com.gs.dbex.core.SchemaGrabber;
 import com.gs.dbex.model.DatabaseReservedWordsUtil;
 import com.gs.dbex.model.db.Column;
 import com.gs.dbex.model.db.Database;
@@ -30,14 +30,14 @@ import com.gs.dbex.model.db.Table;
  * @author Sabuj Das
  *
  */
-public class OracleDbGrabber extends DbGrabber{
+public class OracleDbGrabber extends SchemaGrabber{
 	private static final DatabaseReservedWordsUtil RESERVED_WORDS_UTIL = DatabaseReservedWordsUtil.getInstance();
 	
 	public OracleDbGrabber() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static String grabSqlKeyWords(Connection connection) throws SQLException{
+	public String grabSqlKeyWords(Connection connection) throws SQLException{
 		if(connection == null){
 			return "";
 		}
@@ -55,7 +55,7 @@ public class OracleDbGrabber extends DbGrabber{
 	 * @return
 	 * @throws SQLException
 	 */
-	public Database grabDatabase(Connection connection, String databaseName, ReadDepthEnum readDepth) throws SQLException{
+	public Database grabDatabaseBySchema(Connection connection, String databaseName, ReadDepthEnum readDepth) throws SQLException{
 		if(connection == null){
 			return null;
 		}

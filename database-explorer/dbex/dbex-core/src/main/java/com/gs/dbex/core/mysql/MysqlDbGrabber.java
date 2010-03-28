@@ -20,6 +20,7 @@ import com.gs.dbex.common.enums.ForeignKeyMetaDataEnum;
 import com.gs.dbex.common.enums.PKMetaDataEnum;
 import com.gs.dbex.common.enums.ReadDepthEnum;
 import com.gs.dbex.common.enums.TableMetaDataEnum;
+import com.gs.dbex.core.CatalogGrabber;
 import com.gs.dbex.core.DbGrabber;
 import com.gs.dbex.model.DatabaseReservedWordsUtil;
 import com.gs.dbex.model.db.Column;
@@ -33,14 +34,15 @@ import com.gs.dbex.model.db.Table;
  * @author sabuj.das
  *
  */
-public class MysqlDbGrabber extends DbGrabber {
-private static final DatabaseReservedWordsUtil RESERVED_WORDS_UTIL = DatabaseReservedWordsUtil.getInstance();
+public class MysqlDbGrabber extends CatalogGrabber {
+
+	private static final DatabaseReservedWordsUtil RESERVED_WORDS_UTIL = DatabaseReservedWordsUtil.getInstance();
 	
 	public MysqlDbGrabber() {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public static String grabSqlKeyWords(Connection connection) throws SQLException{
+	public String grabSqlKeyWords(Connection connection) throws SQLException{
 		if(connection == null){
 			return "";
 		}
@@ -58,7 +60,7 @@ private static final DatabaseReservedWordsUtil RESERVED_WORDS_UTIL = DatabaseRes
 	 * @return
 	 * @throws SQLException
 	 */
-	public Database grabDatabase(Connection connection, String databaseName, ReadDepthEnum readDepth) throws SQLException{
+	public Database grabDatabaseByCatalog(Connection connection, String databaseName, ReadDepthEnum readDepth) throws SQLException{
 		if(connection == null){
 			return null;
 		}
@@ -103,7 +105,7 @@ private static final DatabaseReservedWordsUtil RESERVED_WORDS_UTIL = DatabaseRes
 		return db;
 	}
 
-	public Schema grabSchema(Connection connection, String schemaName) throws SQLException{
+	public Schema grabCatalog(Connection connection, String catalogName) throws SQLException{
 		if(connection == null)
 			return null;
 		Schema schema = new Schema();
@@ -113,8 +115,8 @@ private static final DatabaseReservedWordsUtil RESERVED_WORDS_UTIL = DatabaseRes
 			ResultSet rs = databaseMetaData.getCatalogs();
 			while(rs.next()){
 				String cat = rs.getString("TABLE_CAT");
-				if(cat.equalsIgnoreCase(schemaName)){
-					schema.setModelName(schemaName);
+				if(cat.equalsIgnoreCase(catalogName)){
+					schema.setModelName(catalogName);
 					break;
 				}
 			}
@@ -402,7 +404,7 @@ private static final DatabaseReservedWordsUtil RESERVED_WORDS_UTIL = DatabaseRes
 		return fks;
 	}
 
-	public Set<String> getAvailableSchemaNames(
+	public Set<String> getAvailableCatalogNames(
 			Connection connection) throws SQLException {
 		Set<String> schemaNames = new HashSet<String>();
 		if(null == connection)
