@@ -40,8 +40,8 @@ public class MysqlDatabaseMetadataIntegrationImpl extends
 		Database database = null;
 		try {
 			connection = connectionProperties.getDataSource().getConnection();
-			MysqlDbGrabber dbGrabber = new MysqlDbGrabber();
-			database = dbGrabber.grabDatabaseByCatalog(connection, "", readDepthEnum);
+			OracleDbGrabber dbGrabber = new OracleDbGrabber();
+			database = dbGrabber.grabDatabaseBySchema(connection, "", readDepthEnum);
 		} catch (SQLException e) {
 			logger.error(e);
 			throw new DbexException(null, e.getMessage());
