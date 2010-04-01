@@ -6,35 +6,42 @@ package com.gs.dbex.application.frame;
 import java.awt.BorderLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 
 import javax.swing.ImageIcon;
 import javax.swing.JComboBox;
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JMenuBar;
 import javax.swing.JPanel;
 import javax.swing.JToolBar;
 import javax.swing.WindowConstants;
 
-import com.gs.dbex.application.constants.ImageConstants;
+import org.apache.log4j.Logger;
+
+import com.gs.dbex.application.constants.ApplicationConstants;
+import com.gs.dbex.application.iframe.DatabaseViewerInternalFrame;
 import com.gs.dbex.application.menu.MenuBarItems;
 import com.gs.dbex.application.panels.StatusBar;
 import com.gs.dbex.application.toolbar.ToolbarButtons;
-import com.gs.dbex.service.DatabaseConnectionService;
 import com.gs.utils.swing.window.WindowUtil;
 
 /**
  * @author sabuj.das
  *
  */
-public class DatabaseExplorerFrame extends JFrame implements ActionListener {
+public class DatabaseExplorerFrame extends JFrame implements WindowListener{
 
-	private DatabaseConnectionService databaseConnectionService;
+	/**
+	 *  Generated serialVersionUID
+	 */
+	private static final long serialVersionUID = -2179986000548903441L;
+	private static final Logger logger = Logger.getLogger(DatabaseExplorerFrame.class);
 	
-	private JDesktopPane dbexDesktopPane;
-    private JMenuBar dbexMenuBar;
+	private JDesktopPane mainDesktopPane;
+    private JMenuBar mainMenuBar;
     private JPanel mainPanel;
     private JToolBar mainToolBar;
     private ToolbarButtons toolbarButtons;
@@ -43,11 +50,21 @@ public class DatabaseExplorerFrame extends JFrame implements ActionListener {
     private JComboBox dbNamesComboBox;
     
     private StatusBar statusBar;
-    
-    
+
 	public DatabaseExplorerFrame() {
+		logger.info("Starting application.");
 		initComponents();
 		setInitialProperties();
+		addWindowListener(this);
+	}
+	
+	private void setInitialProperties(){
+		setSize(800, 600);
+		setTitle("Oracle GUI");
+		setIconImage((new ImageIcon(DatabaseExplorerFrame.class
+				.getResource(ApplicationConstants.IMAGE_PATH + "Oracle-Gui.gif")))
+				.getImage());
+		WindowUtil.bringToCenter(this);
 	}
 	
 	private void initComponents() {
@@ -55,8 +72,8 @@ public class DatabaseExplorerFrame extends JFrame implements ActionListener {
 
         mainPanel = new JPanel();
         mainToolBar = new JToolBar();
-        dbexDesktopPane = new JDesktopPane();
-        dbexMenuBar = new JMenuBar();
+        mainDesktopPane = new JDesktopPane();
+        mainMenuBar = new JMenuBar();
         dbNamesComboBox = new JComboBox();
         
         statusBar = new StatusBar();
@@ -77,18 +94,18 @@ public class DatabaseExplorerFrame extends JFrame implements ActionListener {
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        //addToolbarComponents();
+        addToolbarComponents();
         
         mainPanel.add(mainToolBar, gridBagConstraints);
 
-        dbexDesktopPane.setName("jDesktopPane1");
+        mainDesktopPane.setName("jDesktopPane1");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
-        mainPanel.add(dbexDesktopPane, gridBagConstraints);
+        mainPanel.add(mainDesktopPane, gridBagConstraints);
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -101,17 +118,17 @@ public class DatabaseExplorerFrame extends JFrame implements ActionListener {
         
         getContentPane().add(mainPanel, BorderLayout.CENTER);
 
-        dbexMenuBar.setName("mainMenuBar"); 
+        mainMenuBar.setName("mainMenuBar"); 
         addMenubarComponents();
         
-        setJMenuBar(dbexMenuBar);
+        setJMenuBar(mainMenuBar);
 
         pack();
     }
-	
+
 	private void addMenubarComponents() {
 		//mainMenuBar.add(menuBarItems.getMenu(MenuBarItems.FILE_MENU_NAME));
-		menuBarItems.addMenusToMenuBar(dbexMenuBar);
+		menuBarItems.addMenusToMenuBar(mainMenuBar);
 	}
 
 	private void addToolbarComponents() {
@@ -124,37 +141,161 @@ public class DatabaseExplorerFrame extends JFrame implements ActionListener {
 		mainToolBar.add(toolbarButtons.getButton(ToolbarButtons.DB_SYNC_TOOLBAR_BUTTON));
 	}
 
-	
-	private void setInitialProperties(){
-		setSize(880, 600);
-		setTitle("Database Explorer");
-		setIconImage((new ImageIcon(DatabaseExplorerFrame.class
-				.getResource(ImageConstants.APPLICATION_IMG_LOC + ImageConstants.MAIN_FRAME_ICON_IMG_NAME )))
-				.getImage());
-		WindowUtil.bringToCenter(this);
+	/**
+	 * @return the mainDesktopPane
+	 */
+	public JDesktopPane getMainDesktopPane() {
+		return mainDesktopPane;
 	}
-	
-	
-	public void actionPerformed(ActionEvent arg0) {
+
+	/**
+	 * @param mainDesktopPane the mainDesktopPane to set
+	 */
+	public void setMainDesktopPane(JDesktopPane mainDesktopPane) {
+		this.mainDesktopPane = mainDesktopPane;
+	}
+
+	/**
+	 * @return the mainMenuBar
+	 */
+	public JMenuBar getMainMenuBar() {
+		return mainMenuBar;
+	}
+
+	/**
+	 * @param mainMenuBar the mainMenuBar to set
+	 */
+	public void setMainMenuBar(JMenuBar mainMenuBar) {
+		this.mainMenuBar = mainMenuBar;
+	}
+
+	/**
+	 * @return the mainPanel
+	 */
+	public JPanel getMainPanel() {
+		return mainPanel;
+	}
+
+	/**
+	 * @param mainPanel the mainPanel to set
+	 */
+	public void setMainPanel(JPanel mainPanel) {
+		this.mainPanel = mainPanel;
+	}
+
+	/**
+	 * @return the mainToolBar
+	 */
+	public JToolBar getMainToolBar() {
+		return mainToolBar;
+	}
+
+	/**
+	 * @param mainToolBar the mainToolBar to set
+	 */
+	public void setMainToolBar(JToolBar mainToolBar) {
+		this.mainToolBar = mainToolBar;
+	}
+
+	/**
+	 * @return the toolbarButtons
+	 */
+	public ToolbarButtons getToolbarButtons() {
+		return toolbarButtons;
+	}
+
+	/**
+	 * @param toolbarButtons the toolbarButtons to set
+	 */
+	public void setToolbarButtons(ToolbarButtons toolbarButtons) {
+		this.toolbarButtons = toolbarButtons;
+	}
+
+	/**
+	 * @return the menuBarItems
+	 */
+	public MenuBarItems getMenuBarItems() {
+		return menuBarItems;
+	}
+
+	/**
+	 * @param menuBarItems the menuBarItems to set
+	 */
+	public void setMenuBarItems(MenuBarItems menuBarItems) {
+		this.menuBarItems = menuBarItems;
+	}
+
+	/**
+	 * @return the dbNamesComboBox
+	 */
+	public JComboBox getDbNamesComboBox() {
+		return dbNamesComboBox;
+	}
+
+	/**
+	 * @param dbNamesComboBox the dbNamesComboBox to set
+	 */
+	public void setDbNamesComboBox(JComboBox dbNamesComboBox) {
+		this.dbNamesComboBox = dbNamesComboBox;
+	}
+
+	/**
+	 * @return the statusBar
+	 */
+	public StatusBar getStatusBar() {
+		return statusBar;
+	}
+
+	/**
+	 * @param statusBar the statusBar to set
+	 */
+	public void setStatusBar(StatusBar statusBar) {
+		this.statusBar = statusBar;
+	}
+
+	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
-
+		
 	}
 
-	/**
-	 * @return the databaseConnectionService
-	 */
-	public DatabaseConnectionService getDatabaseConnectionService() {
-		return databaseConnectionService;
+	public void windowClosed(WindowEvent e) {
+		
 	}
 
-	/**
-	 * @param databaseConnectionService the databaseConnectionService to set
-	 */
-	public void setDatabaseConnectionService(
-			DatabaseConnectionService databaseConnectionService) {
-		this.databaseConnectionService = databaseConnectionService;
+	public void windowClosing(WindowEvent e) {
+		logger.info("Closing application.");
+		JInternalFrame[] iFrames = mainDesktopPane.getAllFrames();
+		for (JInternalFrame internalFrame : iFrames) {
+			if(internalFrame == null){
+				continue;
+			}
+			if(internalFrame instanceof DatabaseViewerInternalFrame){
+				((DatabaseViewerInternalFrame) internalFrame).closeWindow();
+			}
+		}
+		logger.info("Application Closed.");
+		System.exit(0);
 	}
 
+	public void windowDeactivated(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowDeiconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowIconified(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void windowOpened(WindowEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 	
 }

@@ -1,0 +1,174 @@
+/**
+ * 
+ */
+package com.gs.dbex.application.comps;
+
+import java.awt.BorderLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+import javax.swing.JTabbedPane;
+import javax.swing.UIDefaults;
+import javax.swing.plaf.TabbedPaneUI;
+
+import org.fife.plaf.Office2003.Office2003ToolBarUI;
+
+import com.gs.dbex.application.graph.TableDependencyPanel;
+import com.gs.oracle.OracleGuiConstants;
+import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.oracle.model.Table;
+
+/**
+ * @author sabuj.das
+ * 
+ */
+public class TableDetailsPanel extends JPanel implements ActionListener,
+		OracleGuiConstants {
+
+	private Table databaseTable;
+	
+	private JFrame parentFrame;
+	private JTabbedPane tableDetailsTabbedPane;
+	private String tableName;
+	private String schemaName;
+	private ConnectionProperties connectionProperties;
+	
+/*	public TableDetailsPanel(JFrame parentFrame, String schemaName, String tableName) {
+		this(parentFrame, schemaName, tableName, null);
+	}
+	
+
+	public TableDetailsPanel(JFrame parentFrame, String schemaName, String tableName,
+			ConnectionProperties connectionProperties) {
+		
+	}
+
+*/
+
+	public TableDetailsPanel(JFrame parent, Table table, ConnectionProperties connectionProperties) {
+		this.parentFrame = parent;
+		this.databaseTable = table;
+		this.schemaName = table.getSchemaName();
+		this.tableName = table.getModelName();
+		this.connectionProperties = connectionProperties;
+		this.connectionProperties.setDatabaseName(schemaName);
+		initComponents();
+	}
+
+
+	/**
+	 * @return the parentFrame
+	 */
+	public JFrame getParentFrame() {
+		return parentFrame;
+	}
+
+
+	/**
+	 * @param parentFrame the parentFrame to set
+	 */
+	public void setParentFrame(JFrame parentFrame) {
+		this.parentFrame = parentFrame;
+	}
+
+
+	public Table getDatabaseTable() {
+		return databaseTable;
+	}
+
+
+	public void setDatabaseTable(Table databaseTable) {
+		this.databaseTable = databaseTable;
+	}
+
+
+	private void initComponents() {
+		tableDetailsTabbedPane = new JTabbedPane();
+		tableDetailsTabbedPane.setFocusable(false);
+		tableDetailsTabbedPane.addTab("Data", new ImageIcon(
+				TableDetailsPanel.class
+						.getResource(OracleGuiConstants.IMAGE_PATH
+								+ "table_data.gif")), 
+				new TableDataPanel(getParentFrame(), getDatabaseTable(), getConnectionProperties()));
+		tableDetailsTabbedPane.addTab("Columns",new ImageIcon(
+				TableDetailsPanel.class
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "columngroup.gif")), 
+				new ColumnDetailsPanel(getParentFrame(),getSchemaName(), getTableName(), getConnectionProperties()));
+		tableDetailsTabbedPane.addTab("Constraints",new ImageIcon(
+				TableDetailsPanel.class
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "constraint.gif")), 
+				new ConstraintsDetailsPanel(getParentFrame(),getSchemaName(), getTableName(), getConnectionProperties()));
+		tableDetailsTabbedPane.addTab("Dependencies",new ImageIcon(
+				TableDetailsPanel.class
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "dependency.gif")), 
+				new TableDependencyPanel(getParentFrame(),getSchemaName(), getTableName(), getConnectionProperties()));
+		tableDetailsTabbedPane.addTab("Indexes",new ImageIcon(
+				TableDetailsPanel.class
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "index.gif")), 
+				new IndexDetailsPanel(getParentFrame(),getSchemaName(), getTableName(), getConnectionProperties()));
+		tableDetailsTabbedPane.addTab("DDL", new ImageIcon(
+				TableDetailsPanel.class
+				.getResource(OracleGuiConstants.IMAGE_PATH
+						+ "generate_ddl.gif")),
+				new DDLGenerationPanel(getParentFrame(),getTableName(), getConnectionProperties()));
+
+		setLayout(new BorderLayout());
+
+		add(tableDetailsTabbedPane, BorderLayout.CENTER);
+
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * java.awt.event.ActionListener#actionPerformed(java.awt.event.ActionEvent)
+	 */
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		// TODO Auto-generated method stub
+
+	}
+
+	public JTabbedPane getTableDetailsTabbedPane() {
+		return tableDetailsTabbedPane;
+	}
+
+
+	public String getTableName() {
+		return tableName;
+	}
+
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+
+	public ConnectionProperties getConnectionProperties() {
+		return connectionProperties;
+	}
+
+
+	public void setConnectionProperties(ConnectionProperties connectionProperties) {
+		this.connectionProperties = connectionProperties;
+	}
+
+
+	public String getSchemaName() {
+		return schemaName;
+	}
+
+
+	public void setSchemaName(String schemaName) {
+		this.schemaName = schemaName;
+	}
+
+}

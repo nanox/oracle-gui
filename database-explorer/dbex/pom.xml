@@ -104,10 +104,10 @@
 
 	<properties>
 		<project.title>DBEX</project.title>
-		<project.home>D:/SVN_HOME/oracle-gui/trunk/database-explorer</project.home>
+		<project.home>D:/SVN_HOME/MyProjects/oracle-gui/trunk/database-explorer</project.home>
 		<release.version>1.0-BETA-0.1</release.version>
-		<libs.dir>D:/SVN_HOME/oracle-gui/trunk/database-explorer/dbex-setup/libs</libs.dir>
-		<release.dir>D:/SVN_HOME/oracle-gui/trunk/database-explorer/release</release.dir>
+		<libs.dir>D:/SVN_HOME/MyProjects/oracle-gui/trunk/database-explorer/dbex-setup/libs</libs.dir>
+		<release.dir>D:/SVN_HOME/MyProjects/oracle-gui/trunk/database-explorer/release</release.dir>
 		<jdk.version>1.5</jdk.version>
 		<maven.test.skip>true</maven.test.skip>
 	</properties>
