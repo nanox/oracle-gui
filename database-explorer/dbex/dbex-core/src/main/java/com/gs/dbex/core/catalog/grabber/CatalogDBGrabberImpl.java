@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gs.dbex.core.mysql;
+package com.gs.dbex.core.catalog.grabber;
 
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
@@ -21,9 +21,7 @@ import com.gs.dbex.common.enums.PKMetaDataEnum;
 import com.gs.dbex.common.enums.ReadDepthEnum;
 import com.gs.dbex.common.enums.TableMetaDataEnum;
 import com.gs.dbex.core.CatalogGrabber;
-import com.gs.dbex.core.DbGrabber;
 import com.gs.dbex.core.metadata.enums.CatalogMetadataEnum;
-import com.gs.dbex.model.DatabaseReservedWordsUtil;
 import com.gs.dbex.model.db.Column;
 import com.gs.dbex.model.db.Database;
 import com.gs.dbex.model.db.ForeignKey;
@@ -35,14 +33,8 @@ import com.gs.dbex.model.db.Table;
  * @author sabuj.das
  *
  */
-public class MysqlDbGrabber implements CatalogGrabber {
+public class CatalogDBGrabberImpl implements CatalogGrabber {
 
-	private static final DatabaseReservedWordsUtil RESERVED_WORDS_UTIL = DatabaseReservedWordsUtil.getInstance();
-	
-	public MysqlDbGrabber() {
-		// TODO Auto-generated constructor stub
-	}
-	
 	public String grabSqlKeyWords(Connection connection) throws SQLException{
 		if(connection == null){
 			return "";
@@ -425,5 +417,4 @@ public class MysqlDbGrabber implements CatalogGrabber {
 		
 		return schemaNames;
 	}
-	
 }

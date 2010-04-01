@@ -11,9 +11,8 @@ import org.apache.log4j.Logger;
 import com.gs.dbex.common.enums.ReadDepthEnum;
 import com.gs.dbex.common.exception.DbexException;
 import com.gs.dbex.common.exception.ErrorCodeConstants;
-import com.gs.dbex.core.DbGrabber;
+import com.gs.dbex.core.CatalogGrabber;
 import com.gs.dbex.core.mysql.MysqlDbGrabber;
-import com.gs.dbex.core.oracle.OracleDbGrabber;
 import com.gs.dbex.integration.impl.DatabaseMetadataIntegrationImpl;
 import com.gs.dbex.model.cfg.ConnectionProperties;
 import com.gs.dbex.model.db.Database;
@@ -30,6 +29,8 @@ public class MysqlDatabaseMetadataIntegrationImpl extends
 
 	private static Logger logger = Logger.getLogger(MysqlDatabaseMetadataIntegrationImpl.class);
 	
+	private CatalogGrabber dbGrabber;
+	
 	public Database readDatabase(ConnectionProperties connectionProperties,
 			ReadDepthEnum readDepthEnum) throws DbexException {
 		logger.debug("START:: Reading Full database.");
@@ -40,8 +41,8 @@ public class MysqlDatabaseMetadataIntegrationImpl extends
 		Database database = null;
 		try {
 			connection = connectionProperties.getDataSource().getConnection();
-			OracleDbGrabber dbGrabber = new OracleDbGrabber();
-			database = dbGrabber.grabDatabaseBySchema(connection, "", readDepthEnum);
+			if(dbGrabber != null)
+				database = dbGrabber.grabDatabaseByCatalog(connection, "", readDepthEnum);
 		} catch (SQLException e) {
 			logger.error(e);
 			throw new DbexException(null, e.getMessage());
@@ -63,5 +64,14 @@ public class MysqlDatabaseMetadataIntegrationImpl extends
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	public CatalogGrabber getDbGrabber() {
+		return dbGrabber;
+	}
+
+	public void setDbGrabber(CatalogGrabber dbGrabber) {
+		this.dbGrabber = dbGrabber;
+	}
+
 
 }
