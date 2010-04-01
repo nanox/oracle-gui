@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gs.oracle.accesscontrol;
+package com.gs.dbex.model.accesscontrol;
 
 import java.util.HashMap;
 import java.util.List;
