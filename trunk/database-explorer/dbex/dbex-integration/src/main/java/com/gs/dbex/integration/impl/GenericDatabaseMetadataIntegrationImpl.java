@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gs.dbex.integration.impl.oracle;
+package com.gs.dbex.integration.impl;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -11,9 +11,7 @@ import org.apache.log4j.Logger;
 import com.gs.dbex.common.enums.ReadDepthEnum;
 import com.gs.dbex.common.exception.DbexException;
 import com.gs.dbex.common.exception.ErrorCodeConstants;
-import com.gs.dbex.core.SchemaGrabber;
 import com.gs.dbex.core.oracle.OracleDbGrabber;
-import com.gs.dbex.integration.impl.DatabaseMetadataIntegrationImpl;
 import com.gs.dbex.model.cfg.ConnectionProperties;
 import com.gs.dbex.model.db.Database;
 import com.gs.dbex.model.db.Schema;
@@ -21,14 +19,13 @@ import com.gs.dbex.model.db.Table;
 import com.gs.utils.jdbc.JdbcUtil;
 
 /**
- * @author Sabuj.das
+ * @author sabuj.das
  *
  */
-public class OracleDatabaseMetadataIntegrationImpl extends
+public class GenericDatabaseMetadataIntegrationImpl extends
 		DatabaseMetadataIntegrationImpl {
 
-	private static final Logger logger = Logger.getLogger(OracleDatabaseMetadataIntegrationImpl.class);
-	private SchemaGrabber dbGrabber;
+	private static Logger logger = Logger.getLogger(GenericDatabaseMetadataIntegrationImpl.class);
 	
 	public Database readDatabase(ConnectionProperties connectionProperties,
 			ReadDepthEnum readDepthEnum) throws DbexException {
@@ -40,8 +37,8 @@ public class OracleDatabaseMetadataIntegrationImpl extends
 		Database database = null;
 		try {
 			connection = connectionProperties.getDataSource().getConnection();
-			if(dbGrabber != null)
-				database = dbGrabber.grabDatabaseBySchema(connection, "", readDepthEnum);
+			OracleDbGrabber dbGrabber = new OracleDbGrabber();
+			database = dbGrabber.grabDatabaseBySchema(connection, "", readDepthEnum);
 		} catch (SQLException e) {
 			logger.error(e);
 			throw new DbexException(null, e.getMessage());
@@ -64,16 +61,6 @@ public class OracleDatabaseMetadataIntegrationImpl extends
 			String schemaName, String tableName, ReadDepthEnum readDepthEnum) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-
-	public SchemaGrabber getDbGrabber() {
-		return dbGrabber;
-	}
-
-
-	public void setDbGrabber(SchemaGrabber dbGrabber) {
-		this.dbGrabber = dbGrabber;
 	}
 
 }

@@ -20,36 +20,36 @@ import com.gs.dbex.model.db.Table;
  * @author sabuj.das
  * 
  */
-public abstract class CatalogGrabber extends DbGrabber {
+public interface CatalogGrabber extends DbGrabber {
 
-	public abstract Database grabDatabaseByCatalog(Connection connection,
+	public Database grabDatabaseByCatalog(Connection connection,
 			String databaseName, ReadDepthEnum readDepth) throws SQLException;
 
-	public abstract Schema grabCatalog(Connection connection, String catalogName)
+	public Schema grabCatalog(Connection connection, String catalogName)
 			throws SQLException;
 
-	public abstract Set<String> getAvailableCatalogNames(Connection connection)
+	public Set<String> getAvailableCatalogNames(Connection connection)
 			throws SQLException;
 	
-	public abstract Table grabTable(Connection connection, String catalogName,
+	public Table grabTable(Connection connection, String catalogName,
 			String tableName, ReadDepthEnum readDepth);
 
-	public abstract List<Column> getColumnList(Table table,
+	public List<Column> getColumnList(Table table,
 			Connection connection, ReadDepthEnum readDepth) throws SQLException;
 
-	public abstract List<Column> getColumnList(String catalogName,
+	public List<Column> getColumnList(String catalogName,
 			String tableName, Connection connection, ReadDepthEnum readDepth)
 			throws SQLException;
 
-	public abstract List<PrimaryKey> grabPrimaryKeys(Connection connection,
+	public List<PrimaryKey> grabPrimaryKeys(Connection connection,
 			String catalogName, String tableName, ReadDepthEnum readDepth)
 			throws SQLException;
 
-	public abstract List<ForeignKey> grabImportedKeys(Connection connection,
+	public List<ForeignKey> grabImportedKeys(Connection connection,
 			String catalogName, String tableName, ReadDepthEnum readDepth)
 			throws SQLException;
 
-	public abstract List<ForeignKey> grabExportedKeys(Connection connection,
+	public List<ForeignKey> grabExportedKeys(Connection connection,
 			String catalogName, String tableName, ReadDepthEnum readDepth)
 			throws SQLException;
 }

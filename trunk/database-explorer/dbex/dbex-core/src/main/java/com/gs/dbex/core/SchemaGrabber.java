@@ -20,36 +20,36 @@ import com.gs.dbex.model.db.Table;
  * @author sabuj.das
  * 
  */
-public abstract class SchemaGrabber extends DbGrabber {
+public interface SchemaGrabber extends DbGrabber {
 
-	public abstract Database grabDatabaseBySchema(Connection connection,
+	public Database grabDatabaseBySchema(Connection connection,
 			String databaseName, ReadDepthEnum readDepth) throws SQLException;
 
-	public abstract Schema grabSchema(Connection connection, String schemaName)
+	public Schema grabSchema(Connection connection, String schemaName)
 			throws SQLException;
 
-	public abstract Set<String> getAvailableSchemaNames(Connection connection)
+	public Set<String> getAvailableSchemaNames(Connection connection)
 			throws SQLException;
 	
-	public abstract Table grabTable(Connection connection, String schemaName,
+	public Table grabTable(Connection connection, String schemaName,
 			String tableName, ReadDepthEnum readDepth);
 
-	public abstract List<Column> getColumnList(Table table,
+	public List<Column> getColumnList(Table table,
 			Connection connection, ReadDepthEnum readDepth) throws SQLException;
 
-	public abstract List<Column> getColumnList(String schemaName,
+	public List<Column> getColumnList(String schemaName,
 			String tableName, Connection connection, ReadDepthEnum readDepth)
 			throws SQLException;
 
-	public abstract List<PrimaryKey> grabPrimaryKeys(Connection connection,
+	public List<PrimaryKey> grabPrimaryKeys(Connection connection,
 			String schemaName, String tableName, ReadDepthEnum readDepth)
 			throws SQLException;
 
-	public abstract List<ForeignKey> grabImportedKeys(Connection connection,
+	public List<ForeignKey> grabImportedKeys(Connection connection,
 			String schemaName, String tableName, ReadDepthEnum readDepth)
 			throws SQLException;
 
-	public abstract List<ForeignKey> grabExportedKeys(Connection connection,
+	public List<ForeignKey> grabExportedKeys(Connection connection,
 			String schemaName, String tableName, ReadDepthEnum readDepth)
 			throws SQLException;
 }

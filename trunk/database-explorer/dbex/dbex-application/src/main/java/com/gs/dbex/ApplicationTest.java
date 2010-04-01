@@ -42,7 +42,7 @@ public class ApplicationTest {
 			connectionProperties.setConnectionName("TestMysql");
 			connectionProperties.setDatabaseType(DatabaseTypeEnum.MYSQL.getCode());
 			connectionProperties.setUserName("root");
-			connectionProperties.setPassword("root");
+			connectionProperties.setPassword("ROOT");
 			connectionProperties.setHostName("localhost");
 			connectionProperties.setPortNumber(3306);
 			connectionProperties.setDriverClassName("com.mysql.jdbc.Driver"); 

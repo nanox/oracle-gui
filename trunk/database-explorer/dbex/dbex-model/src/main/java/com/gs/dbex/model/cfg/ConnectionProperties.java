@@ -28,6 +28,8 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	private String databaseType;
 	private String sidServiceName;
 	private String schemaName;
+
+	private String databaseStorageType;
 	
 	private transient DataSource dataSource;
 
@@ -41,6 +43,14 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	}
 
 	
+	public String getDatabaseStorageType() {
+		return databaseStorageType;
+	}
+
+	public void setDatabaseStorageType(String databaseStorageType) {
+		this.databaseStorageType = databaseStorageType;
+	}
+
 	public String getSchemaName() {
 		return schemaName;
 	}

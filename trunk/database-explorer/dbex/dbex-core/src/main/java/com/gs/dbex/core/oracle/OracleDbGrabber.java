@@ -30,7 +30,7 @@ import com.gs.dbex.model.db.Table;
  * @author Sabuj Das
  *
  */
-public class OracleDbGrabber extends SchemaGrabber{
+public class OracleDbGrabber implements SchemaGrabber{
 	private static final DatabaseReservedWordsUtil RESERVED_WORDS_UTIL = DatabaseReservedWordsUtil.getInstance();
 	
 	public OracleDbGrabber() {
