@@ -6,6 +6,7 @@ package com.gs.dbex;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import com.gs.dbex.application.frame.DatabaseExplorerFrame;
 import com.gs.dbex.common.enums.DatabaseTypeEnum;
 import com.gs.dbex.common.exception.DbexException;
 import com.gs.dbex.model.cfg.ConnectionProperties;
@@ -29,15 +30,15 @@ public class ApplicationTest {
 					new String[] { "/context/dbex-service-context.xml",
 							"/context/dbex-integration-context.xml" });
 			
-			ConnectionProperties connectionProperties = new ConnectionProperties();
-			/*connectionProperties.setConnectionName("TestOracle");
+			/*ConnectionProperties connectionProperties = new ConnectionProperties();
+			connectionProperties.setConnectionName("TestOracle");
 			//connectionProperties.setConnectionUrl("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
 			connectionProperties.setDatabaseType(DatabaseTypeEnum.ORACLE.getCode());
 			connectionProperties.setUserName("hr");
 			connectionProperties.setPassword("hr");
 			connectionProperties.setHostName("localhost");
 			connectionProperties.setPortNumber(1521);
-			connectionProperties.setSidServiceName("XE");*/
+			connectionProperties.setSidServiceName("XE");
 			
 			connectionProperties.setConnectionName("TestMysql");
 			connectionProperties.setDatabaseType(DatabaseTypeEnum.MYSQL.getCode());
@@ -47,12 +48,12 @@ public class ApplicationTest {
 			connectionProperties.setPortNumber(3306);
 			connectionProperties.setDriverClassName("com.mysql.jdbc.Driver"); 
 			
-			/*connectionProperties.setConnectionName("OtherDB");
+			connectionProperties.setConnectionName("OtherDB");
 			connectionProperties.setDatabaseType(DatabaseTypeEnum.OTHER.getCode());
 			connectionProperties.setUserName("root");
 			connectionProperties.setPassword("root");
 			connectionProperties.setConnectionUrl("");
-			connectionProperties.setDriverClassName("com.mysql.jdbc.Driver");*/
+			connectionProperties.setDriverClassName("com.mysql.jdbc.Driver");
 			
 			DatabaseConnectionService connectionService = DbexServiceBeanFactory
 					.getBeanFactory().getDatabaseConnectionService();
@@ -73,7 +74,9 @@ public class ApplicationTest {
 					System.out.println("Connection Failed");
 				}
 				connectionService.closeConnection(connectionProperties);
-			}
+			}*/
+			DatabaseExplorerFrame frame = new DatabaseExplorerFrame();
+			frame.setVisible(true);
 		} catch (Exception e) {
 			if (e instanceof DbexException) {
 				DbexException de = (DbexException) e;
