@@ -13,8 +13,9 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 
-import com.gs.dbex.application.ApplicationEventHandler;
+import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.application.constants.GuiCommandConstants;
+import com.gs.dbex.application.event.ApplicationEventHandler;
 import com.gs.utils.text.StringUtil;
 
 
@@ -67,7 +68,7 @@ public class ToolbarButtons  implements ActionListener{
 		button.setActionCommand(command);
 		if (StringUtil.hasValidContent(imageFile)) {
 			Icon image = new ImageIcon(ToolbarButtons.class
-					.getResource(imageFile));
+					.getResource(ApplicationConstants.IMAGE_PATH + imageFile));
 			if(image != null)
 				button.setIcon(image);
 		}
@@ -88,7 +89,7 @@ public class ToolbarButtons  implements ActionListener{
 
 	public void actionPerformed(ActionEvent e) {
 		ApplicationEventHandler handler = new ApplicationEventHandler();
-		//handler.setParent(parentFrame);
+		handler.setParent(parentFrame);
 		handler.actionPerformed(e);
 	}
 	
