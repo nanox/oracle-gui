@@ -21,8 +21,9 @@ import javax.swing.JMenuItem;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.KeyStroke;
 
-import com.gs.dbex.application.ApplicationEventHandler;
+import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.application.constants.GuiCommandConstants;
+import com.gs.dbex.application.event.ApplicationEventHandler;
 import com.gs.dbex.application.toolbar.ToolbarButtons;
 import com.gs.utils.swing.menu.MenuBarUtil;
 import com.gs.utils.text.StringUtil;
@@ -299,7 +300,7 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 		item.addActionListener(this);
 		if (StringUtil.hasValidContent(imageFile)) {
 			Icon image = new ImageIcon(ToolbarButtons.class
-					.getResource(imageFile));
+					.getResource(ApplicationConstants.IMAGE_PATH + imageFile));
 			if(image != null)
 				item.setIcon(image);
 		}
@@ -323,7 +324,7 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 		item.addActionListener(this);
 		if (StringUtil.hasValidContent(imageFile)) {
 			Icon image = new ImageIcon(ToolbarButtons.class
-					.getResource(imageFile));
+					.getResource(ApplicationConstants.IMAGE_PATH + imageFile));
 			if(image != null)
 				item.setIcon(image);
 		}
@@ -346,7 +347,7 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 		item.addActionListener(this);
 		if (StringUtil.hasValidContent(imageFile)) {
 			Icon image = new ImageIcon(ToolbarButtons.class
-					.getResource(imageFile));
+					.getResource(ApplicationConstants.IMAGE_PATH + imageFile));
 			if(image != null)
 				item.setIcon(image);
 		}
@@ -398,7 +399,7 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 	
 	public void actionPerformed(ActionEvent evt) {
 		ApplicationEventHandler handler = new ApplicationEventHandler();
-		//handler.setParent(parentFrame);
+		handler.setParent(parentFrame);
 		handler.actionPerformed(evt);
 	}
 }
