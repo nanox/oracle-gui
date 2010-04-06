@@ -394,7 +394,6 @@ public class MenuBarItems implements ActionListener, GuiCommandConstants{
 	
 	
 	
-	@Override
 	public void actionPerformed(ActionEvent evt) {
 		GuiEventHandler handler = new GuiEventHandler();
 		handler.setParent(parentFrame);
