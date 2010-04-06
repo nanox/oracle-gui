@@ -435,12 +435,15 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
         if (selectedFile != null) {
             commonContext.setDriverLoaderLastAccessedDirName(selectedFile.getPath());
             if (copyJarCheckBox.isSelected()) {
-                try {
-                    FileRWUtil.copy(selectedFile,
-                            new File(commonContext.getJdbcDriverDir() + selectedFile.getName()));
-                } catch (IOException e) {
-                    logger.error(e);
-                }
+            	File dir = new File(commonContext.getJdbcDriverDir());
+            	if(!dir.getAbsolutePath().equalsIgnoreCase(selectedFile.getParent())){
+            		try {
+                        FileRWUtil.copy(selectedFile,
+                                new File(commonContext.getJdbcDriverDir() + selectedFile.getName()));
+                    } catch (IOException e) {
+                        logger.error(e);
+                    }
+            	}
             }
             loadDriver(selectedFile);
         }
