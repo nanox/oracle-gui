@@ -24,7 +24,7 @@ import org.apache.log4j.Logger;
 import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.application.iframe.DatabaseViewerInternalFrame;
 import com.gs.dbex.application.menu.MenuBarItems;
-import com.gs.dbex.application.panels.StatusBar;
+import com.gs.dbex.application.panel.StatusBar;
 import com.gs.dbex.application.toolbar.ToolbarButtons;
 import com.gs.utils.swing.window.WindowUtil;
 

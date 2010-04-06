@@ -24,11 +24,11 @@ import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.WindowConstants;
 
-import com.gs.dbex.application.comps.TableRowEditorPanel;
-import com.gs.oracle.OracleGuiConstants;
-import com.gs.oracle.accesscontrol.AuthorizationController;
-import com.gs.oracle.common.StringUtil;
-import com.gs.oracle.connection.ConnectionProperties;
+import com.gs.dbex.application.accesscontrol.AuthorizationController;
+import com.gs.dbex.application.constants.ApplicationConstants;
+import com.gs.dbex.application.panel.TableRowEditorPanel;
+import com.gs.dbex.model.cfg.ConnectionProperties;
+import com.gs.utils.text.StringUtil;
 
 /**
  * 
@@ -43,7 +43,7 @@ public class TableDataEditorDialog extends JDialog implements ActionListener{
 	
 	private static final AuthorizationController authorizationController = AuthorizationController.getInstance();
 	
-	private int selectedOption = OracleGuiConstants.CANCEL_OPTION;
+	private int selectedOption = ApplicationConstants.CANCEL_OPTION;
 	private JFrame parentComponent;	
 	private JTable table;
 	private ConnectionProperties connectionProperties;
@@ -203,42 +203,42 @@ public class TableDataEditorDialog extends JDialog implements ActionListener{
 
 		addWindowListener(new WindowListener(){
 
-			@Override
+			
 			public void windowActivated(WindowEvent e) {
 				// TODO Auto-generated method stub
 				
 			}
 
-			@Override
+			
 			public void windowClosed(WindowEvent e) {
 				// TODO Auto-generated method stub
 				
 			}
 
-			@Override
+			
 			public void windowClosing(WindowEvent e) {
-				selectedOption = OracleGuiConstants.CANCEL_OPTION;
+				selectedOption = ApplicationConstants.CANCEL_OPTION;
 			}
 
-			@Override
+			
 			public void windowDeactivated(WindowEvent e) {
 				// TODO Auto-generated method stub
 				
 			}
 
-			@Override
+			
 			public void windowDeiconified(WindowEvent e) {
 				// TODO Auto-generated method stub
 				
 			}
 
-			@Override
+			
 			public void windowIconified(WindowEvent e) {
 				// TODO Auto-generated method stub
 				
 			}
 
-			@Override
+			
 			public void windowOpened(WindowEvent e) {
 				// TODO Auto-generated method stub
 				
@@ -253,10 +253,10 @@ public class TableDataEditorDialog extends JDialog implements ActionListener{
 
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(okButton)){
-			setSelectedOption(OracleGuiConstants.APPLY_OPTION);
+			setSelectedOption(ApplicationConstants.APPLY_OPTION);
 			dispose();
 		}else if(e.getSource().equals(cancelButton)){
-			setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
+			setSelectedOption(ApplicationConstants.CANCEL_OPTION);
 			dispose();
 		} 
 	}

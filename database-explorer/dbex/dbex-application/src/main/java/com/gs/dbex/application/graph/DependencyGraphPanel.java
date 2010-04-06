@@ -20,23 +20,19 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.naming.ldap.HasControls;
 import javax.swing.BorderFactory;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
+import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.application.util.DrawingUtil;
-import com.gs.dbex.application.util.MenuBarUtil;
-import com.gs.oracle.OracleGuiConstants;
-import com.gs.oracle.command.GuiCommandConstants;
-import com.gs.oracle.model.Column;
-import com.gs.oracle.model.ExportedTableRelation;
-import com.gs.oracle.model.ForeignKey;
-import com.gs.oracle.model.ImportedTableRelation;
-import com.gs.oracle.model.Table;
-import com.gs.oracle.model.TableDependency;
+import com.gs.dbex.model.db.Column;
+import com.gs.dbex.model.db.ForeignKey;
+import com.gs.dbex.model.db.Table;
+import com.gs.dbex.model.dependency.ExportedTableRelation;
+import com.gs.dbex.model.dependency.ImportedTableRelation;
+import com.gs.dbex.model.dependency.TableDependency;
 
 /**
  * @author sabuj.das
@@ -103,10 +99,10 @@ public class DependencyGraphPanel extends JPanel {
 		}
 		
 		imagePk = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "PrimaryKeyColumn.gif")).getImage(); 
 		imageFk = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "ForeignKeyColumn.gif")).getImage(); 
 			
 			
@@ -238,28 +234,28 @@ public class DependencyGraphPanel extends JPanel {
 	public void drawTable(Graphics graphics, Point location, Dimension size, Table table,
 			int tableType){
 		// draw the border
-		graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
+		graphics.setColor(ApplicationConstants.TABLE_BORDER_COLOR);
 		graphics.drawRect(location.x, location.y, size.width, size.height);
-		graphics.setColor(OracleGuiConstants.COLUMN_NAMES_BG_COLOR);
+		graphics.setColor(ApplicationConstants.COLUMN_NAMES_BG_COLOR);
 		graphics.fillRect(location.x+1, location.y+1, size.width-1, size.height-1);
 		// draw the header
-		graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
+		graphics.setColor(ApplicationConstants.TABLE_BORDER_COLOR);
 		graphics.drawRect(location.x, location.y, size.width, DrawingUtil.calculateCellHeight(graphics));
-		graphics.setColor(OracleGuiConstants.TABLE_HEADER_BG_COLOR);
+		graphics.setColor(ApplicationConstants.TABLE_HEADER_BG_COLOR);
 		graphics.fillRect(location.x+1, location.y+1, size.width-1, DrawingUtil.calculateCellHeight(graphics)-1);
-		graphics.setColor(OracleGuiConstants.TABLE_HEADER_FG_COLOR);
+		graphics.setColor(ApplicationConstants.TABLE_HEADER_FG_COLOR);
 		graphics.drawString(table.getModelName(), location.x+2, 
 				location.y+DrawingUtil.calculateCellHeight(graphics)-4);
 		// draw the left margin
-		graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
+		graphics.setColor(ApplicationConstants.TABLE_BORDER_COLOR);
 		graphics.drawRect(location.x, location.y + DrawingUtil.calculateCellHeight(graphics),
-				OracleGuiConstants.TABLE_LEFT_MARGIN_WIDTH, size.height-DrawingUtil.calculateCellHeight(graphics));
-		graphics.setColor(OracleGuiConstants.TABLE_LEFT_MARGIN_BG_COLOR);
+				ApplicationConstants.TABLE_LEFT_MARGIN_WIDTH, size.height-DrawingUtil.calculateCellHeight(graphics));
+		graphics.setColor(ApplicationConstants.TABLE_LEFT_MARGIN_BG_COLOR);
 		graphics.fillRect(location.x+1, location.y + DrawingUtil.calculateCellHeight(graphics)+1,
-				OracleGuiConstants.TABLE_LEFT_MARGIN_WIDTH-1, size.height-1-DrawingUtil.calculateCellHeight(graphics));
+				ApplicationConstants.TABLE_LEFT_MARGIN_WIDTH-1, size.height-1-DrawingUtil.calculateCellHeight(graphics));
 		
 		// draw columns
-		int colStart_X = location.x + OracleGuiConstants.TABLE_LEFT_MARGIN_WIDTH + 5;
+		int colStart_X = location.x + ApplicationConstants.TABLE_LEFT_MARGIN_WIDTH + 5;
 		int colStart_Y = location.y + DrawingUtil.calculateCellHeight(graphics) + 2;
 		int cellHeight = DrawingUtil.calculateCellHeight(graphics);
 		List<Column> columnList = table.getColumnlist();
@@ -268,7 +264,7 @@ public class DependencyGraphPanel extends JPanel {
 			if(! showCompleteTable){
 				// for primary key
 				if(c.getPrimaryKey()){
-					graphics.setColor(OracleGuiConstants.COLUMN_NAMES_FG_COLOR);
+					graphics.setColor(ApplicationConstants.COLUMN_NAMES_FG_COLOR);
 					graphics.drawString(c.getModelName(), 
 							colStart_X + 2, colStart_Y + cellHeight - 4);
 					if(c.getPrimaryKey()){
@@ -298,7 +294,7 @@ public class DependencyGraphPanel extends JPanel {
 												+ expKey.getFkTableName() + "." + expKey.getFkColumnName());
 											if(startPoint != null){
 												TableRelationConnection trc = new TableRelationConnection();
-												trc.setConnectionColor(OracleGuiConstants.EXPORTED_RELATION_LINE_COLOR);
+												trc.setConnectionColor(ApplicationConstants.EXPORTED_RELATION_LINE_COLOR);
 												trc.setRelationPoint(relationLineStart);
 												RelationConnectionDirection dir = new RelationConnectionDirection();
 												dir.setStartPoint(startPoint);
@@ -345,7 +341,7 @@ public class DependencyGraphPanel extends JPanel {
 															+ impKey.getPkTableName() + "." + impKey.getPkColumnName());
 													if(endPoint != null){
 														TableRelationConnection trc = new TableRelationConnection();
-														trc.setConnectionColor(OracleGuiConstants.IMPORTED_RELATION_LINE_COLOR);
+														trc.setConnectionColor(ApplicationConstants.IMPORTED_RELATION_LINE_COLOR);
 														trc.setRelationPoint(relationLineStart);
 														RelationConnectionDirection dir = new RelationConnectionDirection();
 														dir.setStartPoint(relationLineStart);
@@ -367,13 +363,13 @@ public class DependencyGraphPanel extends JPanel {
 					}
 					// if the column is not the last column
 					if(i != columnList.size()-1){
-						graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
+						graphics.setColor(ApplicationConstants.TABLE_BORDER_COLOR);
 						graphics.drawLine(colStart_X+1, colStart_Y + cellHeight +2, location.x+size.width ,
 								colStart_Y + cellHeight +2);
 					}
 					colStart_Y += cellHeight;
 				} else if(c.getForeignKey()){
-					graphics.setColor(OracleGuiConstants.COLUMN_NAMES_FG_COLOR);
+					graphics.setColor(ApplicationConstants.COLUMN_NAMES_FG_COLOR);
 					graphics.drawString(c.getModelName(), 
 							colStart_X + 2, colStart_Y + cellHeight - 4);
 					if(c.getPrimaryKey()){
@@ -403,7 +399,7 @@ public class DependencyGraphPanel extends JPanel {
 												+ expKey.getFkTableName() + "." + expKey.getFkColumnName());
 											if(startPoint != null){
 												TableRelationConnection trc = new TableRelationConnection();
-												trc.setConnectionColor(OracleGuiConstants.EXPORTED_RELATION_LINE_COLOR);
+												trc.setConnectionColor(ApplicationConstants.EXPORTED_RELATION_LINE_COLOR);
 												trc.setRelationPoint(relationLineStart);
 												RelationConnectionDirection dir = new RelationConnectionDirection();
 												dir.setStartPoint(startPoint);
@@ -450,7 +446,7 @@ public class DependencyGraphPanel extends JPanel {
 															+ impKey.getPkTableName() + "." + impKey.getPkColumnName());
 													if(endPoint != null){
 														TableRelationConnection trc = new TableRelationConnection();
-														trc.setConnectionColor(OracleGuiConstants.IMPORTED_RELATION_LINE_COLOR);
+														trc.setConnectionColor(ApplicationConstants.IMPORTED_RELATION_LINE_COLOR);
 														trc.setRelationPoint(relationLineStart);
 														RelationConnectionDirection dir = new RelationConnectionDirection();
 														dir.setStartPoint(relationLineStart);
@@ -471,7 +467,7 @@ public class DependencyGraphPanel extends JPanel {
 					}
 					// if the column is not the last column
 					if(i != columnList.size()-1){
-						graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
+						graphics.setColor(ApplicationConstants.TABLE_BORDER_COLOR);
 						graphics.drawLine(colStart_X+1, colStart_Y + cellHeight +2, location.x+size.width ,
 								colStart_Y + cellHeight +2);
 					}
@@ -481,7 +477,7 @@ public class DependencyGraphPanel extends JPanel {
 			
 		// show complete table	
 			else {
-				graphics.setColor(OracleGuiConstants.COLUMN_NAMES_FG_COLOR);
+				graphics.setColor(ApplicationConstants.COLUMN_NAMES_FG_COLOR);
 				graphics.drawString(c.getModelName(), 
 						colStart_X + 2, colStart_Y + cellHeight - 4);
 				if(c.getPrimaryKey()){
@@ -511,7 +507,7 @@ public class DependencyGraphPanel extends JPanel {
 												+ expKey.getFkTableName() + "." + expKey.getFkColumnName());
 										if(startPoint != null){
 											TableRelationConnection trc = new TableRelationConnection();
-											trc.setConnectionColor(OracleGuiConstants.EXPORTED_RELATION_LINE_COLOR);
+											trc.setConnectionColor(ApplicationConstants.EXPORTED_RELATION_LINE_COLOR);
 											trc.setRelationPoint(relationLineStart);
 											RelationConnectionDirection dir = new RelationConnectionDirection();
 											dir.setStartPoint(startPoint);
@@ -557,7 +553,7 @@ public class DependencyGraphPanel extends JPanel {
 														+ impKey.getPkTableName() + "." + impKey.getPkColumnName());
 												if(endPoint != null){
 													TableRelationConnection trc = new TableRelationConnection();
-													trc.setConnectionColor(OracleGuiConstants.IMPORTED_RELATION_LINE_COLOR);
+													trc.setConnectionColor(ApplicationConstants.IMPORTED_RELATION_LINE_COLOR);
 													trc.setRelationPoint(relationLineStart);
 													RelationConnectionDirection dir = new RelationConnectionDirection();
 													dir.setStartPoint(relationLineStart);
@@ -578,7 +574,7 @@ public class DependencyGraphPanel extends JPanel {
 				}
 				// if the column is not the last column
 				if(i != columnList.size()-1){
-					graphics.setColor(OracleGuiConstants.TABLE_BORDER_COLOR);
+					graphics.setColor(ApplicationConstants.TABLE_BORDER_COLOR);
 					graphics.drawLine(colStart_X+1, colStart_Y + cellHeight +2, location.x+size.width ,
 							colStart_Y + cellHeight +2);
 				}

@@ -44,11 +44,11 @@ import javax.swing.SwingConstants;
 import oracle.sql.ROWID;
 
 import org.apache.log4j.Logger;
-import org.omg.CORBA.portable.ApplicationException;
 
 import com.gs.dbex.application.comps.ExtensionFileFilter;
-import com.gs.dbex.application.comps.ResultSetTableModelFactory;
+import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.application.dlg.QuickEditDialog;
+import com.gs.dbex.application.table.model.ResultSetTableModelFactory;
 import com.gs.dbex.application.util.DisplayTypeEnum;
 import com.gs.dbex.application.util.DisplayUtils;
 import com.gs.dbex.application.vo.PaginationResult;
@@ -88,7 +88,6 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 	
 	private Table databaseTable;
 	
-	private TableDataExportService dataExportService;
 
     public PaginatedTablePanel(JFrame parentFrame, 
     		ConnectionProperties connectionProperties, String query, String countQuery) {
@@ -103,9 +102,6 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         } catch(SQLException sqx){
         	DisplayUtils.displayMessage(parentFrame, "Cannot create connection to database.", DisplayTypeEnum.ERROR);
         }
-        
-        dataExportService = new TableDataExportServiceImpl(this.connectionProperties);
-        
         
         paginationResult = new PaginationResult();
         paginationResult.setRowsPerPage(MIN_RECORDS_PER_PAGE);
@@ -399,7 +395,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         previousPageLabel.setText("");
         previousPageLabel.setToolTipText("Go to Previous Page");
         image = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "previousPage_normal.png"));
         previousPageLabel.setIcon(image);
         previousPageLabel.addMouseListener(this);
@@ -428,7 +424,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 
         refreshButton.setText("");
         image = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "reload_green.png"));
 		refreshButton.setIcon(image);
 		refreshButton.addActionListener(this);
@@ -459,7 +455,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
         nextPageLabel.setText("");
         nextPageLabel.setToolTipText("Go to Next Page");
         image = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "nextPage_normal.png"));
         nextPageLabel.setIcon(image);
         nextPageLabel.addMouseListener(this);
@@ -483,7 +479,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 
         addNewRecordButton.setText("");
         image = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "add_plus.png"));
         addNewRecordButton.setIcon(image);
         addNewRecordButton.addActionListener(this);
@@ -494,7 +490,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 
         editRecordButton.setText("");
         image = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "editor_area.gif"));
         editRecordButton.setIcon(image);
         editRecordButton.addActionListener(this);
@@ -505,7 +501,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 
         deleteRecordButton.setText("");
         image = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "delete_edit.gif"));
         deleteRecordButton.setIcon(image);
         deleteRecordButton.addActionListener(this);
@@ -538,7 +534,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 
         exportButton.setText("");
         image = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "export_wiz.gif"));
         exportButton.setIcon(image);
         exportButton.addActionListener(this);
@@ -639,7 +635,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 
         goToFirstPageLinkLabel.setText("");
         image = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "first_page.png"));
         goToFirstPageLinkLabel.setIcon(image);
         goToFirstPageLinkLabel.addMouseListener(this);
@@ -652,7 +648,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 
         goToPreviousPageLabel.setText("");
         image = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "previous_page.png"));
         goToPreviousPageLabel.setIcon(image);
         goToPreviousPageLabel.setFont(new Font("Tahoma", 1, 11));
@@ -665,7 +661,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 
         goToNextPageLinkLabel.setText("");
         image = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "next_page.png"));
         goToNextPageLinkLabel.setIcon(image);
         goToNextPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
@@ -678,7 +674,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 
         goToLastPageLinkLabel.setText("");
         image = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "last_page.png"));
         goToLastPageLinkLabel.setIcon(image);
         goToLastPageLinkLabel.setFont(new Font("Tahoma", 1, 11));
@@ -712,7 +708,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 
         goButtonLabel.setText("");
         image = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "next.png"));
         goButtonLabel.setIcon(image);
         goButtonLabel.addMouseListener(this);
@@ -770,10 +766,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
     // End of variables declaration
 
 	
-	/* (non-Javadoc)
-	 * @see event.ActionListener#actionPerformed(event.ActionEvent)
-	 */
-	@Override
+
 	public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(showActionsToolbarCheckBox)){
 			if(showActionsToolbarCheckBox.isSelected()){
@@ -800,23 +793,23 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 				if(databaseTable == null){
 		        	return;
 		        }
-				try {
+				/*try {
 					dataExportService.exportData(
 							databaseTable.getSchemaName(), databaseTable.getModelName(), 
 							dataExportTypeEnum, fileName, queryBuffer.toString());
 				} catch (ApplicationException e1) {
 					e1.printStackTrace();
-				}
+				}*/
 	        	return;
 			}
-			try {
+			/*try {
 				dataExportService.exportData(
 						(databaseTable != null) ? databaseTable.getSchemaName() : "", 
 								(databaseTable != null) ? databaseTable.getModelName() : "",
 										dataExportTypeEnum, fileName, queryBuffer.toString());
 			} catch (ApplicationException e1) {
 				e1.printStackTrace();
-			}
+			}*/
 		}
 	}
 	
@@ -865,10 +858,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 		refreshPage(1);
 	}
 
-	/* (non-Javadoc)
-	 * @see event.MouseListener#mouseClicked(event.MouseEvent)
-	 */
-	@Override
+	
 	public void mouseClicked(MouseEvent e) {
 		if(MouseEvent.BUTTON1 == e.getButton()){
 			if(e.getClickCount() == 1){
@@ -941,11 +931,11 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 								|| clazz.getCanonicalName().equalsIgnoreCase("java.sql.Date")
 								|| clazz.getCanonicalName().equalsIgnoreCase("java.sql.Timestamp")
 								|| clazz.getCanonicalName().equalsIgnoreCase("java.sql.Time")){
-							SimpleDateFormat dateFormat = new SimpleDateFormat(OracleGuiConstants.INSERT_DATE_FORMAT);
+							SimpleDateFormat dateFormat = new SimpleDateFormat(ApplicationConstants.INSERT_DATE_FORMAT);
 							if(value instanceof java.util.Date){
 								java.util.Date utilDate = (java.util.Date) value;
-								value = OracleGuiConstants.SQL_DATE_FUNCTION + "('" +
-									dateFormat.format(utilDate) + "', " + OracleGuiConstants.SQL_DATE_FORMAT + ")";
+								value = ApplicationConstants.SQL_DATE_FUNCTION + "('" +
+									dateFormat.format(utilDate) + "', " + ApplicationConstants.SQL_DATE_FORMAT + ")";
 							}
 							q += targetTable.getModel().getColumnName(i) + " = "
 								+ (
@@ -1024,21 +1014,18 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 	public void openQuickEditDialog(QuickEditVO vo) {
 		QuickEditDialog editDialog = new QuickEditDialog(getParentFrame(), vo);
 		int opt = editDialog.showDialog();
-		if(opt == OracleGuiConstants.APPLY_OPTION){
+		if(opt == ApplicationConstants.APPLY_OPTION){
 			refreshPage(paginationResult.getCurrentPage());
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see event.MouseListener#mouseEntered(event.MouseEvent)
-	 */
-	@Override
+
 	public void mouseEntered(MouseEvent e) {
 		if(e.getSource().equals(previousPageLabel)){
 			previousPageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			if(previousPageLabel.isEnabled()){
 				ImageIcon image = new ImageIcon(getClass()
-						.getResource(OracleGuiConstants.IMAGE_PATH
+						.getResource(ApplicationConstants.IMAGE_PATH
 								+ "previousPage_over.png"));
 		        previousPageLabel.setIcon(image);
 			}
@@ -1047,7 +1034,7 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 			nextPageLabel.setCursor(new Cursor(Cursor.HAND_CURSOR));
 			if(nextPageLabel.isEnabled()){
 				ImageIcon image = new ImageIcon(getClass()
-						.getResource(OracleGuiConstants.IMAGE_PATH
+						.getResource(ApplicationConstants.IMAGE_PATH
 								+ "nextPage_over.png"));
 				nextPageLabel.setIcon(image);
 			}
@@ -1084,22 +1071,20 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see event.MouseListener#mouseExited(event.MouseEvent)
-	 */
-	@Override
+
+
 	public void mouseExited(MouseEvent e) {
 		if(e.getSource().equals(previousPageLabel)){
 			previousPageLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			ImageIcon image = new ImageIcon(getClass()
-					.getResource(OracleGuiConstants.IMAGE_PATH
+					.getResource(ApplicationConstants.IMAGE_PATH
 							+ "previousPage_normal.png"));
 	        previousPageLabel.setIcon(image);
 		}
 		else if(e.getSource().equals(nextPageLabel)){
 			nextPageLabel.setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
 			ImageIcon image = new ImageIcon(getClass()
-					.getResource(OracleGuiConstants.IMAGE_PATH
+					.getResource(ApplicationConstants.IMAGE_PATH
 							+ "nextPage_normal.png"));
 			nextPageLabel.setIcon(image);
 		}
@@ -1135,36 +1120,24 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see event.MouseListener#mousePressed(event.MouseEvent)
-	 */
-	@Override
+	
 	public void mousePressed(MouseEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see event.MouseListener#mouseReleased(event.MouseEvent)
-	 */
-	@Override
+	
 	public void mouseReleased(MouseEvent e) {
 		// TODO Auto-generated method stub
 
 	}
 
-	/* (non-Javadoc)
-	 * @see event.KeyListener#keyPressed(event.KeyEvent)
-	 */
-	@Override
+	
 	public void keyPressed(KeyEvent e) {
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see event.KeyListener#keyReleased(event.KeyEvent)
-	 */
-	@Override
+	
 	public void keyReleased(KeyEvent e) {
 		if(KeyEvent.VK_ENTER == e.getKeyCode()){
 			if(e.getSource().equals(gotoPageTextField)){
@@ -1176,21 +1149,16 @@ public class PaginatedTablePanel extends JPanel implements Serializable,
 		
 	}
 
-	/* (non-Javadoc)
-	 * @see event.KeyListener#keyTyped(event.KeyEvent)
-	 */
-	@Override
+	
 	public void keyTyped(KeyEvent e) {
 		
 	}
 
-	@Override
 	public void focusGained(FocusEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
 	public void focusLost(FocusEvent e) {
 		
 	}

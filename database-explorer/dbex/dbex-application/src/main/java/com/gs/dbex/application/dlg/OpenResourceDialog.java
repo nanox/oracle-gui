@@ -1,13 +1,8 @@
-/*
- * OpenResourceDialog.java
- *
- * Created on Sep 29, 2009, 1:50:54 PM
- */
+
 package com.gs.dbex.application.dlg;
 
 import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -15,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.ArrayList;
@@ -36,9 +30,9 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import com.gs.dbex.application.constants.ApplicationConstants;
+import com.gs.dbex.application.iframe.DatabaseViewerInternalFrame;
 import com.gs.dbex.application.util.WindowUtil;
-import com.gs.oracle.OracleGuiConstants;
-import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
 
 /**
  *
@@ -46,7 +40,7 @@ import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
  */
 public class OpenResourceDialog extends JDialog {
 
-	private int selectedOption = OracleGuiConstants.CANCEL_OPTION;
+	private int selectedOption = ApplicationConstants.CANCEL_OPTION;
 	
 	private List<String> schemaNameList, tableNameList;
 	private JFrame parentFrame;
@@ -245,37 +239,37 @@ public class OpenResourceDialog extends JDialog {
                 OpenResourceDialog.this.matchingItemsListValueChanged(evt);
             }
         }
-		@Override
+		
 		public void windowActivated(WindowEvent arg0) {
 			// TODO Auto-generated method stub
 			
 		}
-		@Override
+		
 		public void windowClosed(WindowEvent arg0) {
 			// TODO Auto-generated method stub
 			
 		}
-		@Override
+		
 		public void windowClosing(WindowEvent arg0) {
-			setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
+			setSelectedOption(ApplicationConstants.CANCEL_OPTION);
 			dispose();
 		}
-		@Override
+		
 		public void windowDeactivated(WindowEvent arg0) {
 			// TODO Auto-generated method stub
 			
 		}
-		@Override
+		
 		public void windowDeiconified(WindowEvent arg0) {
 			// TODO Auto-generated method stub
 			
 		}
-		@Override
+		
 		public void windowIconified(WindowEvent arg0) {
 			// TODO Auto-generated method stub
 			
 		}
-		@Override
+		
 		public void windowOpened(WindowEvent arg0) {
 			// TODO Auto-generated method stub
 			
@@ -326,12 +320,12 @@ public class OpenResourceDialog extends JDialog {
     }
 
     private void cancelButtonActionPerformed(ActionEvent evt) {
-    	setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
+    	setSelectedOption(ApplicationConstants.CANCEL_OPTION);
 		dispose();
     }
 
     private void openButtonActionPerformed(ActionEvent evt) {
-    	setSelectedOption(OracleGuiConstants.APPLY_OPTION);
+    	setSelectedOption(ApplicationConstants.APPLY_OPTION);
     	setSelectedSchemaName(schemaNameComboBox.getSelectedItem().toString());
     	setSelectedTableName(matchingItemsList.getSelectedValue().toString());
 		dispose();

@@ -23,11 +23,11 @@ import oracle.jdbc.pool.OracleDataSource;
 import org.apache.log4j.Logger;
 import org.omg.CORBA.portable.ApplicationException;
 
-import com.gs.dbex.application.comps.ButtonTabComponent;
-import com.gs.dbex.application.comps.DatabaseDirectoryPanel;
-import com.gs.dbex.application.comps.DatabaseDirectoryTree;
-import com.gs.dbex.application.comps.SqlQueryPanel;
-import com.gs.dbex.application.context.OracleGuiResourceContext;
+import com.gs.dbex.application.constants.ApplicationConstants;
+import com.gs.dbex.application.panel.DatabaseDirectoryPanel;
+import com.gs.dbex.application.panel.SqlQueryPanel;
+import com.gs.dbex.application.tab.ButtonTabComponent;
+import com.gs.dbex.application.tree.DatabaseDirectoryTree;
 import com.gs.dbex.application.util.DisplayTypeEnum;
 import com.gs.dbex.application.util.DisplayUtils;
 import com.gs.dbex.common.enums.ReadDepthEnum;
@@ -35,7 +35,6 @@ import com.gs.dbex.model.cfg.ConnectionProperties;
 import com.gs.dbex.model.db.Database;
 import com.gs.dbex.model.db.Schema;
 import com.gs.dbex.model.db.Table;
-import com.gs.oracle.OracleGuiConstants;
 
 /**
  * @author sabuj.das
@@ -44,8 +43,6 @@ import com.gs.oracle.OracleGuiConstants;
 public class DatabaseViewerInternalFrame extends JInternalFrame implements WindowListener{
 	private static final Logger logger = Logger.getLogger(DatabaseViewerInternalFrame.class);
 	
-	private static final OracleGuiResourceContext guiResourceContext
-		= OracleGuiResourceContext.getInstance();
 	
 	private JFrame parentFrame;
 	
@@ -55,7 +52,6 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 	private JPanel mainPanel;
 	private JTabbedPane dbDetailsTabbedPane;
 	
-	private OracleDatabaseService service;
 	private JTabbedPane dbViewerTabbedPane;
 	
 	private List<String> schemaNameList = new ArrayList<String>();
@@ -65,20 +61,19 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 	
 	public DatabaseViewerInternalFrame(JFrame parent,
 			ConnectionProperties connectionProperties) {
-		guiResourceContext.internalFrameCount += 1;
-		setName(getClass().getCanonicalName() + guiResourceContext.internalFrameCount);
-		if(logger.isDebugEnabled()){
+		setName(getClass().getCanonicalName());
+		/*if(logger.isDebugEnabled()){
 			logger.debug("DatabaseViewerInternalFrame : Frame count = " 
 					+ guiResourceContext.internalFrameCount);
 			logger.debug("DatabaseViewerInternalFrame : Frame name = " 
 					+ getName());
-		}
+		}*/
 		
 		parentFrame = parent;
-		service = new OracleDatabaseServiceImpl();
+		//service = new OracleDatabaseServiceImpl();
 		this.connectionProperties = connectionProperties;
 		Database database = getDataBaseInformation(ReadDepthEnum.SHALLOW);
-		guiResourceContext.connectedDatabaseMap.put(getName(), database);
+		//guiResourceContext.connectedDatabaseMap.put(getName(), database);
 		initComponents(database);
 	}
 
@@ -88,22 +83,22 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		logger.info("STRT: Reading Database. " + readDepth.getCode());
 		Database db = null;
 		if(connectionProperties != null){
-			try {
+			/*try {
 				db = service.getDatabase(connectionProperties, readDepth);
 			} catch (ApplicationException e) {
 				logger.error(e);
-			}
+			}*/
 		}
 		logger.info("DONE: Reading Database.");
 		if(db != null){
 			List<Schema> schemaList = db.getSchemaList();
 			for (Schema schema : schemaList) {
 				schemaNameList.add(schema.getModelName());
-				OracleGuiConstants.SQL_KEYWORD_LIST.add(schema.getModelName().toLowerCase());
+				ApplicationConstants.SQL_KEYWORD_LIST.add(schema.getModelName().toLowerCase());
 				List<Table> tablelList = schema.getTableList();
 				for (Table table : tablelList) {
 					tableNameList.add(table.getModelName());
-					OracleGuiConstants.SQL_KEYWORD_LIST.add(table.getModelName().toLowerCase());
+					ApplicationConstants.SQL_KEYWORD_LIST.add(table.getModelName().toLowerCase());
 				}
 			}
  		}
@@ -172,7 +167,7 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		int n = dbDetailsTabbedPane.getTabCount();
 		dbDetailsTabbedPane.setTabComponentAt(n - 1,
                 new ButtonTabComponent(dbDetailsTabbedPane, new ImageIcon(DatabaseViewerInternalFrame.class
-        				.getResource(OracleGuiConstants.IMAGE_PATH + "executesql.gif"))));
+        				.getResource(ApplicationConstants.IMAGE_PATH + "executesql.gif"))));
 		dbDetailsTabbedPane.setSelectedIndex(n - 1);
 		outterSplitPane.setRightComponent(dbDetailsTabbedPane);
 		
@@ -220,25 +215,25 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		this.innerSplitPane = innerSplitPane;
 	}
 
-	@Override
+	
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowClosing(WindowEvent e) {
 		closeWindow();
 	}
 	
 	public void closeWindow(){
-		guiResourceContext.internalFrameCount -= 1;
+		/*guiResourceContext.internalFrameCount -= 1;
 		guiResourceContext.connectedDatabaseMap.remove(getName());
 		if(connectionProperties.getDataSource() != null){
 			logger.info("Closing Datasource");
@@ -249,28 +244,28 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 			} catch (SQLException e) {
 				DisplayUtils.displayMessage(getParentFrame(), e.getMessage(), DisplayTypeEnum.ERROR);
 			}
-		}
+		}*/
 	}
 
-	@Override
+	
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
