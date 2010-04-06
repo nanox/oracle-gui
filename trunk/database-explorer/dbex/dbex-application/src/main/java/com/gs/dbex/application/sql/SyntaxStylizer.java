@@ -25,6 +25,7 @@ package com.gs.dbex.application.sql;
 import java.awt.Color;
 import java.awt.Font;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Hashtable;
 import java.util.prefs.PreferenceChangeEvent;
@@ -34,8 +35,11 @@ import javax.swing.JTextPane;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
-import sun.misc.IOUtils;
+import org.exolab.castor.mapping.MappingException;
+import org.exolab.castor.xml.MarshalException;
+import org.exolab.castor.xml.ValidationException;
 
+import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.application.mapping.FontStyle;
 import com.gs.dbex.application.mapping.StyleColor;
 import com.gs.dbex.application.mapping.StyleConfiguration;
@@ -44,6 +48,7 @@ import com.gs.dbex.application.mapping.WordFont;
 import com.gs.dbex.application.mapping.WordStyle;
 import com.gs.dbex.application.sql.processor.TokenType;
 import com.gs.dbex.common.enums.SqlStyleEnum;
+import com.gs.utils.io.IOUtil;
 import com.gs.utils.xml.rw.XmlRWUtils;
 
 
@@ -98,10 +103,10 @@ public class SyntaxStylizer implements PreferenceChangeListener {
     		return;
     	Style style = componentOwner.addStyle(type.toString(), null);
     	
-    	StyleColor fg = wordStyle.getWordColorList().getStyleByType(OracleGuiConstants.FORE_GROUND);
+    	StyleColor fg = wordStyle.getWordColorList().getStyleByType(ApplicationConstants.FORE_GROUND);
     	StyleConstants.setForeground(style, Color.decode(fg.getColorCode()));
     	
-    	StyleColor bg = wordStyle.getWordColorList().getStyleByType(OracleGuiConstants.BACK_GROUND);
+    	StyleColor bg = wordStyle.getWordColorList().getStyleByType(ApplicationConstants.BACK_GROUND);
     	StyleConstants.setBackground(style, Color.decode(bg.getColorCode()));
     	
     	WordFont wordFont = wordStyle.getWordFont();
@@ -226,11 +231,25 @@ public class SyntaxStylizer implements PreferenceChangeListener {
 	}*/
     
 	private StyleConfiguration readSavedStyles() {
-		InputStream mappingInputStream = IOUtils.getResourceAsStream(OracleGuiConstants.SQL_SYNTAX_MAPPING_FILE);
-		File dataFile = IOUtils.mkfile(OracleGuiConstants.SYNTAX_DATA_FILE);
-		
-		return XmlRWUtils.readUsingCastor(dataFile, mappingInputStream);
-		
+		InputStream mappingInputStream = IOUtil.getResourceAsStream(ApplicationConstants.SQL_SYNTAX_MAPPING_FILE);
+		//File dataFile = IOUtil.mkfile(ApplicationConstants.SYNTAX_DATA_FILE);
+		File dataFile = new File(ApplicationConstants.SYNTAX_DATA_FILE);
+		try {
+			return XmlRWUtils.readUsingCastor(dataFile, mappingInputStream);
+		} catch (MarshalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

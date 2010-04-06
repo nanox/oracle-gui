@@ -24,11 +24,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-import com.gs.dbex.application.comps.CheckBoxTreeManager;
-import com.gs.dbex.application.comps.TableColumnTree;
+import com.gs.dbex.application.constants.ApplicationConstants;
+import com.gs.dbex.application.tree.CheckBoxTreeManager;
+import com.gs.dbex.application.tree.TableColumnTree;
 import com.gs.dbex.application.util.WindowUtil;
-import com.gs.oracle.OracleGuiConstants;
-import com.gs.oracle.model.Table;
+import com.gs.dbex.model.db.Table;
 
 /**
  * @author sabuj.das
@@ -37,7 +37,7 @@ import com.gs.oracle.model.Table;
 public class ShowTableContentDialog  extends JDialog implements ActionListener, WindowListener{
 
 	private Table table;
-	private int selectedOption = OracleGuiConstants.CANCEL_OPTION;
+	private int selectedOption = ApplicationConstants.CANCEL_OPTION;
 	
 	
     public ShowTableContentDialog(Frame parent, boolean modal, Table table1) {
@@ -230,59 +230,59 @@ public class ShowTableContentDialog  extends JDialog implements ActionListener, 
     private JTextField tableNameTextField;
     private CheckBoxTreeManager checkTreeManager;
 
-	@Override
+	
 	public void actionPerformed(ActionEvent evt) {
 		if(evt.getSource().equals(cancelButton)){
-    		setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
+    		setSelectedOption(ApplicationConstants.CANCEL_OPTION);
     		dispose();
     	} else if(evt.getSource().equals(showButton)){
     		if(checkTreeManager != null){
     			
-    			setSelectedOption(OracleGuiConstants.APPLY_OPTION);
+    			setSelectedOption(ApplicationConstants.APPLY_OPTION);
     		}else{
-    			setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
+    			setSelectedOption(ApplicationConstants.CANCEL_OPTION);
     		}
     		dispose();
     	}
 	}
 
-	@Override
+	
 	public void windowActivated(WindowEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowClosed(WindowEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowClosing(WindowEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowDeactivated(WindowEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowDeiconified(WindowEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowIconified(WindowEvent arg0) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowOpened(WindowEvent arg0) {
 		// TODO Auto-generated method stub
 		

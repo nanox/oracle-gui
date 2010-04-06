@@ -7,9 +7,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
-import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -17,7 +15,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.Connection;
@@ -38,26 +35,23 @@ import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
 import org.apache.log4j.Logger;
+import org.omg.CORBA.portable.ApplicationException;
 
-import com.gs.dbex.application.comps.CopyTablePanel;
-import com.gs.dbex.application.comps.ResourceCommentPanel;
-import com.gs.dbex.application.comps.ResourceRenamePanel;
-import com.gs.dbex.application.comps.TruncateTablePanel;
+import com.gs.dbex.application.constants.ApplicationConstants;
+import com.gs.dbex.application.panel.ResourceCommentPanel;
+import com.gs.dbex.application.panel.ResourceRenamePanel;
+import com.gs.dbex.application.panel.TruncateTablePanel;
+import com.gs.dbex.application.table.CopyTablePanel;
 import com.gs.dbex.application.util.DisplayUtils;
 import com.gs.dbex.application.util.SqlGeneratorUtil;
 import com.gs.dbex.application.util.WindowUtil;
-import com.gs.oracle.ApplicationException;
-import com.gs.oracle.OracleGuiConstants;
-import com.gs.oracle.SqlQuery;
-import com.gs.oracle.common.StringUtil;
-import com.gs.oracle.connection.ConnectionProperties;
-import com.gs.oracle.enums.ResourceEditTypeEnum;
-import com.gs.oracle.enums.ResourceTypeEnum;
-import com.gs.oracle.grabber.OracleDbGrabber;
-import com.gs.oracle.model.Column;
-import com.gs.oracle.model.Table;
-import com.gs.oracle.service.QueryExecutionService;
-import com.gs.oracle.service.impl.QueryExecutionServiceImpl;
+import com.gs.dbex.common.enums.ResourceEditTypeEnum;
+import com.gs.dbex.common.enums.ResourceTypeEnum;
+import com.gs.dbex.core.oracle.OracleDbGrabber;
+import com.gs.dbex.model.cfg.ConnectionProperties;
+import com.gs.dbex.model.db.Column;
+import com.gs.dbex.model.db.Table;
+import com.gs.utils.text.StringUtil;
 
 /**
  * @author sabuj.das
@@ -67,7 +61,7 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
 
 	private static final Logger logger = Logger.getLogger(ResourceEditDialog.class);
 	
-	private int selectedOption = OracleGuiConstants.CANCEL_OPTION;
+	private int selectedOption = ApplicationConstants.CANCEL_OPTION;
 	
 	private T resource;
 	private String schemaName;
@@ -436,13 +430,13 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
 
     private void cancelButtonActionPerformed(ActionEvent evt) {
     	logger.info("Closing ResourceEditDialog.");
-    	setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
+    	setSelectedOption(ApplicationConstants.CANCEL_OPTION);
     	dispose();
     }
 
     private void applyButtonActionPerformed(ActionEvent evt) {
-    	setSelectedOption(OracleGuiConstants.APPLY_OPTION);
-    	QueryExecutionService executionService = new QueryExecutionServiceImpl(getConnectionProperties());
+    	setSelectedOption(ApplicationConstants.APPLY_OPTION);
+    	/*QueryExecutionService executionService = new QueryExecutionServiceImpl(getConnectionProperties());
     	SqlQuery query = new SqlQuery(sqlTextArea.getText());
     	boolean exceptionOccured = false;
     	try {
@@ -455,7 +449,8 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
 		}
 		if(!exceptionOccured){
 			dispose();
-		}
+		}*/
+    	dispose();
     }
 
     // Variables declaration 
@@ -474,62 +469,62 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
     private JTextField wonerNameTextField;
     // End of variables declaration
 
-	@Override
+	
 	public void keyPressed(KeyEvent e) {
 		
 	}
 
 
-	@Override
+	
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
-	@Override
+	
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
-	@Override
+	
 	public void windowClosing(WindowEvent e) {
 		logger.info("Closing ResourceEditDialog.");
-		setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
+		setSelectedOption(ApplicationConstants.CANCEL_OPTION);
     	dispose();
 	}
 
 
-	@Override
+	
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
-	@Override
+	
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
-	@Override
+	
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
 
-	@Override
+	
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void keyReleased(KeyEvent e) {
 		if(resourceRenamePanel != null){
 			if(e.getSource().equals(resourceRenamePanel.getNewResourceNameTextField())){
@@ -578,7 +573,7 @@ public class ResourceEditDialog<T> extends JDialog implements ActionListener, Ke
 	}
 
 
-	@Override
+	
 	public void keyTyped(KeyEvent e) {
 		// TODO Auto-generated method stub
 		

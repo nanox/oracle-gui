@@ -14,7 +14,6 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -29,13 +28,11 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.WindowConstants;
 
-import oracle.sql.ROWID;
-
+import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.application.util.DisplayTypeEnum;
 import com.gs.dbex.application.util.DisplayUtils;
 import com.gs.dbex.application.util.WindowUtil;
 import com.gs.dbex.application.vo.QuickEditVO;
-import com.gs.oracle.OracleGuiConstants;
 
 /**
  * @author sabuj das
@@ -43,7 +40,7 @@ import com.gs.oracle.OracleGuiConstants;
  */
 public class QuickEditDialog extends JDialog implements ActionListener, WindowListener {
 
-	private int selectedOption = OracleGuiConstants.CANCEL_OPTION;
+	private int selectedOption = ApplicationConstants.CANCEL_OPTION;
 	
 	private JFrame parentFrame;
 	private QuickEditVO quickEditVO;
@@ -209,7 +206,7 @@ public class QuickEditDialog extends JDialog implements ActionListener, WindowLi
     
     public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(updateButton)){
-			setSelectedOption(OracleGuiConstants.APPLY_OPTION);
+			setSelectedOption(ApplicationConstants.APPLY_OPTION);
 			
 			String v = valueTextArea.getText().trim();
 			String q = "UPDATE "+ getQuickEditVO().getSchemaName() 
@@ -238,7 +235,7 @@ public class QuickEditDialog extends JDialog implements ActionListener, WindowLi
 			}
 			dispose();
 		}else if(e.getSource().equals(cancelButton)){
-			setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
+			setSelectedOption(ApplicationConstants.CANCEL_OPTION);
 			dispose();
 		} 
 	}
@@ -305,43 +302,43 @@ public class QuickEditDialog extends JDialog implements ActionListener, WindowLi
 		this.selectedOption = selectedOption;
 	}
 
-	@Override
+	
 	public void windowActivated(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowClosed(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowClosing(WindowEvent e) {
-		setSelectedOption(OracleGuiConstants.CANCEL_OPTION);
+		setSelectedOption(ApplicationConstants.CANCEL_OPTION);
 		dispose();
 	}
 
-	@Override
+	
 	public void windowDeactivated(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowDeiconified(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowIconified(WindowEvent e) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	@Override
+	
 	public void windowOpened(WindowEvent e) {
 		// TODO Auto-generated method stub
 		

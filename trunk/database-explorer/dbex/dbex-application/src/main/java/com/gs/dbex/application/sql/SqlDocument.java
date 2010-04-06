@@ -15,6 +15,8 @@ import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.Style;
 import javax.swing.text.StyleConstants;
 
+import com.gs.dbex.application.constants.ApplicationConstants;
+
 public class SqlDocument extends DefaultStyledDocument {
 	 
 	private DefaultStyledDocument doc;
@@ -55,7 +57,7 @@ public class SqlDocument extends DefaultStyledDocument {
  
 		keywords = new Hashtable();
 		
-		String[] l = OracleGuiConstants.SQL_KEYWORD.split(",");
+		String[] l = ApplicationConstants.SQL_KEYWORD.split(",");
 		for (String s : l) {
 			keywords.put(s.trim(), s.trim());
 		}

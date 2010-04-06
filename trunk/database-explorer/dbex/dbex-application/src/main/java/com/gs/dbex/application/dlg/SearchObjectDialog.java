@@ -12,11 +12,11 @@ import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 
-import com.gs.dbex.application.comps.search.SearchColumnPanel;
-import com.gs.dbex.application.comps.search.SearchTablePanel;
+import com.gs.dbex.application.iframe.DatabaseViewerInternalFrame;
+import com.gs.dbex.application.panel.SearchColumnPanel;
+import com.gs.dbex.application.panel.SearchTablePanel;
 import com.gs.dbex.application.util.WindowUtil;
-import com.gs.oracle.connection.ConnectionProperties;
-import com.gs.oracle.iframe.DatabaseViewerInternalFrame;
+import com.gs.dbex.model.cfg.ConnectionProperties;
 
 /**
  * @author sabuj.das

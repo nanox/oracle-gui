@@ -22,6 +22,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -43,15 +44,19 @@ import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import org.exolab.castor.mapping.MappingException;
+import org.exolab.castor.xml.MarshalException;
+import org.exolab.castor.xml.ValidationException;
+
+import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.application.mapping.FontStyle;
 import com.gs.dbex.application.mapping.StyleColor;
 import com.gs.dbex.application.mapping.StyleConfiguration;
 import com.gs.dbex.application.mapping.SyntaxStyle;
 import com.gs.dbex.application.mapping.WordFont;
 import com.gs.dbex.application.mapping.WordStyle;
-import com.gs.oracle.OracleGuiConstants;
-import com.gs.oracle.io.IOUtils;
-import com.gs.oracle.io.XmlRWUtils;
+import com.gs.utils.io.IOUtil;
+import com.gs.utils.xml.rw.XmlRWUtils;
 
 /**
  * @author sabuj.das
@@ -61,7 +66,7 @@ public class StyleConfigurationDialog extends JDialog {
 
 	public static String[] installedFontNames;
 
-    private int selectedOption = OracleGuiConstants.CANCEL_OPTION;
+    private int selectedOption = ApplicationConstants.CANCEL_OPTION;
     private StyleConfiguration configuration;
     private FormListener formListener;
     
@@ -79,10 +84,24 @@ public class StyleConfigurationDialog extends JDialog {
     }
 
 	private void initValues(){
-		InputStream mappingInputStream = IOUtils.getResourceAsStream(OracleGuiConstants.SQL_SYNTAX_MAPPING_FILE);
-		File dataFile = IOUtils.mkfile(OracleGuiConstants.SYNTAX_DATA_FILE);
-		
-		configuration = XmlRWUtils.readUsingCastor(dataFile, mappingInputStream);
+		InputStream mappingInputStream = IOUtil.getResourceAsStream(ApplicationConstants.SQL_SYNTAX_MAPPING_FILE);
+		//File dataFile = IOUtil.mkfile(ApplicationConstants.SYNTAX_DATA_FILE);
+		File dataFile = new File(ApplicationConstants.SYNTAX_DATA_FILE);
+		try {
+			configuration = XmlRWUtils.readUsingCastor(dataFile, mappingInputStream);
+		} catch (MarshalException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (ValidationException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (MappingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		if(configuration != null ){
 			configuration.loadStyleMap();
@@ -523,7 +542,7 @@ public class StyleConfigurationDialog extends JDialog {
         WordStyle wordStyle = syntaxStyle.getWordStyleList().getStyleByType(keyWord);
         
         styleNameLabel.setText(language + " : " + keyWord);
-        StyleColor foreColor = wordStyle.getWordColorList().getStyleByType(OracleGuiConstants.FORE_GROUND);
+        StyleColor foreColor = wordStyle.getWordColorList().getStyleByType(ApplicationConstants.FORE_GROUND);
         if(foreColor != null){
         	foreColorPanel.setBackground(new Color(foreColor.getRed(), foreColor.getGreen(), foreColor.getBlue()));
         	/*if(!foreColor.isEditable()){
@@ -533,7 +552,7 @@ public class StyleConfigurationDialog extends JDialog {
         	}*/
         	foreColorPanel.setEnabled(foreColor.isEditable());
         }
-        StyleColor backColor = wordStyle.getWordColorList().getStyleByType(OracleGuiConstants.BACK_GROUND);
+        StyleColor backColor = wordStyle.getWordColorList().getStyleByType(ApplicationConstants.BACK_GROUND);
         if(backColor != null){
         	bgColorPanel.setBackground(new Color(backColor.getRed(), backColor.getGreen(), backColor.getBlue()));
         	/*if(!backColor.isEditable()){
@@ -581,7 +600,7 @@ public class StyleConfigurationDialog extends JDialog {
     	// single left click
     	if(MouseEvent.BUTTON1 == evt.getButton()){
     		Color newColor = JColorChooser.showDialog(this, "Choose Color", foreColorPanel.getBackground());
-    		StyleColor color = wordStyle.getWordColorList().getStyleByType(OracleGuiConstants.FORE_GROUND);
+    		StyleColor color = wordStyle.getWordColorList().getStyleByType(ApplicationConstants.FORE_GROUND);
     		foreColorPanel.setBackground(newColor);
     		color.setColor(newColor);
     	}
@@ -597,7 +616,7 @@ public class StyleConfigurationDialog extends JDialog {
     	// single left click
     	if(MouseEvent.BUTTON1 == evt.getButton()){
     		Color newColor = JColorChooser.showDialog(this, "Choose Color", bgColorPanel.getBackground());
-    		StyleColor color = wordStyle.getWordColorList().getStyleByType(OracleGuiConstants.BACK_GROUND);
+    		StyleColor color = wordStyle.getWordColorList().getStyleByType(ApplicationConstants.BACK_GROUND);
     		bgColorPanel.setBackground(newColor);
     		color.setColor(newColor);
     	}
@@ -685,10 +704,10 @@ public class StyleConfigurationDialog extends JDialog {
     }
 
     private void saveButtonActionPerformed(ActionEvent evt) {
-    	InputStream mappingInputStream = IOUtils.getResourceAsStream(OracleGuiConstants.SQL_SYNTAX_MAPPING_FILE);
-		File dataFile = IOUtils.mkfile(OracleGuiConstants.SYNTAX_DATA_FILE);
+    	/*InputStream mappingInputStream = IOUtils.getResourceAsStream(ApplicationConstants.SQL_SYNTAX_MAPPING_FILE);
+		File dataFile = IOUtils.mkfile(ApplicationConstants.SYNTAX_DATA_FILE);
 		
-		XmlRWUtils.writeUsingCastor(dataFile, mappingInputStream, configuration);
+		XmlRWUtils.writeUsingCastor(dataFile, mappingInputStream, configuration);*/
 		dispose();
     }
 

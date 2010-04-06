@@ -7,7 +7,11 @@ import java.awt.EventQueue;
 
 import org.omg.CORBA.portable.ApplicationException;
 
+import com.gs.dbex.common.SqlQuery;
+import com.gs.dbex.common.enums.QueryTypeEnum;
 import com.gs.dbex.model.cfg.ConnectionProperties;
+import com.gs.dbex.service.DbexServiceBeanFactory;
+import com.gs.dbex.service.QueryExecutionService;
 
 /**
  * @author sabuj
@@ -53,15 +57,15 @@ public class QueryExecutionThread<V>
 			});
 		}
 		else {
-			queryExecutionService = new QueryExecutionServiceImpl(getConnectionProperties());
-			try {
+			queryExecutionService = DbexServiceBeanFactory.getBeanFactory().getQueryExecutionService();
+			/*try {
 				int row = queryExecutionService.executeNonQuery(sqlQuery);
 				
 			} catch (ApplicationException ex) {
 				
 			} catch (Exception ex) {
 				
-			}
+			}*/
 		}
 		
 		

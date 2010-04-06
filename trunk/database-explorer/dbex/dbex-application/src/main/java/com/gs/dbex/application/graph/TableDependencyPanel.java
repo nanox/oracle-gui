@@ -3,8 +3,6 @@
  */
 package com.gs.dbex.application.graph;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -20,18 +18,14 @@ import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
 import java.awt.image.BufferedImage;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
 import javax.imageio.ImageIO;
-import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,17 +34,12 @@ import javax.swing.JTextField;
 import javax.swing.JToggleButton;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
-import javax.swing.border.LineBorder;
 
-import com.gs.dbex.application.util.MenuBarUtil;
-import com.gs.oracle.ApplicationException;
-import com.gs.oracle.OracleGuiConstants;
-import com.gs.oracle.connection.ConnectionProperties;
-import com.gs.oracle.grabber.OracleDbGrabber;
-import com.gs.oracle.model.Database;
-import com.gs.oracle.model.TableDependency;
-import com.gs.oracle.service.DependencyService;
-import com.gs.oracle.service.impl.DependencyServiceImpl;
+import org.omg.CORBA.portable.ApplicationException;
+
+import com.gs.dbex.application.constants.ApplicationConstants;
+import com.gs.dbex.model.cfg.ConnectionProperties;
+import com.gs.dbex.model.dependency.TableDependency;
 
 /**
  * @author sabuj.das
@@ -211,7 +200,7 @@ public class TableDependencyPanel extends JPanel {
 
 		loadingLabel.setText("Generating Dependency ...");
 		image = new ImageIcon(getClass()
-				.getResource(OracleGuiConstants.IMAGE_PATH
+				.getResource(ApplicationConstants.IMAGE_PATH
 						+ "loading.gif"));
 		loadingLabel.setIcon(image);
 		loadingLabel.setVisible(false);
@@ -335,9 +324,9 @@ public class TableDependencyPanel extends JPanel {
 		Runnable r = new Runnable(){
 			public void run() {
 				loadingLabel.setVisible(true);
-				DependencyService dependencyService = new DependencyServiceImpl();
+				//DependencyService dependencyService = new DependencyServiceImpl();
 				TableDependency dependency = null;
-				try {
+				/*try {
 					dependency = dependencyService.generateTableDependency(
 							connectionProperties.getDataSource().getConnection(), 
 							schemaName, tableName);
@@ -345,7 +334,7 @@ public class TableDependencyPanel extends JPanel {
 					e.printStackTrace();
 				} catch (SQLException e) {
 					e.printStackTrace();
-				}
+				}*/
 				graphHolderPanel = new DependencyGraphPanel(dependency);
 				graphHolderPanel.addMouseMotionListener(new FormListener());
 				graphHolderPanel.setShowCompleteTable(showCompleteTableToggleBtn.isSelected());
@@ -378,7 +367,7 @@ public class TableDependencyPanel extends JPanel {
 		graphHolderPanel.paint(g2);
         g2.dispose();
         try {
-			ImageIO.write(image, "png", new File(OracleGuiConstants.DATA_DIR + 
+			ImageIO.write(image, "png", new File(ApplicationConstants.DATA_DIR + 
 					schemaName + "." + tableName +"_dependency.png"));
 		} catch (IOException e) {
 			e.printStackTrace();
