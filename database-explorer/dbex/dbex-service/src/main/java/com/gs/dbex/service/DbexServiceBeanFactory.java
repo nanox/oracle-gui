@@ -21,12 +21,19 @@ public final class DbexServiceBeanFactory {
 		return beanFactory;
 	}
 	
-	/*public <T> T getService(String beanName){
-		if()
-	}
-	*/
+	
 	private DatabaseConnectionService databaseConnectionService;
 	private DatabaseMetadataService databaseMetadataService;
+	private QueryExecutionService queryExecutionService;
+
+	
+	public QueryExecutionService getQueryExecutionService() {
+		return queryExecutionService;
+	}
+
+	public void setQueryExecutionService(QueryExecutionService queryExecutionService) {
+		this.queryExecutionService = queryExecutionService;
+	}
 
 	public DatabaseConnectionService getDatabaseConnectionService() {
 		return databaseConnectionService;
