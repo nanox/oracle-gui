@@ -74,8 +74,8 @@ public class ApplicationEventHandler implements ActionListener,
 			}else if(CREATE_CONNECTION_ACT_CMD.equals(cmd)){
 				Runnable connRun = new Runnable(){
 					public void run() {
-						ConnectionDialog dlg = (ConnectionDialog) sourceForm;
-						//dlg.disableButtons(true);
+						final ConnectionDialog dlg = (ConnectionDialog) sourceForm;
+						dlg.disableButtons(true);
 						DatabaseExplorerFrame frame = (DatabaseExplorerFrame) parent;
 						frame.getStatusBar().getCurrentStatusLabel().setIcon(new ImageIcon(this.getClass()
 								.getResource(ApplicationConstants.IMAGE_PATH + "loading.gif")));

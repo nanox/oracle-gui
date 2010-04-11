@@ -490,4 +490,11 @@ public class ConnectionDialog extends JDialog implements ActionListener{
     private void populateOracleValues(){
     	
     }
+
+
+	public void disableButtons(boolean enable) {
+		connectButton.setEnabled(enable);
+		testButton.setEnabled(enable);
+		
+	}
 }
