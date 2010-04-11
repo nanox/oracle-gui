@@ -28,6 +28,7 @@ import com.gs.dbex.model.db.ForeignKey;
 import com.gs.dbex.model.db.PrimaryKey;
 import com.gs.dbex.model.db.Schema;
 import com.gs.dbex.model.db.Table;
+import com.gs.utils.text.StringUtil;
 
 /**
  * @author sabuj.das
@@ -48,48 +49,48 @@ public class CatalogDBGrabberImpl implements CatalogGrabber {
 	 * on the readDepth (DEEP/ SHALLOW).
 	 * 
 	 * @param connection
-	 * @param databaseName
+	 * @param catalogName
 	 * @param readDepth
 	 * @return
 	 * @throws SQLException
 	 */
-	public Database grabDatabaseByCatalog(Connection connection, String databaseName, ReadDepthEnum readDepth) throws SQLException{
+	public Database grabDatabaseByCatalog(Connection connection, String catalogName, ReadDepthEnum readDepth) throws SQLException{
 		if(connection == null){
 			return null;
 		}
 		Database db = new Database();
-		db.setModelName(databaseName);
 		List<Schema> schemaList = new ArrayList<Schema>();
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
 		if(databaseMetaData != null){
-			ResultSet rs = databaseMetaData.getCatalogs();
-			while(rs.next()){
-				String cat = rs.getString(CatalogMetadataEnum.TABLE_CAT.getCode());
-				if(null != databaseName && !"".equals(databaseName))
-					if(!databaseName.equalsIgnoreCase(cat)){
+			ResultSet catalogResultSet = databaseMetaData.getCatalogs();
+			while(catalogResultSet.next()){
+				String cat = catalogResultSet.getString(CatalogMetadataEnum.TABLE_CAT.getCode());
+				if(StringUtil.hasValidContent(cat)){
+					if(!catalogName.equalsIgnoreCase(cat)){
 						continue;
 					}
-				RESERVED_WORDS_UTIL.addSchemaName(cat);
-				Schema s = new Schema();
-				s.setModelName(cat);
-				ResultSet ret = databaseMetaData.getTables(s.getModelName(), "", "%", new String[] {"TABLE"});
-				while(ret.next()){
-					String tn = ret.getString(TableMetaDataEnum.TABLE_NAME.getCode());
-					
-					Table t = grabTable(connection, s.getModelName(), tn, readDepth);
-					if(tn.startsWith("BIN$"))
-						t.setDeleted(true);
-					s.getTableList().add(t);
+				} else {
+					continue;
 				}
-				if(ret != null){
-					ret.close();
+				RESERVED_WORDS_UTIL.addSchemaName(cat);
+				Schema schema = new Schema();
+				schema.setModelName(cat);
+				
+				ResultSet tableResultSet = databaseMetaData.getTables(schema.getModelName(), "", "%", new String[] {"TABLE"});
+				if(tableResultSet != null){
+					while(tableResultSet.next()){
+						String tableName = tableResultSet.getString(TableMetaDataEnum.TABLE_NAME.getCode());
+						Table table = grabTable(connection, schema.getModelName(), tableName, readDepth);
+						schema.getTableList().add(table);
+					}
+					tableResultSet.close();
 				}
 				
-				schemaList.add(s);
+				schemaList.add(schema);
 				
 			}
-			if(rs != null){
-				rs.close();
+			if(catalogResultSet != null){
+				catalogResultSet.close();
 			}
 			
 		}
@@ -132,30 +133,31 @@ public class CatalogDBGrabberImpl implements CatalogGrabber {
 		return count;
 	}
 	
+	
+	
 	/**
 	 * 
 	 * @param connection
-	 * @param schemaName
+	 * @param catalogName
 	 * @param tableName
 	 * @param readDepth
 	 * @return
 	 */
-	public Table grabTable(Connection connection, String schemaName, String tableName, ReadDepthEnum readDepth){
-		if(connection instanceof OracleConnection)
-			((OracleConnection)connection).setRemarksReporting(true);
+	public Table grabTable(Connection connection, String catalogName, String tableName, ReadDepthEnum readDepth){
+		
 		Table table = new Table();
 		table.setModelName(tableName);
 		try{
 			DatabaseMetaData meta = connection.getMetaData();
-			ResultSet ret = meta.getTables("", schemaName, tableName, new String[] {"TABLE"});
+			ResultSet ret = meta.getTables(catalogName, "", tableName, new String[] {"TABLE"});
 			while(ret.next()){
 				String tn = ret.getString(TableMetaDataEnum.TABLE_NAME.getCode());
 				table.setModelName(tn);
-				table.setSchemaName(schemaName);
+				table.setSchemaName(catalogName);
 				if(ReadDepthEnum.DEEP.equals(readDepth) || ReadDepthEnum.MEDIUM.equals(readDepth)){
-					table.setPrimaryKeys(grabPrimaryKeys(connection, schemaName, tableName, readDepth));
-					table.setImportedKeys(grabImportedKeys(connection, schemaName, tableName, readDepth));
-					table.setExportedKeys(grabExportedKeys(connection, schemaName, tableName, readDepth));
+					table.setPrimaryKeys(grabPrimaryKeys(connection, catalogName, tableName, readDepth));
+					table.setImportedKeys(grabImportedKeys(connection, catalogName, tableName, readDepth));
+					table.setExportedKeys(grabExportedKeys(connection, catalogName, tableName, readDepth));
 					try{
 						table.setColumnlist(getColumnList(table, connection, readDepth));
 					}catch(Exception e){
@@ -166,12 +168,7 @@ public class CatalogDBGrabberImpl implements CatalogGrabber {
 						table.setComments(ret.getString(TableMetaDataEnum.REMARKS.getCode()));
 					}
 				}
-				
-				if(tn.startsWith("BIN$"))
-					table.setDeleted(true);
-				else
-					RESERVED_WORDS_UTIL.addTableName(schemaName, tn);
-				
+				RESERVED_WORDS_UTIL.addTableName(catalogName, tn);
 			}
 		}catch(Exception e){
 			e.printStackTrace();
@@ -322,17 +319,17 @@ public class CatalogDBGrabberImpl implements CatalogGrabber {
 	/**
 	 * 
 	 * @param connection
-	 * @param schemaName
+	 * @param catalogName
 	 * @param tableName
 	 * @param readDepth
 	 * @return
 	 * @throws SQLException
 	 */
-	public List<PrimaryKey> grabPrimaryKeys(Connection connection, String schemaName, 
+	public List<PrimaryKey> grabPrimaryKeys(Connection connection, String catalogName, 
 			String tableName, ReadDepthEnum readDepth) throws SQLException{
 		List<PrimaryKey> pkList = new ArrayList<PrimaryKey>();
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
-		ResultSet pkRs = databaseMetaData.getPrimaryKeys("", schemaName, tableName);
+		ResultSet pkRs = databaseMetaData.getPrimaryKeys(catalogName, "", tableName);
 		while(pkRs.next()){
 			PrimaryKey pk = new PrimaryKey();
 			pk.setColumnName(pkRs.getString(PKMetaDataEnum.COLUMN_NAME.getCode()));
@@ -355,15 +352,15 @@ public class CatalogDBGrabberImpl implements CatalogGrabber {
 		return pkList;
 	}
 	
-	public List<ForeignKey> grabImportedKeys(Connection connection, String schemaName, String tableName, ReadDepthEnum readDepth) throws SQLException{
+	public List<ForeignKey> grabImportedKeys(Connection connection, String catalogName, String tableName, ReadDepthEnum readDepth) throws SQLException{
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
-		ResultSet fkRs = databaseMetaData.getImportedKeys("", schemaName, tableName);
+		ResultSet fkRs = databaseMetaData.getImportedKeys(catalogName, "", tableName);
 		return readFksFromRS(fkRs, true, readDepth);
 	}
 	
-	public List<ForeignKey> grabExportedKeys(Connection connection, String schemaName, String tableName, ReadDepthEnum readDepth) throws SQLException{
+	public List<ForeignKey> grabExportedKeys(Connection connection, String catalogName, String tableName, ReadDepthEnum readDepth) throws SQLException{
 		DatabaseMetaData databaseMetaData = connection.getMetaData();
-		ResultSet fkRs = databaseMetaData.getExportedKeys("", schemaName, tableName);
+		ResultSet fkRs = databaseMetaData.getExportedKeys(catalogName, "", tableName);
 		return readFksFromRS(fkRs, false, readDepth);
 	}
 	
@@ -405,9 +402,9 @@ public class CatalogDBGrabberImpl implements CatalogGrabber {
 		
 		DatabaseMetaData metaData = connection.getMetaData();
 		if(metaData != null){
-			ResultSet rs = metaData.getSchemas();
+			ResultSet rs = metaData.getCatalogs();
 			while(rs.next()){
-				String cat = rs.getString("TABLE_SCHEM");
+				String cat = rs.getString(CatalogMetadataEnum.TABLE_CAT.getCode());
 				schemaNames.add(cat);
 			}
 			if(rs != null){
