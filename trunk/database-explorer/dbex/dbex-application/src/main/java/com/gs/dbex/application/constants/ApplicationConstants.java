@@ -23,7 +23,7 @@ public interface ApplicationConstants {
 	String PRIVATE_DATA_DIR = "private_data/";
 	
 	String IMAGE_PATH = "/images/";
-	String EDITOR_IMAGE_PATH = "/images/com/gs/oracle/comps/editor/";
+	String EDITOR_IMAGE_PATH = "/images/com/gs/dbex/sql/editor/";
 	String QUERY_IMAGE_PATH = "/images/query/";
 	String DATA_DIR = "./data/";
 	String CONNECTION_DATA_FILE = DATA_DIR

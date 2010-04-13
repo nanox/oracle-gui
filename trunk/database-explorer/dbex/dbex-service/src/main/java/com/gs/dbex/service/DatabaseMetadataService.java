@@ -5,6 +5,7 @@ package com.gs.dbex.service;
 
 import java.util.Set;
 
+import com.gs.dbex.common.enums.ReadDepthEnum;
 import com.gs.dbex.common.exception.DbexException;
 import com.gs.dbex.model.cfg.ConnectionProperties;
 import com.gs.dbex.model.db.Database;
@@ -21,7 +22,9 @@ public interface DatabaseMetadataService {
 	
 	public Set<Schema> getSchemaDetails(ConnectionProperties connectionProperties, String schemaName);
 	
-	public Database getDatabaseDetails(ConnectionProperties connectionProperties, String schemaName) throws DbexException;
+	public Database getDatabaseDetails(ConnectionProperties connectionProperties, String schemaName, ReadDepthEnum readDepthEnum) throws DbexException;
+	
+	public Database getDatabaseDetails(ConnectionProperties connectionProperties, ReadDepthEnum readDepthEnum) throws DbexException;
 	
 	public Table getTableDetails(ConnectionProperties connectionProperties, String schemaName, String tableName);
 	

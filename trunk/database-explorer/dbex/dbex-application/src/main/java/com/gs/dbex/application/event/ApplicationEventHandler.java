@@ -39,9 +39,12 @@ import com.gs.dbex.application.tab.ButtonTabComponent;
 import com.gs.dbex.application.util.DisplayTypeEnum;
 import com.gs.dbex.application.util.DisplayUtils;
 import com.gs.dbex.common.enums.ReadDepthEnum;
+import com.gs.dbex.common.exception.DbexException;
 import com.gs.dbex.core.oracle.OracleDbGrabber;
+import com.gs.dbex.model.cfg.ConnectionProperties;
 import com.gs.dbex.model.db.Table;
 import com.gs.dbex.service.DatabaseConnectionService;
+import com.gs.dbex.service.DbexServiceBeanFactory;
 import com.gs.dbex.service.impl.DatabaseConnectionServiceImpl;
 import com.gs.utils.swing.window.WindowUtil;
 import com.gs.utils.text.StringUtil;
@@ -76,11 +79,25 @@ public class ApplicationEventHandler implements ActionListener,
 					public void run() {
 						final ConnectionDialog dlg = (ConnectionDialog) sourceForm;
 						dlg.disableButtons(true);
-						DatabaseExplorerFrame frame = (DatabaseExplorerFrame) parent;
+						DatabaseConnectionService connectionService = DbexServiceBeanFactory.getBeanFactory().getDatabaseConnectionService();
+						boolean connected = false;
+						if(connectionService != null){
+							try {
+								connected = connectionService.connectToDatabase((ConnectionProperties)getData());
+							} catch (DbexException e) {
+								DisplayUtils.displayMessage(e.getExceptionMessage());
+							}
+						}
+						final DatabaseExplorerFrame frame = (DatabaseExplorerFrame) parent;
 						frame.getStatusBar().getCurrentStatusLabel().setIcon(new ImageIcon(this.getClass()
 								.getResource(ApplicationConstants.IMAGE_PATH + "loading.gif")));
 						frame.getStatusBar().getCurrentStatusLabel().setText("Connecting to Database. Please wait...");
-						
+						if(connected){
+							DatabaseViewerInternalFrame iFrame = new DatabaseViewerInternalFrame(frame, (ConnectionProperties) data);
+							iFrame.setVisible(true);
+							frame.getMainDesktopPane().add(iFrame);
+							((ConnectionDialog)getSourceForm()).dispose();
+						}
 						frame.getStatusBar().getCurrentStatusLabel().setIcon(null);
 						frame.getStatusBar().getCurrentStatusLabel().setText("");
 						
