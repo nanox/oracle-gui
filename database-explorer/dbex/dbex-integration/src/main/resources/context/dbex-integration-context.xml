@@ -30,6 +30,7 @@
 		<property name="mysqlDatabaseMetadataIntegration" ref="mysqlDatabaseMetadataIntegration"></property>
 		<property name="oracleDatabaseConnectionIntegration" ref="oracleDatabaseConnectionIntegration"></property>
 		<property name="mysqlDatabaseConnectionIntegration" ref="mysqlDatabaseConnectionIntegration"></property>
+		<property name="castorXmlReaderIntegration" ref="castorXmlReaderIntegration"></property>
 	</bean>
 	
 	<bean id="oracleDatabaseConnectionHelper"
@@ -46,6 +47,10 @@
 	
 	<bean id="schemaDBGrabber"
 		class="com.gs.dbex.core.schema.grabber.SchemaDBGrabberImpl">
+	</bean>
+	
+	<bean id="castorXmlReaderIntegration"
+		class="com.gs.dbex.integration.impl.castor.CastorXmlReaderIntegration">
 	</bean>
 	
 </beans>

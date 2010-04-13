@@ -31,10 +31,12 @@ import com.gs.dbex.application.tree.DatabaseDirectoryTree;
 import com.gs.dbex.application.util.DisplayTypeEnum;
 import com.gs.dbex.application.util.DisplayUtils;
 import com.gs.dbex.common.enums.ReadDepthEnum;
+import com.gs.dbex.common.exception.DbexException;
 import com.gs.dbex.model.cfg.ConnectionProperties;
 import com.gs.dbex.model.db.Database;
 import com.gs.dbex.model.db.Schema;
 import com.gs.dbex.model.db.Table;
+import com.gs.dbex.service.DbexServiceBeanFactory;
 
 /**
  * @author sabuj.das
@@ -83,11 +85,13 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 		logger.info("STRT: Reading Database. " + readDepth.getCode());
 		Database db = null;
 		if(connectionProperties != null){
-			/*try {
-				db = service.getDatabase(connectionProperties, readDepth);
-			} catch (ApplicationException e) {
+			try {
+				db = DbexServiceBeanFactory.getBeanFactory().getDatabaseMetadataService()
+				.getDatabaseDetails(connectionProperties, "", ReadDepthEnum.SHALLOW);
+			
+			} catch (DbexException e) {
 				logger.error(e);
-			}*/
+			}
 		}
 		logger.info("DONE: Reading Database.");
 		if(db != null){

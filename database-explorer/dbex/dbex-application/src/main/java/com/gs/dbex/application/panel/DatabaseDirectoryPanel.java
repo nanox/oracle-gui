@@ -692,7 +692,7 @@ public class DatabaseDirectoryPanel extends JPanel implements ActionListener,
 
 	public void reloadDatabaseTree(){
 		try {
-			Database db = DbexServiceBeanFactory.getBeanFactory().getDatabaseMetadataService().getDatabaseDetails(connectionProperties, "");
+			Database db = DbexServiceBeanFactory.getBeanFactory().getDatabaseMetadataService().getDatabaseDetails(connectionProperties, "", ReadDepthEnum.SHALLOW);
 			databaseDirectoryTree.reload(db);
 			if(mouseClickedTreePath != null){
 				databaseDirectoryTree.expandPath(mouseClickedTreePath);

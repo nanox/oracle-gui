@@ -23,6 +23,37 @@ public class DatabaseMetadataServiceImpl implements DatabaseMetadataService {
 		return null;
 	}
 
+	public Database getDatabaseDetails(
+			ConnectionProperties connectionProperties, String schemaName,
+			ReadDepthEnum readDepthEnum) throws DbexException {
+		if(connectionProperties == null){
+			throw new DbexException(ErrorCodeConstants.CANNOT_CONNECT_DB);
+		}
+		DatabaseMetadataIntegration integration = IntegrationBeanFactory.getBeanFactory()
+			.getDatabaseMetadataIntegration(DatabaseTypeEnum.getDatabaseTypeEnum(connectionProperties.getDatabaseType()));
+		if(integration == null){
+			
+			throw new DbexException(ErrorCodeConstants.UNSUPPORTED_OPERATION);
+		}
+		return integration.readDatabase(connectionProperties, ReadDepthEnum.SHALLOW);
+	}
+
+	public Database getDatabaseDetails(
+			ConnectionProperties connectionProperties,
+			ReadDepthEnum readDepthEnum) throws DbexException {
+		if(connectionProperties == null){
+			throw new DbexException(ErrorCodeConstants.CANNOT_CONNECT_DB);
+		}
+		DatabaseMetadataIntegration integration = IntegrationBeanFactory.getBeanFactory()
+			.getDatabaseMetadataIntegration(DatabaseTypeEnum.getDatabaseTypeEnum(connectionProperties.getDatabaseType()));
+		if(integration == null){
+			
+			throw new DbexException(ErrorCodeConstants.UNSUPPORTED_OPERATION);
+		}
+		return integration.readDatabase(connectionProperties, ReadDepthEnum.SHALLOW);
+	}
+
+	
 	public Database getAllTableDetails(ConnectionProperties connectionProperties) {
 		// TODO Auto-generated method stub
 		return null;
@@ -58,5 +89,6 @@ public class DatabaseMetadataServiceImpl implements DatabaseMetadataService {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
 
 }

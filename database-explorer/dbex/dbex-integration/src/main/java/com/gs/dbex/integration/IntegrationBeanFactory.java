@@ -17,6 +17,7 @@ public final class IntegrationBeanFactory {
 	private DatabaseMetadataIntegration mysqlDatabaseMetadataIntegration;
 	private DatabaseConnectionIntegration oracleDatabaseConnectionIntegration;
 	private DatabaseConnectionIntegration mysqlDatabaseConnectionIntegration;
+	private XmlReaderIntegration castorXmlReaderIntegration;
 	
 	private IntegrationBeanFactory() {
 		
@@ -80,6 +81,15 @@ public final class IntegrationBeanFactory {
 	public void setMysqlDatabaseConnectionIntegration(
 			DatabaseConnectionIntegration mysqlDatabaseConnectionIntegration) {
 		this.mysqlDatabaseConnectionIntegration = mysqlDatabaseConnectionIntegration;
+	}
+
+	public XmlReaderIntegration getCastorXmlReaderIntegration() {
+		return castorXmlReaderIntegration;
+	}
+
+	public void setCastorXmlReaderIntegration(
+			XmlReaderIntegration castorXmlReaderIntegration) {
+		this.castorXmlReaderIntegration = castorXmlReaderIntegration;
 	}
 
 	
