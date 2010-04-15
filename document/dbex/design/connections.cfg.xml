@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?><!--comment-->
+<connections>
+	<connection name="SomeName001" db-type="SomeDb001">
+		<database-cfg>
+			<driver-cfg type="thin" class-name="com.somedriver.Driver001">
+				<file name="SomeDriverFile001">
+					<path>d:/somePath001/</path>
+				</file>
+				<driver-class-list>
+					<class>com.somedriver.Driver001</class>
+					<class>com.somedriver.Driver002</class>
+					<class>com.somedriver.Driver003</class>
+				</driver-class-list>
+			</driver-cfg>
+			<host-name>somehost</host-name>
+			<port-number>1234</port-number>
+			<user-name>someuser</user-name>
+			<password>password</password>
+			<save-password>true</save-password>
+			<storage-type>CATALOG</storage-type>
+			<sid-info use-sid="true">
+				<SID>XE</SID>
+				<SERVICE-NAME>SOMESERVICE</SERVICE-NAME>
+			</sid-info>
+		</database-cfg>
+	</connection>
+</connections>
