@@ -22,6 +22,7 @@ public class ApplicationCommonContext{
 	private static final String JDBC_DRIVER_DIR = DRIVER_MGR_DIR + "jdbc-driver/";
 	private static final String DRIVER_MGR_DATA_FILE = "jdbc-driver-manager.xml";
 	private static final String USER_DATA_DIR = "user_data/";
+	private static final String APP_CONF_DIR = "app-conf/";
 
 	private static ApplicationCommonContext instance;
 	
@@ -43,22 +44,24 @@ public class ApplicationCommonContext{
 		instance = new ApplicationCommonContext();
 	}
 	
+	/* -----  Context Constants   ------------------------------------------ */
+	private final String errorMsgConstFileName = ApplicationConstants.DEFAULT_APP_DATA_DIR
+		+ "properties/ErrorMessage.properties";
+	private final Properties errorMessageProperties = ApplicationPropertyLoader.loadProperties(getErrorMsgConstFileName());
+	private final Map<String, ConnectionProperties> connectionPropertiesMap = new HashMap<String, ConnectionProperties>();
+	private final String connectionConfigFileName = ApplicationConstants.DEFAULT_APP_DATA_DIR 
+		+ APP_CONF_DIR + "connection-properties.xml";
+	
 	/* -----  Context Variables   ------------------------------------------ */
 	
 	
 	private String applicationDataDirName = ApplicationConstants.DEFAULT_APP_DATA_DIR;
 	private String driverLoaderLastAccessedDirName = "./";
-
 	private String driverManagerDir = getApplicationDataDirName() + DRIVER_MGR_DIR;
 	private String jdbcDriverDir = getApplicationDataDirName() + JDBC_DRIVER_DIR;
 	private String driverMgrDataFileName = getDriverManagerDir() + DRIVER_MGR_DATA_FILE;
 	
-	private final String errorMsgConstFileName = ApplicationConstants.DEFAULT_APP_DATA_DIR
-		+ "properties/ErrorMessage.properties";
-		
-	private final Properties errorMessageProperties = ApplicationPropertyLoader.loadProperties(getErrorMsgConstFileName());
 	
-	private final Map<String, ConnectionProperties> connectionPropertiesMap = new HashMap<String, ConnectionProperties>();
 	
 	/* -----  get/set methods for Context Variables  ----------------------- */
 	
@@ -102,6 +105,10 @@ public class ApplicationCommonContext{
 
 	public Map<String, ConnectionProperties> getConnectionPropertiesMap() {
 		return connectionPropertiesMap;
+	}
+
+	public String getConnectionConfigFileName() {
+		return connectionConfigFileName;
 	}
 
 

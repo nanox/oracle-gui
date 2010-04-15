@@ -81,16 +81,24 @@ public class ConnectionDialog extends JDialog implements ActionListener{
         connectionNameComboBox = new JComboBox();
         jToolBar1 = new JToolBar();
         newConnectionPropButton = new JButton();
+        newConnectionPropButton.addActionListener(this);
         openConnectionPropButton = new JButton();
+        openConnectionPropButton.addActionListener(this);
         jSeparator3 = new JToolBar.Separator();
         loadConnectionPropButton = new JButton();
+        loadConnectionPropButton.addActionListener(this);
         jSeparator1 = new JToolBar.Separator();
         saveConnectionPropButton = new JButton();
+        saveConnectionPropButton.addActionListener(this);
         saveAsConnectionPropButton = new JButton();
+        saveAsConnectionPropButton.addActionListener(this);
         saveAllConnectionPropButton = new JButton();
+        saveAllConnectionPropButton.addActionListener(this);
         jSeparator2 = new JToolBar.Separator();
         clearConnectionPropButton = new JButton();
+        clearConnectionPropButton.addActionListener(this);
         deleteConnectionPropButton = new JButton();
+        deleteConnectionPropButton.addActionListener(this);
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Connect");
