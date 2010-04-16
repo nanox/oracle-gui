@@ -18,18 +18,11 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	 */
 	private static final long serialVersionUID = 2717753646686919478L;
 	
-	private String hostName;
-	private Integer portNumber;
-	private String driverClassName;
 	private String connectionName;
-	private String userName;
-	private String password;
-	private String connectionUrl;
 	private String databaseType;
-	private String sidServiceName;
-	private String schemaName;
-
-	private String databaseStorageType;
+	private String connectionUrl;
+	private Integer displayOrder;
+	private DatabaseConfiguration databaseConfiguration;
 	
 	private transient DataSource dataSource;
 
@@ -43,33 +36,7 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	}
 
 	
-	public String getDatabaseStorageType() {
-		return databaseStorageType;
-	}
 
-	public void setDatabaseStorageType(String databaseStorageType) {
-		this.databaseStorageType = databaseStorageType;
-	}
-
-	public String getSchemaName() {
-		return schemaName;
-	}
-
-	public void setSchemaName(String schemaName) {
-		this.schemaName = schemaName;
-	}
-
-	public String getSidServiceName() {
-		return sidServiceName;
-	}
-
-	/**
-	 * This property is for oracle.
-	 * @param sidServiceName
-	 */
-	public void setSidServiceName(String sidServiceName) {
-		this.sidServiceName = sidServiceName;
-	}
 
 	/**
 	 * @return the connectionName
@@ -85,33 +52,7 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 		this.connectionName = connectionName;
 	}
 
-	/**
-	 * @return the userName
-	 */
-	public String getUserName() {
-		return userName;
-	}
 
-	/**
-	 * @param userName the userName to set
-	 */
-	public void setUserName(String userName) {
-		this.userName = userName;
-	}
-
-	/**
-	 * @return the password
-	 */
-	public String getPassword() {
-		return password;
-	}
-
-	/**
-	 * @param password the password to set
-	 */
-	public void setPassword(String password) {
-		this.password = password;
-	}
 
 	/**
 	 * @return the connectionUrl
@@ -155,29 +96,20 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 		this.dataSource = dataSource;
 	}
 
-	public String getHostName() {
-		return hostName;
+	public Integer getDisplayOrder() {
+		return displayOrder;
 	}
 
-	public void setHostName(String hostName) {
-		this.hostName = hostName;
+	public void setDisplayOrder(Integer displayOrder) {
+		this.displayOrder = displayOrder;
 	}
 
-	public Integer getPortNumber() {
-		return portNumber;
+	public DatabaseConfiguration getDatabaseConfiguration() {
+		return databaseConfiguration;
 	}
 
-	public void setPortNumber(Integer portNumber) {
-		this.portNumber = portNumber;
+	public void setDatabaseConfiguration(DatabaseConfiguration databaseConfiguration) {
+		this.databaseConfiguration = databaseConfiguration;
 	}
-
-	public String getDriverClassName() {
-		return driverClassName;
-	}
-
-	public void setDriverClassName(String driverClassName) {
-		this.driverClassName = driverClassName;
-	}
-
 	
 }
