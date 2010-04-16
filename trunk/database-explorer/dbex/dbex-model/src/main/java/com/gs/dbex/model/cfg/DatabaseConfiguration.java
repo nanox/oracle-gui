@@ -9,9 +9,15 @@ package com.gs.dbex.model.cfg;
  */
 public class DatabaseConfiguration {
 
-	private String databaseTypeCode;
-	private String databaseTypeName;
-	private String databaseTypeDescription;
-	//private 
+	private String hostName;
+	private Integer portNumber;
+	private String driverClassName;
+	private String userName;
+	private String password;
+	private String storageType;
+	private String schemaName;
 	
+	public DatabaseConfiguration() {
+		// TODO Auto-generated constructor stub
+	}
 }

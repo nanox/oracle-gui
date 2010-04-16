@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?><!--comment-->
 <connections>
-	<connection name="SomeName001" db-type="SomeDb001">
+	<connection name="SomeName001" db-type="SomeDb001"
+		display-order="1">
 		<database-cfg>
 			<driver-cfg type="thin" class-name="com.somedriver.Driver001">
-				<file name="SomeDriverFile001">
+				<driver-file name="SomeDriverFile001">
 					<path>d:/somePath001/</path>
-				</file>
+				</driver-file>
 				<driver-class-list>
-					<class>com.somedriver.Driver001</class>
-					<class>com.somedriver.Driver002</class>
-					<class>com.somedriver.Driver003</class>
+					<driver-class>com.somedriver.Driver001</driver-class>
+					<driver-class>com.somedriver.Driver002</driver-class>
+					<driver-class>com.somedriver.Driver003</driver-class>
 				</driver-class-list>
 			</driver-cfg>
 			<host-name>somehost</host-name>
@@ -22,6 +23,7 @@
 				<SID>XE</SID>
 				<SERVICE-NAME>SOMESERVICE</SERVICE-NAME>
 			</sid-info>
+			<schema-name>Some_Schema</schema-name>
 		</database-cfg>
 	</connection>
 </connections>
