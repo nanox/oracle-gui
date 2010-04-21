@@ -7,6 +7,7 @@
 				<driver-file name="SomeDriverFile001">
 					<path>d:/somePath001/</path>
 				</driver-file>
+				
 				<driver-class-list>
 					<driver-class>com.somedriver.Driver001</driver-class>
 					<driver-class>com.somedriver.Driver002</driver-class>
