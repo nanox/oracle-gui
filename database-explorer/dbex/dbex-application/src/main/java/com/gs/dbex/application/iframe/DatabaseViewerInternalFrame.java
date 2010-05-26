@@ -43,6 +43,12 @@ import com.gs.dbex.service.DbexServiceBeanFactory;
  *
  */
 public class DatabaseViewerInternalFrame extends JInternalFrame implements WindowListener{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 6258515577551371086L;
+
+
 	private static final Logger logger = Logger.getLogger(DatabaseViewerInternalFrame.class);
 	
 	
