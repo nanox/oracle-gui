@@ -8,7 +8,7 @@ import java.awt.Component;
 import javax.swing.JOptionPane;
 
 /**
- * @author Green Moon
+ * @author sabuj
  *
  */
 public class DisplayUtils {
