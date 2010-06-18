@@ -60,7 +60,7 @@ public class DatabaseExplorerFrame extends JFrame implements WindowListener{
 	
 	private void setInitialProperties(){
 		setSize(800, 600);
-		setTitle("Oracle GUI");
+		setTitle("Database Explorer");
 		setIconImage((new ImageIcon(DatabaseExplorerFrame.class
 				.getResource(ApplicationConstants.IMAGE_PATH + "Oracle-Gui.gif")))
 				.getImage());
@@ -68,7 +68,7 @@ public class DatabaseExplorerFrame extends JFrame implements WindowListener{
 	}
 	
 	private void initComponents() {
-        java.awt.GridBagConstraints gridBagConstraints;
+        GridBagConstraints gridBagConstraints;
 
         mainPanel = new JPanel();
         mainToolBar = new JToolBar();

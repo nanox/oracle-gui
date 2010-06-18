@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.gs.dbex.application.connection;
+package com.gs.dbex.application.dlg;
 
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -27,6 +27,8 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
@@ -70,7 +72,7 @@ public class ConnectionDialog extends JDialog implements ActionListener{
         cancelButton = new JButton();
         testButton = new JButton();
         jLabel10 = new JLabel();
-        statusLabel = new JLabel();
+        schemaNameTextField = new JTextField();
         jLabel9 = new JLabel();
         jLabel12 = new JLabel();
         catalogRadioButton = new JRadioButton();
@@ -194,7 +196,7 @@ public class ConnectionDialog extends JDialog implements ActionListener{
         jLabel5.setText("Connection Name");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         getContentPane().add(jLabel5, gridBagConstraints);
@@ -202,14 +204,14 @@ public class ConnectionDialog extends JDialog implements ActionListener{
         jLabel6.setText("Database Type");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new Insets(6, 2, 2, 2);
         getContentPane().add(jLabel6, gridBagConstraints);
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 2;
+        gridBagConstraints.gridy = 3;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = GridBagConstraints.EAST;
@@ -236,7 +238,7 @@ public class ConnectionDialog extends JDialog implements ActionListener{
         gridBagConstraints.insets = new Insets(2, 2, 4, 2);
         getContentPane().add(testButton, gridBagConstraints);
 
-        jLabel10.setText("Status");
+        jLabel10.setText("Schema/Catalog");
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 12;
@@ -246,17 +248,17 @@ public class ConnectionDialog extends JDialog implements ActionListener{
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         getContentPane().add(jLabel10, gridBagConstraints);
 
-        statusLabel.setHorizontalAlignment(SwingConstants.LEFT);
+        
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 12;
-        gridBagConstraints.gridwidth = 2;
+        gridBagConstraints.gridwidth = 1;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
-        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.weighty = 0.0;
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
-        getContentPane().add(statusLabel, gridBagConstraints);
+        getContentPane().add(schemaNameTextField, gridBagConstraints);
 
         jLabel9.setText("Port");
         gridBagConstraints = new GridBagConstraints();
@@ -324,12 +326,13 @@ public class ConnectionDialog extends JDialog implements ActionListener{
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 3;
+        gridBagConstraints.gridy = 2;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         connectionNameComboBox.addActionListener(this);
+        connectionNameComboBox.setEditable(true);
         getContentPane().add(connectionNameComboBox, gridBagConstraints);
 
         jToolBar1.setFloatable(false);
@@ -417,6 +420,11 @@ public class ConnectionDialog extends JDialog implements ActionListener{
 
     
     public static void main(String args[]) {
+    	try {
+			UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		} 
         EventQueue.invokeLater(new Runnable() {
             public void run() {
                 ConnectionDialog dialog = new ConnectionDialog(new JFrame(), true);
@@ -463,7 +471,7 @@ public class ConnectionDialog extends JDialog implements ActionListener{
     private JButton saveAsConnectionPropButton;
     private JButton saveConnectionPropButton;
     private JRadioButton schemaRadioButton;
-    private JLabel statusLabel;
+    private JTextField schemaNameTextField;
     private ButtonGroup storageTypeButtonGroup;
     private JButton testButton;
     private JTextField uidTextField;
@@ -480,7 +488,7 @@ public class ConnectionDialog extends JDialog implements ActionListener{
 		handler.setParent(getParent());
 		handler.setSourceForm(this);
 
-		ConnectionProperties connectionProperties = new ConnectionProperties();
+		/*ConnectionProperties connectionProperties = new ConnectionProperties();
 		connectionProperties.setConnectionName("TestOracle");
 		connectionProperties.setConnectionUrl("jdbc:oracle:thin:hr/hr@localhost:1521/XE");
 		connectionProperties.setDatabaseType(DatabaseTypeEnum.ORACLE.getCode());
@@ -492,7 +500,7 @@ public class ConnectionDialog extends JDialog implements ActionListener{
 		
 		handler.setData(connectionProperties);
 		handler.setSourceForm(this);
-		handler.actionPerformed(evt);
+		handler.actionPerformed(evt);*/
     }
 
     private void populateOracleValues(){

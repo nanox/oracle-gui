@@ -461,12 +461,10 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
                 }
             }
         } catch (MalformedURLException ex) {
-            java.util.logging.Logger.getLogger(JdbcDriverManagerDialog.class.getName()).log(Level.SEVERE, null, ex);
+            logger.error(ex);
         } catch (IOException ex) {
-            java.util.logging.Logger.getLogger(JdbcDriverManagerDialog.class.getName()).log(Level.SEVERE, null, ex);
+        	logger.error(ex);
         }
-
-
         defaultTreeModel = new DefaultTreeModel(topNode);
         driverClassTree.setModel(defaultTreeModel);
     }
