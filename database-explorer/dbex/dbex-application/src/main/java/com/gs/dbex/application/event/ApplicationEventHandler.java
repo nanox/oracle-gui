@@ -23,9 +23,9 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.fife.plaf.Office2003.Office2003LookAndFeel;
 import org.fife.plaf.OfficeXP.OfficeXPLookAndFeel;
 
-import com.gs.dbex.application.connection.ConnectionDialog;
 import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.application.constants.GuiCommandConstants;
+import com.gs.dbex.application.dlg.ConnectionDialog;
 import com.gs.dbex.application.dlg.OpenResourceDialog;
 import com.gs.dbex.application.dlg.SearchObjectDialog;
 import com.gs.dbex.application.dlg.StyleConfigurationDialog;

@@ -35,6 +35,11 @@
 			<artifactId>dbex-application</artifactId>
 			<version>${release.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>com.gs.dbex</groupId>
+			<artifactId>dbex-historyMgr</artifactId>
+			<version>${release.version}</version>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -43,4 +48,85 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.0</version>
+				<configuration>
+					<source>${jdk.version}</source>
+					<target>${jdk.version}</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>com.gs.dbex.launcher.DatabaseExplorerLauncher</mainClass> 
+							<addClasspath>true</addClasspath>
+							<classpathPrefix>lib/</classpathPrefix>
+							
+						</manifest>
+						<!-- <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile> 
+						<classpathLayoutType>repository</classpathLayoutType> -->
+					</archive>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>test-jar</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			
+			<plugin>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<!-- Coping JAR to release directory-->
+					<execution>
+						<id>defaultcopy</id>
+						<phase>package</phase>
+						<configuration>
+							<tasks>
+								<!-- Coping JAR to release directory-->
+								<copy todir="${release.dir}/${project.title}_${release.version}/"
+									overwrite="true" failonerror="true" includeEmptyDirs="true">
+									<fileset dir="target">
+										<include name="dbex-launcher-${release.version}.jar" />
+									</fileset>
+								</copy>
+								
+							</tasks>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-dependency-plugin</artifactId>
+				<executions>
+				  <execution>
+					<id>copy-dependencies</id>
+					<phase>package</phase>
+					<goals>
+					  <goal>copy-dependencies</goal>
+					</goals>
+					<configuration>
+					  <outputDirectory>${release.dir}/${project.title}_${release.version}/lib/</outputDirectory>
+					  <overWriteReleases>false</overWriteReleases>
+					  <overWriteSnapshots>false</overWriteSnapshots>
+					  <overWriteIfNewer>true</overWriteIfNewer>
+					</configuration>
+				  </execution>
+				</executions>
+			  </plugin>
+		</plugins>
+	</build>
 </project>

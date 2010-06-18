@@ -19,7 +19,7 @@ import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
  */
 public class MysqlDatabaseConnectionHelper extends DatabaseConnectionHelper {
 
-	public DataSource createDataSource(ConnectionProperties connectionProperties)
+	/*public DataSource createDataSource(ConnectionProperties connectionProperties)
 			throws ClassNotFoundException, SQLException {
 		MysqlDataSource mysqlDataSource = new MysqlDataSource();
 		mysqlDataSource.setServerName(connectionProperties.getHostName());
@@ -80,6 +80,32 @@ public class MysqlDatabaseConnectionHelper extends DatabaseConnectionHelper {
 			}
 		}
 		return connected;
+	}*/
+	@Override
+	public DataSource createDataSource(ConnectionProperties connectionProperties)
+			throws ClassNotFoundException, SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String formConnectionURL(ConnectionProperties connectionProperties) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Connection getConnection(ConnectionProperties connectionProperties)
+			throws ClassNotFoundException, SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean testConnection(ConnectionProperties connectionProperties)
+			throws ClassNotFoundException, SQLException {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }
