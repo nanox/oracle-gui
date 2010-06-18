@@ -20,8 +20,35 @@ import com.gs.dbex.model.cfg.ConnectionProperties;
  */
 public class OracleDatabaseConnectionHelper extends DatabaseConnectionHelper {
 
+	@Override
+	public DataSource createDataSource(ConnectionProperties connectionProperties)
+			throws ClassNotFoundException, SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-	public DataSource createDataSource(	ConnectionProperties connectionProperties)
+	@Override
+	public String formConnectionURL(ConnectionProperties connectionProperties) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Connection getConnection(ConnectionProperties connectionProperties)
+			throws ClassNotFoundException, SQLException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean testConnection(ConnectionProperties connectionProperties)
+			throws ClassNotFoundException, SQLException {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+
+	/*public DataSource createDataSource(	ConnectionProperties connectionProperties)
 			throws ClassNotFoundException, SQLException {
 		OracleDataSource ds = new OracleDataSource();
 		ds.setDriverType("thin");
@@ -80,12 +107,12 @@ public class OracleDatabaseConnectionHelper extends DatabaseConnectionHelper {
 			if (conn != null) {
 				connected = true;
 			}
-		/*} catch (ClassNotFoundException e) {
+		} catch (ClassNotFoundException e) {
 			connected = false;
 			e.printStackTrace();
 		} catch (SQLException e) {
 			connected = false;
-			e.printStackTrace();*/
+			e.printStackTrace();
 		} finally {
 			if (conn != null) {
 				try {
@@ -96,6 +123,7 @@ public class OracleDatabaseConnectionHelper extends DatabaseConnectionHelper {
 			}
 		}
 		return connected;
-	}
+	}*/
+	
 
 }
