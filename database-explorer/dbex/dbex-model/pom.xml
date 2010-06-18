@@ -8,7 +8,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>dbex-model</artifactId>
-	<name>dbex-model</name>
+	<name>DBEx - Model</name>
 	<version>${release.version}</version>
 	<packaging>jar</packaging>
 

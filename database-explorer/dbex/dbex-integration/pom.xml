@@ -9,7 +9,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>dbex-integration</artifactId>
-	<name>dbex-integration</name>
+	<name>DBEx - Integration</name>
 	<version>${release.version}</version>
 	<packaging>jar</packaging>
 

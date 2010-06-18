@@ -8,7 +8,7 @@
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>dbex-common</artifactId>
-	<name>dbex-common</name>
+	<name>DBEx - Common</name>
 	<version>${release.version}</version>
 	<packaging>jar</packaging>
 	

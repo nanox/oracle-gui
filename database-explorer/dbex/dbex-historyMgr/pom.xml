@@ -7,8 +7,8 @@
 		<version>${release.version}</version>
 	</parent>
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>dbex-core</artifactId>
-	<name>DBEx - Core</name>
+	<artifactId>dbex-historyMgr</artifactId>
+	<name>DBEx - History Manager</name>
 	<version>${release.version}</version>
 	<packaging>jar</packaging>
 
@@ -23,29 +23,12 @@
 			<artifactId>dbex-model</artifactId>
 			<version>${release.version}</version>
 		</dependency>
-
+		
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>3.8.1</version>
 			<scope>test</scope>
 		</dependency>
-
-
-		<dependency>
-			<groupId>ojdbc</groupId>
-			<artifactId>ojdbc</artifactId>
-			<version>14</version>
-			<scope>system</scope>
-			<systemPath>${libs.dir}/ojdbc14.jar</systemPath>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql</artifactId>
-			<version>5.1.12</version>
-			<scope>system</scope>
-			<systemPath>${libs.dir}/mysql-connector-java-5.1.12.jar</systemPath>
-		</dependency>
-	
 	</dependencies>
 </project>
