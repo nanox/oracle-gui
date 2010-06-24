@@ -11,10 +11,15 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 import javax.swing.ButtonGroup;
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
@@ -33,6 +38,7 @@ import javax.swing.WindowConstants;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 
+import com.gs.dbex.application.connection.driver.JdbcDriverManagerDialog;
 import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.application.constants.GuiCommandConstants;
 import com.gs.dbex.application.event.ApplicationEventHandler;
@@ -43,11 +49,13 @@ import com.gs.dbex.model.cfg.ConnectionProperties;
  * @author sabuj.das
  *
  */
-public class ConnectionDialog extends JDialog implements ActionListener{
+public class ConnectionDialog extends JDialog implements ActionListener, ItemListener, KeyListener {
 
+	private Frame parentFrame;
 
     public ConnectionDialog(Frame parent, boolean modal) {
         super(parent, modal);
+        parentFrame = parent;
         initComponents();
     }
 
@@ -106,6 +114,8 @@ public class ConnectionDialog extends JDialog implements ActionListener{
         setTitle("Connect");
         setResizable(false);
         getContentPane().setLayout(new GridBagLayout());
+        setMinimumSize(new Dimension(480, 380));
+        setPreferredSize(getMinimumSize());
 
         jLabel1.setText("Driver Class Name");
         gridBagConstraints = new GridBagConstraints();
@@ -218,6 +228,11 @@ public class ConnectionDialog extends JDialog implements ActionListener{
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new Insets(6, 2, 2, 2);
         databaseTypeComboBox.addActionListener(this);
+        databaseTypeComboBox.setModel(new DefaultComboBoxModel(
+        		new String[]{DatabaseTypeEnum.ORACLE.getDescription(),
+            		DatabaseTypeEnum.MYSQL.getDescription(),
+            		DatabaseTypeEnum.MSSQL_2005.getDescription(),
+            		DatabaseTypeEnum.OTHER.getDescription()}));
         getContentPane().add(databaseTypeComboBox, gridBagConstraints);
 
         cancelButton.setText("Cancel");
@@ -313,6 +328,7 @@ public class ConnectionDialog extends JDialog implements ActionListener{
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
+        hostNameTextField.addKeyListener(this);
         getContentPane().add(hostNameTextField, gridBagConstraints);
 
         portNumberFormattedTextField.setFormatterFactory(new DefaultFormatterFactory(new NumberFormatter(new java.text.DecimalFormat("#0"))));
@@ -332,7 +348,9 @@ public class ConnectionDialog extends JDialog implements ActionListener{
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         connectionNameComboBox.addActionListener(this);
+        connectionNameComboBox.addKeyListener(this);
         connectionNameComboBox.setEditable(true);
+        connectionNameComboBox.setModel(new DefaultComboBoxModel());
         getContentPane().add(connectionNameComboBox, gridBagConstraints);
 
         jToolBar1.setFloatable(false);
@@ -477,12 +495,68 @@ public class ConnectionDialog extends JDialog implements ActionListener{
     private JTextField uidTextField;
     private JTextField urlTextField;
 
+    /* ----- Action Methods START----- */
+    @Override
     public void actionPerformed(ActionEvent e) {
 		if(e.getSource().equals(connectButton)){
 			connect(e);
-		}
+		} else if(e.getSource().equals(testButton)){
+			testConnection(e);
+		} else if(e.getSource().equals(cancelButton)){
+			cancel(e);
+		} else if(e.getSource().equals(driverManagerButton)){
+			manageDriver(e);
+		} else if(e.getSource().equals(newConnectionPropButton)){
+			newConnection(e);
+		} else if(e.getSource().equals(openConnectionPropButton)){
+			openConnection(e);
+		} else if(e.getSource().equals(loadConnectionPropButton)){
+			loadConnection(e);
+		} else if(e.getSource().equals(saveConnectionPropButton)){
+			saveConnection(e);
+		} else if(e.getSource().equals(saveAsConnectionPropButton)){
+			saveConnectionAs(e);
+		} else if(e.getSource().equals(saveAllConnectionPropButton)){
+			saveAllConnections(e);
+		} else if(e.getSource().equals(clearConnectionPropButton)){
+			clearConnection(e);
+		} else if(e.getSource().equals(deleteConnectionPropButton)){
+			deleteConnection(e);
+		} 
 	}
     
+    
+
+
+	@Override
+	public void itemStateChanged(ItemEvent e) {
+    	
+	}
+    
+    @Override
+	public void keyPressed(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		if(e.getSource().equals(connectionNameComboBox)){
+			String s = connectionNameComboBox.getSelectedItem().toString();
+			System.out.println(s);
+		} 
+	}
+
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+    
+	/* ----- Action Methods END----- */
+	
     private void connect(ActionEvent evt){
     	ApplicationEventHandler handler = new ApplicationEventHandler();
 		handler.setParent(getParent());
@@ -513,4 +587,76 @@ public class ConnectionDialog extends JDialog implements ActionListener{
 		testButton.setEnabled(enable);
 		
 	}
+
+	private void deleteConnection(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void clearConnection(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void saveAllConnections(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void saveConnectionAs(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void saveConnection(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void loadConnection(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void openConnection(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void newConnection(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void manageDriver(ActionEvent e) {
+		JdbcDriverManagerDialog driverManagerDialog = new JdbcDriverManagerDialog(parentFrame, true);
+		int option = driverManagerDialog.showDialog();
+		if(option == ApplicationConstants.APPLY_OPTION){
+			System.out.println("OK");
+		}
+	}
+
+
+	private void cancel(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+
+	private void testConnection(ActionEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+	
+
+
+	
 }
