@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -53,8 +54,10 @@ import javax.swing.tree.ExpandVetoException;
 
 import org.apache.log4j.Logger;
 
+import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.application.constants.ImageConstants;
 import com.gs.dbex.application.context.ApplicationCommonContext;
+import com.gs.dbex.common.enums.DatabaseTypeEnum;
 import com.gs.utils.io.FileRWUtil;
 import com.gs.utils.jdbc.driver.JdbcDriverManagerUtil;
 import com.gs.utils.swing.file.ExtensionFileFilter;
@@ -82,6 +85,8 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
             + JAR_IMG_NAME));
     public static final ImageIcon DRIVER_ICON = new ImageIcon(
             JdbcDriverManagerDialog.class.getResource(DRIVER_MGR_IMG_LOC + DRIVER_IMG_NAME));
+    
+    private int selectedOption = ApplicationConstants.CANCEL_OPTION;
 
     public JdbcDriverManagerDialog(Frame parent, boolean modal) {
         super(parent, modal);
@@ -117,13 +122,57 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
         loadingProgressBar = new JProgressBar();
         copyJarCheckBox = new JCheckBox();
         jPanel3 = new JPanel();
-        closeButton = new JButton();
+        okButton = new JButton();
         cancelButton = new JButton();
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Driver Manager");
         setMinimumSize(new Dimension(630, 530));
         setPreferredSize(getMinimumSize());
+        
+        addWindowListener(new WindowListener() {
+			
+			@Override
+			public void windowOpened(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowIconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeiconified(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowDeactivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowClosing(WindowEvent e) {
+				selectedOption = ApplicationConstants.CANCEL_OPTION;
+			}
+			
+			@Override
+			public void windowClosed(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+			@Override
+			public void windowActivated(WindowEvent e) {
+				// TODO Auto-generated method stub
+				
+			}
+		});
 
         mainPanel.setMinimumSize(new Dimension(620, 520));
         mainPanel.setPreferredSize(mainPanel.getMinimumSize());
@@ -142,8 +191,12 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
 
         databaseNameList.setModel(new AbstractListModel() {
 
-            String[] strings = {"Item 1", "Item 2", "Item 3", "Item 4",
-                "Item 5"};
+            String[] strings = {
+            		DatabaseTypeEnum.ORACLE.getDescription(),
+            		DatabaseTypeEnum.MYSQL.getDescription(),
+            		DatabaseTypeEnum.MSSQL_2005.getDescription(),
+            		DatabaseTypeEnum.OTHER.getDescription()
+            };
 
             public int getSize() {
                 return strings.length;
@@ -339,14 +392,14 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
         gridBagConstraints.insets = new Insets(4, 4, 4, 4);
         mainPanel.add(infoTabbedPane, gridBagConstraints);
 
-        closeButton.setText("Close");
-        closeButton.addActionListener(this);
+        okButton.setText("Ok");
+        okButton.addActionListener(this);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = GridBagConstraints.SOUTHEAST;
         gridBagConstraints.insets = new Insets(4, 4, 4, 4);
-        mainPanel.add(closeButton, gridBagConstraints);
+        mainPanel.add(okButton, gridBagConstraints);
 
         cancelButton.setText("Cancel");
         cancelButton.addActionListener(this);
@@ -361,6 +414,13 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
         pack();
     }
 
+    public int showDialog(){
+    	setVisible(true);
+    	return selectedOption;
+    }
+    
+    
+    
     // Code for dispatching events from components to event handlers.
     public void actionPerformed(ActionEvent evt) {
         if (evt.getSource() == cancelButton) {
@@ -369,8 +429,8 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
             JdbcDriverManagerDialog.this.loadJarButtonActionPerformed(evt);
         } else if (evt.getSource() == removeJarButton) {
             JdbcDriverManagerDialog.this.removeJarButtonActionPerformed(evt);
-        } else if (evt.getSource() == closeButton) {
-            JdbcDriverManagerDialog.this.closeButtonActionPerformed(evt);
+        } else if (evt.getSource() == okButton) {
+            JdbcDriverManagerDialog.this.okButtonActionPerformed(evt);
         }
     }
 
@@ -425,7 +485,8 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
     }
 
     private void cancelButtonActionPerformed(ActionEvent evt) {
-        // TODO add your handling code here:
+    	selectedOption = ApplicationConstants.CANCEL_OPTION;
+    	dispose();
     }
 
     private void loadJarButtonActionPerformed(ActionEvent evt) {
@@ -499,8 +560,9 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
         // TODO add your handling code here:
     }
 
-    private void closeButtonActionPerformed(ActionEvent evt) {
-        // TODO add your handling code here:
+    private void okButtonActionPerformed(ActionEvent evt) {
+        selectedOption = ApplicationConstants.APPLY_OPTION;
+        dispose();
     }
 
     /**
@@ -540,7 +602,7 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
     }
     // Variables declaration
     private JButton cancelButton;
-    private JButton closeButton;
+    private JButton okButton;
     private JCheckBox copyJarCheckBox;
     private JList databaseNameList;
     private JTextField databaseNameTextField;
