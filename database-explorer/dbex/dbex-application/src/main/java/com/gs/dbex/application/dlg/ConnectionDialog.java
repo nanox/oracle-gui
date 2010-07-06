@@ -17,6 +17,9 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -38,6 +41,8 @@ import javax.swing.WindowConstants;
 import javax.swing.text.DefaultFormatterFactory;
 import javax.swing.text.NumberFormatter;
 
+import org.apache.log4j.Logger;
+
 import com.gs.dbex.application.connection.driver.JdbcDriverManagerDialog;
 import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.application.constants.GuiCommandConstants;
@@ -49,18 +54,73 @@ import com.gs.dbex.model.cfg.ConnectionProperties;
  * @author sabuj.das
  *
  */
-public class ConnectionDialog extends JDialog implements ActionListener, ItemListener, KeyListener {
+public class ConnectionDialog extends JDialog implements ActionListener, ItemListener, KeyListener, PropertyChangeListener {
 
+	private static final Logger logger = Logger.getLogger(ConnectionDialog.class);
+	
+	private int selectedOption = ApplicationConstants.CANCEL_OPTION;
 	private Frame parentFrame;
+	private ConnectionProperties connectionProperties;
 
     public ConnectionDialog(Frame parent, boolean modal) {
         super(parent, modal);
         parentFrame = parent;
         initComponents();
+        
+        addWindowListener(new WindowListener() {
+			public void windowOpened(WindowEvent e) {
+			}
+			public void windowIconified(WindowEvent e) {
+			}
+			public void windowDeiconified(WindowEvent e) {
+			}
+			public void windowDeactivated(WindowEvent e) {
+			}
+			public void windowClosing(WindowEvent e) {
+				selectedOption = ApplicationConstants.CANCEL_OPTION;
+				logger.info("Closing Connection Dialog");
+			}
+			public void windowClosed(WindowEvent e) {
+				logger.info("Connection Dialog closed");
+			}
+			public void windowActivated(WindowEvent e) {
+			}
+		});
     }
-
     
-    private void initComponents() {
+    public int showDialog(){
+    	logger.info("Opening Connection Dialog");
+    	setVisible(true);
+    	return selectedOption;
+    }
+    
+    
+    
+    public int getSelectedOption() {
+		return selectedOption;
+	}
+
+	public void setSelectedOption(int selectedOption) {
+		this.selectedOption = selectedOption;
+	}
+
+	public Frame getParentFrame() {
+		return parentFrame;
+	}
+
+	public void setParentFrame(Frame parentFrame) {
+		this.parentFrame = parentFrame;
+	}
+
+	public ConnectionProperties getConnectionProperties() {
+		return connectionProperties;
+	}
+
+	public void setConnectionProperties(ConnectionProperties connectionProperties) {
+		this.connectionProperties = connectionProperties;
+	}
+
+	private void initComponents() {
         GridBagConstraints gridBagConstraints;
 
         storageTypeButtonGroup = new ButtonGroup();
@@ -72,8 +132,9 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         uidTextField = new JTextField();
         connectButton = new JButton();
         jLabel4 = new JLabel();
-        pwdPasswordField1 = new JPasswordField();
+        pwdPasswordField = new JPasswordField();
         driverManagerButton = new JButton();
+        driverManagerButton.setEnabled(false); // TODO: Need to remove after implementing the DriverManager
         jLabel5 = new JLabel();
         jLabel6 = new JLabel();
         databaseTypeComboBox = new JComboBox();
@@ -81,6 +142,7 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         testButton = new JButton();
         jLabel10 = new JLabel();
         schemaNameTextField = new JTextField();
+        serviceNameTextField = new JTextField();
         jLabel9 = new JLabel();
         jLabel12 = new JLabel();
         catalogRadioButton = new JRadioButton();
@@ -89,7 +151,7 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         hostNameTextField = new JTextField();
         portNumberFormattedTextField = new JFormattedTextField();
         connectionNameComboBox = new JComboBox();
-        jToolBar1 = new JToolBar();
+        connectionDetailToolBar = new JToolBar();
         newConnectionPropButton = new JButton();
         newConnectionPropButton.addActionListener(this);
         openConnectionPropButton = new JButton();
@@ -109,12 +171,19 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         clearConnectionPropButton.addActionListener(this);
         deleteConnectionPropButton = new JButton();
         deleteConnectionPropButton.addActionListener(this);
+        
+        hostNameTextField.addKeyListener(this);
+        portNumberFormattedTextField.addKeyListener(this);
+        uidTextField.addKeyListener(this);
+        pwdPasswordField.addKeyListener(this);
+        serviceNameTextField.addKeyListener(this);
+        schemaNameTextField.addKeyListener(this);
 
         setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Connect");
         setResizable(false);
         getContentPane().setLayout(new GridBagLayout());
-        setMinimumSize(new Dimension(480, 380));
+        setMinimumSize(new Dimension(500, 400));
         setPreferredSize(getMinimumSize());
 
         jLabel1.setText("Driver Class Name");
@@ -172,7 +241,7 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         connectButton.setActionCommand(GuiCommandConstants.CREATE_CONNECTION_ACT_CMD);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 2;
-        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.anchor = GridBagConstraints.SOUTHEAST;
         gridBagConstraints.insets = new Insets(2, 2, 4, 2);
@@ -192,7 +261,7 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
-        getContentPane().add(pwdPasswordField1, gridBagConstraints);
+        getContentPane().add(pwdPasswordField, gridBagConstraints);
 
         driverManagerButton.setText("Driver Manager");
         driverManagerButton.addActionListener(this);
@@ -227,7 +296,7 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         gridBagConstraints.anchor = GridBagConstraints.EAST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new Insets(6, 2, 2, 2);
-        databaseTypeComboBox.addActionListener(this);
+        databaseTypeComboBox.addPropertyChangeListener(this);
         databaseTypeComboBox.setModel(new DefaultComboBoxModel(
         		new String[]{DatabaseTypeEnum.ORACLE.getDescription(),
             		DatabaseTypeEnum.MYSQL.getDescription(),
@@ -239,7 +308,7 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         cancelButton.addActionListener(this);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
-        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.anchor = GridBagConstraints.SOUTHWEST;
         gridBagConstraints.insets = new Insets(2, 2, 4, 2);
         getContentPane().add(cancelButton, gridBagConstraints);
@@ -248,7 +317,7 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         testButton.addActionListener(this);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
-        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridy = 14;
         gridBagConstraints.anchor = GridBagConstraints.SOUTHEAST;
         gridBagConstraints.insets = new Insets(2, 2, 4, 2);
         getContentPane().add(testButton, gridBagConstraints);
@@ -259,9 +328,20 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         gridBagConstraints.gridy = 12;
         gridBagConstraints.fill = GridBagConstraints.VERTICAL;
         gridBagConstraints.anchor = GridBagConstraints.WEST;
-        gridBagConstraints.weighty = 1.0;
+        gridBagConstraints.weighty = 0;
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         getContentPane().add(jLabel10, gridBagConstraints);
+        
+        JLabel jLabel11 = new JLabel();
+        jLabel11.setText("SID/ServiceName");
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 0;
+        gridBagConstraints.gridy = 13;
+        gridBagConstraints.fill = GridBagConstraints.VERTICAL;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        gridBagConstraints.weighty = 0;
+        gridBagConstraints.insets = new Insets(2, 2, 2, 2);
+        getContentPane().add(jLabel11, gridBagConstraints);
 
         
         gridBagConstraints = new GridBagConstraints();
@@ -274,6 +354,18 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         gridBagConstraints.weighty = 0.0;
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         getContentPane().add(schemaNameTextField, gridBagConstraints);
+        
+        gridBagConstraints = new GridBagConstraints();
+        gridBagConstraints.gridx = 1;
+        gridBagConstraints.gridy = 13;
+        gridBagConstraints.gridwidth = 1;
+        gridBagConstraints.fill = GridBagConstraints.BOTH;
+        gridBagConstraints.anchor = GridBagConstraints.WEST;
+        gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 0.0;
+        gridBagConstraints.insets = new Insets(2, 2, 2, 2);
+        getContentPane().add(serviceNameTextField, gridBagConstraints);
+        
 
         jLabel9.setText("Port");
         gridBagConstraints = new GridBagConstraints();
@@ -287,6 +379,8 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 6;
+        gridBagConstraints.weightx = 0;
+        gridBagConstraints.weighty = 0;
         gridBagConstraints.anchor = GridBagConstraints.WEST;
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         getContentPane().add(jLabel12, gridBagConstraints);
@@ -353,9 +447,9 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         connectionNameComboBox.setModel(new DefaultComboBoxModel());
         getContentPane().add(connectionNameComboBox, gridBagConstraints);
 
-        jToolBar1.setFloatable(false);
-        jToolBar1.setRollover(true);
-        jToolBar1.setMinimumSize(new Dimension(100, 25));
+        connectionDetailToolBar.setFloatable(false);
+        connectionDetailToolBar.setRollover(true);
+        connectionDetailToolBar.setMinimumSize(new Dimension(100, 25));
 
         newConnectionPropButton.setIcon(new ImageIcon(getClass().getResource(ApplicationConstants.IMAGE_PATH + "new_untitled_text_file.gif"))); 
         newConnectionPropButton.setText("New");
@@ -363,7 +457,7 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         newConnectionPropButton.setFocusable(false);
         newConnectionPropButton.setHorizontalTextPosition(SwingConstants.CENTER);
         newConnectionPropButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        jToolBar1.add(newConnectionPropButton);
+        connectionDetailToolBar.add(newConnectionPropButton);
 
         openConnectionPropButton.addActionListener(this);
         openConnectionPropButton.setIcon(new ImageIcon(getClass().getResource(ApplicationConstants.IMAGE_PATH + "open.gif"))); 
@@ -371,8 +465,8 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         openConnectionPropButton.setFocusable(false);
         openConnectionPropButton.setHorizontalTextPosition(SwingConstants.CENTER);
         openConnectionPropButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        jToolBar1.add(openConnectionPropButton);
-        jToolBar1.add(jSeparator3);
+        connectionDetailToolBar.add(openConnectionPropButton);
+        connectionDetailToolBar.add(jSeparator3);
 
         loadConnectionPropButton.addActionListener(this);
         loadConnectionPropButton.setIcon(new ImageIcon(getClass().getResource(ApplicationConstants.IMAGE_PATH + "go-down.png"))); 
@@ -380,8 +474,8 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         loadConnectionPropButton.setFocusable(false);
         loadConnectionPropButton.setHorizontalTextPosition(SwingConstants.CENTER);
         loadConnectionPropButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        jToolBar1.add(loadConnectionPropButton);
-        jToolBar1.add(jSeparator1);
+        connectionDetailToolBar.add(loadConnectionPropButton);
+        connectionDetailToolBar.add(jSeparator1);
 
         saveConnectionPropButton.addActionListener(this);
         saveConnectionPropButton.setIcon(new ImageIcon(getClass().getResource(ApplicationConstants.IMAGE_PATH + "save_edit.gif"))); 
@@ -389,7 +483,7 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         saveConnectionPropButton.setFocusable(false);
         saveConnectionPropButton.setHorizontalTextPosition(SwingConstants.CENTER);
         saveConnectionPropButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        jToolBar1.add(saveConnectionPropButton);
+        connectionDetailToolBar.add(saveConnectionPropButton);
 
         saveAsConnectionPropButton.addActionListener(this);
         saveAsConnectionPropButton.setIcon(new ImageIcon(getClass().getResource(ApplicationConstants.IMAGE_PATH + "saveas_edit.gif"))); 
@@ -397,7 +491,7 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         saveAsConnectionPropButton.setFocusable(false);
         saveAsConnectionPropButton.setHorizontalTextPosition(SwingConstants.CENTER);
         saveAsConnectionPropButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        jToolBar1.add(saveAsConnectionPropButton);
+        connectionDetailToolBar.add(saveAsConnectionPropButton);
 
         saveAllConnectionPropButton.addActionListener(this);
         saveAllConnectionPropButton.setIcon(new ImageIcon(getClass().getResource(ApplicationConstants.IMAGE_PATH + "saveall_edit.gif"))); 
@@ -405,8 +499,8 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         saveAllConnectionPropButton.setFocusable(false);
         saveAllConnectionPropButton.setHorizontalTextPosition(SwingConstants.CENTER);
         saveAllConnectionPropButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        jToolBar1.add(saveAllConnectionPropButton);
-        jToolBar1.add(jSeparator2);
+        connectionDetailToolBar.add(saveAllConnectionPropButton);
+        connectionDetailToolBar.add(jSeparator2);
 
         clearConnectionPropButton.addActionListener(this);
         clearConnectionPropButton.setIcon(new ImageIcon(getClass().getResource(ApplicationConstants.IMAGE_PATH + "clear_co.gif"))); 
@@ -414,7 +508,7 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         clearConnectionPropButton.setFocusable(false);
         clearConnectionPropButton.setHorizontalTextPosition(SwingConstants.CENTER);
         clearConnectionPropButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        jToolBar1.add(clearConnectionPropButton);
+        connectionDetailToolBar.add(clearConnectionPropButton);
 
         deleteConnectionPropButton.addActionListener(this);
         deleteConnectionPropButton.setIcon(new ImageIcon(getClass().getResource(ApplicationConstants.IMAGE_PATH + "delete_edit.gif"))); 
@@ -422,7 +516,7 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         deleteConnectionPropButton.setFocusable(false);
         deleteConnectionPropButton.setHorizontalTextPosition(SwingConstants.CENTER);
         deleteConnectionPropButton.setVerticalTextPosition(SwingConstants.BOTTOM);
-        jToolBar1.add(deleteConnectionPropButton);
+        connectionDetailToolBar.add(deleteConnectionPropButton);
 
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -430,8 +524,9 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         gridBagConstraints.weightx = 1.0;
+        gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
-        getContentPane().add(jToolBar1, gridBagConstraints);
+        getContentPane().add(connectionDetailToolBar, gridBagConstraints);
 
         pack();
     }
@@ -479,17 +574,18 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
     private JToolBar.Separator jSeparator1;
     private JToolBar.Separator jSeparator2;
     private JToolBar.Separator jSeparator3;
-    private JToolBar jToolBar1;
+    private JToolBar connectionDetailToolBar;
     private JButton loadConnectionPropButton;
     private JButton newConnectionPropButton;
     private JButton openConnectionPropButton;
     private JFormattedTextField portNumberFormattedTextField;
-    private JPasswordField pwdPasswordField1;
+    private JPasswordField pwdPasswordField;
     private JButton saveAllConnectionPropButton;
     private JButton saveAsConnectionPropButton;
     private JButton saveConnectionPropButton;
     private JRadioButton schemaRadioButton;
     private JTextField schemaNameTextField;
+    private JTextField serviceNameTextField;
     private ButtonGroup storageTypeButtonGroup;
     private JButton testButton;
     private JTextField uidTextField;
@@ -505,7 +601,7 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
 		} else if(e.getSource().equals(cancelButton)){
 			cancel(e);
 		} else if(e.getSource().equals(driverManagerButton)){
-			manageDriver(e);
+			//manageDriver(e);
 		} else if(e.getSource().equals(newConnectionPropButton)){
 			newConnection(e);
 		} else if(e.getSource().equals(openConnectionPropButton)){
@@ -522,11 +618,55 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
 			clearConnection(e);
 		} else if(e.getSource().equals(deleteConnectionPropButton)){
 			deleteConnection(e);
-		} 
+		}
 	}
     
     
 
+
+	private void databaseTypeChanged() {
+		String databaseName = databaseTypeComboBox.getSelectedItem().toString();
+		if(DatabaseTypeEnum.ORACLE.getDescription().equals(databaseName)){
+			driverNameTextField.setText(ApplicationConstants.ORACLE_DRIVER_NAME);
+			driverNameTextField.setEditable(false);
+			urlTextField.setText(ApplicationConstants.ORACLE_CONNECTION_URL_PATTERN);
+			schemaRadioButton.setSelected(true);
+			catalogRadioButton.setSelected(false);
+			schemaRadioButton.setEnabled(false);
+			catalogRadioButton.setEnabled(false);
+			serviceNameTextField.setEnabled(true);
+		}
+		else if(DatabaseTypeEnum.MYSQL.getDescription().equals(databaseName)){
+			driverNameTextField.setText(ApplicationConstants.MYSQL_DRIVER_NAME);
+			driverNameTextField.setEditable(false);
+			urlTextField.setText(ApplicationConstants.MYSQL_CONNECTION_URL_PATTERN);
+			schemaRadioButton.setSelected(false);
+			catalogRadioButton.setSelected(true);
+			schemaRadioButton.setEnabled(false);
+			catalogRadioButton.setEnabled(false);
+			serviceNameTextField.setEnabled(false);
+		}
+		else if(DatabaseTypeEnum.MSSQL_2005.getDescription().equals(databaseName)){
+			driverNameTextField.setText(ApplicationConstants.MSSQL_DRIVER_NAME);
+			driverNameTextField.setEditable(false);
+			urlTextField.setText(ApplicationConstants.MSSQL_CONNECTION_URL_PATTERN);
+			schemaRadioButton.setSelected(false);
+			catalogRadioButton.setSelected(true);
+			schemaRadioButton.setEnabled(false);
+			catalogRadioButton.setEnabled(false);
+			serviceNameTextField.setEnabled(false);
+		}
+		else {
+			driverNameTextField.setText("");
+			driverNameTextField.setEditable(true);
+			urlTextField.setText("");
+			schemaRadioButton.setSelected(true);
+			catalogRadioButton.setSelected(false);
+			schemaRadioButton.setEnabled(true);
+			catalogRadioButton.setEnabled(true);
+			serviceNameTextField.setEnabled(true);
+		}
+	}
 
 	@Override
 	public void itemStateChanged(ItemEvent e) {
@@ -551,10 +691,19 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
-		
+		String url = urlTextField.getText();
+		if(e.getSource().equals(hostNameTextField)){
+			String hostName = hostNameTextField.getText();
+			//urlTextField.getText()
+		}
 	}
     
+	@Override
+	public void propertyChange(PropertyChangeEvent e) {
+		if(e.getSource().equals(databaseTypeComboBox)){
+			databaseTypeChanged();
+		}
+	}
 	/* ----- Action Methods END----- */
 	
     private void connect(ActionEvent evt){
@@ -575,6 +724,10 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
 		handler.setData(connectionProperties);
 		handler.setSourceForm(this);
 		handler.actionPerformed(evt);*/
+		
+		
+		selectedOption = ApplicationConstants.APPLY_OPTION;
+        dispose();
     }
 
     private void populateOracleValues(){
@@ -646,8 +799,8 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
 
 
 	private void cancel(ActionEvent e) {
-		// TODO Auto-generated method stub
-		
+		selectedOption = ApplicationConstants.CANCEL_OPTION;
+    	dispose();
 	}
 
 
@@ -655,6 +808,8 @@ public class ConnectionDialog extends JDialog implements ActionListener, ItemLis
 		// TODO Auto-generated method stub
 		
 	}
+
+	
 	
 
 
