@@ -40,4 +40,17 @@ public enum DatabaseTypeEnum {
 		}
 		return OTHER;
 	}
+	
+	public static DatabaseTypeEnum getDatabaseTypeEnumByName(String name){
+		if(ORACLE.getDescription().equals(name)){
+			return ORACLE;
+		}
+		if(MYSQL.getDescription().equals(name)){
+			return MYSQL;
+		}
+		if(MSSQL_2005.getDescription().equals(name)){
+			return MSSQL_2005;
+		}
+		return OTHER;
+	}
 }

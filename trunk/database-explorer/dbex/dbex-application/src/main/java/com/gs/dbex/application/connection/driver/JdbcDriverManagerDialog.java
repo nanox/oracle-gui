@@ -18,6 +18,8 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -43,6 +45,8 @@ import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.WindowConstants;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TreeExpansionEvent;
 import javax.swing.event.TreeExpansionListener;
 import javax.swing.event.TreeSelectionEvent;
@@ -72,7 +76,7 @@ import java.util.List;
  */
 public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
         TreeSelectionListener, TreeExpansionListener, MouseListener,
-        TreeWillExpandListener, ImageConstants {
+        TreeWillExpandListener, ImageConstants, PropertyChangeListener, ListSelectionListener {
 
     /**
      * serialVersionUID = -2644355150992499368L;
@@ -87,14 +91,20 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
             JdbcDriverManagerDialog.class.getResource(DRIVER_MGR_IMG_LOC + DRIVER_IMG_NAME));
     
     private int selectedOption = ApplicationConstants.CANCEL_OPTION;
+    private Frame parentFrame;
 
     public JdbcDriverManagerDialog(Frame parent, boolean modal) {
         super(parent, modal);
+        parentFrame = parent;
         initComponents();
-
+        loadSavedProperties();
     }
 
-    @SuppressWarnings("unchecked")
+    private void loadSavedProperties() {
+    	
+	}
+
+	@SuppressWarnings("unchecked")
     private void initComponents() {
         GridBagConstraints gridBagConstraints;
 
@@ -206,6 +216,8 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
                 return strings[i];
             }
         });
+        databaseNameList.addPropertyChangeListener(this);
+        databaseNameList.addListSelectionListener(this);
         databaseNameList.setMaximumSize(new Dimension(145, 85));
         databaseNameList.setMinimumSize(new Dimension(145, 85));
         databaseNameList.setPreferredSize(new Dimension(145, 85));
@@ -303,7 +315,7 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
         gridBagConstraints.insets = new Insets(4, 4, 4, 4);
         jPanel2.add(jSeparator1, gridBagConstraints);
 
-        defaultValuePanel.setBorder(BorderFactory.createTitledBorder(" Default Values"));
+        defaultValuePanel.setBorder(BorderFactory.createTitledBorder(" Default Values "));
         defaultValuePanel.setMinimumSize(new Dimension(100, 150));
         defaultValuePanel.setPreferredSize(new Dimension(100, 150));
         gridBagConstraints = new GridBagConstraints();
@@ -313,7 +325,7 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
         gridBagConstraints.fill = GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new Insets(4, 4, 4, 4);
-        jPanel2.add(defaultValuePanel, gridBagConstraints);
+       // jPanel2.add(defaultValuePanel, gridBagConstraints);
 
         loadJarButton.setText("Load ...");
         loadJarButton.addActionListener(this);
@@ -564,7 +576,35 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
         selectedOption = ApplicationConstants.APPLY_OPTION;
         dispose();
     }
-
+    
+    @Override
+	public void propertyChange(PropertyChangeEvent evt) {
+		if(evt.getSource().equals(databaseNameList)){
+			
+		}
+	}
+    
+    @Override
+	public void valueChanged(ListSelectionEvent evt) {
+    	if(evt.getSource().equals(databaseNameList)){
+			if(databaseNameList.getSelectedIndex() >= 0){
+				String dbType = databaseNameList.getSelectedValue().toString();
+				if(DatabaseTypeEnum.ORACLE.getDescription().equals(dbType)){
+					
+				}
+				else if(DatabaseTypeEnum.MYSQL.getDescription().equals(dbType)){
+					
+				}
+				else if(DatabaseTypeEnum.MSSQL_2005.getDescription().equals(dbType)){
+					
+				}
+				else {
+					
+				}
+			}
+		}
+	}
+    
     /**
      * @param args
      *            the command line arguments
@@ -630,4 +670,8 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
     private DefaultMutableTreeNode topNode;
     private DefaultTreeModel defaultTreeModel;
     // End of variables declaration
+
+	
+
+	
 }
