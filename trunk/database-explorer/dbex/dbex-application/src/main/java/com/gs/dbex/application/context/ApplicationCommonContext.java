@@ -49,8 +49,7 @@ public class ApplicationCommonContext{
 		+ "properties/ErrorMessage.properties";
 	private final Properties errorMessageProperties = ApplicationPropertyLoader.loadProperties(getErrorMsgConstFileName());
 	private final Map<String, ConnectionProperties> connectionPropertiesMap = new HashMap<String, ConnectionProperties>();
-	private final String connectionConfigFileName = ApplicationConstants.DEFAULT_APP_DATA_DIR 
-		+ APP_CONF_DIR + "connection-properties.xml";
+	
 	
 	/* -----  Context Variables   ------------------------------------------ */
 	
@@ -107,9 +106,6 @@ public class ApplicationCommonContext{
 		return connectionPropertiesMap;
 	}
 
-	public String getConnectionConfigFileName() {
-		return connectionConfigFileName;
-	}
 
 
 }
