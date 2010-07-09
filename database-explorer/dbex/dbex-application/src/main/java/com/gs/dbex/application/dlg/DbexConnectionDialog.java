@@ -61,6 +61,8 @@ import com.gs.dbex.application.connection.driver.JdbcDriverManagerDialog;
 import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.common.enums.DatabaseTypeEnum;
 import com.gs.dbex.model.cfg.ConnectionProperties;
+import com.gs.utils.swing.display.DisplayUtils;
+import com.gs.utils.text.StringUtil;
 
 /**
  * @author sabuj.das
@@ -832,7 +834,16 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 	}                                                 
 
 	private void newConnectionButtonActionPerformed(ActionEvent evt) {                                                    
-		// TODO add your handling code here:
+		String connectionName = DisplayUtils.readString(this,"Connection Name");
+		if(StringUtil.hasValidContent(connectionName)){
+			ConnectionProperties p = new ConnectionProperties();
+			p.setConnectionName(connectionName);
+			((CollectionListModel<ConnectionProperties>)connectionNameList.getModel()).addElement(p);
+			connectionNameList.setSelectedIndex(connectionNameList.getModel().getSize()-1);
+			connectionNameList.updateUI();
+		} else {
+			DisplayUtils.displayMessage(this,"Invalid Connection Name");
+		}
 	}                                                   
 
 	private void loadConnectionsButtonActionPerformed(ActionEvent evt) {                                                      
@@ -932,6 +943,17 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 		logger.info("Closing Connection Dialog");
 	}
 
+	
+	private ConnectionProperties populateToProperties(){
+		ConnectionProperties p = (ConnectionProperties) connectionNameList.getSelectedValue();
+		if(p == null)
+		return null;
+	}
+	
+	private void populateFromProperties(ConnectionProperties p){
+		
+	}
+	
     /**
     * @param args the command line arguments
     */

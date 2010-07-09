@@ -35,4 +35,11 @@ public class CollectionListModel<T extends Object> extends AbstractListModel {
 		return (null != dataList) ? dataList.get(index) : null;
 	}
 
+	public void addElement(T element){
+		addElementAt(element, getSize());
+	}
+	
+	public void addElementAt(T element, int index){
+		dataList.add(index, element);
+	}
 }
