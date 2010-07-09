@@ -26,6 +26,7 @@ import org.fife.plaf.OfficeXP.OfficeXPLookAndFeel;
 import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.application.constants.GuiCommandConstants;
 import com.gs.dbex.application.dlg.ConnectionDialog;
+import com.gs.dbex.application.dlg.DbexConnectionDialog;
 import com.gs.dbex.application.dlg.OpenResourceDialog;
 import com.gs.dbex.application.dlg.SearchObjectDialog;
 import com.gs.dbex.application.dlg.StyleConfigurationDialog;
@@ -71,7 +72,8 @@ public class ApplicationEventHandler implements ActionListener,
 		if(e != null){
 			String cmd = e.getActionCommand();
 			if(NEW_CONNECTION_ACT_CMD.equals(cmd)){
-				ConnectionDialog dialog = new ConnectionDialog((JFrame)parent, true);
+				//ConnectionDialog dialog = new ConnectionDialog((JFrame)parent, true);
+				DbexConnectionDialog dialog = new DbexConnectionDialog((JFrame)parent, true);
 				WindowUtil.bringCenterTo(dialog, parent);
 				dialog.setVisible(true);
 			}else if(CREATE_CONNECTION_ACT_CMD.equals(cmd)){
