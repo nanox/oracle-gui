@@ -10,17 +10,12 @@ package com.gs.dbex.common;
 public interface DbexCommonConstants {
 
 	String FILE_SEPARATOR = System.getProperty("file.separator");
+	String USER_HOME = System.getProperty("user.home");
 	
 	String EXTERNAL_DATA_PATH_KEY = "EXTERNAL_DATA_PATH";
-	String EXTERNAL_DATA_PATH = "." + FILE_SEPARATOR + "data";
+	String DEFAULT_EXTERNAL_DATA_PATH = USER_HOME + FILE_SEPARATOR + "dbex-data";
 	
-	/*String APP_DATA_PATH = EXTERNAL_DATA_PATH + FILE_SEPARATOR + "application";
-	String USER_DATA_PATH = EXTERNAL_DATA_PATH + FILE_SEPARATOR + "user";
-	String LOCAL_HISTORY_PATH = EXTERNAL_DATA_PATH + FILE_SEPARATOR + "localHistory";
-	
-	
-	String CONNECTION_PROPS_FILE = APP_DATA_PATH + FILE_SEPARATOR + "ConnectionDetails.xml";*/
-	int MAX_CONNECTION_PROPS_LIMIT = 100;
+	int MAX_SAVED_CONNECTIONS = 100;
 	
 	
 }

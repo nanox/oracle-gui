@@ -13,7 +13,6 @@ import javax.swing.UnsupportedLookAndFeelException;
 import org.apache.log4j.Logger;
 
 import com.gs.dbex.application.frame.DatabaseExplorerFrame;
-import com.gs.dbex.common.DbexCommonConstants;
 import com.gs.dbex.common.DbexCommonContext;
 
 /**
@@ -42,6 +41,7 @@ public class DatabaseExplorerLauncher {
             e1.printStackTrace();
         }
         try{
+        	logger.info("Create files/folders.");
         	createFiles();
         }catch (Exception ex){
         	ex.printStackTrace();
@@ -55,10 +55,7 @@ public class DatabaseExplorerLauncher {
         		}
             }
         });
-        if(logger.isDebugEnabled()){
-			logger.debug("");
-		}
-		
+        
 	}
 	
 	private static void createFiles() throws Exception{
@@ -76,14 +73,14 @@ public class DatabaseExplorerLauncher {
 				logger.debug("Directory [ " + appDataDir.getCanonicalPath() + " ] created.");
 			}
 		} 
-		File historyDataDir = new File(DbexCommonConstants.LOCAL_HISTORY_PATH);
+		File historyDataDir = new File(dbexCommonContext.getLocalHistoryPath());
 		if(!historyDataDir.exists()){
 			historyDataDir.mkdir();
 			if(logger.isDebugEnabled()){
 				logger.debug("Directory [ " + historyDataDir.getCanonicalPath() + " ] created.");
 			}
 		} 
-		File userDir = new File(DbexCommonConstants.USER_DATA_PATH);
+		File userDir = new File(dbexCommonContext.getUserDataPath());
 		if(!userDir.exists()){
 			userDir.mkdir();
 			if(logger.isDebugEnabled()){
