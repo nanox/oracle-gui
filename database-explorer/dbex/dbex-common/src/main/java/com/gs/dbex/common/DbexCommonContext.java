@@ -28,27 +28,37 @@ public final class DbexCommonContext implements DbexCommonConstants{
 	
 	public final Map<String, String> APP_PROPERTIES_MAP = new HashMap<String, String>();
 	
-	private final String applicationDataDir = getDataDirName() + FILE_SEPARATOR + "application";
-	private final String connectionConfigFileName = getApplicationDataDir() + FILE_SEPARATOR + "connection-properties.xml";
-	
 	
 	/* -----------  Utility methods  --------------------------------------- */
 	private void initContext() {
-		APP_PROPERTIES_MAP.put(EXTERNAL_DATA_PATH_KEY, EXTERNAL_DATA_PATH);
+		APP_PROPERTIES_MAP.put(EXTERNAL_DATA_PATH_KEY, DEFAULT_EXTERNAL_DATA_PATH);
 	}
 
+	
 	/* -----------  get-set methods  --------------------------------------- */
 	
 	public String getDataDirName(){
 		return APP_PROPERTIES_MAP.get(EXTERNAL_DATA_PATH_KEY);
 	}
+	
+	public void setDataDirName(String dir){
+		APP_PROPERTIES_MAP.put(EXTERNAL_DATA_PATH_KEY, dir);
+	}
 
 	public String getApplicationDataDir() {
-		return applicationDataDir;
+		return getDataDirName() + FILE_SEPARATOR + "application";
 	}
 
 	public String getConnectionConfigFileName() {
-		return connectionConfigFileName;
+		return getApplicationDataDir() + FILE_SEPARATOR + "connection-properties.xml";
+	}
+
+	public String getLocalHistoryPath() {
+		return getDataDirName() + FILE_SEPARATOR + "localHistory";
+	}
+
+	public String getUserDataPath() {
+		return getDataDirName() + FILE_SEPARATOR + "user";
 	}
 	
 }
