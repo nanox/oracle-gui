@@ -7,6 +7,8 @@ import java.io.Serializable;
 
 import javax.sql.DataSource;
 
+import com.gs.utils.text.StringUtil;
+
 /**
  * @author sabuj.das
  *
@@ -26,6 +28,10 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	
 	private transient DataSource dataSource;
 
+	public ConnectionProperties() {
+		databaseConfiguration = new DatabaseConfiguration();
+	}
+	
 	public int compareTo(ConnectionProperties o) {
 		return connectionName.compareTo(o.getConnectionName());
 	}
@@ -112,4 +118,8 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 		this.databaseConfiguration = databaseConfiguration;
 	}
 	
+	@Override
+	public String toString() {
+		return (StringUtil.hasValidContent(getConnectionName())) ? getConnectionName() : "UN-NAMED";
+	}
 }

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
+<Form version="1.5" maxVersion="1.7" type="org.netbeans.modules.form.forminfo.JDialogFormInfo">
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="buttonGroup1">
     </Component>
@@ -11,6 +11,9 @@
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
   </SyntheticProperties>
+  <Events>
+    <EventHandler event="windowClosing" listener="java.awt.event.WindowListener" parameters="java.awt.event.WindowEvent" handler="formWindowClosing"/>
+  </Events>
   <AuxValues>
     <AuxValue name="FormSettings_autoResourcing" type="java.lang.Integer" value="0"/>
     <AuxValue name="FormSettings_autoSetComponentName" type="java.lang.Boolean" value="true"/>
@@ -106,7 +109,9 @@
           <SubComponents>
             <Component class="javax.swing.JButton" name="newConnectionButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="N*"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/new_connection.gif"/>
+                </Property>
                 <Property name="toolTipText" type="java.lang.String" value="New Connection"/>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -119,7 +124,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="loadConnectionsButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="L"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/go-bottom.png"/>
+                </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Load Connections"/>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -137,7 +144,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="saveButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="S"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/save_edit.gif"/>
+                </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Save"/>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -150,7 +159,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="saveAsButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="SA"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/saveas_edit.gif"/>
+                </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Save As..."/>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -163,7 +174,9 @@
             </Component>
             <Component class="javax.swing.JButton" name="saveAllButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="SAL"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/saveall_edit.gif"/>
+                </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Save All..."/>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -179,22 +192,11 @@
                 <Property name="name" type="java.lang.String" value="jSeparator2" noResource="true"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="deleteButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="D"/>
-                <Property name="toolTipText" type="java.lang.String" value="Delete"/>
-                <Property name="focusable" type="boolean" value="false"/>
-                <Property name="horizontalTextPosition" type="int" value="0"/>
-                <Property name="name" type="java.lang.String" value="deleteButton" noResource="true"/>
-                <Property name="verticalTextPosition" type="int" value="3"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteButtonActionPerformed"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JButton" name="clearButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="C"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/edit-clear.png"/>
+                </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Clear"/>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -205,27 +207,31 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="clearButtonActionPerformed"/>
               </Events>
             </Component>
+            <Component class="javax.swing.JButton" name="deleteButton">
+              <Properties>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/delete_edit.gif"/>
+                </Property>
+                <Property name="toolTipText" type="java.lang.String" value="Delete"/>
+                <Property name="focusable" type="boolean" value="false"/>
+                <Property name="horizontalTextPosition" type="int" value="0"/>
+                <Property name="name" type="java.lang.String" value="deleteButton" noResource="true"/>
+                <Property name="verticalTextPosition" type="int" value="3"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deleteButtonActionPerformed"/>
+              </Events>
+            </Component>
             <Component class="javax.swing.JToolBar$Separator" name="jSeparator3">
               <Properties>
                 <Property name="name" type="java.lang.String" value="jSeparator3" noResource="true"/>
               </Properties>
             </Component>
-            <Component class="javax.swing.JButton" name="exportButton">
-              <Properties>
-                <Property name="text" type="java.lang.String" value="E"/>
-                <Property name="toolTipText" type="java.lang.String" value="Export to XML"/>
-                <Property name="focusable" type="boolean" value="false"/>
-                <Property name="horizontalTextPosition" type="int" value="0"/>
-                <Property name="name" type="java.lang.String" value="exportButton" noResource="true"/>
-                <Property name="verticalTextPosition" type="int" value="3"/>
-              </Properties>
-              <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="exportButtonActionPerformed"/>
-              </Events>
-            </Component>
             <Component class="javax.swing.JButton" name="exportAllButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="EA"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/export_wiz.gif"/>
+                </Property>
                 <Property name="toolTipText" type="java.lang.String" value="Export All to XML"/>
                 <Property name="focusable" type="boolean" value="false"/>
                 <Property name="horizontalTextPosition" type="int" value="0"/>
@@ -411,6 +417,9 @@
                 </Component>
                 <Component class="javax.swing.JFormattedTextField" name="portNumberFormattedTextField">
                   <Properties>
+                    <Property name="formatterFactory" type="javax.swing.JFormattedTextField$AbstractFormatterFactory" editor="org.netbeans.modules.form.editors.AbstractFormatterFactoryEditor">
+                      <Format format="###0" subtype="-1" type="0"/>
+                    </Property>
                     <Property name="name" type="java.lang.String" value="portNumberFormattedTextField" noResource="true"/>
                   </Properties>
                   <Events>
@@ -610,6 +619,7 @@
             </Component>
             <Component class="javax.swing.JTextField" name="urlTextField">
               <Properties>
+                <Property name="editable" type="boolean" value="false"/>
                 <Property name="name" type="java.lang.String" value="urlTextField" noResource="true"/>
               </Properties>
               <Constraints>
@@ -620,7 +630,10 @@
             </Component>
             <Component class="javax.swing.JToggleButton" name="editUrlToggleButton">
               <Properties>
-                <Property name="text" type="java.lang.String" value="E"/>
+                <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+                  <Image iconType="3" name="/images/edit.gif"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Edit"/>
                 <Property name="name" type="java.lang.String" value="editUrlToggleButton" noResource="true"/>
               </Properties>
               <Events>
@@ -636,7 +649,9 @@
         </Container>
         <Component class="javax.swing.JButton" name="moveUpButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="U"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/images/Stock Index Up.png"/>
+            </Property>
             <Property name="name" type="java.lang.String" value="moveUpButton" noResource="true"/>
           </Properties>
           <Events>
@@ -650,7 +665,9 @@
         </Component>
         <Component class="javax.swing.JButton" name="moveDownButton">
           <Properties>
-            <Property name="text" type="java.lang.String" value="D"/>
+            <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
+              <Image iconType="3" name="/images/go-down.png"/>
+            </Property>
             <Property name="name" type="java.lang.String" value="moveDownButton" noResource="true"/>
           </Properties>
           <Events>

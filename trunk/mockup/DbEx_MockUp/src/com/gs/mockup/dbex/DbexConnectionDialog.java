@@ -13,6 +13,7 @@ package com.gs.mockup.dbex;
 
 import java.awt.event.ActionListener;
 import java.awt.event.KeyListener;
+import java.awt.event.WindowListener;
 import java.beans.PropertyChangeListener;
 import javax.swing.event.ListSelectionListener;
 
@@ -20,7 +21,7 @@ import javax.swing.event.ListSelectionListener;
  *
  * @author sabuj.das
  */
-public class DbexConnectionDialog extends javax.swing.JDialog implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyListener {
+public class DbexConnectionDialog extends javax.swing.JDialog implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyListener, WindowListener {
 
     /** Creates new form DbexConnectionDialog */
     public DbexConnectionDialog(java.awt.Frame parent, boolean modal) {
@@ -51,10 +52,9 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         saveAsButton = new javax.swing.JButton();
         saveAllButton = new javax.swing.JButton();
         jSeparator2 = new javax.swing.JToolBar.Separator();
-        deleteButton = new javax.swing.JButton();
         clearButton = new javax.swing.JButton();
+        deleteButton = new javax.swing.JButton();
         jSeparator3 = new javax.swing.JToolBar.Separator();
-        exportButton = new javax.swing.JButton();
         exportAllButton = new javax.swing.JButton();
         jPanel2 = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
@@ -94,11 +94,12 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         connectButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        addWindowListener(this);
 
         jPanel1.setName("jPanel1"); // NOI18N
         jPanel1.setLayout(new java.awt.GridBagLayout());
 
-        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 16)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Tahoma", 0, 16));
         jLabel1.setForeground(new java.awt.Color(0, 51, 255));
         jLabel1.setText("Connection Names");
         jLabel1.setName("jLabel1"); // NOI18N
@@ -133,7 +134,7 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         actionToolBar.setRollover(true);
         actionToolBar.setName("actionToolBar"); // NOI18N
 
-        newConnectionButton.setText("N*");
+        newConnectionButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/new_connection.gif"))); // NOI18N
         newConnectionButton.setToolTipText("New Connection");
         newConnectionButton.setFocusable(false);
         newConnectionButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -142,7 +143,7 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         newConnectionButton.addActionListener(this);
         actionToolBar.add(newConnectionButton);
 
-        loadConnectionsButton.setText("L");
+        loadConnectionsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/go-bottom.png"))); // NOI18N
         loadConnectionsButton.setToolTipText("Load Connections");
         loadConnectionsButton.setFocusable(false);
         loadConnectionsButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -154,7 +155,7 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         jSeparator1.setName("jSeparator1"); // NOI18N
         actionToolBar.add(jSeparator1);
 
-        saveButton.setText("S");
+        saveButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/save_edit.gif"))); // NOI18N
         saveButton.setToolTipText("Save");
         saveButton.setFocusable(false);
         saveButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -163,7 +164,7 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         saveButton.addActionListener(this);
         actionToolBar.add(saveButton);
 
-        saveAsButton.setText("SA");
+        saveAsButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/saveas_edit.gif"))); // NOI18N
         saveAsButton.setToolTipText("Save As...");
         saveAsButton.setFocusable(false);
         saveAsButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -172,7 +173,7 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         saveAsButton.addActionListener(this);
         actionToolBar.add(saveAsButton);
 
-        saveAllButton.setText("SAL");
+        saveAllButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/saveall_edit.gif"))); // NOI18N
         saveAllButton.setToolTipText("Save All...");
         saveAllButton.setFocusable(false);
         saveAllButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -184,16 +185,7 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         jSeparator2.setName("jSeparator2"); // NOI18N
         actionToolBar.add(jSeparator2);
 
-        deleteButton.setText("D");
-        deleteButton.setToolTipText("Delete");
-        deleteButton.setFocusable(false);
-        deleteButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        deleteButton.setName("deleteButton"); // NOI18N
-        deleteButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        deleteButton.addActionListener(this);
-        actionToolBar.add(deleteButton);
-
-        clearButton.setText("C");
+        clearButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit-clear.png"))); // NOI18N
         clearButton.setToolTipText("Clear");
         clearButton.setFocusable(false);
         clearButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -202,19 +194,19 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         clearButton.addActionListener(this);
         actionToolBar.add(clearButton);
 
+        deleteButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/delete_edit.gif"))); // NOI18N
+        deleteButton.setToolTipText("Delete");
+        deleteButton.setFocusable(false);
+        deleteButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
+        deleteButton.setName("deleteButton"); // NOI18N
+        deleteButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
+        deleteButton.addActionListener(this);
+        actionToolBar.add(deleteButton);
+
         jSeparator3.setName("jSeparator3"); // NOI18N
         actionToolBar.add(jSeparator3);
 
-        exportButton.setText("E");
-        exportButton.setToolTipText("Export to XML");
-        exportButton.setFocusable(false);
-        exportButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
-        exportButton.setName("exportButton"); // NOI18N
-        exportButton.setVerticalTextPosition(javax.swing.SwingConstants.BOTTOM);
-        exportButton.addActionListener(this);
-        actionToolBar.add(exportButton);
-
-        exportAllButton.setText("EA");
+        exportAllButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/export_wiz.gif"))); // NOI18N
         exportAllButton.setToolTipText("Export All to XML");
         exportAllButton.setFocusable(false);
         exportAllButton.setHorizontalTextPosition(javax.swing.SwingConstants.CENTER);
@@ -235,7 +227,7 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         jPanel2.setName("jPanel2"); // NOI18N
         jPanel2.setLayout(new java.awt.GridBagLayout());
 
-        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
+        jLabel2.setFont(new java.awt.Font("Tahoma", 0, 14));
         jLabel2.setForeground(new java.awt.Color(0, 51, 204));
         jLabel2.setText("Connection Details  ");
         jLabel2.setName("jLabel2"); // NOI18N
@@ -340,6 +332,7 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         fieldValuePanel.add(jLabel7, gridBagConstraints);
 
+        portNumberFormattedTextField.setFormatterFactory(new javax.swing.text.DefaultFormatterFactory(new javax.swing.text.NumberFormatter(new java.text.DecimalFormat("###0"))));
         portNumberFormattedTextField.setName("portNumberFormattedTextField"); // NOI18N
         portNumberFormattedTextField.addKeyListener(this);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -513,6 +506,7 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         jPanel2.add(jLabel6, gridBagConstraints);
 
+        urlTextField.setEditable(false);
         urlTextField.setName("urlTextField"); // NOI18N
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
@@ -522,7 +516,8 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         gridBagConstraints.insets = new java.awt.Insets(2, 2, 2, 2);
         jPanel2.add(urlTextField, gridBagConstraints);
 
-        editUrlToggleButton.setText("E");
+        editUrlToggleButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/edit.gif"))); // NOI18N
+        editUrlToggleButton.setText("Edit");
         editUrlToggleButton.setName("editUrlToggleButton"); // NOI18N
         editUrlToggleButton.addActionListener(this);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -544,7 +539,7 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanel1.add(jPanel2, gridBagConstraints);
 
-        moveUpButton.setText("U");
+        moveUpButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/Stock Index Up.png"))); // NOI18N
         moveUpButton.setName("moveUpButton"); // NOI18N
         moveUpButton.addActionListener(this);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -554,7 +549,7 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanel1.add(moveUpButton, gridBagConstraints);
 
-        moveDownButton.setText("D");
+        moveDownButton.setIcon(new javax.swing.ImageIcon(getClass().getResource("/images/go-down.png"))); // NOI18N
         moveDownButton.setName("moveDownButton"); // NOI18N
         moveDownButton.addActionListener(this);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -602,10 +597,7 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
     // Code for dispatching events from components to event handlers.
 
     public void actionPerformed(java.awt.event.ActionEvent evt) {
-        if (evt.getSource() == cancelButton) {
-            DbexConnectionDialog.this.cancelButtonActionPerformed(evt);
-        }
-        else if (evt.getSource() == newConnectionButton) {
+        if (evt.getSource() == newConnectionButton) {
             DbexConnectionDialog.this.newConnectionButtonActionPerformed(evt);
         }
         else if (evt.getSource() == loadConnectionsButton) {
@@ -626,14 +618,20 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         else if (evt.getSource() == clearButton) {
             DbexConnectionDialog.this.clearButtonActionPerformed(evt);
         }
-        else if (evt.getSource() == exportButton) {
-            DbexConnectionDialog.this.exportButtonActionPerformed(evt);
-        }
         else if (evt.getSource() == exportAllButton) {
             DbexConnectionDialog.this.exportAllButtonActionPerformed(evt);
         }
         else if (evt.getSource() == driverMgrButton) {
             DbexConnectionDialog.this.driverMgrButtonActionPerformed(evt);
+        }
+        else if (evt.getSource() == schemaRadioButton) {
+            DbexConnectionDialog.this.schemaRadioButtonActionPerformed(evt);
+        }
+        else if (evt.getSource() == catalogRadioButton) {
+            DbexConnectionDialog.this.catalogRadioButtonActionPerformed(evt);
+        }
+        else if (evt.getSource() == editUrlToggleButton) {
+            DbexConnectionDialog.this.editUrlToggleButtonActionPerformed(evt);
         }
         else if (evt.getSource() == moveUpButton) {
             DbexConnectionDialog.this.moveUpButtonActionPerformed(evt);
@@ -641,20 +639,14 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
         else if (evt.getSource() == moveDownButton) {
             DbexConnectionDialog.this.moveDownButtonActionPerformed(evt);
         }
-        else if (evt.getSource() == editUrlToggleButton) {
-            DbexConnectionDialog.this.editUrlToggleButtonActionPerformed(evt);
+        else if (evt.getSource() == cancelButton) {
+            DbexConnectionDialog.this.cancelButtonActionPerformed(evt);
         }
         else if (evt.getSource() == testConnectionButton) {
             DbexConnectionDialog.this.testConnectionButtonActionPerformed(evt);
         }
         else if (evt.getSource() == connectButton) {
             DbexConnectionDialog.this.connectButtonActionPerformed(evt);
-        }
-        else if (evt.getSource() == schemaRadioButton) {
-            DbexConnectionDialog.this.schemaRadioButtonActionPerformed(evt);
-        }
-        else if (evt.getSource() == catalogRadioButton) {
-            DbexConnectionDialog.this.catalogRadioButtonActionPerformed(evt);
         }
     }
 
@@ -683,6 +675,30 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
     }
 
     public void keyTyped(java.awt.event.KeyEvent evt) {
+    }
+
+    public void windowActivated(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowClosed(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowClosing(java.awt.event.WindowEvent evt) {
+        if (evt.getSource() == DbexConnectionDialog.this) {
+            DbexConnectionDialog.this.formWindowClosing(evt);
+        }
+    }
+
+    public void windowDeactivated(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowDeiconified(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowIconified(java.awt.event.WindowEvent evt) {
+    }
+
+    public void windowOpened(java.awt.event.WindowEvent evt) {
     }
 
     public void propertyChange(java.beans.PropertyChangeEvent evt) {
@@ -739,10 +755,6 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
 	private void clearButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_clearButtonActionPerformed
 		// TODO add your handling code here:
 	}//GEN-LAST:event_clearButtonActionPerformed
-
-	private void exportButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportButtonActionPerformed
-		// TODO add your handling code here:
-	}//GEN-LAST:event_exportButtonActionPerformed
 
 	private void exportAllButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportAllButtonActionPerformed
 		// TODO add your handling code here:
@@ -808,6 +820,10 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
 		urlTextField.setText(sidTextField.getText());
 	}//GEN-LAST:event_sidTextFieldKeyReleased
 
+	private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
+		// TODO add your handling code here:
+	}//GEN-LAST:event_formWindowClosing
+
     /**
     * @param args the command line arguments
     */
@@ -840,7 +856,6 @@ public class DbexConnectionDialog extends javax.swing.JDialog implements ActionL
     private javax.swing.JButton driverMgrButton;
     private javax.swing.JToggleButton editUrlToggleButton;
     private javax.swing.JButton exportAllButton;
-    private javax.swing.JButton exportButton;
     private javax.swing.JPanel fieldValuePanel;
     private javax.swing.JTextField hostNameTextField;
     private javax.swing.JLabel jLabel1;
