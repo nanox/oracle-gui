@@ -32,7 +32,7 @@ public class CollectionListModel<T extends Object> extends AbstractListModel {
 	}
 
 	public T getElementAt(int index) {
-		return (null != dataList) ? dataList.get(index) : null;
+		return (null != dataList) ? (T)dataList.get(index) : null;
 	}
 
 	public void addElement(T element){
