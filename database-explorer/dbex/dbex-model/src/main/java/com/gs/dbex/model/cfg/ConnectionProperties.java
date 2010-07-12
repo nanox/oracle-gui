@@ -29,6 +29,11 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	private transient DataSource dataSource;
 
 	public ConnectionProperties() {
+		this("UN-NAMED");
+	}
+	
+	public ConnectionProperties(String connName) {
+		this.connectionName = connName;
 		databaseConfiguration = new DatabaseConfiguration();
 	}
 	

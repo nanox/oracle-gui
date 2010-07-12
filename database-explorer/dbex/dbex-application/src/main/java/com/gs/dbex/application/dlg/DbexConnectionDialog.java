@@ -945,9 +945,13 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 
 	
 	private ConnectionProperties populateToProperties(){
+		//String connectionName = (StringUtil.hasValidContent(connectionName))
+		
 		ConnectionProperties p = (ConnectionProperties) connectionNameList.getSelectedValue();
 		if(p == null)
-		return null;
+			p = new ConnectionProperties();
+		
+		return p;
 	}
 	
 	private void populateFromProperties(ConnectionProperties p){
