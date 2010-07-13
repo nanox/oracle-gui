@@ -27,8 +27,8 @@ public final class DbexCommonContext implements DbexCommonConstants{
 	/* ------------  Context Variables  ------------------------------------ */
 	
 	public final Map<String, String> APP_PROPERTIES_MAP = new HashMap<String, String>();
-	
-	
+	private int defaultPortNumber = 1521;
+	private String defaultHostName = "localhost";
 	/* -----------  Utility methods  --------------------------------------- */
 	private void initContext() {
 		APP_PROPERTIES_MAP.put(EXTERNAL_DATA_PATH_KEY, DEFAULT_EXTERNAL_DATA_PATH);
@@ -60,5 +60,22 @@ public final class DbexCommonContext implements DbexCommonConstants{
 	public String getUserDataPath() {
 		return getDataDirName() + FILE_SEPARATOR + "user";
 	}
+
+	public int getDefaultPortNumber() {
+		return defaultPortNumber;
+	}
+
+	public void setDefaultPortNumber(int defaultPortNumber) {
+		this.defaultPortNumber = defaultPortNumber;
+	}
+
+	public String getDefaultHostName() {
+		return defaultHostName;
+	}
+
+	public void setDefaultHostName(String defaultHostName) {
+		this.defaultHostName = defaultHostName;
+	}
+	
 	
 }
