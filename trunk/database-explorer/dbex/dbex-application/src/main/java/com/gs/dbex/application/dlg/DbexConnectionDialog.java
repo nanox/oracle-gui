@@ -19,12 +19,12 @@ import java.awt.event.KeyListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.DefaultComboBoxModel;
@@ -59,6 +59,7 @@ import org.apache.log4j.Logger;
 import com.gs.dbex.application.comps.CollectionListModel;
 import com.gs.dbex.application.connection.driver.JdbcDriverManagerDialog;
 import com.gs.dbex.application.constants.ApplicationConstants;
+import com.gs.dbex.common.DbexCommonContext;
 import com.gs.dbex.common.enums.DatabaseTypeEnum;
 import com.gs.dbex.model.cfg.ConnectionProperties;
 import com.gs.utils.swing.display.DisplayUtils;
@@ -72,6 +73,7 @@ public class DbexConnectionDialog extends JDialog
 implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyListener, WindowListener {
 
 	private static final Logger logger = Logger.getLogger(DbexConnectionDialog.class);
+	private static final DbexCommonContext DBEX_COMMON_CONTEXT = DbexCommonContext.getInstance();
 	
 	private int selectedOption = ApplicationConstants.CANCEL_OPTION;
 	private Frame parentFrame;
@@ -83,6 +85,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
         parentFrame = parent;
         initComponents();
         populateInitialData();
+        databaseTypeChanged();
     }
 
     public int showDialog(){
@@ -355,7 +358,8 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
                 		DatabaseTypeEnum.MSSQL_2005.getDescription(),
                 		DatabaseTypeEnum.OTHER.getDescription()}));
         dbTypeComboBox.setName("dbTypeComboBox"); 
-        dbTypeComboBox.addPropertyChangeListener(this);
+        //dbTypeComboBox.addPropertyChangeListener(this);
+        dbTypeComboBox.addActionListener(this);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 1;
@@ -669,7 +673,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
         gridBagConstraints.insets = new Insets(4, 4, 4, 4);
         jPanel1.add(cancelButton, gridBagConstraints);
 
-        testConnectionButton.setText("Test Connection");
+        testConnectionButton.setText("Test");
         testConnectionButton.setName("testConnectionButton"); 
         testConnectionButton.addActionListener(this);
         gridBagConstraints = new GridBagConstraints();
@@ -748,9 +752,13 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
         else if (evt.getSource() == connectButton) {
             DbexConnectionDialog.this.connectButtonActionPerformed(evt);
         }
+        else if (evt.getSource() == dbTypeComboBox) {
+            DbexConnectionDialog.this.dbTypeComboBoxActionPerformed(evt);
+        }
     }
 
-    public void keyPressed(KeyEvent evt) {
+
+	public void keyPressed(KeyEvent evt) {
     }
 
     public void keyReleased(KeyEvent evt) {
@@ -801,7 +809,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
     public void windowOpened(WindowEvent evt) {
     }
 
-    public void propertyChange(java.beans.PropertyChangeEvent evt) {
+    public void propertyChange(PropertyChangeEvent evt) {
         if (evt.getSource() == connectionNameList) {
             DbexConnectionDialog.this.connectionNameListPropertyChange(evt);
         }
@@ -824,13 +832,12 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 	private void connectionNameListValueChanged(ListSelectionEvent evt) {                                                
 		ConnectionProperties p = (ConnectionProperties) connectionNameList.getSelectedValue();
 		if(p != null){
-			portNumberFormattedTextField.setText(""+p.getDatabaseConfiguration().getPortNumber());
-			connectionNameLabel.setText(p.getConnectionName());
+			populateFromProperties(p);
 		}
 	}                                               
 
-	private void connectionNameListPropertyChange(java.beans.PropertyChangeEvent evt) {                                                  
-		// TODO add your handling code here:
+	private void connectionNameListPropertyChange(PropertyChangeEvent evt) {                                                  
+		
 	}                                                 
 
 	private void newConnectionButtonActionPerformed(ActionEvent evt) {                                                    
@@ -874,8 +881,80 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 		// TODO add your handling code here:
 	}                                               
 
-	private void dbTypeComboBoxPropertyChange(java.beans.PropertyChangeEvent evt) {                                              
-		// TODO add your handling code here:
+	private void dbTypeComboBoxActionPerformed(ActionEvent evt) {
+		databaseTypeChanged();
+	}
+	
+	private void databaseTypeChanged(){
+		String databaseName = dbTypeComboBox.getSelectedItem().toString();
+		if(DatabaseTypeEnum.ORACLE.getDescription().equals(databaseName)){
+			driverClassTextField.setText(ApplicationConstants.ORACLE_DRIVER_NAME);
+			driverClassTextField.setEditable(false);
+			urlTextField.setText(ApplicationConstants.ORACLE_CONNECTION_URL_PATTERN);
+			schemaRadioButton.setSelected(true);
+			catalogRadioButton.setSelected(false);
+			schemaRadioButton.setEnabled(false);
+			catalogRadioButton.setEnabled(false);
+			sidTextField.setVisible(true);
+			sidLabel.setVisible(true);
+			if(schemaRadioButton.isSelected()){
+				schemaLabel.setText("Schema Name");
+			} else {
+				schemaLabel.setText("Catalog Name");
+			}
+		}
+		else if(DatabaseTypeEnum.MYSQL.getDescription().equals(databaseName)){
+			driverClassTextField.setText(ApplicationConstants.MYSQL_DRIVER_NAME);
+			driverClassTextField.setEditable(false);
+			urlTextField.setText(ApplicationConstants.MYSQL_CONNECTION_URL_PATTERN);
+			schemaRadioButton.setSelected(false);
+			catalogRadioButton.setSelected(true);
+			schemaRadioButton.setEnabled(false);
+			catalogRadioButton.setEnabled(false);
+			sidTextField.setVisible(false);
+			sidLabel.setVisible(false);
+			if(catalogRadioButton.isSelected()){
+				schemaLabel.setText("Catalog Name");
+			} else {
+				schemaLabel.setText("Schema Name");
+			}
+		}
+		else if(DatabaseTypeEnum.MSSQL_2005.getDescription().equals(databaseName)){
+			driverClassTextField.setText(ApplicationConstants.MSSQL_DRIVER_NAME);
+			driverClassTextField.setEditable(false);
+			urlTextField.setText(ApplicationConstants.MSSQL_CONNECTION_URL_PATTERN);
+			schemaRadioButton.setSelected(false);
+			catalogRadioButton.setSelected(true);
+			schemaRadioButton.setEnabled(false);
+			catalogRadioButton.setEnabled(false);
+			sidTextField.setVisible(false);
+			sidLabel.setVisible(false);
+			if(catalogRadioButton.isSelected()){
+				schemaLabel.setText("Catalog Name");
+			} else {
+				schemaLabel.setText("Schema Name");
+			}
+		}
+		else {
+			driverClassTextField.setText("");
+			driverClassTextField.setEditable(true);
+			urlTextField.setText("");
+			schemaRadioButton.setSelected(true);
+			catalogRadioButton.setSelected(false);
+			schemaRadioButton.setEnabled(true);
+			catalogRadioButton.setEnabled(true);
+			sidTextField.setVisible(true);
+			sidLabel.setVisible(true);
+			if(schemaRadioButton.isSelected()){
+				schemaLabel.setText("Schema Name");
+			} else {
+				schemaLabel.setText("Catalog Name");
+			}
+		}
+	}
+	
+	private void dbTypeComboBoxPropertyChange(PropertyChangeEvent evt) {                                              
+		
 	}                                             
 
 	private void driverMgrButtonActionPerformed(ActionEvent evt) {                                                
@@ -895,7 +974,11 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 	}                                              
 
 	private void editUrlToggleButtonActionPerformed(ActionEvent evt) {                                                    
-		// TODO add your handling code here:
+		if(editUrlToggleButton.isSelected()){
+			urlTextField.setEditable(true);
+		} else if(!editUrlToggleButton.isSelected()){
+			urlTextField.setEditable(false);
+		}
 	}                                                   
 
 	private void testConnectionButtonActionPerformed(ActionEvent evt) {                                                     
@@ -907,11 +990,19 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 	}                                             
 
 	private void schemaRadioButtonActionPerformed(ActionEvent evt) {                                                  
-		// TODO add your handling code here:
+		if(schemaRadioButton.isSelected()){
+			schemaLabel.setText("Schema Name");
+		} else {
+			schemaLabel.setText("Catalog Name");
+		}
 	}                                                 
 
 	private void catalogRadioButtonActionPerformed(ActionEvent evt) {                                                   
-		// TODO add your handling code here:
+		if(catalogRadioButton.isSelected()){
+			schemaLabel.setText("Catalog Name");
+		} else {
+			schemaLabel.setText("Schema Name");
+		}
 	}                                                  
 
 	private void hostNameTextFieldKeyReleased(KeyEvent evt) {                                              
@@ -955,7 +1046,20 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 	}
 	
 	private void populateFromProperties(ConnectionProperties p){
-		
+		if(null != p){
+			portNumberFormattedTextField.setText(""
+					+ (null != p.getDatabaseConfiguration().getPortNumber() 
+						? p.getDatabaseConfiguration().getPortNumber() 
+						: DBEX_COMMON_CONTEXT.getDefaultPortNumber()));
+			connectionNameLabel.setText(StringUtil.hasValidContent(p
+					.getConnectionName()) ? p.getConnectionName()
+					: DBEX_COMMON_CONTEXT.getDefaultHostName());
+			dbTypeComboBox.setSelectedItem(StringUtil.hasValidContent(p
+					.getDatabaseType()) ? p.getDatabaseType()
+					: DatabaseTypeEnum.OTHER.getDescription());
+			driverClassTextField.setText(StringUtil.hasValidContent(p.getDatabaseConfiguration().getDriverClassName()));
+			
+		}
 	}
 	
     /**
