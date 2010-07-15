@@ -3,6 +3,9 @@
  */
 package com.gs.dbex.common.enums;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * @author sabuj.das
  *
@@ -52,5 +55,32 @@ public enum DatabaseTypeEnum {
 			return MSSQL_2005;
 		}
 		return OTHER;
+	}
+	
+	public static List<DatabaseTypeEnum> toList(){
+		List<DatabaseTypeEnum> l = new ArrayList<DatabaseTypeEnum>();
+		l.add(ORACLE);
+		l.add(MYSQL);
+		l.add(MSSQL_2005);
+		l.add(OTHER);
+		return l;
+	}
+	
+	public static List<String> getCodes(){
+		List<String> l = new ArrayList<String>();
+		l.add(ORACLE.getCode());
+		l.add(MYSQL.getCode());
+		l.add(MSSQL_2005.getCode());
+		l.add(OTHER.getCode());
+		return l;
+	}
+	
+	public static List<String> getNamse(){
+		List<String> l = new ArrayList<String>();
+		l.add(ORACLE.getDescription());
+		l.add(MYSQL.getDescription());
+		l.add(MSSQL_2005.getDescription());
+		l.add(OTHER.getDescription());
+		return l;
 	}
 }
