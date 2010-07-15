@@ -60,6 +60,7 @@ import com.gs.dbex.application.comps.CollectionListModel;
 import com.gs.dbex.application.connection.driver.JdbcDriverManagerDialog;
 import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.common.DbexCommonContext;
+import com.gs.dbex.common.enums.DatabaseStorageTypeEnum;
 import com.gs.dbex.common.enums.DatabaseTypeEnum;
 import com.gs.dbex.model.cfg.ConnectionProperties;
 import com.gs.utils.swing.display.DisplayUtils;
@@ -96,10 +97,18 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
     
     private void populateInitialData(){
     	List<ConnectionProperties> pl = new ArrayList<ConnectionProperties>();
+    	List<String> dbTypes = DatabaseTypeEnum.getNamse();
     	for(int i=0; i<10; i++){
     		ConnectionProperties p = new ConnectionProperties();
     		p.setConnectionName("ConnectionName_" + (i+1));
     		p.getDatabaseConfiguration().setPortNumber((i+1) * 100);
+    		p.getDatabaseConfiguration().setHostName("hostName_" + ((i+1) * 100));
+    		p.getDatabaseConfiguration().setUserName("userName" + ((i+1) * 100));
+    		p.getDatabaseConfiguration().setPassword("password" + ((i+1) * 100));
+    		p.getDatabaseConfiguration().setSavePassword((i % 2 == 0) ? true : false);
+    		p.getDatabaseConfiguration().setSchemaName("schemaName");
+    		p.getDatabaseConfiguration().setStorageType("SCHEMA");
+    		p.setDatabaseType(dbTypes.get(i % 4));
     		pl.add(p);
     	}
     	CollectionListModel<ConnectionProperties> model = new CollectionListModel<ConnectionProperties>(pl);
@@ -136,7 +145,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
     private void initComponents() {
         GridBagConstraints gridBagConstraints;
 
-        buttonGroup1 = new ButtonGroup();
+        schemaCatalogButtonGroup = new ButtonGroup();
         jPanel1 = new JPanel();
         jLabel1 = new JLabel();
         jScrollPane1 = new JScrollPane();
@@ -545,7 +554,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         fieldValuePanel.add(jLabel12, gridBagConstraints);
 
-        buttonGroup1.add(schemaRadioButton);
+        schemaCatalogButtonGroup.add(schemaRadioButton);
         schemaRadioButton.setSelected(true);
         schemaRadioButton.setText("SCHEMA");
         schemaRadioButton.setName("schemaRadioButton"); 
@@ -558,7 +567,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
         gridBagConstraints.insets = new Insets(2, 2, 2, 2);
         fieldValuePanel.add(schemaRadioButton, gridBagConstraints);
 
-        buttonGroup1.add(catalogRadioButton);
+        schemaCatalogButtonGroup.add(catalogRadioButton);
         catalogRadioButton.setText("CATALOG");
         catalogRadioButton.setName("catalogRadioButton"); 
         catalogRadioButton.addActionListener(this);
@@ -1046,19 +1055,57 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 	}
 	
 	private void populateFromProperties(ConnectionProperties p){
-		if(null != p){
-			portNumberFormattedTextField.setText(""
-					+ (null != p.getDatabaseConfiguration().getPortNumber() 
-						? p.getDatabaseConfiguration().getPortNumber() 
-						: DBEX_COMMON_CONTEXT.getDefaultPortNumber()));
+		if (null != p) {
 			connectionNameLabel.setText(StringUtil.hasValidContent(p
 					.getConnectionName()) ? p.getConnectionName()
 					: DBEX_COMMON_CONTEXT.getDefaultHostName());
 			dbTypeComboBox.setSelectedItem(StringUtil.hasValidContent(p
 					.getDatabaseType()) ? p.getDatabaseType()
 					: DatabaseTypeEnum.OTHER.getDescription());
-			driverClassTextField.setText(StringUtil.hasValidContent(p.getDatabaseConfiguration().getDriverClassName()));
-			
+			DatabaseTypeEnum databaseTypeEnum = DatabaseTypeEnum.getDatabaseTypeEnumByName(p.getDatabaseType());
+			if (null != p.getDatabaseConfiguration()) {
+				driverClassTextField.setText(StringUtil.hasValidContent(p
+						.getDatabaseConfiguration().getDriverClassName()) ? p
+						.getDatabaseConfiguration().getDriverClassName() : "");
+				hostNameTextField.setText(StringUtil.hasValidContent(p
+						.getDatabaseConfiguration().getHostName()) ? p
+						.getDatabaseConfiguration().getHostName()
+						: DBEX_COMMON_CONTEXT.getDefaultHostName());
+				portNumberFormattedTextField
+						.setText(""
+								+ (null != p.getDatabaseConfiguration()
+										.getPortNumber() ? p
+										.getDatabaseConfiguration()
+										.getPortNumber() : DBEX_COMMON_CONTEXT
+										.getDefaultPortNumber()));
+				userNameTextField.setText(StringUtil.hasValidContent(p
+						.getDatabaseConfiguration().getUserName()) ? p
+						.getDatabaseConfiguration().getUserName() : "");
+				savePasswordCheckBox.setSelected(p.getDatabaseConfiguration().isSavePassword());
+				if(p.getDatabaseConfiguration().isSavePassword()){
+					passwordPasswordField.setText(StringUtil.hasValidContent(p
+							.getDatabaseConfiguration().getPassword()) ? p
+							.getDatabaseConfiguration().getPassword() : "");
+				} else {
+					passwordPasswordField.setText("");
+				}
+				if(DatabaseTypeEnum.OTHER.equals(databaseTypeEnum)){
+					if(DatabaseStorageTypeEnum.SCHEMA_STORAGE.getCode().equals(p.getDatabaseConfiguration().getStorageType())){
+						schemaRadioButton.setSelected(true);
+						catalogRadioButton.setSelected(false);
+					} else if(DatabaseStorageTypeEnum.CATALOG_STORAGE.getCode().equals(p.getDatabaseConfiguration().getStorageType())){
+						schemaRadioButton.setSelected(false);
+						catalogRadioButton.setSelected(true);
+					} else {
+						schemaRadioButton.setSelected(false);
+						catalogRadioButton.setSelected(false);
+					}
+				}
+				sidTextField.setText(StringUtil.hasValidContent(p
+						.getDatabaseConfiguration().getSidServiceName()) ? p
+						.getDatabaseConfiguration().getSidServiceName() : "");
+			}
+
 		}
 	}
 	
@@ -1081,7 +1128,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 
     // Variables declaration - do not modify
     private JToolBar actionToolBar;
-    private ButtonGroup buttonGroup1;
+    private ButtonGroup schemaCatalogButtonGroup;
     private JButton cancelButton;
     private JRadioButton catalogRadioButton;
     private JButton clearButton;

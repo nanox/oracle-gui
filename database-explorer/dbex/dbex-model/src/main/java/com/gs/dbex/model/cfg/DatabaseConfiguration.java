@@ -16,9 +16,27 @@ public class DatabaseConfiguration {
 	private String password;
 	private String storageType;
 	private String schemaName;
+	private boolean savePassword;
+	private String sidServiceName;
 	
 	public DatabaseConfiguration() {
 		// TODO Auto-generated constructor stub
+	}
+
+	public String getSidServiceName() {
+		return sidServiceName;
+	}
+
+	public void setSidServiceName(String sidServiceName) {
+		this.sidServiceName = sidServiceName;
+	}
+
+	public boolean isSavePassword() {
+		return savePassword;
+	}
+
+	public void setSavePassword(boolean savePassword) {
+		this.savePassword = savePassword;
 	}
 
 	public String getHostName() {

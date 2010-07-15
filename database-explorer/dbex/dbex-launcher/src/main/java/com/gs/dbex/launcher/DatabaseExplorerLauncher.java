@@ -12,6 +12,7 @@ import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.Logger;
 
+import com.gs.dbex.application.context.ApplicationCommonContext;
 import com.gs.dbex.application.frame.DatabaseExplorerFrame;
 import com.gs.dbex.common.DbexCommonContext;
 
@@ -23,6 +24,8 @@ public class DatabaseExplorerLauncher {
 
 	private static final Logger logger = Logger.getLogger(DatabaseExplorerLauncher.class);
 	private static DbexCommonContext dbexCommonContext = DbexCommonContext.getInstance();
+	private static ApplicationCommonContext applicationCommonContext = ApplicationCommonContext.getInstance();
+	
 	
 	/**
 	 * @param args
@@ -95,6 +98,10 @@ public class DatabaseExplorerLauncher {
 				logger.debug("File [ " + connPropsFile.getCanonicalPath() + " ] created.");
 			}
 		}
+	}
+	
+	public void populateInitialContext(){
+		
 	}
 
 }
