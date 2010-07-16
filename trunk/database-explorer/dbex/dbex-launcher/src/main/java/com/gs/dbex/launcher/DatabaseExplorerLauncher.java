@@ -101,6 +101,15 @@ public class DatabaseExplorerLauncher {
 	}
 	
 	public void populateInitialContext(){
+		populateDbexCommonContext();
+		populateApplicationCommonContext();
+	}
+
+	private void populateDbexCommonContext() {
+		
+	}
+
+	private void populateApplicationCommonContext() {
 		
 	}
 
