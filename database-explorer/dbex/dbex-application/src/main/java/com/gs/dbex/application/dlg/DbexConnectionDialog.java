@@ -59,6 +59,7 @@ import org.apache.log4j.Logger;
 import com.gs.dbex.application.comps.CollectionListModel;
 import com.gs.dbex.application.connection.driver.JdbcDriverManagerDialog;
 import com.gs.dbex.application.constants.ApplicationConstants;
+import com.gs.dbex.application.context.ApplicationCommonContext;
 import com.gs.dbex.common.DbexCommonContext;
 import com.gs.dbex.common.enums.DatabaseStorageTypeEnum;
 import com.gs.dbex.common.enums.DatabaseTypeEnum;
@@ -74,7 +75,8 @@ public class DbexConnectionDialog extends JDialog
 implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyListener, WindowListener {
 
 	private static final Logger logger = Logger.getLogger(DbexConnectionDialog.class);
-	private static final DbexCommonContext DBEX_COMMON_CONTEXT = DbexCommonContext.getInstance();
+	private static final DbexCommonContext dbexCommonContext = DbexCommonContext.getInstance();
+	private static final ApplicationCommonContext applicationCommonContext = ApplicationCommonContext.getInstance();
 	
 	private int selectedOption = ApplicationConstants.CANCEL_OPTION;
 	private Frame parentFrame;
@@ -1058,7 +1060,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 		if (null != p) {
 			connectionNameLabel.setText(StringUtil.hasValidContent(p
 					.getConnectionName()) ? p.getConnectionName()
-					: DBEX_COMMON_CONTEXT.getDefaultHostName());
+					: dbexCommonContext.getDefaultHostName());
 			dbTypeComboBox.setSelectedItem(StringUtil.hasValidContent(p
 					.getDatabaseType()) ? p.getDatabaseType()
 					: DatabaseTypeEnum.OTHER.getDescription());
@@ -1070,13 +1072,13 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 				hostNameTextField.setText(StringUtil.hasValidContent(p
 						.getDatabaseConfiguration().getHostName()) ? p
 						.getDatabaseConfiguration().getHostName()
-						: DBEX_COMMON_CONTEXT.getDefaultHostName());
+						: dbexCommonContext.getDefaultHostName());
 				portNumberFormattedTextField
 						.setText(""
 								+ (null != p.getDatabaseConfiguration()
 										.getPortNumber() ? p
 										.getDatabaseConfiguration()
-										.getPortNumber() : DBEX_COMMON_CONTEXT
+										.getPortNumber() : dbexCommonContext
 										.getDefaultPortNumber()));
 				userNameTextField.setText(StringUtil.hasValidContent(p
 						.getDatabaseConfiguration().getUserName()) ? p

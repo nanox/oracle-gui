@@ -15,6 +15,8 @@ public interface ApplicationDataHistoryMgr {
 
 	public List<ConnectionProperties> loadAllConnectionProperties();
 	
+	public List<ConnectionProperties> loadAllConnectionProperties(String fileName);
+	
 	public ConnectionProperties getConnectionProperties(String connectionName);
 	
 }
