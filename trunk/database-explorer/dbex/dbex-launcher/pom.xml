@@ -48,7 +48,7 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>
@@ -65,13 +65,13 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>com.gs.dbex.launcher.DatabaseExplorerLauncher</mainClass> 
+							<mainClass>com.gs.dbex.launcher.DatabaseExplorerLauncher</mainClass>
 							<addClasspath>true</addClasspath>
 							<classpathPrefix>lib/</classpathPrefix>
-							
+
 						</manifest>
 						<!-- <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile> 
-						<classpathLayoutType>repository</classpathLayoutType> -->
+							<classpathLayoutType>repository</classpathLayoutType> -->
 					</archive>
 				</configuration>
 				<executions>
@@ -82,24 +82,28 @@
 					</execution>
 				</executions>
 			</plugin>
-			
+
 			<plugin>
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
-					<!-- Coping JAR to release directory-->
+					<!-- Coping JAR to release directory -->
 					<execution>
 						<id>defaultcopy</id>
 						<phase>package</phase>
 						<configuration>
 							<tasks>
-								<!-- Coping JAR to release directory-->
+								<!-- Coping JAR to release directory -->
 								<copy todir="${release.dir}/${project.title}_${release.version}/"
 									overwrite="true" failonerror="true" includeEmptyDirs="true">
 									<fileset dir="target">
 										<include name="dbex-launcher-${release.version}.jar" />
 									</fileset>
 								</copy>
-								
+								<!-- Coping Application data to release directory -->
+								<copy todir="${release.dir}/${project.title}_${release.version}/" 
+									overwrite="true" failonerror="true" includeEmptyDirs="true"> <fileset dir="${setup.dir}"> 
+									<include name="application-data/**/*.*" /> </fileset> 
+								</copy> 
 							</tasks>
 						</configuration>
 						<goals>
@@ -108,25 +112,49 @@
 					</execution>
 				</executions>
 			</plugin>
+			<!--<plugin> TODO: Not Working
+				<artifactId>maven-resources-plugin</artifactId>
+				<version>2.4</version>
+				<executions>
+					<execution>
+						<id>copy-resources</id>
+						 here the phase you need 
+						<phase>validate</phase>
+						<goals>
+							<goal>copy-resources</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${release.dir}/${project.title}_${release.version}/application-data/</outputDirectory>
+							<resources>
+								<resource>
+									<directory>${setup.dir}/application-data</directory>
+									<filtering>true</filtering>
+								</resource>
+							</resources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> -->
+
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-dependency-plugin</artifactId>
 				<executions>
-				  <execution>
-					<id>copy-dependencies</id>
-					<phase>package</phase>
-					<goals>
-					  <goal>copy-dependencies</goal>
-					</goals>
-					<configuration>
-					  <outputDirectory>${release.dir}/${project.title}_${release.version}/lib/</outputDirectory>
-					  <overWriteReleases>false</overWriteReleases>
-					  <overWriteSnapshots>false</overWriteSnapshots>
-					  <overWriteIfNewer>true</overWriteIfNewer>
-					</configuration>
-				  </execution>
+					<execution>
+						<id>copy-dependencies</id>
+						<phase>package</phase>
+						<goals>
+							<goal>copy-dependencies</goal>
+						</goals>
+						<configuration>
+							<outputDirectory>${release.dir}/${project.title}_${release.version}/lib/</outputDirectory>
+							<overWriteReleases>false</overWriteReleases>
+							<overWriteSnapshots>false</overWriteSnapshots>
+							<overWriteIfNewer>true</overWriteIfNewer>
+						</configuration>
+					</execution>
 				</executions>
-			  </plugin>
+			</plugin>
 		</plugins>
 	</build>
 </project>
