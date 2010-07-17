@@ -52,6 +52,10 @@ public final class DbexCommonContext implements DbexCommonConstants{
 	public String getConnectionConfigFileName() {
 		return getApplicationDataDir() + FILE_SEPARATOR + "connection-properties.xml";
 	}
+	
+	public String getConnectionConfigMappingFileName() {
+		return CASTOR_MAPPING_DIR + FILE_SEPARATOR + "connection-properties-mapping.xml";
+	}
 
 	public String getLocalHistoryPath() {
 		return getDataDirName() + FILE_SEPARATOR + "localHistory";
@@ -77,5 +81,12 @@ public final class DbexCommonContext implements DbexCommonConstants{
 		this.defaultHostName = defaultHostName;
 	}
 	
+	public String getApplicationPropertiesDir(){
+		return APPLICATION_DATA_DIR + FILE_SEPARATOR + APPLICATION_PROPERTIES_DIR_NAME;
+	}
+	
+	public String getErrorMsgConstFileName() {
+		return getApplicationPropertiesDir() + FILE_SEPARATOR + "ErrorMessage.properties";
+	}
 	
 }

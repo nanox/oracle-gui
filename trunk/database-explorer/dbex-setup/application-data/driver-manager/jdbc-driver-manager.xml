@@ -1,18 +1,58 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<driver-manager>
-	<driver-collection>
-		<jdbc-driver name="Oracle 9i">
-			<connection-url>
+<driverManager>
+	<jdbcDriver name="Oracle 9i">
+		<connectionConfiguration name="SomeName001">
+			<databaseType>databaseType</databaseType>
+			<connectionUrl>
 				<protocol></protocol>
-				<default-port></default-port>
-			</connection-url>
-			<services>
-				<class-name>com.oracle.Driver</class-name>
-				<class-name>com.oracle.jdbc.JdbcDriver</class-name>
-			</services>
-			<jar-entry file-name="" system-ref="true">
-				<jar-location>d:/libs/</jar-location>
-			</jar-entry>
-		</jdbc-driver>
-	</driver-collection>
-</driver-manager>
+				<url></url>
+			</connectionUrl>
+			<databaseConfiguration>
+				<driverClassName>someDriver</driverClassName>
+				<hostName>somehost</hostName>
+				<portNumber>1234</portNumber>
+				<userName>someuser</userName>
+				<password>password</password>
+				<savePassword>true</savePassword>
+				<storageType>CATALOG</storageType>
+				<sidServiceName>SOMESERVICE</sidServiceName>
+				<schemaName>Some_Schema</schemaName>
+			</databaseConfiguration>
+		</connectionConfiguration>
+		<services>
+			<className>com.oracle.Driver</className>
+			<className>com.oracle.jdbc.JdbcDriver</className>
+		</services>
+		<jarEntry fileName="" systemRef="true">
+			<jarLocation>d:/libs/</jarLocation>
+		</jarEntry>
+	</jdbcDriver>
+
+	<jdbcDriver name="Oracle 10g">
+		<connectionConfiguration name="SomeName001">
+			<databaseType>databaseType</databaseType>
+			<connectionUrl>
+				<protocol></protocol>
+				<url></url>
+			</connectionUrl>
+			<databaseConfiguration>
+				<driverClassName>someDriver</driverClassName>
+				<hostName>somehost</hostName>
+				<portNumber>1234</portNumber>
+				<userName>someuser</userName>
+				<password>password</password>
+				<savePassword>true</savePassword>
+				<storageType>CATALOG</storageType>
+				<sidServiceName>SOMESERVICE</sidServiceName>
+				<schemaName>Some_Schema</schemaName>
+			</databaseConfiguration>
+		</connectionConfiguration>
+		<services>
+			<className>com.oracle.Driver</className>
+			<className>com.oracle.jdbc.JdbcDriver</className>
+		</services>
+		<jarEntry fileName="" systemRef="true">
+			<jarLocation>d:/libs/</jarLocation>
+		</jarEntry>
+	</jdbcDriver>
+</driverManager>

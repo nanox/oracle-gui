@@ -13,9 +13,12 @@ public interface DbexCommonConstants {
 	String USER_HOME = System.getProperty("user.home");
 	
 	String EXTERNAL_DATA_PATH_KEY = "EXTERNAL_DATA_PATH";
-	String DEFAULT_EXTERNAL_DATA_PATH = USER_HOME + FILE_SEPARATOR + "dbex-data";
+	String DEFAULT_EXTERNAL_DATA_PATH = "./dbex-data";
 	
 	int MAX_SAVED_CONNECTIONS = 100;
 	
+	String APPLICATION_DATA_DIR = "./application-data";
+	String APPLICATION_PROPERTIES_DIR_NAME = "properties";
 	
+	String CASTOR_MAPPING_DIR = APPLICATION_DATA_DIR + FILE_SEPARATOR + "mapping";
 }

@@ -9,8 +9,8 @@ package com.gs.dbex.common.enums;
  */
 public enum DatabaseStorageTypeEnum {
 
-	CATALOG_STORAGE("CATALOG_STORAGE", "Store as Catalog"),
-	SCHEMA_STORAGE("SCHEMA_STORAGE", "Store as Schema"),
+	CATALOG_STORAGE("CATALOG", "Store as Catalog"),
+	SCHEMA_STORAGE("SCHEMA", "Store as Schema"),
 	UNKNOWN("UNKNOWN", "Unknown");
 	
 	private String code;
@@ -29,5 +29,11 @@ public enum DatabaseStorageTypeEnum {
 		return description;
 	}
 	
-	
+	public static DatabaseStorageTypeEnum getTypeByDesc(String dsc){
+		if(CATALOG_STORAGE.getDescription().equals(dsc))
+			return CATALOG_STORAGE;
+		if(SCHEMA_STORAGE.getDescription().equals(dsc))
+			return SCHEMA_STORAGE;
+		return UNKNOWN;
+	}
 }
