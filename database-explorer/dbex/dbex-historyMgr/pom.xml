@@ -28,6 +28,7 @@
 			<artifactId>dbex-integration</artifactId>
 			<version>${release.version}</version>
 		</dependency>
+
 		
 		<dependency>
 			<groupId>junit</groupId>
