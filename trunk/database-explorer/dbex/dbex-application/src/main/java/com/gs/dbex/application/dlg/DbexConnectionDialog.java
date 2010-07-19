@@ -23,6 +23,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -99,20 +100,9 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
     
     private void populateInitialData(){
     	List<ConnectionProperties> pl = new ArrayList<ConnectionProperties>();
-    	List<String> dbTypes = DatabaseTypeEnum.getNamse();
-    	for(int i=0; i<10; i++){
-    		ConnectionProperties p = new ConnectionProperties();
-    		p.setConnectionName("ConnectionName_" + (i+1));
-    		p.getDatabaseConfiguration().setPortNumber((i+1) * 100);
-    		p.getDatabaseConfiguration().setHostName("hostName_" + ((i+1) * 100));
-    		p.getDatabaseConfiguration().setUserName("userName" + ((i+1) * 100));
-    		p.getDatabaseConfiguration().setPassword("password" + ((i+1) * 100));
-    		p.getDatabaseConfiguration().setSavePassword((i % 2 == 0) ? true : false);
-    		p.getDatabaseConfiguration().setSchemaName("schemaName");
-    		p.getDatabaseConfiguration().setStorageType("SCHEMA");
-    		p.setDatabaseType(dbTypes.get(i % 4));
-    		pl.add(p);
-    	}
+    	if(applicationCommonContext.getConnectionPropertiesMap() != null && applicationCommonContext.getConnectionPropertiesMap().size() >0)	
+    		pl = (List<ConnectionProperties>) applicationCommonContext.getConnectionPropertiesMap().values();
+    	Collections.sort(pl);
     	CollectionListModel<ConnectionProperties> model = new CollectionListModel<ConnectionProperties>(pl);
     	connectionNameList.setModel(model);
     	connectionNameList.setSelectedIndex(0);
@@ -1045,6 +1035,9 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 		logger.info("Closing Connection Dialog");
 	}
 
+	private void saveAllConnectionProperties(){
+		
+	}
 	
 	private ConnectionProperties populateToProperties(){
 		//String connectionName = (StringUtil.hasValidContent(connectionName))

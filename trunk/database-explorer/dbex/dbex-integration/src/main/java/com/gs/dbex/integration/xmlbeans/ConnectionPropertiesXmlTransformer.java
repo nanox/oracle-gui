@@ -1,6 +1,7 @@
 package com.gs.dbex.integration.xmlbeans;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,13 +25,16 @@ public class ConnectionPropertiesXmlTransformer {
 
 	private static Logger logger = Logger.getLogger(ConnectionPropertiesXmlTransformer.class);
 	
+	
+	
 	public List<ConnectionProperties> readAllConnectionProperties(String xmlText){
 		if(logger.isDebugEnabled()){
 			logger.debug("readAllConnectionProperties from XML");
 		}
 		List<ConnectionProperties> list = new ArrayList<ConnectionProperties>();
-		if(!StringUtil.hasValidContent(xmlText))
+		if(!StringUtil.hasValidContent(xmlText)){
 			return list;
+		}
 		ConnectionsDocument connectionsDocument = null;
 		XmlOptions xmloptions = new XmlOptions();
 		xmloptions.setDocumentType(XmlBeans.typeForClass(ConnectionsDocumentImpl.class));
@@ -84,25 +88,4 @@ public class ConnectionPropertiesXmlTransformer {
 	}
 
 
-	public static void main(String[] args) {
-		List<ConnectionProperties> pl = new ArrayList<ConnectionProperties>();
-    	List<String> dbTypes = DatabaseTypeEnum.getNamse();
-    	for(int i=0; i<10; i++){
-    		ConnectionProperties p = new ConnectionProperties();
-    		p.setConnectionName("ConnectionName_" + (i+1));
-    		p.getDatabaseConfiguration().setPortNumber((i+1) * 100);
-    		p.getDatabaseConfiguration().setHostName("hostName_" + ((i+1) * 100));
-    		p.getDatabaseConfiguration().setUserName("userName" + ((i+1) * 100));
-    		p.getDatabaseConfiguration().setPassword("password" + ((i+1) * 100));
-    		p.getDatabaseConfiguration().setSavePassword((i % 2 == 0) ? true : false);
-    		p.getDatabaseConfiguration().setSchemaName("schemaName");
-    		p.getDatabaseConfiguration().setStorageType("SCHEMA");
-    		p.setDatabaseType(dbTypes.get(i % 4));
-    		pl.add(p);
-    	}
-		List<ConnectionProperties> list = new ConnectionPropertiesXmlTransformer().readAllConnectionProperties(
-				FileRWUtil.getContents(new File("D:\\SVN_HOME\\MyProjects\\oracle-gui\\document\\dbex\\design\\connections.cfg.xml")));
-		String s = new ConnectionPropertiesBodGenerator().createConnectionPropertiesXmlText(pl);
-		System.out.println(s);
-	}
 }
