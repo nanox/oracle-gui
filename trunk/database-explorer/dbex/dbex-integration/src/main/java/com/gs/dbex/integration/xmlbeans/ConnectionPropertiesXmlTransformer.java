@@ -82,7 +82,8 @@ public class ConnectionPropertiesXmlTransformer {
 		cfg.setSavePassword(databaseConfiguration.getSavePassword());
 		cfg.setSchemaName(databaseConfiguration.getSchemaName());
 		cfg.setSidServiceName(databaseConfiguration.getSidServiceName());
-		cfg.setStorageType(databaseConfiguration.getStorageType().toString());
+		if(databaseConfiguration.getStorageType() != null)
+			cfg.setStorageType(databaseConfiguration.getStorageType().toString());
 		cfg.setUserName(databaseConfiguration.getUserName());
 		return cfg;
 	}
