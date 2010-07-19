@@ -7,9 +7,9 @@
 	<import resource="dbex-integration-context.xml"/>
 	<import resource="dbex-service-context.xml"/>
 	<import resource="dbex-historyMgr-context.xml"/>
-	<import resource="dbex-appliation-context.xml"/>
+	<!--<import resource="dbex-appliation-context.xml"/>
 	
-	<bean id="databaseExplorerLauncher" class="com.gs.dbex.launcher.DatabaseExplorerLauncher">
+	--><bean id="databaseExplorerLauncher" class="com.gs.dbex.launcher.DatabaseExplorerLauncher">
 		<property name="applicationDataLoader" ref="applicationDataLoader"></property>
 	</bean>
 	
