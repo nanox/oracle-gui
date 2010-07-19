@@ -80,13 +80,22 @@ public class DatabaseExplorerLauncher {
 	
 	
 	private static void createFiles() throws Exception{
-		File dataDir = new File(dbexCommonContext.getDataDirName());
-		if(!dataDir.exists()){
-			dataDir.mkdir();
+		File profilesDir = new File(dbexCommonContext.getProfilesDirName());
+		if(!profilesDir.exists()){
+			profilesDir.mkdir();
 			if(logger.isDebugEnabled()){
-				logger.debug("Directory [ " + dataDir.getCanonicalPath() + " ] created.");
+				logger.debug("Directory [ " + profilesDir.getCanonicalPath() + " ] created.");
 			}
 		} 
+		File userDir = new File(dbexCommonContext.getUserDataPath());
+		if(!userDir.exists()){
+			userDir.mkdir();
+			if(logger.isDebugEnabled()){
+				logger.debug("Directory [ " + userDir.getCanonicalPath() + " ] created.");
+			}
+		} 
+		
+		
 		File appDataDir = new File(dbexCommonContext.getApplicationDataDir());
 		if(!appDataDir.exists()){
 			appDataDir.mkdir();
@@ -99,13 +108,6 @@ public class DatabaseExplorerLauncher {
 			historyDataDir.mkdir();
 			if(logger.isDebugEnabled()){
 				logger.debug("Directory [ " + historyDataDir.getCanonicalPath() + " ] created.");
-			}
-		} 
-		File userDir = new File(dbexCommonContext.getUserDataPath());
-		if(!userDir.exists()){
-			userDir.mkdir();
-			if(logger.isDebugEnabled()){
-				logger.debug("Directory [ " + userDir.getCanonicalPath() + " ] created.");
 			}
 		} 
 		

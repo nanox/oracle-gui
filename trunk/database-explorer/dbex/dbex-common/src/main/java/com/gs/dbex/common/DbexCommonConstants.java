@@ -11,9 +11,10 @@ public interface DbexCommonConstants {
 
 	String FILE_SEPARATOR = System.getProperty("file.separator");
 	String USER_HOME = System.getProperty("user.home");
+	String USER_NAME = System.getProperty("user.name");
 	
-	String EXTERNAL_DATA_PATH_KEY = "EXTERNAL_DATA_PATH";
-	String DEFAULT_EXTERNAL_DATA_PATH = "./dbex-data";
+	String PROFILES_PATH_KEY = "EXTERNAL_DATA_PATH";
+	String DEFAULT_PROFILES_PATH = "./Profiles";
 	
 	int MAX_SAVED_CONNECTIONS = 100;
 	
