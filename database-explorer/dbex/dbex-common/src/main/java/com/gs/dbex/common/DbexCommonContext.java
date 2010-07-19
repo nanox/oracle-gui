@@ -35,22 +35,22 @@ public final class DbexCommonContext implements DbexCommonConstants{
 	
 	/* -----------  Utility methods  --------------------------------------- */
 	private void initContext() {
-		APP_PROPERTIES_MAP.put(EXTERNAL_DATA_PATH_KEY, DEFAULT_EXTERNAL_DATA_PATH);
+		APP_PROPERTIES_MAP.put(PROFILES_PATH_KEY, DEFAULT_PROFILES_PATH);
 	}
 
 	
 	/* -----------  get-set methods  --------------------------------------- */
 	
-	public String getDataDirName(){
-		return APP_PROPERTIES_MAP.get(EXTERNAL_DATA_PATH_KEY);
+	public String getProfilesDirName(){
+		return APP_PROPERTIES_MAP.get(PROFILES_PATH_KEY);
 	}
 	
 	public void setDataDirName(String dir){
-		APP_PROPERTIES_MAP.put(EXTERNAL_DATA_PATH_KEY, dir);
+		APP_PROPERTIES_MAP.put(PROFILES_PATH_KEY, dir);
 	}
 
 	public String getApplicationDataDir() {
-		return getDataDirName() + FILE_SEPARATOR + "application";
+		return getUserDataPath() + FILE_SEPARATOR + "application";
 	}
 
 	public String getConnectionConfigFileName() {
@@ -62,11 +62,11 @@ public final class DbexCommonContext implements DbexCommonConstants{
 	}
 
 	public String getLocalHistoryPath() {
-		return getDataDirName() + FILE_SEPARATOR + "localHistory";
+		return getUserDataPath() + FILE_SEPARATOR + "localHistory";
 	}
 
 	public String getUserDataPath() {
-		return getDataDirName() + FILE_SEPARATOR + "user";
+		return getProfilesDirName() + FILE_SEPARATOR + USER_NAME;
 	}
 
 	public int getDefaultPortNumber() {
