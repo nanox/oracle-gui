@@ -28,7 +28,8 @@ public class ApplicationTest {
 		try {
 			ApplicationContext applicationContext = new ClassPathXmlApplicationContext(
 					new String[] { "/context/dbex-service-context.xml",
-							"/context/dbex-integration-context.xml" });
+							"/context/dbex-integration-context.xml",
+							"/context/dbex-historyMgr-context.xml"});
 			
 			/*ConnectionProperties connectionProperties = new ConnectionProperties();
 			connectionProperties.setConnectionName("TestOracle");

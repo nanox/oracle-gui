@@ -6,6 +6,8 @@ package com.gs.dbex.common;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.context.ApplicationContext;
+
 /**
  * @author sabuj.das
  *
@@ -29,6 +31,8 @@ public final class DbexCommonContext implements DbexCommonConstants{
 	public final Map<String, String> APP_PROPERTIES_MAP = new HashMap<String, String>();
 	private int defaultPortNumber = 1521;
 	private String defaultHostName = "localhost";
+	public ApplicationContext applicationSpringContext;
+	
 	/* -----------  Utility methods  --------------------------------------- */
 	private void initContext() {
 		APP_PROPERTIES_MAP.put(EXTERNAL_DATA_PATH_KEY, DEFAULT_EXTERNAL_DATA_PATH);

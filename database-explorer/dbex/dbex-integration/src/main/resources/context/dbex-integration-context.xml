@@ -53,4 +53,12 @@
 		class="com.gs.dbex.integration.impl.castor.CastorXmlReaderIntegration">
 	</bean>
 	
+	<bean id="connectionPropertiesXmlTransformer"
+		class="com.gs.dbex.integration.xmlbeans.ConnectionPropertiesXmlTransformer">
+	</bean>
+	
+	<bean id="connectionPropertiesBodGenerator"
+		class="com.gs.dbex.integration.xmlbeans.ConnectionPropertiesBodGenerator">
+	</bean>
+	
 </beans>
