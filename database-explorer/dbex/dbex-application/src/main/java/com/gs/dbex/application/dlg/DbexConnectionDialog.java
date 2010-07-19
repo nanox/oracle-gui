@@ -103,8 +103,10 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
     
     private void populateInitialData(){
     	List<ConnectionProperties> pl = new ArrayList<ConnectionProperties>();
-    	if(applicationCommonContext.getConnectionPropertiesMap() != null && applicationCommonContext.getConnectionPropertiesMap().size() >0)	
-    		pl = (List<ConnectionProperties>) applicationCommonContext.getConnectionPropertiesMap().values();
+    	if(applicationCommonContext.getConnectionPropertiesMap() != null && applicationCommonContext.getConnectionPropertiesMap().size() >0){
+    		Collection<ConnectionProperties> l = applicationCommonContext.getConnectionPropertiesMap().values();
+    		pl.addAll(l);
+    	}
     	Collections.sort(pl);
     	CollectionListModel<ConnectionProperties> model = new CollectionListModel<ConnectionProperties>(pl);
     	connectionNameList.setModel(model);
@@ -849,6 +851,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 		if(StringUtil.hasValidContent(connectionName)){
 			ConnectionProperties p = new ConnectionProperties();
 			p.setConnectionName(connectionName);
+			p.setDisplayOrder(connectionNameList.getModel().getSize()+1);
 			((CollectionListModel<ConnectionProperties>)connectionNameList.getModel()).addElement(p);
 			connectionNameList.setSelectedIndex(connectionNameList.getModel().getSize()-1);
 			connectionNameList.updateUI();
@@ -863,7 +866,10 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 	}                                                     
 
 	private void saveButtonActionPerformed(ActionEvent evt) {                                           
-		// TODO add your handling code here:
+		ConnectionProperties p = populateToProperties();
+		if(p != null){
+			applicationCommonContext.getConnectionPropertiesMap().put(p.getConnectionName(), p);
+		}
 	}                                          
 
 	private void saveAsButtonActionPerformed(ActionEvent evt) {                                             
@@ -1053,12 +1059,22 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 	}
 	
 	private ConnectionProperties populateToProperties(){
-		//String connectionName = (StringUtil.hasValidContent(connectionName))
-		
 		ConnectionProperties p = (ConnectionProperties) connectionNameList.getSelectedValue();
-		if(p == null)
+		if(p == null){
 			p = new ConnectionProperties();
-		
+			p.setDisplayOrder(applicationCommonContext.getConnectionPropertiesMap().size()+1);
+		}
+		p.setConnectionName(connectionNameLabel.getText());
+		p.setDatabaseType(DatabaseTypeEnum.getDatabaseTypeEnumByName(dbTypeComboBox.getSelectedItem().toString()).getCode());
+		//p.setDisplayOrder(applicationCommonContext.getConnectionPropertiesMap().size()+1);
+		p.setConnectionUrl(urlTextField.getText());
+		p.getDatabaseConfiguration().setHostName(hostNameTextField.getText());
+		p.getDatabaseConfiguration().setPortNumber(123);
+		p.getDatabaseConfiguration().setDriverClassName(driverClassTextField.getText());
+		p.getDatabaseConfiguration().setPassword(passwordPasswordField.getText());
+		p.getDatabaseConfiguration().setSchemaName(schemaNameTextField.getText());
+		p.getDatabaseConfiguration().setSidServiceName(sidTextField.getText());
+		p.getDatabaseConfiguration().setSavePassword(savePasswordCheckBox.isSelected());
 		return p;
 	}
 	
