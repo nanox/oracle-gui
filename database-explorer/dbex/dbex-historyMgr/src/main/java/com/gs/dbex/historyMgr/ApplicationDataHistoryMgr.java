@@ -19,4 +19,8 @@ public interface ApplicationDataHistoryMgr {
 	
 	public ConnectionProperties getConnectionProperties(String connectionName);
 	
+	public boolean saveAllConnectionProperties(List<ConnectionProperties> connectionPropertiesList);
+	
+	public boolean saveAllConnectionProperties(List<ConnectionProperties> connectionPropertiesList, String fileName);
+	
 }

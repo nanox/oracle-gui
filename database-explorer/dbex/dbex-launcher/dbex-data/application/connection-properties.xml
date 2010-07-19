@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<connections xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <connection name="asdgdfgsdfg" displayOrder="0">
+    <databaseType xsi:nil="true"/>
+    <connectionUrl>
+      <protocol/>
+      <url xsi:nil="true"/>
+    </connectionUrl>
+    <databaseConfiguration>
+      <driverClassName xsi:nil="true"/>
+      <hostName xsi:nil="true"/>
+      <portNumber>1521</portNumber>
+      <userName xsi:nil="true"/>
+      <password xsi:nil="true"/>
+      <savePassword>false</savePassword>
+      <sidServiceName xsi:nil="true"/>
+      <schemaName xsi:nil="true"/>
+    </databaseConfiguration>
+  </connection>
+  <connection name="sdfgergegrsdfgrg" displayOrder="0">
+    <databaseType xsi:nil="true"/>
+    <connectionUrl>
+      <protocol/>
+      <url xsi:nil="true"/>
+    </connectionUrl>
+    <databaseConfiguration>
+      <driverClassName xsi:nil="true"/>
+      <hostName xsi:nil="true"/>
+      <portNumber>1521</portNumber>
+      <userName xsi:nil="true"/>
+      <password xsi:nil="true"/>
+      <savePassword>false</savePassword>
+      <sidServiceName xsi:nil="true"/>
+      <schemaName xsi:nil="true"/>
+    </databaseConfiguration>
+  </connection>
+</connections>

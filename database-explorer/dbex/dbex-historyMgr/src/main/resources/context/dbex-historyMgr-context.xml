@@ -4,6 +4,12 @@
    
 <beans>
 
+	<bean id="DbexHistoryMgrBeanFactory"
+		class="com.gs.dbex.historyMgr.DbexHistoryMgrBeanFactory"
+		factory-method="getInstance">
+		<property name="applicationDataHistoryMgr" ref="applicationDataHistoryMgr"></property>
+	</bean>
+
 	<bean id="applicationDataHistoryMgr" class="com.gs.dbex.historyMgr.data.ApplicationDataHistoryMgrImpl">
 		<property name="connectionPropertiesXmlTransformer" ref="connectionPropertiesXmlTransformer" />
 		<property name="connectionPropertiesBodGenerator" ref="connectionPropertiesBodGenerator" />

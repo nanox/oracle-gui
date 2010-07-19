@@ -23,6 +23,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -64,6 +65,8 @@ import com.gs.dbex.application.context.ApplicationCommonContext;
 import com.gs.dbex.common.DbexCommonContext;
 import com.gs.dbex.common.enums.DatabaseStorageTypeEnum;
 import com.gs.dbex.common.enums.DatabaseTypeEnum;
+import com.gs.dbex.historyMgr.ApplicationDataHistoryMgr;
+import com.gs.dbex.historyMgr.DbexHistoryMgrBeanFactory;
 import com.gs.dbex.model.cfg.ConnectionProperties;
 import com.gs.utils.swing.display.DisplayUtils;
 import com.gs.utils.text.StringUtil;
@@ -849,6 +852,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 			((CollectionListModel<ConnectionProperties>)connectionNameList.getModel()).addElement(p);
 			connectionNameList.setSelectedIndex(connectionNameList.getModel().getSize()-1);
 			connectionNameList.updateUI();
+			applicationCommonContext.getConnectionPropertiesMap().put(p.getConnectionName(), p);
 		} else {
 			DisplayUtils.displayMessage(this,"Invalid Connection Name");
 		}
@@ -867,7 +871,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 	}                                            
 
 	private void saveAllButtonActionPerformed(ActionEvent evt) {                                              
-		// TODO add your handling code here:
+		saveAllConnectionProperties();
 	}                                             
 
 	private void deleteButtonActionPerformed(ActionEvent evt) {                                             
@@ -1036,7 +1040,16 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 	}
 
 	private void saveAllConnectionProperties(){
-		
+		ApplicationDataHistoryMgr dataHistoryMgr = DbexHistoryMgrBeanFactory.getInstance().getApplicationDataHistoryMgr();
+		Collection<ConnectionProperties> list = applicationCommonContext.getConnectionPropertiesMap().values();
+		List<ConnectionProperties> ps = new ArrayList<ConnectionProperties>();
+		ps.addAll(list);
+		boolean b = dataHistoryMgr.saveAllConnectionProperties(ps);
+		if(b){
+			System.out.println("Saved");
+		} else {
+			System.out.println("NOT Saved");
+		}
 	}
 	
 	private ConnectionProperties populateToProperties(){

@@ -74,5 +74,24 @@ public class ApplicationDataHistoryMgrImpl implements ApplicationDataHistoryMgr 
 	public ConnectionProperties getConnectionProperties(String connectionName) {
 		return null;
 	}
-
+	
+	/**
+	 * 
+	 */
+	public boolean saveAllConnectionProperties(
+			List<ConnectionProperties> connectionPropertiesList) {
+		return saveAllConnectionProperties(connectionPropertiesList, dbexCommonContext.getConnectionConfigFileName());
+	}
+	
+	/**
+	 * 
+	 */
+	public boolean saveAllConnectionProperties(
+			List<ConnectionProperties> connectionPropertiesList, String fileName) {
+		if(!StringUtil.hasValidContent(fileName) || connectionPropertiesList == null)
+			return false;
+		String xmlText = getConnectionPropertiesBodGenerator().createConnectionPropertiesXmlText(connectionPropertiesList);
+		FileRWUtil.writeAsText(fileName, xmlText);
+		return true;
+	}
 }
