@@ -142,8 +142,9 @@ public class DatabaseViewerInternalFrame extends JInternalFrame implements Windo
 	}
 	
 	private void initComponents(Database database){
-		/*if(connectionProperties != null)
-			setTitle((connectionProperties.getUserName() + " @ " + connectionProperties.getHostName()).toUpperCase());*/
+		if(connectionProperties != null)
+			setTitle((connectionProperties.getDatabaseConfiguration().getUserName() 
+					+ " @ " + connectionProperties.getDatabaseConfiguration().getHostName()).toUpperCase());
 		
 		setLocation(0, 0);
 		setSize(600, 450);

@@ -10,6 +10,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
+import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
@@ -79,13 +80,14 @@ public class ApplicationEventHandler implements ActionListener,
 			}else if(CREATE_CONNECTION_ACT_CMD.equals(cmd)){
 				Runnable connRun = new Runnable(){
 					public void run() {
-						final ConnectionDialog dlg = (ConnectionDialog) sourceForm;
-						dlg.disableButtons(true);
+						final DbexConnectionDialog dlg = (DbexConnectionDialog) sourceForm;
+						//dlg.disableButtons(true);
 						DatabaseConnectionService connectionService = DbexServiceBeanFactory.getBeanFactory().getDatabaseConnectionService();
 						boolean connected = false;
 						if(connectionService != null){
 							try {
-								connected = connectionService.connectToDatabase((ConnectionProperties)getData());
+								ConnectionProperties properties = (ConnectionProperties)getData();
+								connected = connectionService.connectToDatabase(properties);
 							} catch (DbexException e) {
 								DisplayUtils.displayMessage(e.getExceptionMessage());
 							}
@@ -98,7 +100,7 @@ public class ApplicationEventHandler implements ActionListener,
 							DatabaseViewerInternalFrame iFrame = new DatabaseViewerInternalFrame(frame, (ConnectionProperties) data);
 							iFrame.setVisible(true);
 							frame.getMainDesktopPane().add(iFrame);
-							((ConnectionDialog)getSourceForm()).dispose();
+							((DbexConnectionDialog)getSourceForm()).dispose();
 						}
 						frame.getStatusBar().getCurrentStatusLabel().setIcon(null);
 						frame.getStatusBar().getCurrentStatusLabel().setText("");

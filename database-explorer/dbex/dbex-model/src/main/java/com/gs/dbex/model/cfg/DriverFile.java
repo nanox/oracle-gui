@@ -10,7 +10,8 @@ package com.gs.dbex.model.cfg;
 public class DriverFile {
 
 	private String fileName;
-	private String path;
+	private String driverLocation;
+	private boolean systemRef;
 	
 	public DriverFile() {
 		// TODO Auto-generated constructor stub
@@ -24,12 +25,20 @@ public class DriverFile {
 		this.fileName = fileName;
 	}
 
-	public String getPath() {
-		return path;
+	public String getDriverLocation() {
+		return driverLocation;
 	}
 
-	public void setPath(String path) {
-		this.path = path;
+	public void setDriverLocation(String driverLocation) {
+		this.driverLocation = driverLocation;
+	}
+
+	public boolean isSystemRef() {
+		return systemRef;
+	}
+
+	public void setSystemRef(boolean systemRef) {
+		this.systemRef = systemRef;
 	}
 	
 	

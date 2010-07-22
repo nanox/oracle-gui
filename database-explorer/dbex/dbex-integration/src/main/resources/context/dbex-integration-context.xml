@@ -24,6 +24,11 @@
 		<property name="databaseConnectionHelper" ref="mysqlDatabaseConnectionHelper"></property>
 	</bean>
 	
+	<bean id="genericDatabaseConnectionIntegration"
+		class="com.gs.dbex.integration.impl.GenericDatabaseConnectionIntegration">
+		<property name="databaseConnectionHelper" ref="genericDatabaseConnectionHelper"></property>
+	</bean>
+	
 	<bean id="IntegrationBeanFactory"
 		class="com.gs.dbex.integration.IntegrationBeanFactory" factory-method="getBeanFactory">
 		<property name="oracleDatabaseMetadataIntegration" ref="oracleDatabaseMetadataIntegration"></property>
@@ -31,6 +36,7 @@
 		<property name="oracleDatabaseConnectionIntegration" ref="oracleDatabaseConnectionIntegration"></property>
 		<property name="mysqlDatabaseConnectionIntegration" ref="mysqlDatabaseConnectionIntegration"></property>
 		<property name="castorXmlReaderIntegration" ref="castorXmlReaderIntegration"></property>
+		<property name="genericDatabaseConnectionIntegration" ref="genericDatabaseConnectionIntegration"></property>
 	</bean>
 	
 	<bean id="oracleDatabaseConnectionHelper"
@@ -39,6 +45,10 @@
 	
 	<bean id="mysqlDatabaseConnectionHelper"
 		class="com.gs.dbex.integration.helper.mysql.MysqlDatabaseConnectionHelper">
+	</bean>
+	
+	<bean id="genericDatabaseConnectionHelper"
+		class="com.gs.dbex.integration.helper.GenericDatabaseConnectionHelper">
 	</bean>
 	
 	<bean id="catalogDBGrabber"

@@ -82,40 +82,66 @@ public class DatabaseExplorerLauncher {
 	private static void createFiles() throws Exception{
 		File profilesDir = new File(dbexCommonContext.getProfilesDirName());
 		if(!profilesDir.exists()){
-			profilesDir.mkdir();
+			boolean created = profilesDir.mkdir();
 			if(logger.isDebugEnabled()){
-				logger.debug("Directory [ " + profilesDir.getCanonicalPath() + " ] created.");
+				if(created)
+					logger.debug("Directory [ " + profilesDir.getCanonicalPath() + " ] created.");
+				else
+					logger.debug("Cannot Create Directory [ " + profilesDir.getCanonicalPath() + " ].");
 			}
 		} 
 		File userDir = new File(dbexCommonContext.getUserDataPath());
 		if(!userDir.exists()){
-			userDir.mkdir();
+			boolean created = userDir.mkdir();
 			if(logger.isDebugEnabled()){
-				logger.debug("Directory [ " + userDir.getCanonicalPath() + " ] created.");
+				if(created)
+					logger.debug("Directory [ " + userDir.getCanonicalPath() + " ] created.");
+				else
+					logger.debug("Cannot Create Directory [ " + userDir.getCanonicalPath() + " ].");
 			}
 		} 
 		
 		
 		File appDataDir = new File(dbexCommonContext.getApplicationDataDir());
 		if(!appDataDir.exists()){
-			appDataDir.mkdir();
+			boolean created = appDataDir.mkdir();
 			if(logger.isDebugEnabled()){
-				logger.debug("Directory [ " + appDataDir.getCanonicalPath() + " ] created.");
+				if(created)
+					logger.debug("Directory [ " + appDataDir.getCanonicalPath() + " ] created.");
+				else
+					logger.debug("Cannot Create Directory [ " + appDataDir.getCanonicalPath() + " ].");
 			}
 		} 
 		File historyDataDir = new File(dbexCommonContext.getLocalHistoryPath());
 		if(!historyDataDir.exists()){
-			historyDataDir.mkdir();
+			boolean created = historyDataDir.mkdir();
 			if(logger.isDebugEnabled()){
-				logger.debug("Directory [ " + historyDataDir.getCanonicalPath() + " ] created.");
+				if(created)
+					logger.debug("Directory [ " + historyDataDir.getCanonicalPath() + " ] created.");
+				else
+					logger.debug("Cannot Create Directory [ " + historyDataDir.getCanonicalPath() + " ].");
 			}
 		} 
 		
 		File connPropsFile = new File(dbexCommonContext.getConnectionConfigFileName());
 		if(!connPropsFile.exists()){
-			connPropsFile.createNewFile();
+			boolean created = connPropsFile.createNewFile();
 			if(logger.isDebugEnabled()){
-				logger.debug("File [ " + connPropsFile.getCanonicalPath() + " ] created.");
+				if(created)
+					logger.debug("File [ " + connPropsFile.getCanonicalPath() + " ] created.");
+				else
+					logger.debug("Cannot Create File [ " + connPropsFile.getCanonicalPath() + " ].");
+			}
+		}
+		
+		File driverMgrFile = new File(dbexCommonContext.getDriverManagerFileName());
+		if(!driverMgrFile.exists()){
+			boolean created = driverMgrFile.createNewFile();
+			if(logger.isDebugEnabled()){
+				if(created)
+					logger.debug("File [ " + driverMgrFile.getCanonicalPath() + " ] created.");
+				else
+					logger.debug("Cannot Create File [ " + driverMgrFile.getCanonicalPath() + " ].");
 			}
 		}
 	}

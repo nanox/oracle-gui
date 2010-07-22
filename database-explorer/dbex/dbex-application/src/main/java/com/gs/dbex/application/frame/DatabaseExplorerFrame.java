@@ -62,7 +62,7 @@ public class DatabaseExplorerFrame extends JFrame implements WindowListener{
 		setSize(800, 600);
 		setTitle("Database Explorer");
 		setIconImage((new ImageIcon(DatabaseExplorerFrame.class
-				.getResource(ApplicationConstants.IMAGE_PATH + "Oracle-Gui.gif")))
+				.getResource(ApplicationConstants.IMAGE_PATH + "dbex_24x24.png")))
 				.getImage());
 		WindowUtil.bringToCenter(this);
 	}
