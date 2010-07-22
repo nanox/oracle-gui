@@ -10,7 +10,9 @@ import com.gs.dbex.common.DbexCommonContext;
 import com.gs.dbex.historyMgr.ApplicationDataHistoryMgr;
 import com.gs.dbex.integration.xmlbeans.ConnectionPropertiesBodGenerator;
 import com.gs.dbex.integration.xmlbeans.ConnectionPropertiesXmlTransformer;
+import com.gs.dbex.integration.xmlbeans.DriverManagerXmlTransformer;
 import com.gs.dbex.model.cfg.ConnectionProperties;
+import com.gs.dbex.model.cfg.JdbcDriverConfiguration;
 import com.gs.utils.io.FileRWUtil;
 import com.gs.utils.text.StringUtil;
 
@@ -24,6 +26,7 @@ public class ApplicationDataHistoryMgrImpl implements ApplicationDataHistoryMgr 
 	
 	private ConnectionPropertiesBodGenerator connectionPropertiesBodGenerator;
 	private ConnectionPropertiesXmlTransformer connectionPropertiesXmlTransformer;
+	private DriverManagerXmlTransformer driverManagerXmlTransformer;
 	
 	public ApplicationDataHistoryMgrImpl() {
 		// TODO Auto-generated constructor stub
@@ -47,6 +50,15 @@ public class ApplicationDataHistoryMgrImpl implements ApplicationDataHistoryMgr 
 	public void setConnectionPropertiesXmlTransformer(
 			ConnectionPropertiesXmlTransformer connectionPropertiesXmlTransformer) {
 		this.connectionPropertiesXmlTransformer = connectionPropertiesXmlTransformer;
+	}
+
+	public DriverManagerXmlTransformer getDriverManagerXmlTransformer() {
+		return driverManagerXmlTransformer;
+	}
+
+	public void setDriverManagerXmlTransformer(
+			DriverManagerXmlTransformer driverManagerXmlTransformer) {
+		this.driverManagerXmlTransformer = driverManagerXmlTransformer;
 	}
 
 
@@ -93,5 +105,29 @@ public class ApplicationDataHistoryMgrImpl implements ApplicationDataHistoryMgr 
 		String xmlText = getConnectionPropertiesBodGenerator().createConnectionPropertiesXmlText(connectionPropertiesList);
 		FileRWUtil.writeAsText(fileName, xmlText);
 		return true;
+	}
+
+	public List<JdbcDriverConfiguration> getAllJdbcDriverConfiguration() {
+		return getAllJdbcDriverConfiguration(dbexCommonContext.getDriverManagerFileName());
+	}
+
+	public List<JdbcDriverConfiguration> getAllJdbcDriverConfiguration(
+			String fileName) {
+		if(!StringUtil.hasValidContent(fileName))
+			return null;
+		String xmlText = FileRWUtil.getContents(new File(fileName));
+		return getDriverManagerXmlTransformer().getAllJdbcDriverConfiguration(xmlText);
+	}
+
+	public boolean saveAllJdbcDriverConfiguration(
+			List<JdbcDriverConfiguration> driverConfigurations) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	public boolean saveAllJdbcDriverConfiguration(
+			List<JdbcDriverConfiguration> driverConfigurations, String fileName) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

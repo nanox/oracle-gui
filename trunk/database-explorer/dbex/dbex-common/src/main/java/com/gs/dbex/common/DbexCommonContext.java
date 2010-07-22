@@ -57,8 +57,8 @@ public final class DbexCommonContext implements DbexCommonConstants{
 		return getApplicationDataDir() + FILE_SEPARATOR + "connection-properties.xml";
 	}
 	
-	public String getConnectionConfigMappingFileName() {
-		return CASTOR_MAPPING_DIR + FILE_SEPARATOR + "connection-properties-mapping.xml";
+	public String getDriverManagerFileName() {
+		return getApplicationDataDir() + FILE_SEPARATOR + "jdbc-driver-manager.xml";
 	}
 
 	public String getLocalHistoryPath() {

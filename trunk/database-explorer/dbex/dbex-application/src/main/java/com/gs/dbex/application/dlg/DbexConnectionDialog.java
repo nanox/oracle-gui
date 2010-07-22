@@ -61,7 +61,9 @@ import org.apache.log4j.Logger;
 import com.gs.dbex.application.comps.CollectionListModel;
 import com.gs.dbex.application.connection.driver.JdbcDriverManagerDialog;
 import com.gs.dbex.application.constants.ApplicationConstants;
+import com.gs.dbex.application.constants.GuiCommandConstants;
 import com.gs.dbex.application.context.ApplicationCommonContext;
+import com.gs.dbex.application.event.ApplicationEventHandler;
 import com.gs.dbex.common.DbexCommonContext;
 import com.gs.dbex.common.enums.DatabaseStorageTypeEnum;
 import com.gs.dbex.common.enums.DatabaseTypeEnum;
@@ -692,6 +694,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
         connectButton.setText("Connect");
         connectButton.setName("connectButton"); 
         connectButton.addActionListener(this);
+        connectButton.setActionCommand(GuiCommandConstants.CREATE_CONNECTION_ACT_CMD);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 4;
         gridBagConstraints.gridy = 3;
@@ -839,6 +842,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 		ConnectionProperties p = (ConnectionProperties) connectionNameList.getSelectedValue();
 		if(p != null){
 			populateFromProperties(p);
+			changeButtonEnabled();
 		}
 	}                                               
 
@@ -987,17 +991,37 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 	private void editUrlToggleButtonActionPerformed(ActionEvent evt) {                                                    
 		if(editUrlToggleButton.isSelected()){
 			urlTextField.setEditable(true);
+			enableFileds(false);
 		} else if(!editUrlToggleButton.isSelected()){
 			urlTextField.setEditable(false);
+			enableFileds(true);
 		}
 	}                                                   
+
+	private void enableFileds(boolean b) {
+		hostNameTextField.setEnabled(b);
+		portNumberFormattedTextField.setEnabled(b);
+		userNameTextField.setEnabled(b);
+		passwordPasswordField.setEnabled(b);
+		schemaNameTextField.setEnabled(b);
+		sidTextField.setEnabled(b);
+	}
 
 	private void testConnectionButtonActionPerformed(ActionEvent evt) {                                                     
 		// TODO add your handling code here:
 	}                                                    
 
 	private void connectButtonActionPerformed(ActionEvent evt) {                                              
-		// TODO add your handling code here:
+		ConnectionProperties properties = populateToProperties();
+		if(properties != null){
+			ApplicationEventHandler handler = new ApplicationEventHandler();
+			handler.setParent(getParent());
+			handler.setSourceForm(this);
+			handler.setData(properties);
+			handler.actionPerformed(evt);
+			selectedOption = ApplicationConstants.APPLY_OPTION;
+	        dispose();
+		}
 	}                                             
 
 	private void schemaRadioButtonActionPerformed(ActionEvent evt) {                                                  
@@ -1130,6 +1154,20 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 						.getDatabaseConfiguration().getSidServiceName() : "");
 			}
 
+		}
+	}
+	
+	private void changeButtonEnabled(){
+		if(connectionNameList.getSelectedIndex() >= 0){ // something is selected
+			saveButton.setEnabled(true);
+			saveAsButton.setEnabled(true);
+			deleteButton.setEnabled(true);
+			exportAllButton.setEnabled(true);
+		} else {
+			saveButton.setEnabled(false);
+			saveAsButton.setEnabled(false);
+			deleteButton.setEnabled(false);
+			exportAllButton.setEnabled(false);
 		}
 	}
 	

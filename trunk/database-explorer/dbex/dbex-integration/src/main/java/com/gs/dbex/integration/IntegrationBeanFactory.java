@@ -17,6 +17,7 @@ public final class IntegrationBeanFactory {
 	private DatabaseMetadataIntegration mysqlDatabaseMetadataIntegration;
 	private DatabaseConnectionIntegration oracleDatabaseConnectionIntegration;
 	private DatabaseConnectionIntegration mysqlDatabaseConnectionIntegration;
+	private DatabaseConnectionIntegration genericDatabaseConnectionIntegration;
 	private XmlReaderIntegration castorXmlReaderIntegration;
 	
 	private IntegrationBeanFactory() {
@@ -43,6 +44,10 @@ public final class IntegrationBeanFactory {
 			return getOracleDatabaseConnectionIntegration();
 		} else if(DatabaseTypeEnum.MYSQL.equals(databaseTypeEnum)){
 			return getMysqlDatabaseConnectionIntegration();
+		} else if(DatabaseTypeEnum.MSSQL_2005.equals(databaseTypeEnum)){
+			return null;
+		} else if(DatabaseTypeEnum.OTHER.equals(databaseTypeEnum)){
+			return getGenericDatabaseConnectionIntegration();
 		}
 		return null;
 	}
@@ -90,6 +95,15 @@ public final class IntegrationBeanFactory {
 	public void setCastorXmlReaderIntegration(
 			XmlReaderIntegration castorXmlReaderIntegration) {
 		this.castorXmlReaderIntegration = castorXmlReaderIntegration;
+	}
+
+	public DatabaseConnectionIntegration getGenericDatabaseConnectionIntegration() {
+		return genericDatabaseConnectionIntegration;
+	}
+
+	public void setGenericDatabaseConnectionIntegration(
+			DatabaseConnectionIntegration genericDatabaseConnectionIntegration) {
+		this.genericDatabaseConnectionIntegration = genericDatabaseConnectionIntegration;
 	}
 
 	
