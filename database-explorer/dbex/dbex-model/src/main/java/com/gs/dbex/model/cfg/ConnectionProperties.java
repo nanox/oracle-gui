@@ -11,32 +11,34 @@ import com.gs.utils.text.StringUtil;
 
 /**
  * @author sabuj.das
- *
+ * 
  */
-public class ConnectionProperties implements Serializable, Comparable<ConnectionProperties> {
+public class ConnectionProperties implements Serializable,
+		Comparable<ConnectionProperties> {
 
 	/**
 	 * serialVersionUID = 2717753646686919478L;
 	 */
 	private static final long serialVersionUID = 2717753646686919478L;
-	
+
 	private String connectionName;
 	private String databaseType;
 	private String connectionUrl;
 	private Integer displayOrder;
 	private DatabaseConfiguration databaseConfiguration;
-	
+
 	private transient DataSource dataSource;
+	private transient boolean propertySaved = true;
 
 	public ConnectionProperties() {
 		this("UN-NAMED");
 	}
-	
+
 	public ConnectionProperties(String connName) {
 		this.connectionName = connName;
 		databaseConfiguration = new DatabaseConfiguration();
 	}
-	
+
 	public int compareTo(ConnectionProperties o) {
 		return connectionName.compareTo(o.getConnectionName());
 	}
@@ -46,8 +48,13 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 		dataSource = null;
 	}
 
-	
+	public boolean isPropertySaved() {
+		return propertySaved;
+	}
 
+	public void setPropertySaved(boolean propertySaved) {
+		this.propertySaved = propertySaved;
+	}
 
 	/**
 	 * @return the connectionName
@@ -57,13 +64,12 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	}
 
 	/**
-	 * @param connectionName the connectionName to set
+	 * @param connectionName
+	 *            the connectionName to set
 	 */
 	public void setConnectionName(String connectionName) {
 		this.connectionName = connectionName;
 	}
-
-
 
 	/**
 	 * @return the connectionUrl
@@ -73,7 +79,8 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	}
 
 	/**
-	 * @param connectionUrl the connectionUrl to set
+	 * @param connectionUrl
+	 *            the connectionUrl to set
 	 */
 	public void setConnectionUrl(String connectionUrl) {
 		this.connectionUrl = connectionUrl;
@@ -87,7 +94,8 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	}
 
 	/**
-	 * @param databaseType the databaseType to set
+	 * @param databaseType
+	 *            the databaseType to set
 	 */
 	public void setDatabaseType(String databaseType) {
 		this.databaseType = databaseType;
@@ -101,7 +109,8 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 	}
 
 	/**
-	 * @param dataSource the dataSource to set
+	 * @param dataSource
+	 *            the dataSource to set
 	 */
 	public void setDataSource(DataSource dataSource) {
 		this.dataSource = dataSource;
@@ -119,12 +128,14 @@ public class ConnectionProperties implements Serializable, Comparable<Connection
 		return databaseConfiguration;
 	}
 
-	public void setDatabaseConfiguration(DatabaseConfiguration databaseConfiguration) {
+	public void setDatabaseConfiguration(
+			DatabaseConfiguration databaseConfiguration) {
 		this.databaseConfiguration = databaseConfiguration;
 	}
-	
+
 	@Override
 	public String toString() {
-		return (StringUtil.hasValidContent(getConnectionName())) ? getConnectionName() : "UN-NAMED";
+		return (StringUtil.hasValidContent(getConnectionName())) ? getConnectionName()
+				: "UN-NAMED";
 	}
 }

@@ -80,6 +80,11 @@ import com.gs.utils.text.StringUtil;
 public class DbexConnectionDialog extends JDialog 
 implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyListener, WindowListener {
 
+	/**
+	 * 	Generated :: serialVersionUID = 1803937201488762305L
+	 */
+	private static final long serialVersionUID = 1803937201488762305L;
+	
 	private static final Logger logger = Logger.getLogger(DbexConnectionDialog.class);
 	private static final DbexCommonContext dbexCommonContext = DbexCommonContext.getInstance();
 	private static final ApplicationCommonContext applicationCommonContext = ApplicationCommonContext.getInstance();
@@ -87,6 +92,60 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 	private int selectedOption = ApplicationConstants.CANCEL_OPTION;
 	private Frame parentFrame;
 	private ConnectionProperties connectionProperties;
+	
+    private JToolBar actionToolBar;
+    private ButtonGroup schemaCatalogButtonGroup;
+    private JButton cancelButton;
+    private JRadioButton catalogRadioButton;
+    private JButton clearButton;
+    private JButton connectButton;
+    private JLabel connectionNameLabel;
+    private JList connectionNameList;
+    private JComboBox dbTypeComboBox;
+    private JButton deleteButton;
+    private JTextField driverClassTextField;
+    private JButton driverMgrButton;
+    private JToggleButton editUrlToggleButton;
+    private JButton exportAllButton;
+    private JPanel fieldValuePanel;
+    private JTextField hostNameTextField;
+    private JLabel jLabel1;
+    private JLabel jLabel12;
+    private JLabel jLabel13;
+    private JLabel jLabel2;
+    private JLabel jLabel3;
+    private JLabel jLabel4;
+    private JLabel jLabel5;
+    private JLabel jLabel6;
+    private JLabel jLabel7;
+    private JLabel jLabel8;
+    private JLabel jLabel9;
+    private JPanel jPanel1;
+    private JPanel jPanel2;
+    private JScrollPane jScrollPane1;
+    private JToolBar.Separator jSeparator1;
+    private JToolBar.Separator jSeparator2;
+    private JToolBar.Separator jSeparator3;
+    private JSeparator jSeparator4;
+    private JSeparator jSeparator5;
+    private JButton loadConnectionsButton;
+    private JButton moveDownButton;
+    private JButton moveUpButton;
+    private JButton newConnectionButton;
+    private JPasswordField passwordPasswordField;
+    private JFormattedTextField portNumberFormattedTextField;
+    private JButton saveAllButton;
+    private JButton saveAsButton;
+    private JButton saveButton;
+    private JCheckBox savePasswordCheckBox;
+    private JLabel schemaLabel;
+    private JTextField schemaNameTextField;
+    private JRadioButton schemaRadioButton;
+    private JLabel sidLabel;
+    private JTextField sidTextField;
+    private JButton testConnectionButton;
+    private JTextField urlTextField;
+    private JTextField userNameTextField;
 	
     /** Creates new form DbexConnectionDialog */
     public DbexConnectionDialog(Frame parent, boolean modal) {
@@ -262,6 +321,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 
         saveButton.setIcon(new ImageIcon(getClass().getResource("/images/save_edit.gif"))); 
         saveButton.setToolTipText("Save");
+        saveButton.setEnabled(false);
         saveButton.setFocusable(false);
         saveButton.setHorizontalTextPosition(SwingConstants.CENTER);
         saveButton.setName("saveButton"); 
@@ -272,6 +332,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
         saveAsButton.setIcon(new ImageIcon(getClass().getResource("/images/saveas_edit.gif"))); 
         saveAsButton.setToolTipText("Save As...");
         saveAsButton.setFocusable(false);
+        saveAsButton.setEnabled(false);
         saveAsButton.setHorizontalTextPosition(SwingConstants.CENTER);
         saveAsButton.setName("saveAsButton"); 
         saveAsButton.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -293,6 +354,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
         clearButton.setIcon(new ImageIcon(getClass().getResource("/images/edit-clear.png"))); 
         clearButton.setToolTipText("Clear");
         clearButton.setFocusable(false);
+        clearButton.setEnabled(false);
         clearButton.setHorizontalTextPosition(SwingConstants.CENTER);
         clearButton.setName("clearButton"); 
         clearButton.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -302,6 +364,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
         deleteButton.setIcon(new ImageIcon(getClass().getResource("/images/delete_edit.gif"))); 
         deleteButton.setToolTipText("Delete");
         deleteButton.setFocusable(false);
+        deleteButton.setEnabled(false);
         deleteButton.setHorizontalTextPosition(SwingConstants.CENTER);
         deleteButton.setName("deleteButton"); 
         deleteButton.setVerticalTextPosition(SwingConstants.BOTTOM);
@@ -386,6 +449,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
         jPanel2.add(jLabel5, gridBagConstraints);
 
         driverClassTextField.setName("driverClassTextField"); 
+        driverClassTextField.addKeyListener(this);
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 2;
@@ -764,8 +828,13 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
         else if (evt.getSource() == dbTypeComboBox) {
             DbexConnectionDialog.this.dbTypeComboBoxActionPerformed(evt);
         }
+        else if (evt.getSource() == savePasswordCheckBox) {
+            DbexConnectionDialog.this.savePasswordCheckBoxActionPerformed(evt);
+        }
     }
 
+
+	
 
 	public void keyPressed(KeyEvent evt) {
     }
@@ -789,9 +858,14 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
         else if (evt.getSource() == sidTextField) {
             DbexConnectionDialog.this.sidTextFieldKeyReleased(evt);
         }
+        else if (evt.getSource() == driverClassTextField) {
+            DbexConnectionDialog.this.driverClassTextFieldKeyReleased(evt);
+        }
     }
 
-    public void keyTyped(KeyEvent evt) {
+    
+
+	public void keyTyped(KeyEvent evt) {
     }
 
     public void windowActivated(WindowEvent evt) {
@@ -842,7 +916,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 		ConnectionProperties p = (ConnectionProperties) connectionNameList.getSelectedValue();
 		if(p != null){
 			populateFromProperties(p);
-			changeButtonEnabled();
+			changeButtonEnabled(p);
 		}
 	}                                               
 
@@ -856,10 +930,12 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 			ConnectionProperties p = new ConnectionProperties();
 			p.setConnectionName(connectionName);
 			p.setDisplayOrder(connectionNameList.getModel().getSize()+1);
+			p.setPropertySaved(false);
 			((CollectionListModel<ConnectionProperties>)connectionNameList.getModel()).addElement(p);
 			connectionNameList.setSelectedIndex(connectionNameList.getModel().getSize()-1);
 			connectionNameList.updateUI();
 			applicationCommonContext.getConnectionPropertiesMap().put(p.getConnectionName(), p);
+			changeButtonEnabled(p);
 		} else {
 			DisplayUtils.displayMessage(this,"Invalid Connection Name");
 		}
@@ -873,11 +949,18 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 		ConnectionProperties p = populateToProperties();
 		if(p != null){
 			applicationCommonContext.getConnectionPropertiesMap().put(p.getConnectionName(), p);
+			p.setPropertySaved(true);
+			changeButtonEnabled(p);
 		}
 	}                                          
 
 	private void saveAsButtonActionPerformed(ActionEvent evt) {                                             
-		// TODO add your handling code here:
+		ConnectionProperties p = populateToProperties();
+		if(p != null){
+			applicationCommonContext.getConnectionPropertiesMap().put(p.getConnectionName(), p);
+			p.setPropertySaved(true);
+			changeButtonEnabled(p);
+		}
 	}                                            
 
 	private void saveAllButtonActionPerformed(ActionEvent evt) {                                              
@@ -898,6 +981,10 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 
 	private void dbTypeComboBoxActionPerformed(ActionEvent evt) {
 		databaseTypeChanged();
+	}
+	
+	private void savePasswordCheckBoxActionPerformed(ActionEvent evt) {
+		connectionPropertiesModified();
 	}
 	
 	private void databaseTypeChanged(){
@@ -966,6 +1053,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 				schemaLabel.setText("Catalog Name");
 			}
 		}
+		connectionPropertiesModified();
 	}
 	
 	private void dbTypeComboBoxPropertyChange(PropertyChangeEvent evt) {                                              
@@ -977,6 +1065,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 		int option = driverManagerDialog.showDialog();
 		if(option == ApplicationConstants.APPLY_OPTION){
 			System.out.println("OK");
+			connectionPropertiesModified();
 		}
 	}                                               
 
@@ -1030,6 +1119,7 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 		} else {
 			schemaLabel.setText("Catalog Name");
 		}
+		connectionPropertiesModified();
 	}                                                 
 
 	private void catalogRadioButtonActionPerformed(ActionEvent evt) {                                                   
@@ -1038,32 +1128,37 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 		} else {
 			schemaLabel.setText("Schema Name");
 		}
+		connectionPropertiesModified();
 	}                                                  
 
 	private void hostNameTextFieldKeyReleased(KeyEvent evt) {                                              
-		// TODO add your handling code here:
+		connectionPropertiesModified();
 	}                                             
 
 	private void portNumberFormattedTextFieldKeyReleased(KeyEvent evt) {                                                         
-		// TODO add your handling code here:
+		connectionPropertiesModified();
 	}                                                        
 
 	private void userNameTextFieldKeyReleased(KeyEvent evt) {                                              
-		// TODO add your handling code here:
+		connectionPropertiesModified();
 	}                                             
 
 	private void passwordPasswordFieldKeyReleased(KeyEvent evt) {                                                  
-		// TODO add your handling code here:
+		connectionPropertiesModified();
 	}                                                 
 
 	private void schemaNameTextFieldKeyReleased(KeyEvent evt) {                                                
-		// TODO add your handling code here:
+		connectionPropertiesModified();
 	}                                               
 
 	private void sidTextFieldKeyReleased(KeyEvent evt) {                                         
-		urlTextField.setText(sidTextField.getText());
-	}                                        
-
+		connectionPropertiesModified();
+	}
+	
+	private void driverClassTextFieldKeyReleased(KeyEvent evt) {
+		connectionPropertiesModified();
+	}
+	
 	private void formWindowClosing(WindowEvent evt) {
 		selectedOption = ApplicationConstants.CANCEL_OPTION;
 		logger.info("Closing Connection Dialog");
@@ -1089,16 +1184,31 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 			p.setDisplayOrder(applicationCommonContext.getConnectionPropertiesMap().size()+1);
 		}
 		p.setConnectionName(connectionNameLabel.getText());
-		p.setDatabaseType(DatabaseTypeEnum.getDatabaseTypeEnumByName(dbTypeComboBox.getSelectedItem().toString()).getCode());
-		//p.setDisplayOrder(applicationCommonContext.getConnectionPropertiesMap().size()+1);
+		if(null != dbTypeComboBox.getSelectedItem()){
+			p.setDatabaseType(DatabaseTypeEnum.getDatabaseTypeEnumByName(dbTypeComboBox.getSelectedItem().toString()).getCode());
+		}
 		p.setConnectionUrl(urlTextField.getText());
 		p.getDatabaseConfiguration().setHostName(hostNameTextField.getText());
-		p.getDatabaseConfiguration().setPortNumber(123);
+		if(StringUtil.hasValidContent(portNumberFormattedTextField.getText())){
+			p.getDatabaseConfiguration().setPortNumber(Integer.valueOf(portNumberFormattedTextField.getText()));
+		}
+		p.getDatabaseConfiguration().setUserName(userNameTextField.getText());
 		p.getDatabaseConfiguration().setDriverClassName(driverClassTextField.getText());
 		p.getDatabaseConfiguration().setPassword(passwordPasswordField.getText());
 		p.getDatabaseConfiguration().setSchemaName(schemaNameTextField.getText());
 		p.getDatabaseConfiguration().setSidServiceName(sidTextField.getText());
 		p.getDatabaseConfiguration().setSavePassword(savePasswordCheckBox.isSelected());
+		if(schemaRadioButton.isSelected()){
+			p.getDatabaseConfiguration().setStorageType(DatabaseStorageTypeEnum.SCHEMA_STORAGE.getCode());
+		}
+		else if(catalogRadioButton.isSelected()){
+			p.getDatabaseConfiguration().setStorageType(DatabaseStorageTypeEnum.CATALOG_STORAGE.getCode());
+		}
+		else {
+			p.getDatabaseConfiguration().setStorageType(DatabaseStorageTypeEnum.UNKNOWN.getCode());
+		}
+		
+		
 		return p;
 	}
 	
@@ -1157,17 +1267,25 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
 		}
 	}
 	
-	private void changeButtonEnabled(){
+	private void changeButtonEnabled(ConnectionProperties properties){
 		if(connectionNameList.getSelectedIndex() >= 0){ // something is selected
-			saveButton.setEnabled(true);
+			saveButton.setEnabled(true && !properties.isPropertySaved());
 			saveAsButton.setEnabled(true);
 			deleteButton.setEnabled(true);
-			exportAllButton.setEnabled(true);
+			clearButton.setEnabled(true);
 		} else {
 			saveButton.setEnabled(false);
 			saveAsButton.setEnabled(false);
 			deleteButton.setEnabled(false);
-			exportAllButton.setEnabled(false);
+			clearButton.setEnabled(false);
+		}
+	}
+	
+	private void connectionPropertiesModified(){
+		ConnectionProperties p = (ConnectionProperties) connectionNameList.getSelectedValue();
+		if(p != null){
+			p.setPropertySaved(false);
+			changeButtonEnabled(p);
 		}
 	}
 	
@@ -1188,60 +1306,5 @@ implements ActionListener, ListSelectionListener, PropertyChangeListener, KeyLis
         });
     }
 
-    // Variables declaration - do not modify
-    private JToolBar actionToolBar;
-    private ButtonGroup schemaCatalogButtonGroup;
-    private JButton cancelButton;
-    private JRadioButton catalogRadioButton;
-    private JButton clearButton;
-    private JButton connectButton;
-    private JLabel connectionNameLabel;
-    private JList connectionNameList;
-    private JComboBox dbTypeComboBox;
-    private JButton deleteButton;
-    private JTextField driverClassTextField;
-    private JButton driverMgrButton;
-    private JToggleButton editUrlToggleButton;
-    private JButton exportAllButton;
-    private JPanel fieldValuePanel;
-    private JTextField hostNameTextField;
-    private JLabel jLabel1;
-    private JLabel jLabel12;
-    private JLabel jLabel13;
-    private JLabel jLabel2;
-    private JLabel jLabel3;
-    private JLabel jLabel4;
-    private JLabel jLabel5;
-    private JLabel jLabel6;
-    private JLabel jLabel7;
-    private JLabel jLabel8;
-    private JLabel jLabel9;
-    private JPanel jPanel1;
-    private JPanel jPanel2;
-    private JScrollPane jScrollPane1;
-    private JToolBar.Separator jSeparator1;
-    private JToolBar.Separator jSeparator2;
-    private JToolBar.Separator jSeparator3;
-    private JSeparator jSeparator4;
-    private JSeparator jSeparator5;
-    private JButton loadConnectionsButton;
-    private JButton moveDownButton;
-    private JButton moveUpButton;
-    private JButton newConnectionButton;
-    private JPasswordField passwordPasswordField;
-    private JFormattedTextField portNumberFormattedTextField;
-    private JButton saveAllButton;
-    private JButton saveAsButton;
-    private JButton saveButton;
-    private JCheckBox savePasswordCheckBox;
-    private JLabel schemaLabel;
-    private JTextField schemaNameTextField;
-    private JRadioButton schemaRadioButton;
-    private JLabel sidLabel;
-    private JTextField sidTextField;
-    private JButton testConnectionButton;
-    private JTextField urlTextField;
-    private JTextField userNameTextField;
-    // End of variables declaration
 
 }

@@ -3,24 +3,18 @@
  */
 package com.gs.dbex.launcher;
 
-import java.awt.EventQueue;
 import java.io.File;
-import java.util.Collections;
-import java.util.List;
 
 import javax.swing.JFrame;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
 import org.apache.log4j.Logger;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.gs.dbex.application.context.ApplicationCommonContext;
 import com.gs.dbex.application.frame.DatabaseExplorerFrame;
 import com.gs.dbex.common.DbexCommonContext;
-import com.gs.dbex.historyMgr.ApplicationDataHistoryMgr;
-import com.gs.dbex.model.cfg.ConnectionProperties;
 
 /**
  * @author sabuj.das
