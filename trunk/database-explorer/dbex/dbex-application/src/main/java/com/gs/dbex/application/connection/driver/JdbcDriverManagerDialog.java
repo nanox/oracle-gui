@@ -23,7 +23,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.logging.Level;
+import java.util.List;
 
 import javax.swing.AbstractListModel;
 import javax.swing.BorderFactory;
@@ -61,6 +61,7 @@ import org.apache.log4j.Logger;
 import com.gs.dbex.application.constants.ApplicationConstants;
 import com.gs.dbex.application.constants.ImageConstants;
 import com.gs.dbex.application.context.ApplicationCommonContext;
+import com.gs.dbex.common.CommonConstants;
 import com.gs.dbex.common.enums.DatabaseTypeEnum;
 import com.gs.utils.io.FileRWUtil;
 import com.gs.utils.jdbc.driver.JdbcDriverManagerUtil;
@@ -68,7 +69,6 @@ import com.gs.utils.swing.file.ExtensionFileFilter;
 import com.gs.utils.swing.file.FileBrowserUtil;
 import com.gs.utils.swing.tree.IconCellRenderer;
 import com.gs.utils.swing.tree.IconData;
-import java.util.List;
 
 /**
  * @author sabuj.das
@@ -98,6 +98,16 @@ public class JdbcDriverManagerDialog extends JDialog implements ActionListener,
         parentFrame = parent;
         initComponents();
         loadSavedProperties();
+        databaseNameList.setModel(new AbstractListModel() {
+            String[] strings = CommonConstants.DATABASE_TYPES;
+            public int getSize() {
+                return strings.length;
+            }
+            public Object getElementAt(int i) {
+                return strings[i];
+            }
+        });
+        databaseNameList.setSelectedIndex(0);
     }
 
     private void loadSavedProperties() {
