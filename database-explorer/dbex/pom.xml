@@ -14,8 +14,9 @@
 		<module>dbex-bod</module>
 		<module>dbex-integration</module>
 		<module>dbex-service</module>
-		<module>dbex-application</module>
 		<module>dbex-historyMgr</module>
+		<module>dbex-application</module>
+		<module>dbex-design</module>
 		<module>dbex-launcher</module>
 	</modules>
 
