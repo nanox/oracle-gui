@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.beans.PropertyVetoException;
 import java.sql.Connection;
-import java.sql.DatabaseMetaData;
 import java.sql.SQLException;
 
 import javax.swing.ImageIcon;
@@ -21,6 +20,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 
+import org.apache.log4j.Logger;
 import org.fife.plaf.Office2003.Office2003LookAndFeel;
 import org.fife.plaf.OfficeXP.OfficeXPLookAndFeel;
 
@@ -60,6 +60,7 @@ import de.muntjak.tinylookandfeel.TinyLookAndFeel;
 public class ApplicationEventHandler implements ActionListener,
 		GuiCommandConstants {
 
+	private static final Logger logger = Logger.getLogger(ApplicationEventHandler.class);
 	
 	private Component parent, sourceForm;
 	private Object data;
@@ -97,14 +98,16 @@ public class ApplicationEventHandler implements ActionListener,
 								.getResource(ApplicationConstants.IMAGE_PATH + "loading.gif")));
 						frame.getStatusBar().getCurrentStatusLabel().setText("Connecting to Database. Please wait...");
 						if(connected){
+							logger.info("Connection Successful !!!");
 							DatabaseViewerInternalFrame iFrame = new DatabaseViewerInternalFrame(frame, (ConnectionProperties) data);
 							iFrame.setVisible(true);
 							frame.getMainDesktopPane().add(iFrame);
 							((DbexConnectionDialog)getSourceForm()).dispose();
+						} else {
+							logger.info("Connection Failed !!!");
 						}
 						frame.getStatusBar().getCurrentStatusLabel().setIcon(null);
 						frame.getStatusBar().getCurrentStatusLabel().setText("");
-						
 					}
 				};
 				new Thread(connRun).start();
