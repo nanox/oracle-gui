@@ -59,7 +59,7 @@ public class DatabaseExplorerLauncher {
         	logger.info("Create files/folders.");
         	createFiles();
         }catch (Exception ex){
-        	ex.printStackTrace();
+        	logger.error(ex);
         }
         logger.info("Initialize Context.");
         launcher.getApplicationDataLoader().populateInitialContext();

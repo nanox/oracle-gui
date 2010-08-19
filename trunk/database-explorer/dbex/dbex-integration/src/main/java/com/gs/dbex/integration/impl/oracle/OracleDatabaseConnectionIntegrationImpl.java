@@ -5,9 +5,10 @@ package com.gs.dbex.integration.impl.oracle;
 
 import java.sql.SQLException;
 
+import org.apache.log4j.Logger;
+
 import com.gs.dbex.common.exception.DbexException;
 import com.gs.dbex.integration.helper.DatabaseConnectionHelper;
-import com.gs.dbex.integration.helper.oracle.OracleDatabaseConnectionHelper;
 import com.gs.dbex.integration.impl.DatabaseConnectionIntegrationImpl;
 import com.gs.dbex.model.cfg.ConnectionProperties;
 
@@ -18,6 +19,8 @@ import com.gs.dbex.model.cfg.ConnectionProperties;
 public class OracleDatabaseConnectionIntegrationImpl extends
 		DatabaseConnectionIntegrationImpl {
 
+	private static final Logger logger = Logger.getLogger(OracleDatabaseConnectionIntegrationImpl.class);
+	
 	private DatabaseConnectionHelper databaseConnectionHelper;
 	
 	
@@ -29,10 +32,16 @@ public class OracleDatabaseConnectionIntegrationImpl extends
 
 	public Boolean connectToDatabase(ConnectionProperties connectionProperties)
 			throws DbexException {
+		if(logger.isDebugEnabled()){
+			logger.debug("ENTER ::- connectToDatabase()");
+		}
 		try {
 			if(getDatabaseConnectionHelper().testConnection(connectionProperties)){
 				connectionProperties.setDataSource(getDatabaseConnectionHelper().createDataSource(connectionProperties));
 			} else {
+				if(logger.isDebugEnabled()){
+					logger.debug("EXIT ::- connectToDatabase() with FAILURE");
+				}
 				return false;
 			}
 		} catch (ClassNotFoundException e) {
@@ -41,6 +50,9 @@ public class OracleDatabaseConnectionIntegrationImpl extends
 		} catch (SQLException e) {
 			
 			e.printStackTrace();
+		}
+		if(logger.isDebugEnabled()){
+			logger.debug("EXIT ::- connectToDatabase() with SUCCESS");
 		}
 		return true;
 	}
